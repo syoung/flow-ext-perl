@@ -1,4 +1,0 @@
-if test "$d_unsetenv" = "$define" -a \
-    `expr "$ccflags" : '.*-DPERL_USE_SAFE_PUTENV'` -eq 0; then
-        ccflags="$ccflags -DPERL_USE_SAFE_PUTENV"
-fi
