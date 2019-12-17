@@ -3,7 +3,7 @@ package Specio::Library::Structured::Tuple;
 use strict;
 use warnings;
 
-our $VERSION = '0.45';
+our $VERSION = '0.44';
 
 use Carp qw( confess );
 use List::Util ();
@@ -182,7 +182,7 @@ Specio::Library::Structured::Tuple - Guts of Tuple structured type
 
 =head1 VERSION
 
-version 0.45
+version 0.44
 
 =head1 DESCRIPTION
 

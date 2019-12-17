@@ -1,0 +1,2860 @@
+=head2 Thu Nov 21 17:40:05 2019: C<Module> L<install|install>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:40:50 2019: C<Module> L<Convert::Binary::C|Convert::Binary::C>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.78>
+
+=item *
+
+C<EXE_FILES: bin/ccconfig>
+
+=back
+
+=head2 Thu Nov 21 17:42:32 2019: C<Module> L<install|install>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:42:34 2019: C<Module> L<Canary::Stability|Canary::Stability>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2013>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:42:39 2019: C<Module> L<AnyEvent|AnyEvent>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 7.17>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:42:49 2019: C<Module> L<Guard|Guard>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.023>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:42:50 2019: C<Module> L<common::sense|common::sense>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 3.74>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:42:53 2019: C<Module> L<Coro|Coro>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 6.55>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:43:43 2019: C<Module> L<Capture::Tiny|Capture::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.48>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:43:44 2019: C<Module> L<Mock::Config|Mock::Config>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.03>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:43:49 2019: C<Module> L<Devel::CheckLib|Devel::CheckLib>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.14>
+
+=item *
+
+C<EXE_FILES: bin/use-devel-checklib>
+
+=back
+
+=head2 Thu Nov 21 17:44:57 2019: C<Module> L<DBI|DBI>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.642>
+
+=item *
+
+C<EXE_FILES: dbilogstrip dbiprof dbiproxy>
+
+=back
+
+=head2 Thu Nov 21 17:46:48 2019: C<Module> L<Test::Warnings|Test::Warnings>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.027>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:46:52 2019: C<Module> L<Path::Tiny|Path::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.108>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:46:54 2019: C<Module> L<Try::Tiny|Try::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.30>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:46:55 2019: C<Module> L<Test::Fatal|Test::Fatal>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.014>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:46:57 2019: C<Module> L<Test::utf8|Test::utf8>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:46:59 2019: C<Module> L<Test::File|Test::File>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.443>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:47:02 2019: C<Module> L<Test::Deep|Test::Deep>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.128>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:47:04 2019: C<Module> L<File::Copy::Recursive|File::Copy::Recursive>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.45>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:49:04 2019: C<Module> L<FindBin::Real|FindBin::Real>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.05>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:49:13 2019: C<Module> L<Test::Pod|Test::Pod>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.52>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:49:53 2019: C<Module> L<JSON|JSON>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 4.02>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:47 2019: C<Module> L<Params::Util|Params::Util>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.07>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:50 2019: C<Module> L<B::COW|B::COW>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.001>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:51 2019: C<Module> L<Clone|Clone>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.43>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:53 2019: C<Module> L<Hook::LexWrap|Hook::LexWrap>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.26>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:54 2019: C<Module> L<Test::SubCalls|Test::SubCalls>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.10>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:55 2019: C<Module> L<Test::Object|Test::Object>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:57 2019: C<Module> L<Task::Weaken|Task::Weaken>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.06>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:50:58 2019: C<Module> L<IO::String|IO::String>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:00 2019: C<Module> L<Class::Inspector|Class::Inspector>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.36>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:02 2019: C<Module> L<Test::NoWarnings|Test::NoWarnings>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.04>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:27 2019: C<Module> L<PPI|PPI>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.270>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:31 2019: C<Module> L<ExtUtils::Config|ExtUtils::Config>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.008>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:33 2019: C<Module> L<ExtUtils::Helpers|ExtUtils::Helpers>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.026>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:34 2019: C<Module> L<ExtUtils::InstallPaths|ExtUtils::InstallPaths>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.012>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:37 2019: C<Module> L<Sub::Exporter::Progressive|Sub::Exporter::Progressive>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.001013>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:39 2019: C<Module> L<Sub::Uplevel|Sub::Uplevel>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.2800>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:41 2019: C<Module> L<Test::Warn|Test::Warn>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.36>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:43 2019: C<Module> L<Test::Exception|Test::Exception>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.43>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:44 2019: C<Module> L<ExtUtils::Depends|ExtUtils::Depends>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.8000>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:46 2019: C<Module> L<B::Hooks::OP::Check|B::Hooks::OP::Check>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.22>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:50 2019: C<Module> L<Variable::Magic|Variable::Magic>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.62>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:53 2019: C<Module> L<Test::Requires|Test::Requires>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.10>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:55 2019: C<Module> L<Module::Implementation|Module::Implementation>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.09>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:56 2019: C<Module> L<B::Hooks::EndOfScope|B::Hooks::EndOfScope>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.24>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:51:59 2019: C<Module> L<Sub::Name|Sub::Name>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.26>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:52:02 2019: C<Module> L<Devel::Declare|Devel::Declare>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.006019>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:52:04 2019: C<Module> L<File::Copy::Recursive::Reduced|File::Copy::Recursive::Reduced>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:52:11 2019: C<Module> L<Test::Output|Test::Output>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.031>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:52:13 2019: C<Module> L<Test::LeakTrace|Test::LeakTrace>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.16>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:52:57 2019: C<Module> L<Any::Moose|Any::Moose>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.27>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:10 2019: C<Module> L<Method::Signatures::Simple|Method::Signatures::Simple>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.07>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:30 2019: C<Module> L<Dist::CheckConflicts|Dist::CheckConflicts>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.11>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:33 2019: C<Module> L<Sub::Identify|Sub::Identify>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.14>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:38 2019: C<Module> L<Test::Needs|Test::Needs>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.002006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:41 2019: C<Module> L<Package::Stash::XS|Package::Stash::XS>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.29>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:44 2019: C<Module> L<Package::Stash|Package::Stash>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.38>
+
+=item *
+
+C<EXE_FILES: bin/package-stash-conflicts>
+
+=back
+
+=head2 Thu Nov 21 17:55:46 2019: C<Module> L<Sub::Install|Sub::Install>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.928>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:47 2019: C<Module> L<Data::OptList|Data::OptList>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.110>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:49 2019: C<Module> L<Class::Load|Class::Load>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.25>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:51 2019: C<Module> L<Eval::Closure|Eval::Closure>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.14>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:52 2019: C<Module> L<CPAN::Meta::Check|CPAN::Meta::Check>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.014>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:55 2019: C<Module> L<Class::Load::XS|Class::Load::XS>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.10>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:56 2019: C<Module> L<MRO::Compat|MRO::Compat>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.13>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:55:59 2019: C<Module> L<Sub::Exporter|Sub::Exporter>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.987>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:00 2019: C<Module> L<File::pushd|File::pushd>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.016>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:03 2019: C<Module> L<namespace::clean|namespace::clean>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.27>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:04 2019: C<Module> L<Test::CleanNamespaces|Test::CleanNamespaces>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.24>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:06 2019: C<Module> L<Package::DeprecationManager|Package::DeprecationManager>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.17>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:07 2019: C<Module> L<Module::Runtime::Conflicts|Module::Runtime::Conflicts>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.003>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:08 2019: C<Module> L<Devel::GlobalDestruction|Devel::GlobalDestruction>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.14>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:10 2019: C<Module> L<Devel::StackTrace|Devel::StackTrace>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.04>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:56:12 2019: C<Module> L<Devel::OverloadInfo|Devel::OverloadInfo>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.005>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:57:34 2019: C<Module> L<Moose|Moose>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.2011>
+
+=item *
+
+C<EXE_FILES: bin/moose-outdated>
+
+=back
+
+=head2 Thu Nov 21 17:58:39 2019: C<Module> L<namespace::autoclean|namespace::autoclean>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.29>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:58:40 2019: C<Module> L<Sub::Exporter::ForMethods|Sub::Exporter::ForMethods>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.100052>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:58:42 2019: C<Module> L<Carp::Clan|Carp::Clan>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 6.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:58:48 2019: C<Module> L<Class::Tiny|Class::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:58:49 2019: C<Module> L<Devel::PartialDump|Devel::PartialDump>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.20>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:58:53 2019: C<Module> L<Role::Tiny|Role::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.001004>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:58:56 2019: C<Module> L<Sub::Quote|Sub::Quote>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.006006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:04 2019: C<Module> L<Specio|Specio>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.44>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:06 2019: C<Module> L<Test::Without::Module|Test::Without::Module>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.20>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:08 2019: C<Module> L<Class::Data::Inheritable|Class::Data::Inheritable>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:09 2019: C<Module> L<Exception::Class|Exception::Class>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.44>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:10 2019: C<Module> L<Scope::Guard|Scope::Guard>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.21>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:12 2019: C<Module> L<Importer|Importer>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.025>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:12 2019: C<Module> L<Sub::Info|Sub::Info>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.002>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:14 2019: C<Module> L<Term::Table|Term::Table>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.015>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:18 2019: C<Module> L<Module::Pluggable|Module::Pluggable>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 5.2>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:31 2019: C<Module> L<Test2::Suite|Test2::Suite>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.000127>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:34 2019: C<Module> L<IPC::Run3|IPC::Run3>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.048>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:35 2019: C<Module> L<Test2::Plugin::NoWarnings|Test2::Plugin::NoWarnings>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:38 2019: C<Module> L<Params::ValidationCompiler|Params::ValidationCompiler>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.30>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:41 2019: C<Module> L<Class::Singleton|Class::Singleton>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.5>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:45 2019: C<Module> L<DateTime::TimeZone|DateTime::TimeZone>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.38>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:49 2019: C<Module> L<File::ShareDir::Install|File::ShareDir::Install>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.13>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:52 2019: C<Module> L<File::ShareDir|File::ShareDir>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.116>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:54 2019: C<Module> L<Test::File::ShareDir|Test::File::ShareDir>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.001002>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 17:59:57 2019: C<Module> L<IPC::System::Simple|IPC::System::Simple>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.25>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:00:24 2019: C<Module> L<DateTime::Locale|DateTime::Locale>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.25>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:00:40 2019: C<Module> L<DateTime|DateTime>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.51>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:00:49 2019: C<Module> L<Exporter::Tiny|Exporter::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.002001>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:00:59 2019: C<Module> L<List::MoreUtils::XS|List::MoreUtils::XS>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.428>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:01:12 2019: C<Module> L<List::MoreUtils|List::MoreUtils>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.428>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:01:14 2019: C<Module> L<Algorithm::Diff|Algorithm::Diff>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.1903>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:01:15 2019: C<Module> L<Text::Diff|Text::Diff>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.45>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:01:17 2019: C<Module> L<Test::Differences|Test::Differences>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.67>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:01:28 2019: C<Module> L<Parse::Method::Signatures|Parse::Method::Signatures>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.003019>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:01:29 2019: C<Module> L<MooseX::Meta::TypeConstraint::ForceCoercion|MooseX::Meta::TypeConstraint::ForceCoercion>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:01:33 2019: C<Module> L<Context::Preserve|Context::Preserve>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.03>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:02:14 2019: C<Module> L<PadWalker|PadWalker>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.3>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:04:47 2019: C<Module> L<PerlIO::eol|PerlIO::eol>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.17>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:05:10 2019: C<Module> L<Term::ReadKey|Term::ReadKey>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.38>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:05:34 2019: C<Module> L<B::Hooks::OP::PPAddr|B::Hooks::OP::PPAddr>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.06>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:05:42 2019: C<Module> L<Scope::Upper|Scope::Upper>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.32>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:05:46 2019: C<Module> L<TryCatch|TryCatch>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.003002>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:06:04 2019: C<Module> L<YAML::Tiny|YAML::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.73>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:06:07 2019: C<Module> L<install|install>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:06:10 2019: C<Module> L<Net::RabbitMQ|Net::RabbitMQ>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.2.8>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:06:13 2019: C<Module> L<Acme::Damn|Acme::Damn>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:06:19 2019: C<Module> L<UUID|UUID>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.28>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:43:42 2019: C<Module> L<Spiffy|Spiffy>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.46>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:43:51 2019: C<Module> L<Test::Base|Test::Base>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.89>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:43:52 2019: C<Module> L<Test::YAML|Test::YAML>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.07>
+
+=item *
+
+C<EXE_FILES: bin/test-yaml>
+
+=back
+
+=head2 Thu Nov 21 18:43:59 2019: C<Module> L<YAML|YAML>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.29>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 18:58:37 2019: C<Module> L<DBD::SQLite|DBD::SQLite>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.64>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Thu Nov 21 19:00:15 2019: C<Module> L<File::Sort|File::Sort>
+
+=over 4
+
+=item *
+
+C<installed into: /Users/kbsf633/localrepos/flow/perl/perls/perl-5.30.1/lib/site_perl/5.30.1>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+

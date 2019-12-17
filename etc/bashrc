@@ -1,5 +1,5 @@
 export PERLBREW_SHELLRC_VERSION=0.87
-export PERLBREW_ROOT=/flow/perl
+export PERLBREW_ROOT=/Users/kbsf633/localrepos/flow/perl
 
 
 __perlbrew_reinit() {
