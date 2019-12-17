@@ -1,0 +1,32 @@
+File::Sort
+DBD::SQLite
+YAML
+install
+Convert::Binary::C
+AnyEvent --force
+Coro
+DBI
+DBD::mysql
+File::Copy::Recursive
+File::Remove
+FindBin::Real
+Getopt::Simple
+JSON
+Method::Signatures
+Method::Signatures::Modifiers
+Method::Signatures::Simple
+Moose::Role
+#Moose::Util
+Moose::Util::TypeConstraints
+MooseX::Declare
+PadWalker
+PerlIO::eol
+Term::ANSIColor
+Term::ReadKey
+threads
+TryCatch
+vars
+YAML::Tiny
+Net::RabbitMQ --force --notest
+Acme::Damn
+UUID
