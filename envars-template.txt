@@ -1,0 +1,11 @@
+export PATH=$DIR/perl/5.30.0_64/perl/bin:\$PATH
+export PERL5LIB=$DIR/perl/5.30.0_64/perl/lib:\$PERL5LIB"
+export PERL5LIB=$DIR/perl/5.30.0_64/perl/site/lib:\$PERL5LIB"
+export PERL5LIB=$DIR/perl/5.30.0_64/perl/site/lib/$ARCHITECTURE:\$PERL5LIB"
+export PERL5LIB=$DIR/perl/5.30.0_64/perl/vendor/lib:\$PERL5LIB"
+export PERL5LIB=$DIR/lib:\$PERL5LIB"
+
+export PATH=
+5.30.0_64/perl/lib
+5.30.0_64/perl/site
+PERL5LIB
