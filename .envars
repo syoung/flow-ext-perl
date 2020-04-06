@@ -1,0 +1,5 @@
+export PATH=<INSTALLDIR>/perl/bin:$PATH 
+export PERL5LIB=<INSTALLDIR>/perl/lib/perl5:$PERL5LIB
+export PERL5LIB=<INSTALLDIR>/perl/lib/perl5/x86_64-linux-thread-multi:$PERL5LIB
+export PERL5LIB=<INSTALLDIR>/perl/lib/perl5/site_perl/5.26.3:$PERL5LIB
+export PERL5LIB=<INSTALLDIR>/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi:$PERL5LIB
