@@ -1,0 +1,136 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS-AND-VARIABLES">FUNCTIONS AND VARIABLES</a></li>
+  <li><a href="#PROBLEMS-WITH-IO::Async">PROBLEMS WITH IO::Async</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Impl::IOAsync - AnyEvent adaptor for IO::Async</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use AnyEvent;
+  use IO::Async::Loop;
+
+  # optionally set another event loop
+  use AnyEvent::Impl::IOAsync;
+  my $loop = new IO::Async::Loop;
+  AnyEvent::Impl::IOAsync::set_loop $loop;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides support for IO::Async as AnyEvent backend. It supports I/O, timers, signals and child process watchers. Idle watchers are emulated. I/O watchers need to dup their fh because IO::Async only supports IO handles, not plain file descriptors.</p>
+
+<h1 id="FUNCTIONS-AND-VARIABLES">FUNCTIONS AND VARIABLES</h1>
+
+<p>The only user-servicible part in this module is the <code>set_loop</code> function and <code>$LOOP</code> variable:</p>
+
+<dl>
+
+<dt id="AnyEvent::Impl::IOAsync::set_loop-new_loop">AnyEvent::Impl::IOAsync::set_loop $new_loop</dt>
+<dd>
+
+<p>Unfortunately, IO::Async has no concept of a default loop. Modules using IO::Async must be told by their caller which loop to use, which makes it impossible to transparently use IO::Async from a module.</p>
+
+<p>This module is no exception. It creates a new IO::Async::Loop object when it is loaded. This might not be the right loop object, though, and thus you can replace it by a call to this function with the loop object of your choice.</p>
+
+<p>Note that switching loops while watchers are already initialised can have unexpected effects, and is not supported unless you can live witht he consequences.</p>
+
+</dd>
+<dt id="AnyEvent::Impl::IOAsync::LOOP">$AnyEvent::Impl::IOAsync::LOOP</dt>
+<dd>
+
+<p>This variable always contains the IO::Async::Loop object used by this AnyEvent backend. See above for more info.</p>
+
+<p>Storing the &quot;default&quot; loop makes this module a possible arbiter for other modules that want to use IO::Async transparently. It&#39;s advised to directly refer to this variable each time you want to use it, without making a local copy.</p>
+
+</dd>
+</dl>
+
+<h1 id="PROBLEMS-WITH-IO::Async">PROBLEMS WITH IO::Async</h1>
+
+<p>This section had a long list of problems and shortcomings that made it almost impossible to support <a>IO::Async</a>. With version 0.33 of IO::Async, however, most of these have been fixed, so <a>IO::Async</a> can now be used as easily as many other loops.</p>
+
+<p>There are a few remaining problems that require emulation or workarounds:</p>
+
+<dl>
+
+<dt id="No-support-for-multiple-watchers-per-event">No support for multiple watchers per event</dt>
+<dd>
+
+<p>In most (all? documentation?) cases you cannot have multiple watchers for the same event (what&#39;s the point of having all these fancy notifier classes when you cannot have multiple notifiers for the same event? That&#39;s like only allowing one timer per second or so...).</p>
+
+<p>For I/O watchers, AnyEvent has to dup() every file handle, as IO::Async fails to support the same or different file handles pointing to the same fd (the good thing is that it is documented, but why not fix it instead?).</p>
+
+</dd>
+</dl>
+
+<p>Apart from these fatal flaws, there are a number of unpleasent properties that just need some mentioning:</p>
+
+<dl>
+
+<dt id="Confusing-and-misleading-names">Confusing and misleading names</dt>
+<dd>
+
+<p>Another rather negative point about this module family is its name, which is deeply confusing: Despite the &quot;async&quot; in the name, <a>IO::Async</a> only does <i>synchronous</i> I/O, there is nothing &quot;asynchronous&quot; about it whatsoever (when I first heard about it, I thought, &quot;wow, a second async I/O module, what does it do compared to <a>IO::AIO</a>&quot;, and was somehow set back when I learned that the only &quot;async&quot; aspect of it is the name).</p>
+
+</dd>
+<dt id="Inconsistent-incomplete-and-convoluted-API">Inconsistent, incomplete and convoluted API</dt>
+<dd>
+
+<p>Implementing AnyEvent&#39;s rather simple timers on top of IO::Async&#39;s timers was a nightmare (try implementing a timer with configurable interval and delay value...).</p>
+
+<p>The method naming is chaotic: <code>watch_child</code> creates a child watcher, but <code>watch_io</code> is an internal method; <code>detach_signal</code> removes a signal watcher, but <code>detach_child</code> forks a subprocess and so on).</p>
+
+</dd>
+<dt id="Unpleasant-surprises-on-GNU-Linux">Unpleasant surprises on GNU/Linux</dt>
+<dd>
+
+<p>When you develop your program on FreeBSD and run it on GNU/Linux, you might have unpleasant surprises, as IO::Async::Loop will by default use <a>IO::Async::Loop::Epoll</a>, which is incompatible with <code>fork</code>, so your network server will run into spurious and very hard to debug problems under heavy load, as IO::Async forks a lot of processes, e.g. for DNS resolution. It would be better if IO::Async would only load &quot;safe&quot; backends by default (or fix the epoll backend to work in the presence of fork, which admittedly is hard - EV does it for you, and also does not use unsafe backends by default).</p>
+
+</dd>
+</dl>
+
+<p>On the positive side, performance with IO::Async is quite good even in my very demanding eyes.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a>, <a>IO::Async</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de
+
+ Paul Evans &lt;leonerd@leonerd.org.uk&gt;
+ Rewrote the backend for IO::Async version 0.33.</code></pre>
+
+
+</body>
+
+</html>
+
+

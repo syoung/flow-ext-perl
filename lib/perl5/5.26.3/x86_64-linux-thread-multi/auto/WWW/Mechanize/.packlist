@@ -1,0 +1,14 @@
+/flow/perl/bin/mech-dump
+/flow/perl/lib/perl5/5.26.3/WWW/Mechanize.pm
+/flow/perl/lib/perl5/5.26.3/WWW/Mechanize/Cookbook.pod
+/flow/perl/lib/perl5/5.26.3/WWW/Mechanize/Examples.pod
+/flow/perl/lib/perl5/5.26.3/WWW/Mechanize/FAQ.pod
+/flow/perl/lib/perl5/5.26.3/WWW/Mechanize/Image.pm
+/flow/perl/lib/perl5/5.26.3/WWW/Mechanize/Link.pm
+/flow/perl/man/man1/mech-dump.1
+/flow/perl/man/man3/WWW::Mechanize.3
+/flow/perl/man/man3/WWW::Mechanize::Cookbook.3
+/flow/perl/man/man3/WWW::Mechanize::Examples.3
+/flow/perl/man/man3/WWW::Mechanize::FAQ.3
+/flow/perl/man/man3/WWW::Mechanize::Image.3
+/flow/perl/man/man3/WWW::Mechanize::Link.3

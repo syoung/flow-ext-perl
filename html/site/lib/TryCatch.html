@@ -1,0 +1,137 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#SYNTAX">SYNTAX</a></li>
+  <li><a href="#BENEFITS">BENEFITS</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#THANKS">THANKS</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>TryCatch - first class try catch semantics for Perl, without source filters.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module aims to provide a nicer syntax and method to catch errors in Perl, similar to what is found in other languages (such as Java, Python or C++). The standard method of using <code>eval {}; if ($@) {}</code> is often prone to subtle bugs, primarily that its far too easy to stomp on the error in error handlers. And also eval/if isn&#39;t the nicest idiom.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use TryCatch;
+
+ sub foo {
+   my ($self) = @_;
+
+   try {
+     die Some::Class-&gt;new(code =&gt; 404 ) if $self-&gt;not_found;
+     return &quot;return value from foo&quot;;
+   }
+   catch (Some::Class $e where { $_-&gt;code &gt; 100 } ) {
+   }
+ }</code></pre>
+
+<h1 id="SYNTAX">SYNTAX</h1>
+
+<p>This module aims to give first class exception handling to perl via &#39;try&#39; and &#39;catch&#39; keywords. The basic syntax this module provides is <code>try { # block }</code> followed by zero or more catch blocks. Each catch block has an optional type constraint on it the resembles Perl6&#39;s method signatures.</p>
+
+<p>Also worth noting is that the error variable (<code>$@</code>) is localised to the try/catch blocks and will not leak outside the scope, or stomp on a previous value of <code>$@</code>.</p>
+
+<p>The simplest case of a catch block is just</p>
+
+<pre><code> catch { ... }</code></pre>
+
+<p>where upon the error is available in the standard <code>$@</code> variable and no type checking is performed. The exception can instead be accessed via a named lexical variable by providing a simple signature to the catch block as follows:</p>
+
+<pre><code> catch ($err) { ... }</code></pre>
+
+<p>Type checking of the exception can be performed by specifing a type constraint or where clauses in the signature as follows:</p>
+
+<pre><code> catch (TypeFoo $e) { ... }
+ catch (Dict[code =&gt; Int, message =&gt; Str] $err) { ... }</code></pre>
+
+<p>As shown in the above example, complex Moose types can be used, including <a href="../../lib/perl5/site_perl/5.26.3/MooseX/Types.html">MooseX::Types</a> style of type constraints</p>
+
+<p>In addition to type checking via Moose type constraints, you can also use where clauses to only match a certain sub-condition on an error. For example, assuming that <code>HTTPError</code> is a suitably defined TC:</p>
+
+<pre><code> catch (HTTPError $e where { $_-&gt;code &gt;= 400 &amp;&amp; $_-&gt;code &lt;= 499 } ) {
+   return &quot;4XX error&quot;;
+ }
+ catch (HTTPError $e) {
+   return &quot;other http code&quot;;
+ }</code></pre>
+
+<p>would return &quot;4XX error&quot; in the case of a 404 error, and &quot;other http code&quot; in the case of a 302.</p>
+
+<p>In the case where multiple catch blocks are present, the first one that matches the type constraints (if any) will executed.</p>
+
+<h1 id="BENEFITS">BENEFITS</h1>
+
+<p><b>return</b>. You can put a return in a try block, and it would do the right thing - namely return a value from the subroutine you are in, instead of just from the eval block.</p>
+
+<p><b>Type Checking</b>. This is nothing you couldn&#39;t do manually yourself, it does it for you using Moose type constraints.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<ul>
+
+<li><p>Decide on <code>finally</code> semantics w.r.t return values.</p>
+
+</li>
+<li><p>Write some more documentation</p>
+
+</li>
+<li><p>Split out the dependancy on Moose</p>
+
+</li>
+</ul>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../lib/perl5/site_perl/5.26.3/MooseX/Types.html">MooseX::Types</a>, <a href="../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Util/TypeConstraints.html">Moose::Util::TypeConstraints</a>, <a href="../../lib/perl5/site_perl/5.26.3/Parse/Method/Signatures.html">Parse::Method::Signatures</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ash Berlin &lt;ash@cpan.org&gt;</p>
+
+<h1 id="THANKS">THANKS</h1>
+
+<p>Thanks to Matt S Trout and Florian Ragwitz for work on <a href="../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Devel/Declare.html">Devel::Declare</a> and various B::Hooks modules</p>
+
+<p>Vincent Pit for <a href="../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Scope/Upper.html">Scope::Upper</a> that makes the return from block possible.</p>
+
+<p>Zefram for providing support and XS guidance.</p>
+
+<p>Xavier Bergade for the impetus to finally fix this module in 5.12.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>Licensed under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

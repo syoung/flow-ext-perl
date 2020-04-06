@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::BDB - truly asynchronous bdb access</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use Coro::BDB;
+   use BDB;
+
+   # can now use any of the bdb requests</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is an <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> user, you need to make sure that you use and run a supported event loop.</p>
+
+<p>This module implements a thin wrapper around the <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/BDB.html">BDB</a> module: Each BDB request that could block and doesn&#39;t get passed a callback will normally block all coroutines. after loading this module, this will no longer be the case (it provides a suitable sync prepare callback).</p>
+
+<p>It will also register an AnyEvent watcher as soon as AnyEvent chooses an event loop.</p>
+
+<p>The AnyEvent watcher can be disabled by executing <code>undef $Coro::BDB::WATCHER</code>. Please notify the author of when and why you think this was necessary.</p>
+
+<p>This module does not export anything (unlike <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AIO.html">Coro::AIO</a>), as BDB already supports leaving out the callback. (Unfortunately, it ties a C context to each coroutine executing such a callback, so in the future, it might export more efficient wrappers).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/BDB.html">BDB</a> of course.</p>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

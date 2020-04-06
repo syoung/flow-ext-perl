@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Signal - thread signals (binary semaphores)</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro;
+
+ my $sig = new Coro::Signal;
+
+ $sig-&gt;wait; # wait for signal
+
+ # ... some other &quot;thread&quot;
+
+ $sig-&gt;send;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements signals/binary semaphores/condition variables (basically all the same thing). You can wait for a signal to occur or send it, in which case it will wake up one waiter, or it can be broadcast, waking up all waiters.</p>
+
+<p>It is recommended not to mix <code>send</code> and <code>broadcast</code> calls on the same <code>Coro::Signal</code> without some deep thinking: while it should work as documented, it can easily confuse you :-&gt;</p>
+
+<p>You don&#39;t have to load <code>Coro::Signal</code> manually, it will be loaded automatically when you <code>use Coro</code> and call the <code>new</code> constructor.</p>
+
+<dl>
+
+<dt id="sig-new-Coro::Signal">$sig = new Coro::Signal;</dt>
+<dd>
+
+<p>Create a new signal.</p>
+
+</dd>
+<dt id="sig-wait">$sig-&gt;wait</dt>
+<dd>
+
+<p>Wait for the signal to occur (via either <code>send</code> or <code>broadcast</code>). Returns immediately if the signal has been sent before.</p>
+
+</dd>
+<dt id="sig-wait-callback">$sig-&gt;wait ($callback)</dt>
+<dd>
+
+<p>If you pass a callback argument to <code>wait</code>, it will not wait, but immediately return. The callback will be called under the same conditions as <code>wait</code> without arguments would continue the thrad.</p>
+
+<p>The callback might wake up any number of threads, but is <i>NOT</i> allowed to block (switch to other threads).</p>
+
+</dd>
+<dt id="sig-send">$sig-&gt;send</dt>
+<dd>
+
+<p>Send the signal, waking up <i>one</i> waiting process or remember the signal if no process is waiting.</p>
+
+</dd>
+<dt id="sig-broadcast">$sig-&gt;broadcast</dt>
+<dd>
+
+<p>Send the signal, waking up <i>all</i> waiting process. If no process is waiting the signal is lost.</p>
+
+</dd>
+<dt id="sig-awaited">$sig-&gt;awaited</dt>
+<dd>
+
+<p>Return true when the signal is being awaited by some process.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

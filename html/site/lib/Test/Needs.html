@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORTS">EXPORTS</a>
+    <ul>
+      <li><a href="#test_needs">test_needs</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::Needs - Skip tests when modules not available</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  # need one module
+  use Test::Needs &#39;Some::Module&#39;;
+
+  # need multiple modules
+  use Test::Needs &#39;Some::Module&#39;, &#39;Some::Other::Module&#39;;
+
+  # need a given version of a module
+  use Test::Needs {
+    &#39;Some::Module&#39; =&gt; &#39;1.005&#39;,
+  };
+
+  # check later
+  use Test::Needs;
+  test_needs &#39;Some::Module&#39;;
+
+  # skips remainder of subtest
+  use Test::More;
+  use Test::Needs;
+  subtest &#39;my subtest&#39; =&gt; sub {
+    test_needs &#39;Some::Module&#39;;
+    ...
+  };
+
+  # check perl version
+  use Test::Needs { perl =&gt; 5.020 };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Skip test scripts if modules are not available. The requested modules will be loaded, and optionally have their versions checked. If the module is missing, the test script will be skipped. Modules that are found but fail to compile will exit with an error rather than skip.</p>
+
+<p>If used in a subtest, the remainder of the subtest will be skipped.</p>
+
+<p>Skipping will work even if some tests have already been run, or if a plan has been declared.</p>
+
+<p>Versions are checked via a <code>$module-&gt;VERSION($wanted_version)</code> call. Versions must be provided in a format that will be accepted. No extra processing is done on them.</p>
+
+<p>If <code>perl</code> is used as a module, the version is checked against the running perl version (<a href="../../../lib/perl5/5.26.3/pod/perlvar.html#pod">$]</a>). The version can be specified as a number, dotted-decimal string, v-string, or version object.</p>
+
+<p>If the <code>RELEASE_TESTING</code> environment variable is set, the tests will fail rather than skip. Subtests will be aborted, but the test script will continue running after that point.</p>
+
+<h1 id="EXPORTS">EXPORTS</h1>
+
+<h2 id="test_needs">test_needs</h2>
+
+<p>Has the same interface as when using Test::Needs in a <code>use</code>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Test::Requires"><a href="../../../lib/perl5/site_perl/5.26.3/Test/Requires.html">Test::Requires</a></dt>
+<dd>
+
+<p>A similar module, with some important differences. <a href="../../../lib/perl5/site_perl/5.26.3/Test/Requires.html">Test::Requires</a> will act as a <code>use</code> statement (despite its name), calling the import sub. Under <code>RELEASE_TESTING</code>, it will BAIL_OUT if a module fails to load rather than using a normal test fail. It also doesn&#39;t distinguish between missing modules and broken modules.</p>
+
+</dd>
+<dt id="Test2::Require::Module"><a href="../../../lib/perl5/5.26.3/Test2/Require/Module.html">Test2::Require::Module</a></dt>
+<dd>
+
+<p>Part of the <a href="../../../lib/perl5/5.26.3/Test2.html">Test2</a> ecosystem. Only supports running as a <code>use</code> command to skip an entire plan.</p>
+
+</dd>
+<dt id="Test2::Require::Perl"><a href="../../../lib/perl5/5.26.3/Test2/Require/Perl.html">Test2::Require::Perl</a></dt>
+<dd>
+
+<p>Part of the <a href="../../../lib/perl5/5.26.3/Test2.html">Test2</a> ecosystem. Only supports running as a <code>use</code> command to skip an entire plan. Checks perl versions.</p>
+
+</dd>
+<dt id="Test::If"><a>Test::If</a></dt>
+<dd>
+
+<p>Acts as a <code>use</code> statement. Only supports running as a <code>use</code> command to skip an entire plan. Can skip based on subref results.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>haarg - Graham Knop (cpan:HAARG) &lt;haarg@haarg.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<p>None so far.</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>Copyright (c) 2016 the Test::Needs <a href="#AUTHORS">&quot;AUTHORS&quot;</a> and <a href="#CONTRIBUTORS">&quot;CONTRIBUTORS&quot;</a> as listed above.</p>
+
+<p>This library is free software and may be distributed under the same terms as perl itself. See <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a>.</p>
+
+
+</body>
+
+</html>
+
+

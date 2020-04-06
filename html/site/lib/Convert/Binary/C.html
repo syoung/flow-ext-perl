@@ -1,0 +1,4661 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a>
+    <ul>
+      <li><a href="#Simple">Simple</a></li>
+      <li><a href="#Advanced">Advanced</a></li>
+    </ul>
+  </li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Background-and-History">Background and History</a></li>
+      <li><a href="#About-this-document">About this document</a></li>
+      <li><a href="#Why-use-Convert::Binary::C">Why use Convert::Binary::C?</a></li>
+      <li><a href="#Creating-a-Convert::Binary::C-object">Creating a Convert::Binary::C object</a></li>
+      <li><a href="#Configuring-the-object">Configuring the object</a></li>
+      <li><a href="#Parsing-C-code">Parsing C code</a></li>
+      <li><a href="#Packing-and-unpacking">Packing and unpacking</a></li>
+      <li><a href="#Preprocessor-configuration">Preprocessor configuration</a></li>
+      <li><a href="#Supported-pragma-directives">Supported pragma directives</a></li>
+      <li><a href="#Automatic-configuration-using-ccconfig">Automatic configuration using ccconfig</a></li>
+    </ul>
+  </li>
+  <li><a href="#UNDERSTANDING-TYPES">UNDERSTANDING TYPES</a>
+    <ul>
+      <li><a href="#Standard-Types">Standard Types</a></li>
+      <li><a href="#Basic-Types">Basic Types</a></li>
+      <li><a href="#Member-Expressions">Member Expressions</a></li>
+      <li><a href="#Offsets">Offsets</a></li>
+    </ul>
+  </li>
+  <li><a href="#USING-TAGS">USING TAGS</a>
+    <ul>
+      <li><a href="#The-Format-Tag">The Format Tag</a></li>
+      <li><a href="#The-ByteOrder-Tag">The ByteOrder Tag</a></li>
+      <li><a href="#The-Dimension-Tag">The Dimension Tag</a></li>
+      <li><a href="#The-Hooks-Tag">The Hooks Tag</a>
+        <ul>
+          <li><a href="#Basic-Hooks">Basic Hooks</a></li>
+          <li><a href="#Advanced-Hooks">Advanced Hooks</a></li>
+          <li><a href="#Performance">Performance</a></li>
+        </ul>
+      </li>
+      <li><a href="#Tag-Order">Tag Order</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#configure">configure</a></li>
+      <li><a href="#parse">parse</a></li>
+      <li><a href="#parse_file">parse_file</a></li>
+      <li><a href="#clean">clean</a></li>
+      <li><a href="#clone">clone</a></li>
+      <li><a href="#def">def</a></li>
+      <li><a href="#defined">defined</a></li>
+      <li><a href="#pack">pack</a></li>
+      <li><a href="#unpack">unpack</a></li>
+      <li><a href="#initializer">initializer</a></li>
+      <li><a href="#sizeof">sizeof</a></li>
+      <li><a href="#typeof">typeof</a></li>
+      <li><a href="#offsetof">offsetof</a></li>
+      <li><a href="#member">member</a></li>
+      <li><a href="#tag">tag</a></li>
+      <li><a href="#untag">untag</a></li>
+      <li><a href="#arg">arg</a></li>
+      <li><a href="#dependencies">dependencies</a></li>
+      <li><a href="#sourcify">sourcify</a></li>
+      <li><a href="#enum_names">enum_names</a></li>
+      <li><a href="#enum">enum</a></li>
+      <li><a href="#compound_names">compound_names</a></li>
+      <li><a href="#compound">compound</a></li>
+      <li><a href="#struct_names">struct_names</a></li>
+      <li><a href="#struct">struct</a></li>
+      <li><a href="#union_names">union_names</a></li>
+      <li><a href="#union">union</a></li>
+      <li><a href="#typedef_names">typedef_names</a></li>
+      <li><a href="#typedef">typedef</a></li>
+      <li><a href="#macro_names">macro_names</a></li>
+      <li><a href="#macro">macro</a></li>
+    </ul>
+  </li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#feature">feature</a></li>
+      <li><a href="#native">native</a></li>
+    </ul>
+  </li>
+  <li><a href="#DEBUGGING">DEBUGGING</a>
+    <ul>
+      <li><a href="#Debugging-options">Debugging options</a></li>
+      <li><a href="#Redirecting-debug-output">Redirecting debug output</a></li>
+    </ul>
+  </li>
+  <li><a href="#ENVIRONMENT">ENVIRONMENT</a>
+    <ul>
+      <li><a href="#CBC_ORDER_MEMBERS">CBC_ORDER_MEMBERS</a></li>
+      <li><a href="#CBC_DEBUG_OPT">CBC_DEBUG_OPT</a></li>
+      <li><a href="#CBC_DEBUG_FILE">CBC_DEBUG_FILE</a></li>
+      <li><a href="#CBC_DISABLE_PARSER">CBC_DISABLE_PARSER</a></li>
+    </ul>
+  </li>
+  <li><a href="#FLEXIBLE-ARRAY-MEMBERS-AND-INCOMPLETE-TYPES">FLEXIBLE ARRAY MEMBERS AND INCOMPLETE TYPES</a></li>
+  <li><a href="#FLOATING-POINT-VALUES">FLOATING POINT VALUES</a></li>
+  <li><a href="#BITFIELDS">BITFIELDS</a></li>
+  <li><a href="#MULTITHREADING">MULTITHREADING</a></li>
+  <li><a href="#INHERITANCE">INHERITANCE</a></li>
+  <li><a href="#PORTABILITY">PORTABILITY</a></li>
+  <li><a href="#COMPARISON-WITH-SIMILAR-MODULES">COMPARISON WITH SIMILAR MODULES</a>
+    <ul>
+      <li><a href="#C::Include">C::Include</a></li>
+      <li><a href="#C::DynaLib::Struct">C::DynaLib::Struct</a></li>
+      <li><a href="#Win32::API::Struct">Win32::API::Struct</a></li>
+    </ul>
+  </li>
+  <li><a href="#CREDITS">CREDITS</a></li>
+  <li><a href="#MAILING-LIST">MAILING LIST</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#EXPERIMENTAL-FEATURES">EXPERIMENTAL FEATURES</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#POSTCARDS">POSTCARDS</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Convert::Binary::C - Binary Data Conversion using C Types</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<h2 id="Simple">Simple</h2>
+
+<pre><code>  use Convert::Binary::C;
+  
+  #---------------------------------------------
+  # Create a new object and parse embedded code
+  #---------------------------------------------
+  my $c = Convert::Binary::C-&gt;new-&gt;parse(&lt;&lt;ENDC);
+  
+  enum Month { JAN, FEB, MAR, APR, MAY, JUN,
+               JUL, AUG, SEP, OCT, NOV, DEC };
+  
+  struct Date {
+    int        year;
+    enum Month month;
+    int        day;
+  };
+  
+  ENDC
+  
+  #-----------------------------------------------
+  # Pack Perl data structure into a binary string
+  #-----------------------------------------------
+  my $date = { year =&gt; 2002, month =&gt; &#39;DEC&#39;, day =&gt; 24 };
+  
+  my $packed = $c-&gt;pack(&#39;Date&#39;, $date);</code></pre>
+
+<h2 id="Advanced">Advanced</h2>
+
+<pre><code>  use Convert::Binary::C;
+  use Data::Dumper;
+  
+  #---------------------
+  # Create a new object
+  #---------------------
+  my $c = new Convert::Binary::C ByteOrder =&gt; &#39;BigEndian&#39;;
+  
+  #---------------------------------------------------
+  # Add include paths and global preprocessor defines
+  #---------------------------------------------------
+  $c-&gt;Include(&#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include&#39;,
+              &#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include-fixed&#39;,
+              &#39;/usr/include&#39;)
+    -&gt;Define(qw( __USE_POSIX __USE_ISOC99=1 ));
+  
+  #----------------------------------
+  # Parse the &#39;time.h&#39; header file
+  #----------------------------------
+  $c-&gt;parse_file(&#39;time.h&#39;);
+  
+  #---------------------------------------
+  # See which files the object depends on
+  #---------------------------------------
+  print Dumper([$c-&gt;dependencies]);
+  
+  #-----------------------------------------------------------
+  # See if struct timespec is defined and dump its definition
+  #-----------------------------------------------------------
+  if ($c-&gt;def(&#39;struct timespec&#39;)) {
+    print Dumper($c-&gt;struct(&#39;timespec&#39;));
+  }
+  
+  #-------------------------------
+  # Create some binary dummy data
+  #-------------------------------
+  my $data = &quot;binary_test_string&quot;;
+  
+  #--------------------------------------------------------
+  # Unpack $data according to &#39;struct timespec&#39; definition
+  #--------------------------------------------------------
+  if (length($data) &gt;= $c-&gt;sizeof(&#39;timespec&#39;)) {
+    my $perl = $c-&gt;unpack(&#39;timespec&#39;, $data);
+    print Dumper($perl);
+  }
+  
+  #--------------------------------------------------------
+  # See which member lies at offset 5 of &#39;struct timespec&#39;
+  #--------------------------------------------------------
+  my $member = $c-&gt;member(&#39;timespec&#39;, 5);
+  print &quot;member(&#39;timespec&#39;, 5) = &#39;$member&#39;\n&quot;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Convert::Binary::C is a preprocessor and parser for C type definitions. It is highly configurable and supports arbitrarily complex data structures. Its object-oriented interface has <a href="#pack"><code>pack</code></a> and <a href="#unpack"><code>unpack</code></a> methods that act as replacements for Perl&#39;s <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#pack"><code>pack</code></a> and <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#unpack"><code>unpack</code></a> and allow one to use C types instead of a string representation of the data structure for conversion of binary data from and to Perl&#39;s complex data structures.</p>
+
+<p>Actually, what Convert::Binary::C does is not very different from what a C compiler does, just that it doesn&#39;t compile the source code into an object file or executable, but only parses the code and allows Perl to use the enumerations, structs, unions and typedefs that have been defined within your C source for binary data conversion, similar to Perl&#39;s <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#pack"><code>pack</code></a> and <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#unpack"><code>unpack</code></a>.</p>
+
+<p>Beyond that, the module offers a lot of convenience methods to retrieve information about the C types that have been parsed.</p>
+
+<h2 id="Background-and-History">Background and History</h2>
+
+<p>In late 2000 I wrote a real-time debugging interface for an embedded medical device that allowed me to send out data from that device over its integrated Ethernet adapter. The interface was <code>printf()</code>-like, so you could easily send out strings or numbers. But you could also send out what I called <i>arbitrary data</i>, which was intended for arbitrary blocks of the device&#39;s memory.</p>
+
+<p>Another part of this real-time debugger was a Perl application running on my workstation that gathered all the messages that were sent out from the embedded device. It printed all the strings and numbers, and hex-dumped the arbitrary data. However, manually parsing a couple of 300 byte hex-dumps of a complex C structure is not only frustrating, but also error-prone and time consuming.</p>
+
+<p>Using <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#unpack"><code>unpack</code></a> to retrieve the contents of a C structure works fine for small structures and if you don&#39;t have to deal with struct member alignment. But otherwise, maintaining such code can be as awful as deciphering hex-dumps.</p>
+
+<p>As I didn&#39;t find anything to solve my problem on the CPAN, I wrote a little module that translated simple C structs into <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#unpack"><code>unpack</code></a> strings. It worked, but it was slow. And since it couldn&#39;t deal with struct member alignment, I soon found myself adding padding bytes everywhere. So again, I had to maintain two sources, and changing one of them forced me to touch the other one.</p>
+
+<p>All in all, this little module seemed to make my task a bit easier, but it was far from being what I was thinking of:</p>
+
+<ul>
+
+<li><p>A module that could directly use the source I&#39;ve been coding for the embedded device without any modifications.</p>
+
+</li>
+<li><p>A module that could be configured to match the properties of the different compilers and target platforms I was using.</p>
+
+</li>
+<li><p>A module that was fast enough to decode a great amount of binary data even on my slow workstation.</p>
+
+</li>
+</ul>
+
+<p>I didn&#39;t know how to accomplish these tasks until I read something about XS. At least, it seemed as if it could solve my performance problems. However, writing a C parser in C isn&#39;t easier than it is in Perl. But writing a C preprocessor from scratch is even worse.</p>
+
+<p>Fortunately enough, after a few weeks of searching I found both, a lean, open-source C preprocessor library, and a reusable YACC grammar for ANSI-C. That was the beginning of the development of Convert::Binary::C in late 2001.</p>
+
+<p>Now, I&#39;m successfully using the module in my embedded environment since long before it appeared on CPAN. From my point of view, it is exactly what I had in mind. It&#39;s fast, flexible, easy to use and portable. It doesn&#39;t require external programs or other Perl modules.</p>
+
+<h2 id="About-this-document">About this document</h2>
+
+<p>This document describes how to use Convert::Binary::C. A lot of different features are presented, and the example code sometimes uses Perl&#39;s more advanced language elements. If your experience with Perl is rather limited, you should know how to use Perl&#39;s very good documentation system.</p>
+
+<p>To look up one of the manpages, use the <a href="../../../../lib/perl5/5.26.3/pod/perldoc.html"><code>perldoc</code></a> command. For example,</p>
+
+<pre><code>  perldoc perl</code></pre>
+
+<p>will show you Perl&#39;s main manpage. To look up a specific Perl function, use <code>perldoc -f</code>:</p>
+
+<pre><code>  perldoc -f map</code></pre>
+
+<p>gives you more information about the <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#map"><code>map</code></a> function. You can also search the FAQ using <code>perldoc -q</code>:</p>
+
+<pre><code>  perldoc -q array</code></pre>
+
+<p>will give you everything you ever wanted to know about Perl arrays. But now, let&#39;s go on with some real stuff!</p>
+
+<h2 id="Why-use-Convert::Binary::C">Why use Convert::Binary::C?</h2>
+
+<p>Say you want to pack (or unpack) data according to the following C structure:</p>
+
+<pre><code>  struct foo {
+    char ary[3];
+    unsigned short baz;
+    int bar;
+  };</code></pre>
+
+<p>You could of course use Perl&#39;s <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#pack"><code>pack</code></a> and <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#unpack"><code>unpack</code></a> functions:</p>
+
+<pre><code>  @ary = (1, 2, 3);
+  $baz = 40000;
+  $bar = -4711;
+  $binary = pack &#39;c3 S i&#39;, @ary, $baz, $bar;</code></pre>
+
+<p>But this implies that the struct members are byte aligned. If they were long aligned (which is the default for most compilers), you&#39;d have to write</p>
+
+<pre><code>  $binary = pack &#39;c3 x S x2 i&#39;, @ary, $baz, $bar;</code></pre>
+
+<p>which doesn&#39;t really increase readability.</p>
+
+<p>Now imagine that you need to pack the data for a completely different architecture with different byte order. You would look into the <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#pack"><code>pack</code></a> manpage again and perhaps come up with this:</p>
+
+<pre><code>  $binary = pack &#39;c3 x n x2 N&#39;, @ary, $baz, $bar;</code></pre>
+
+<p>However, if you try to unpack <code>$foo</code> again, your signed values have turned into unsigned ones.</p>
+
+<p>All this can still be managed with Perl. But imagine your structures get more complex? Imagine you need to support different platforms? Imagine you need to make changes to the structures? You&#39;ll not only have to change the C source but also dozens of <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html#pack"><code>pack</code></a> strings in your Perl code. This is no fun. And Perl should be fun.</p>
+
+<p>Now, wouldn&#39;t it be great if you could just read in the C source you&#39;ve already written and use all the types defined there for packing and unpacking? That&#39;s what Convert::Binary::C does.</p>
+
+<h2 id="Creating-a-Convert::Binary::C-object">Creating a Convert::Binary::C object</h2>
+
+<p>To use Convert::Binary::C just say</p>
+
+<pre><code>  use Convert::Binary::C;</code></pre>
+
+<p>to load the module. Its interface is completely object oriented, so it doesn&#39;t export any functions.</p>
+
+<p>Next, you need to create a new Convert::Binary::C object. This can be done by either</p>
+
+<pre><code>  $c = Convert::Binary::C-&gt;new;</code></pre>
+
+<p>or</p>
+
+<pre><code>  $c = new Convert::Binary::C;</code></pre>
+
+<p>You can optionally pass configuration options to the <a href="#new">constructor</a> as described in the next section.</p>
+
+<h2 id="Configuring-the-object">Configuring the object</h2>
+
+<p>To configure a Convert::Binary::C object, you can either call the <a href="#configure"><code>configure</code></a> method or directly pass the configuration options to the <a href="#new">constructor</a>. If you want to change byte order and alignment, you can use</p>
+
+<pre><code>  $c-&gt;configure(ByteOrder =&gt; &#39;LittleEndian&#39;,
+                Alignment =&gt; 2);</code></pre>
+
+<p>or you can change the construction code to</p>
+
+<pre><code>  $c = new Convert::Binary::C ByteOrder =&gt; &#39;LittleEndian&#39;,
+                              Alignment =&gt; 2;</code></pre>
+
+<p>Either way, the object will now know that it should use little endian (Intel) byte order and 2-byte struct member alignment for packing and unpacking.</p>
+
+<p>Alternatively, you can use the option names as names of methods to configure the object, like:</p>
+
+<pre><code>  $c-&gt;ByteOrder(&#39;LittleEndian&#39;);</code></pre>
+
+<p>You can also retrieve information about the current configuration of a Convert::Binary::C object. For details, see the section about the <a href="#configure"><code>configure</code></a> method.</p>
+
+<h2 id="Parsing-C-code">Parsing C code</h2>
+
+<p>Convert::Binary::C allows two ways of parsing C source. Either by parsing external C header or C source files:</p>
+
+<pre><code>  $c-&gt;parse_file(&#39;header.h&#39;);</code></pre>
+
+<p>Or by parsing C code embedded in your script:</p>
+
+<pre><code>  $c-&gt;parse(&lt;&lt;&#39;CCODE&#39;);
+  struct foo {
+    char ary[3];
+    unsigned short baz;
+    int bar;
+  };
+  CCODE</code></pre>
+
+<p>Now the object <code>$c</code> will know everything about <code>struct foo</code>. The example above uses a so-called here-document. It allows one to easily embed multi-line strings in your code. You can find more about here-documents in <a href="../../../../lib/perl5/5.26.3/pod/perldata.html">perldata</a> or <a href="../../../../lib/perl5/5.26.3/pod/perlop.html">perlop</a>.</p>
+
+<p>Since the <a href="#parse"><code>parse</code></a> and <a href="#parse_file"><code>parse_file</code></a> methods throw an exception when a parse error occurs, you usually want to catch these in an <code>eval</code> block:</p>
+
+<pre><code>  eval { $c-&gt;parse_file(&#39;header.h&#39;) };
+  if ($@) {
+    # handle error appropriately
+  }</code></pre>
+
+<p>Perl&#39;s special <code>$@</code> variable will contain an empty string (which evaluates to a false value in boolean context) on success or an error string on failure.</p>
+
+<p>As another feature, <a href="#parse"><code>parse</code></a> and <a href="#parse_file"><code>parse_file</code></a> return a reference to their object on success, just like <a href="#configure"><code>configure</code></a> does when you&#39;re configuring the object. This will allow you to write constructs like this:</p>
+
+<pre><code>  my $c = eval {
+    Convert::Binary::C-&gt;new(Include =&gt; [&#39;/usr/include&#39;])
+                      -&gt;parse_file(&#39;header.h&#39;)
+  };
+  if ($@) {
+    # handle error appropriately
+  }</code></pre>
+
+<h2 id="Packing-and-unpacking">Packing and unpacking</h2>
+
+<p>Convert::Binary::C has two methods, <a href="#pack"><code>pack</code></a> and <a href="#unpack"><code>unpack</code></a>, that act similar to the functions of same denominator in Perl. To perform the packing described in the example above, you could write:</p>
+
+<pre><code>  $data = {
+    ary =&gt; [1, 2, 3],
+    baz =&gt; 40000,
+    bar =&gt; -4711,
+  };
+  $binary = $c-&gt;pack(&#39;foo&#39;, $data);</code></pre>
+
+<p>Unpacking will work exactly the same way, just that the <a href="#unpack"><code>unpack</code></a> method will take a byte string as its input and will return a reference to a (possibly very complex) Perl data structure.</p>
+
+<pre><code>  $binary = get_data_from_memory();
+  $data = $c-&gt;unpack(&#39;foo&#39;, $binary);</code></pre>
+
+<p>You can now easily access all of the values:</p>
+
+<pre><code>  print &quot;foo.ary[1] = $data-&gt;{ary}[1]\n&quot;;</code></pre>
+
+<p>Or you can even more conveniently use the <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Data/Dumper.html">Data::Dumper</a> module:</p>
+
+<pre><code>  use Data::Dumper;
+  print Dumper($data);</code></pre>
+
+<p>The output would look something like this:</p>
+
+<pre><code>  $VAR1 = {
+    &#39;bar&#39; =&gt; -271,
+    &#39;baz&#39; =&gt; 5000,
+    &#39;ary&#39; =&gt; [
+      42,
+      48,
+      100
+    ]
+  };</code></pre>
+
+<h2 id="Preprocessor-configuration">Preprocessor configuration</h2>
+
+<p>Convert::Binary::C uses Thomas Pornin&#39;s <code>ucpp</code> as an internal C preprocessor. It is compliant to ISO-C99, so you don&#39;t have to worry about using even weird preprocessor constructs in your code.</p>
+
+<p>If your C source contains includes or depends upon preprocessor defines, you may need to configure the internal preprocessor. Use the <code>Include</code> and <code>Define</code> configuration options for that:</p>
+
+<pre><code>  $c-&gt;configure(Include =&gt; [&#39;/usr/include&#39;,
+                            &#39;/home/mhx/include&#39;],
+                Define  =&gt; [qw( NDEBUG FOO=42 )]);</code></pre>
+
+<p>If your code uses system includes, it is most likely that you will need to define the symbols that are usually defined by the compiler.</p>
+
+<p>On some operating systems, the system includes require the preprocessor to predefine a certain set of assertions. Assertions are supported by <code>ucpp</code>, and you can define them either in the source code using <code>#assert</code> or as a property of the Convert::Binary::C object using <code>Assert</code>:</p>
+
+<pre><code>  $c-&gt;configure(Assert =&gt; [&#39;predicate(answer)&#39;]);</code></pre>
+
+<p>Information about defined macros can be retrieved from the preprocessor as long as its configuration isn&#39;t changed. The preprocessor is implicitly reset if you change one of the following configuration options:</p>
+
+<pre><code>  Include
+  Define
+  Assert
+  HasCPPComments
+  HasMacroVAARGS</code></pre>
+
+<h2 id="Supported-pragma-directives">Supported pragma directives</h2>
+
+<p>Convert::Binary::C supports the <code>pack</code> pragma to locally override struct member alignment. The supported syntax is as follows:</p>
+
+<dl>
+
+<dt id="pragma-pack-ALIGN">#pragma pack( ALIGN )</dt>
+<dd>
+
+<p>Sets the new alignment to ALIGN. If ALIGN is 0, resets the alignment to its original value.</p>
+
+</dd>
+<dt id="pragma-pack">#pragma pack</dt>
+<dd>
+
+<p>Resets the alignment to its original value.</p>
+
+</dd>
+<dt id="pragma-pack-push-ALIGN">#pragma pack( push, ALIGN )</dt>
+<dd>
+
+<p>Saves the current alignment on a stack and sets the new alignment to ALIGN. If ALIGN is 0, sets the alignment to the default alignment.</p>
+
+</dd>
+<dt id="pragma-pack-pop">#pragma pack( pop )</dt>
+<dd>
+
+<p>Restores the alignment to the last value saved on the stack.</p>
+
+</dd>
+</dl>
+
+<pre><code>  /*  Example assumes sizeof( short ) == 2, sizeof( long ) == 4.  */
+  
+  #pragma pack(1)
+  
+  struct nopad {
+    char a;               /* no padding bytes between &#39;a&#39; and &#39;b&#39; */
+    long b;
+  };
+  
+  #pragma pack            /* reset to &quot;native&quot; alignment          */
+  
+  #pragma pack( push, 2 )
+  
+  struct pad {
+    char    a;            /* one padding byte between &#39;a&#39; and &#39;b&#39; */
+    long    b;
+  
+  #pragma pack( push, 1 )
+  
+    struct {
+      char  c;            /* no padding between &#39;c&#39; and &#39;d&#39;       */
+      short d;
+    }       e;            /* sizeof( e ) == 3                     */
+  
+  #pragma pack( pop );    /* back to pack( 2 )                    */
+  
+    long    f;            /* one padding byte between &#39;e&#39; and &#39;f&#39; */
+  };
+  
+  #pragma pack( pop );    /* back to &quot;native&quot;                     */</code></pre>
+
+<p>The <code>pack</code> pragma as it is currently implemented only affects the <i>maximum</i> struct member alignment. There are compilers that also allow one to specify the <i>minimum</i> struct member alignment. This is not supported by Convert::Binary::C.</p>
+
+<h2 id="Automatic-configuration-using-ccconfig">Automatic configuration using <code>ccconfig</code></h2>
+
+<p>As there are over 20 different configuration options, setting all of them correctly can be a lengthy and tedious task.</p>
+
+<p>The <a href="../../../../../../root/.cpanm/work/1586168065.25505/Convert-Binary-C-0.78/blib/script/ccconfig.html"><code>ccconfig</code></a> script, which is bundled with this module, aims at automatically determining the correct compiler configuration by testing the compiler executable. It works for both, native and cross compilers.</p>
+
+<h1 id="UNDERSTANDING-TYPES">UNDERSTANDING TYPES</h1>
+
+<p>This section covers one of the fundamental features of Convert::Binary::C. It&#39;s how <i>type expressions</i>, referred to as TYPEs in the <a href="#METHODS">method reference</a>, are handled by the module.</p>
+
+<p>Many of the methods, namely <a href="#pack"><code>pack</code></a>, <a href="#unpack"><code>unpack</code></a>, <a href="#sizeof"><code>sizeof</code></a>, <a href="#typeof"><code>typeof</code></a>, <a href="#member"><code>member</code></a>, <a href="#offsetof"><code>offsetof</code></a>, <a href="#def"><code>def</code></a>, <a href="#initializer"><code>initializer</code></a> and <a href="#tag"><code>tag</code></a>, are passed a TYPE to operate on as their first argument.</p>
+
+<h2 id="Standard-Types">Standard Types</h2>
+
+<p>These are trivial. Standard types are simply enum names, struct names, union names, or typedefs. Almost every method that wants a TYPE will accept a standard type.</p>
+
+<p>For enums, structs and unions, the prefixes <code>enum</code>, <code>struct</code> and <code>union</code> are optional. However, if a typedef with the same name exists, like in</p>
+
+<pre><code>  struct foo {
+    int bar;
+  };
+  
+  typedef int foo;</code></pre>
+
+<p>you will have to use the prefix to distinguish between the struct and the typedef. Otherwise, a typedef is always given preference.</p>
+
+<h2 id="Basic-Types">Basic Types</h2>
+
+<p>Basic types, or atomic types, are <code>int</code> or <code>char</code>, for example. It&#39;s possible to use these basic types without having parsed any code. You can simply do</p>
+
+<pre><code>  $c = new Convert::Binary::C;
+  $size = $c-&gt;sizeof(&#39;unsigned long&#39;);
+  $data = $c-&gt;pack(&#39;short int&#39;, 42);</code></pre>
+
+<p>Even though the above works fine, it is not possible to define more complex types on the fly, so</p>
+
+<pre><code>  $size = $c-&gt;sizeof(&#39;struct { int a, b; }&#39;);</code></pre>
+
+<p>will result in an error.</p>
+
+<p>Basic types are not supported by all methods. For example, it makes no sense to use <a href="#member"><code>member</code></a> or <a href="#offsetof"><code>offsetof</code></a> on a basic type. Using <a href="#typeof"><code>typeof</code></a> isn&#39;t very useful, but supported.</p>
+
+<h2 id="Member-Expressions">Member Expressions</h2>
+
+<p>This is by far the most complex part, depending on the complexity of your data structures. Any <a href="#Standard-Types">standard type</a> that defines a compound or an array may be followed by a member expression to select only a certain part of the data type. Say you have parsed the following C code:</p>
+
+<pre><code>  struct foo {
+    long type;
+    struct {
+      short x, y;
+    } array[20];
+  };
+  
+  typedef struct foo matrix[8][8];</code></pre>
+
+<p>You may want to know the size of the <code>array</code> member of <code>struct foo</code>. This is quite easy:</p>
+
+<pre><code>  print $c-&gt;sizeof(&#39;foo.array&#39;), &quot; bytes&quot;;</code></pre>
+
+<p>will print</p>
+
+<pre><code>  80 bytes</code></pre>
+
+<p>depending of course on the <code>ShortSize</code> you configured.</p>
+
+<p>If you wanted to unpack only a single column of <code>matrix</code>, that&#39;s easy as well (and of course it doesn&#39;t matter which index you use):</p>
+
+<pre><code>  $column = $c-&gt;unpack(&#39;matrix[2]&#39;, $data);</code></pre>
+
+<p>Just like in C, it is possible to use out-of-bounds array indices. This means that, for example, despite <code>array</code> is declared to have 20 elements, the following code</p>
+
+<pre><code>  $size   = $c-&gt;sizeof(&#39;foo.array[4711]&#39;);
+  $offset = $c-&gt;offsetof(&#39;foo&#39;, &#39;array[-13]&#39;);</code></pre>
+
+<p>is perfectly valid and will result in:</p>
+
+<pre><code>  $size   = 4
+  $offset = -48</code></pre>
+
+<p>Member expressions can be arbitrarily complex:</p>
+
+<pre><code>  $type = $c-&gt;typeof(&#39;matrix[2][3].array[7].y&#39;);
+  print &quot;the type is $type&quot;;</code></pre>
+
+<p>will, for example, print</p>
+
+<pre><code>  the type is short</code></pre>
+
+<p>Member expressions are also used as the second argument to <a href="#offsetof"><code>offsetof</code></a>.</p>
+
+<h2 id="Offsets">Offsets</h2>
+
+<p>Members returned by the <a href="#member"><code>member</code></a> method have an optional offset suffix to indicate that the given offset doesn&#39;t point to the start of that member. For example,</p>
+
+<pre><code>  $member = $c-&gt;member(&#39;matrix&#39;, 1431);
+  print $member;</code></pre>
+
+<p>will print</p>
+
+<pre><code>  [2][1].type+3</code></pre>
+
+<p>If you would use this as a member expression, like in</p>
+
+<pre><code>  $size = $c-&gt;sizeof(&quot;matrix $member&quot;);</code></pre>
+
+<p>the offset suffix will simply be ignored. Actually, it will be ignored for all methods if it&#39;s used in the first argument.</p>
+
+<p>When used in the second argument to <a href="#offsetof"><code>offsetof</code></a>, it will usually do what you mean, i. e. the offset suffix, if present, will be considered when determining the offset. This behaviour ensures that</p>
+
+<pre><code>  $member = $c-&gt;member(&#39;foo&#39;, 43);
+  $offset = $c-&gt;offsetof(&#39;foo&#39;, $member);
+  print &quot;&#39;$member&#39; is located at offset $offset of struct foo&quot;;</code></pre>
+
+<p>will always correctly set <code>$offset</code>:</p>
+
+<pre><code>  &#39;.array[9].y+1&#39; is located at offset 43 of struct foo</code></pre>
+
+<p>If this is not what you mean, e.g. because you want to know the offset where the member returned by <a href="#member"><code>member</code></a> starts, you just have to remove the suffix:</p>
+
+<pre><code>  $member =~ s/\+\d+$//;
+  $offset = $c-&gt;offsetof(&#39;foo&#39;, $member);
+  print &quot;&#39;$member&#39; starts at offset $offset of struct foo&quot;;</code></pre>
+
+<p>This would then print:</p>
+
+<pre><code>  &#39;.array[9].y&#39; starts at offset 42 of struct foo</code></pre>
+
+<h1 id="USING-TAGS">USING TAGS</h1>
+
+<p>In a nutshell, tags are properties that you can attach to types.</p>
+
+<p>You can add tags to types using the <a href="#tag"><code>tag</code></a> method, and remove them using <a href="#tag"><code>tag</code></a> or <a href="#untag"><code>untag</code></a>, for example:</p>
+
+<pre><code>  # Attach &#39;Format&#39; and &#39;Hooks&#39; tags
+  $c-&gt;tag(&#39;type&#39;, Format =&gt; &#39;String&#39;, Hooks =&gt; { pack =&gt; \&amp;rout });
+  
+  $c-&gt;untag(&#39;type&#39;, &#39;Format&#39;);  # Remove only &#39;Format&#39; tag
+  $c-&gt;untag(&#39;type&#39;);            # Remove all tags</code></pre>
+
+<p>You can also use <a href="#tag"><code>tag</code></a> to see which tags are attached to a type, for example:</p>
+
+<pre><code>  $tags = $c-&gt;tag(&#39;type&#39;);</code></pre>
+
+<p>This would give you:</p>
+
+<pre><code>  $tags = {
+    &#39;Hooks&#39; =&gt; {
+      &#39;pack&#39; =&gt; \&amp;rout
+    },
+    &#39;Format&#39; =&gt; &#39;String&#39;
+  };</code></pre>
+
+<p>Currently, there are only a couple of different tags that influence the way data is packed and unpacked. There are probably more tags to come in the future.</p>
+
+<h2 id="The-Format-Tag">The Format Tag</h2>
+
+<p>One of the tags currently available is the <code>Format</code> tag. Using this tag, you can tell a Convert::Binary::C object to pack and unpack a certain data type in a special way.</p>
+
+<p>For example, if you have a (fixed length) string type</p>
+
+<pre><code>  typedef char str_type[40];</code></pre>
+
+<p>this type would, by default, be unpacked as an array of <code>char</code>s. That&#39;s because it <b>is</b> only an array of <code>char</code>s, and Convert::Binary::C doesn&#39;t know it is actually used as a string.</p>
+
+<p>But you can tell Convert::Binary::C that <code>str_type</code> is a C string using the <code>Format</code> tag:</p>
+
+<pre><code>  $c-&gt;tag(&#39;str_type&#39;, Format =&gt; &#39;String&#39;);</code></pre>
+
+<p>This will make <a href="#unpack"><code>unpack</code></a> (and of course also <a href="#pack"><code>pack</code></a>) treat the binary data like a null-terminated C string:</p>
+
+<pre><code>  $binary = &quot;Hello World!\n\0 this is just some dummy data&quot;;
+  $hello = $c-&gt;unpack(&#39;str_type&#39;, $binary);
+  print $hello;</code></pre>
+
+<p>would thusly print:</p>
+
+<pre><code>  Hello World!</code></pre>
+
+<p>Of course, this also works the other way round:</p>
+
+<pre><code>  use Data::Hexdumper;
+  
+  $binary = $c-&gt;pack(&#39;str_type&#39;, &quot;Just another C::B::C hacker&quot;);
+  print hexdump(data =&gt; $binary);</code></pre>
+
+<p>would print:</p>
+
+<pre><code>    0x0000 : 4A 75 73 74 20 61 6E 6F 74 68 65 72 20 43 3A 3A : Just.another.C::
+    0x0010 : 42 3A 3A 43 20 68 61 63 6B 65 72 00 00 00 00 00 : B::C.hacker.....
+    0x0020 : 00 00 00 00 00 00 00 00                         : ........</code></pre>
+
+<p>If you want Convert::Binary::C to not interpret the binary data at all, you can set the <code>Format</code> tag to <code>Binary</code>. This might not be seem very useful, as <a href="#pack"><code>pack</code></a> and <a href="#unpack"><code>unpack</code></a> would just pass through the unmodified binary data. But you can tag not only whole types, but also compound members. For example</p>
+
+<pre><code>  $c-&gt;parse(&lt;&lt;ENDC);
+  struct packet {
+    unsigned short header;
+    unsigned short flags;
+    unsigned char  payload[28];
+  };
+  ENDC
+  
+  $c-&gt;tag(&#39;packet.payload&#39;, Format =&gt; &#39;Binary&#39;);</code></pre>
+
+<p>would allow you to write:</p>
+
+<pre><code>  read FILE, $payload, $c-&gt;sizeof(&#39;packet.payload&#39;);
+  
+  $packet = {
+              header  =&gt; 4711,
+              flags   =&gt; 0xf00f,
+              payload =&gt; $payload,
+            };
+  
+  $binary = $c-&gt;pack(&#39;packet&#39;, $packet);
+  
+  print hexdump(data =&gt; $binary);</code></pre>
+
+<p>This would print something like:</p>
+
+<pre><code>    0x0000 : 12 67 F0 0F 6E 6F 0A 6E 6F 0A 6E 6F 0A 6E 6F 0A : .g..no.no.no.no.
+    0x0010 : 6E 6F 0A 6E 6F 0A 6E 6F 0A 6E 6F 0A 6E 6F 0A 6E : no.no.no.no.no.n</code></pre>
+
+<p>For obvious reasons, it is not allowed to attach a <code>Format</code> tag to bitfield members. Trying to do so will result in an exception being thrown by the <a href="#tag"><code>tag</code></a> method.</p>
+
+<h2 id="The-ByteOrder-Tag">The ByteOrder Tag</h2>
+
+<p>The <code>ByteOrder</code> tag allows you to override the byte order of certain types or members. The implementation of this tag is considered <b>experimental</b> and may be subject to changes in the future.</p>
+
+<p>Usually it doesn&#39;t make much sense to override the byte order, but there may be applications where a sub-structure is packed in a different byte order than the surrounding structure.</p>
+
+<p>Take, for example, the following code:</p>
+
+<pre><code>  $c = Convert::Binary::C-&gt;new(ByteOrder =&gt; &#39;BigEndian&#39;,
+                               OrderMembers =&gt; 1);
+  $c-&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  
+  typedef unsigned short u_16;
+  
+  struct coords_3d {
+    long x, y, z;
+  };
+  
+  struct coords_msg {
+    u_16 header;
+    u_16 length;
+    struct coords_3d coords;
+  };
+  
+  ENDC</code></pre>
+
+<p>Assume that while <code>coords_msg</code> is big endian, the embedded coordinates <code>coords_3d</code> are stored in little endian format for some reason. In C, you&#39;ll have to handle this manually.</p>
+
+<p>But using Convert::Binary::C, you can simply attach a <code>ByteOrder</code> tag to either the <code>coords_3d</code> structure or to the <code>coords</code> member of the <code>coords_msg</code> structure. Both will work in this case. The only difference is that if you tag the <code>coords</code> member, <code>coords_3d</code> will only be treated as little endian if you <a href="#pack"><code>pack</code></a> or <a href="#unpack"><code>unpack</code></a> the <code>coords_msg</code> structure. (BTW, you could also tag all members of <code>coords_3d</code> individually, but that would be inefficient.)</p>
+
+<p>So, let&#39;s attach the <code>ByteOrder</code> tag to the <code>coords</code> member:</p>
+
+<pre><code>  $c-&gt;tag(&#39;coords_msg.coords&#39;, ByteOrder =&gt; &#39;LittleEndian&#39;);</code></pre>
+
+<p>Assume the following binary message:</p>
+
+<pre><code>    0x0000 : 00 2A 00 0C FF FF FF FF 02 00 00 00 2A 00 00 00 : .*..........*...</code></pre>
+
+<p>If you unpack this message...</p>
+
+<pre><code>  $msg = $c-&gt;unpack(&#39;coords_msg&#39;, $binary);</code></pre>
+
+<p>...you will get the following data structure:</p>
+
+<pre><code>  $msg = {
+    &#39;header&#39; =&gt; 42,
+    &#39;length&#39; =&gt; 12,
+    &#39;coords&#39; =&gt; {
+      &#39;x&#39; =&gt; -1,
+      &#39;y&#39; =&gt; 2,
+      &#39;z&#39; =&gt; 42
+    }
+  };</code></pre>
+
+<p>Without the <code>ByteOrder</code> tag, you would get:</p>
+
+<pre><code>  $msg = {
+    &#39;header&#39; =&gt; 42,
+    &#39;length&#39; =&gt; 12,
+    &#39;coords&#39; =&gt; {
+      &#39;x&#39; =&gt; -1,
+      &#39;y&#39; =&gt; 33554432,
+      &#39;z&#39; =&gt; 704643072
+    }
+  };</code></pre>
+
+<p>The <code>ByteOrder</code> tag is a <i>recursive</i> tag, i.e. it applies to all children of the tagged object recursively. Of course, it is also possible to override a <code>ByteOrder</code> tag by attaching another <code>ByteOrder</code> tag to a child type. Confused? Here&#39;s an example. In addition to tagging the <code>coords</code> member as little endian, we now tag <code>coords_3d.y</code> as big endian:</p>
+
+<pre><code>  $c-&gt;tag(&#39;coords_3d.y&#39;, ByteOrder =&gt; &#39;BigEndian&#39;);
+  $msg = $c-&gt;unpack(&#39;coords_msg&#39;, $binary);</code></pre>
+
+<p>This will return the following data structure:</p>
+
+<pre><code>  $msg = {
+    &#39;header&#39; =&gt; 42,
+    &#39;length&#39; =&gt; 12,
+    &#39;coords&#39; =&gt; {
+      &#39;x&#39; =&gt; -1,
+      &#39;y&#39; =&gt; 33554432,
+      &#39;z&#39; =&gt; 42
+    }
+  };</code></pre>
+
+<p>Note that if you tag both a type and a member of that type within a compound, the tag attached to the type itself has higher precedence. Using the example above, if you would attach a <code>ByteOrder</code> tag to both <code>coords_msg.coords</code> and <code>coords_3d</code>, the tag attached to <code>coords_3d</code> would always win.</p>
+
+<p>Also note that the <code>ByteOrder</code> tag might not work as expected along with bitfields, which is why the implementation is considered experimental. Bitfields are currently <b>not</b> affected by the <code>ByteOrder</code> tag at all. This is because the byte order would affect the bitfield layout, and a consistent implementation supporting multiple layouts of the same struct would be quite bulky and probably slow down the whole module.</p>
+
+<p>If you really need the correct behaviour, you can use the following trick:</p>
+
+<pre><code>  $le = Convert::Binary::C-&gt;new(ByteOrder =&gt; &#39;LittleEndian&#39;);
+  
+  $le-&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  
+  typedef unsigned short u_16;
+  typedef unsigned long  u_32;
+  
+  struct message {
+    u_16 header;
+    u_16 length;
+    struct {
+      u_32 a;
+      u_32 b;
+      u_32 c :  7;
+      u_32 d :  5;
+      u_32 e : 20;
+    } data;
+  };
+  
+  ENDC
+  
+  $be = $le-&gt;clone-&gt;ByteOrder(&#39;BigEndian&#39;);
+  
+  $le-&gt;tag(&#39;message.data&#39;, Format =&gt; &#39;Binary&#39;, Hooks =&gt; {
+      unpack =&gt; sub { $be-&gt;unpack(&#39;message.data&#39;, @_) },
+      pack   =&gt; sub { $be-&gt;pack(&#39;message.data&#39;, @_) },
+    });
+  
+  
+  $msg = $le-&gt;unpack(&#39;message&#39;, $binary);</code></pre>
+
+<p>This uses the <a href="#The-Format-Tag"><code>Format</code></a> and <a href="#The-Hooks-Tag"><code>Hooks</code></a> tags along with a big endian <a href="#clone"><code>clone</code></a> of the original little endian object. It attaches hooks to the little endian object and in the hooks it uses the big endian object to <a href="#pack"><code>pack</code></a> and <a href="#unpack"><code>unpack</code></a> the binary data.</p>
+
+<h2 id="The-Dimension-Tag">The Dimension Tag</h2>
+
+<p>The <code>Dimension</code> tag allows you to override the declared dimension of an array for packing or unpacking data. The implementation of this tag is considered <b>very experimental</b> and will <b>definitely change</b> in a future release.</p>
+
+<p>That being said, the <code>Dimension</code> tag is primarily useful to support variable length arrays. Usually, you have to write the following code for such a variable length array in C:</p>
+
+<pre><code>  struct c_message
+  {
+    unsigned count;
+    char data[1];
+  };</code></pre>
+
+<p>So, because you cannot declare an empty array, you declare an array with a single element. If you have a ISO-C99 compliant compiler, you can write this code instead:</p>
+
+<pre><code>  struct c99_message
+  {
+    unsigned count;
+    char data[];
+  };</code></pre>
+
+<p>This explicitly tells the compiler that <code>data</code> is a flexible array member. Convert::Binary::C already uses this information to handle <a href="#FLEXIBLE-ARRAY-MEMBERS-AND-INCOMPLETE-TYPES">flexible array members</a> in a special way.</p>
+
+<p>As you can see in the following example, the two types are treated differently:</p>
+
+<pre><code>  $data = pack &#39;NC*&#39;, 3, 1..8;
+  $uc   = $c-&gt;unpack(&#39;c_message&#39;, $data);
+  $uc99 = $c-&gt;unpack(&#39;c99_message&#39;, $data);</code></pre>
+
+<p>This will result in:</p>
+
+<pre><code>  $uc = {&#39;count&#39; =&gt; 3,&#39;data&#39; =&gt; [1]};
+  $uc99 = {&#39;count&#39; =&gt; 3,&#39;data&#39; =&gt; [1,2,3,4,5,6,7,8]};</code></pre>
+
+<p>However, only few compilers support ISO-C99, and you probably don&#39;t want to change your existing code only to get some extra features when using Convert::Binary::C.</p>
+
+<p>So it is possible to attach a tag to the <code>data</code> member of the <code>c_message</code> struct that tells Convert::Binary::C to treat the array as if it were flexible:</p>
+
+<pre><code>  $c-&gt;tag(&#39;c_message.data&#39;, Dimension =&gt; &#39;*&#39;);</code></pre>
+
+<p>Now both <code>c_message</code> and <code>c99_message</code> will behave exactly the same when using <a href="#pack"><code>pack</code></a> or <a href="#unpack"><code>unpack</code></a>. Repeating the above code:</p>
+
+<pre><code>  $uc = $c-&gt;unpack(&#39;c_message&#39;, $data);</code></pre>
+
+<p>This will result in:</p>
+
+<pre><code>  $uc = {&#39;count&#39; =&gt; 3,&#39;data&#39; =&gt; [1,2,3,4,5,6,7,8]};</code></pre>
+
+<p>But there&#39;s more you can do. Even though it probably doesn&#39;t make much sense, you can tag a fixed dimension to an array:</p>
+
+<pre><code>  $c-&gt;tag(&#39;c_message.data&#39;, Dimension =&gt; &#39;5&#39;);</code></pre>
+
+<p>This will obviously result in:</p>
+
+<pre><code>  $uc = {&#39;count&#39; =&gt; 3,&#39;data&#39; =&gt; [1,2,3,4,5]};</code></pre>
+
+<p>A more useful way to use the <code>Dimension</code> tag is to set it to the name of a member in the same compound:</p>
+
+<pre><code>  $c-&gt;tag(&#39;c_message.data&#39;, Dimension =&gt; &#39;count&#39;);</code></pre>
+
+<p>Convert::Binary::C will now use the value of that member to determine the size of the array, so unpacking will result in:</p>
+
+<pre><code>  $uc = {&#39;count&#39; =&gt; 3,&#39;data&#39; =&gt; [1,2,3]};</code></pre>
+
+<p>Of course, you can also tag flexible array members. And yes, it&#39;s also possible to use more complex member expressions:</p>
+
+<pre><code>  $c-&gt;parse(&lt;&lt;ENDC);
+  struct msg_header
+  {
+    unsigned len[2];
+  };
+  
+  struct more_complex
+  {
+    struct msg_header hdr;
+    char data[];
+  };
+  ENDC
+  
+  $data = pack &#39;NNC*&#39;, 42, 7, 1 .. 10;
+  
+  $c-&gt;tag(&#39;more_complex.data&#39;, Dimension =&gt; &#39;hdr.len[1]&#39;);
+  
+  $u = $c-&gt;unpack(&#39;more_complex&#39;, $data);</code></pre>
+
+<p>The result will be:</p>
+
+<pre><code>  $u = {
+    &#39;hdr&#39; =&gt; {
+      &#39;len&#39; =&gt; [
+        42,
+        7
+      ]
+    },
+    &#39;data&#39; =&gt; [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  };</code></pre>
+
+<p>By the way, it&#39;s also possible to tag arrays that are not embedded inside a compound:</p>
+
+<pre><code>  $c-&gt;parse(&lt;&lt;ENDC);
+  typedef unsigned short short_array[];
+  ENDC
+  
+  $c-&gt;tag(&#39;short_array&#39;, Dimension =&gt; &#39;5&#39;);
+  
+  $u = $c-&gt;unpack(&#39;short_array&#39;, $data);</code></pre>
+
+<p>Resulting in:</p>
+
+<pre><code>  $u = [0,42,0,7,258];</code></pre>
+
+<p>The final and most powerful way to define a <code>Dimension</code> tag is to pass it a subroutine reference. The referenced subroutine can execute whatever code is necessary to determine the size of the tagged array:</p>
+
+<pre><code>  sub get_size
+  {
+    my $m = shift;
+    return $m-&gt;{hdr}{len}[0] / $m-&gt;{hdr}{len}[1];
+  }
+  
+  $c-&gt;tag(&#39;more_complex.data&#39;, Dimension =&gt; \&amp;get_size);
+  
+  $u = $c-&gt;unpack(&#39;more_complex&#39;, $data);
+  </code></pre>
+
+<p>As you can guess from the above code, the subroutine is being passed a reference to hash that stores the already unpacked part of the compound embedding the tagged array. This is the result:</p>
+
+<pre><code>  $u = {
+    &#39;hdr&#39; =&gt; {
+      &#39;len&#39; =&gt; [
+        42,
+        7
+      ]
+    },
+    &#39;data&#39; =&gt; [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  };</code></pre>
+
+<p>You can also pass custom arguments to the subroutines by using the <a href="#arg"><code>arg</code></a> method. This is similar to the functionality offered by the <a href="#The-Hooks-Tag"><code>Hooks</code></a> tag.</p>
+
+<p>Of course, all that also works for the <a href="#pack"><code>pack</code></a> method as well.</p>
+
+<p>However, the current implementation has at least one shortcomings, which is why it&#39;s experimental: The <code>Dimension</code> tag doesn&#39;t impact compound layout. This means that while you can alter the size of an array in the middle of a compound, the offset of the members after that array won&#39;t be impacted. I&#39;d rather like to see the layout adapt dynamically, so this is what I&#39;m hoping to implement in the future.</p>
+
+<h2 id="The-Hooks-Tag">The Hooks Tag</h2>
+
+<p>Hooks are a special kind of tag that can be extremely useful.</p>
+
+<p>Using hooks, you can easily override the way <a href="#pack"><code>pack</code></a> and <a href="#unpack"><code>unpack</code></a> handle data using your own subroutines. If you define hooks for a certain data type, each time this data type is processed the corresponding hook will be called to allow you to modify that data.</p>
+
+<h3 id="Basic-Hooks">Basic Hooks</h3>
+
+<p>Here&#39;s an example. Let&#39;s assume the following C code has been parsed:</p>
+
+<pre><code>  typedef unsigned long u_32;
+  typedef u_32          ProtoId;
+  typedef ProtoId       MyProtoId;
+  
+  struct MsgHeader {
+    MyProtoId id;
+    u_32      len;
+  };
+
+  struct String {
+    u_32 len;
+    char buf[];
+  };</code></pre>
+
+<p>You could now use the types above and, for example, unpack binary data representing a <code>MsgHeader</code> like this:</p>
+
+<pre><code>  $msg_header = $c-&gt;unpack(&#39;MsgHeader&#39;, $data);</code></pre>
+
+<p>This would give you:</p>
+
+<pre><code>  $msg_header = {
+    &#39;len&#39; =&gt; 13,
+    &#39;id&#39; =&gt; 42
+  };</code></pre>
+
+<p>Instead of dealing with <code>ProtoId</code>&#39;s as integers, you would rather like to have them as clear text. You could provide subroutines to convert between clear text and integers:</p>
+
+<pre><code>  %proto = (
+    CATS      =&gt;    1,
+    DOGS      =&gt;   42,
+    HEDGEHOGS =&gt; 4711,
+  );
+  
+  %rproto = reverse %proto;
+  
+  sub ProtoId_unpack {
+    $rproto{$_[0]} || &#39;unknown protocol&#39;
+  }
+  
+  sub ProtoId_pack {
+    $proto{$_[0]} or die &#39;unknown protocol&#39;
+  }</code></pre>
+
+<p>You can now register these subroutines by attaching a <code>Hooks</code> tag to <code>ProtoId</code> using the <a href="#tag"><code>tag</code></a> method:</p>
+
+<pre><code>  $c-&gt;tag(&#39;ProtoId&#39;, Hooks =&gt; { pack   =&gt; \&amp;ProtoId_pack,
+                                unpack =&gt; \&amp;ProtoId_unpack });</code></pre>
+
+<p>Doing exactly the same unpack on <code>MsgHeader</code> again would now return:</p>
+
+<pre><code>  $msg_header = {
+    &#39;len&#39; =&gt; 13,
+    &#39;id&#39; =&gt; &#39;DOGS&#39;
+  };</code></pre>
+
+<p>Actually, if you don&#39;t need the reverse operation, you don&#39;t even have to register a <code>pack</code> hook. Or, even better, you can have a more intelligent <code>unpack</code> hook that creates a dual-typed variable:</p>
+
+<pre><code>  use Scalar::Util qw(dualvar);
+  
+  sub ProtoId_unpack2 {
+    dualvar $_[0], $rproto{$_[0]} || &#39;unknown protocol&#39;
+  }
+  
+  $c-&gt;tag(&#39;ProtoId&#39;, Hooks =&gt; { unpack =&gt; \&amp;ProtoId_unpack2 });
+  
+  $msg_header = $c-&gt;unpack(&#39;MsgHeader&#39;, $data);</code></pre>
+
+<p>Just as before, this would print</p>
+
+<pre><code>  $msg_header = {
+    &#39;len&#39; =&gt; 13,
+    &#39;id&#39; =&gt; &#39;DOGS&#39;
+  };</code></pre>
+
+<p>but without requiring a <code>pack</code> hook for packing, at least as long as you keep the variable dual-typed.</p>
+
+<p>Hooks are usually called with exactly one argument, which is the data that should be processed (see <a href="#Advanced-Hooks">&quot;Advanced Hooks&quot;</a> for details on how to customize hook arguments). They are called in scalar context and expected to return the processed data.</p>
+
+<p>To get rid of registered hooks, you can either undefine only certain hooks</p>
+
+<pre><code>  $c-&gt;tag(&#39;ProtoId&#39;, Hooks =&gt; { pack =&gt; undef });</code></pre>
+
+<p>or all hooks:</p>
+
+<pre><code>  $c-&gt;tag(&#39;ProtoId&#39;, Hooks =&gt; undef);</code></pre>
+
+<p>Of course, hooks are not restricted to handling integer values. You could just as well attach hooks for the <code>String</code> struct from the code above. A useful example would be to have these hooks:</p>
+
+<pre><code>  sub string_unpack {
+    my $s = shift;
+    pack &quot;c$s-&gt;{len}&quot;, @{$s-&gt;{buf}};
+  }
+  
+  sub string_pack {
+    my $s = shift;
+    return {
+      len =&gt; length $s,
+      buf =&gt; [ unpack &#39;c*&#39;, $s ],
+    }
+  }</code></pre>
+
+<p>(Don&#39;t be confused by the fact that the <code>unpack</code> hook uses <code>pack</code> and the <code>pack</code> hook uses <code>unpack</code>. And also see <a href="#Advanced-Hooks">&quot;Advanced Hooks&quot;</a> for a more clever approach.)</p>
+
+<p>While you would normally get the following output when unpacking a <code>String</code></p>
+
+<pre><code>  $string = {
+    &#39;len&#39; =&gt; 12,
+    &#39;buf&#39; =&gt; [
+      72,
+      101,
+      108,
+      108,
+      111,
+      32,
+      87,
+      111,
+      114,
+      108,
+      100,
+      33
+    ]
+  };</code></pre>
+
+<p>you could just register the hooks using</p>
+
+<pre><code>  $c-&gt;tag(&#39;String&#39;, Hooks =&gt; { pack   =&gt; \&amp;string_pack,
+                               unpack =&gt; \&amp;string_unpack });</code></pre>
+
+<p>and you would get a nice human-readable Perl string:</p>
+
+<pre><code>  $string = &#39;Hello World!&#39;;</code></pre>
+
+<p>Packing a string turns out to be just as easy:</p>
+
+<pre><code>  use Data::Hexdumper;
+  
+  $data = $c-&gt;pack(&#39;String&#39;, &#39;Just another Perl hacker,&#39;);
+  
+  print hexdump(data =&gt; $data);</code></pre>
+
+<p>This would print:</p>
+
+<pre><code>    0x0000 : 00 00 00 19 4A 75 73 74 20 61 6E 6F 74 68 65 72 : ....Just.another
+    0x0010 : 20 50 65 72 6C 20 68 61 63 6B 65 72 2C          : .Perl.hacker,</code></pre>
+
+<p>If you want to find out if or which hooks are registered for a certain type, you can also use the <a href="#tag"><code>tag</code></a> method:</p>
+
+<pre><code>  $hooks = $c-&gt;tag(&#39;String&#39;, &#39;Hooks&#39;);</code></pre>
+
+<p>This would return:</p>
+
+<pre><code>  $hooks = {
+    &#39;unpack&#39; =&gt; \&amp;string_unpack,
+    &#39;pack&#39; =&gt; \&amp;string_pack
+  };</code></pre>
+
+<h3 id="Advanced-Hooks">Advanced Hooks</h3>
+
+<p>It is also possible to combine hooks with using the <code>Format</code> tag. This can be useful if you know better than Convert::Binary::C how to interpret the binary data. In the previous section, we&#39;ve handled this type</p>
+
+<pre><code>  struct String {
+    u_32 len;
+    char buf[];
+  };</code></pre>
+
+<p>with the following hooks:</p>
+
+<pre><code>  sub string_unpack {
+    my $s = shift;
+    pack &quot;c$s-&gt;{len}&quot;, @{$s-&gt;{buf}};
+  }
+  
+  sub string_pack {
+    my $s = shift;
+    return {
+      len =&gt; length $s,
+      buf =&gt; [ unpack &#39;c*&#39;, $s ],
+    }
+  }
+
+  $c-&gt;tag(&#39;String&#39;, Hooks =&gt; { pack   =&gt; \&amp;string_pack,
+                               unpack =&gt; \&amp;string_unpack });</code></pre>
+
+<p>As you can see in the hook code, <code>buf</code> is expected to be an array of characters. For the <a href="#unpack"><code>unpack</code></a> case Convert::Binary::C first turns the binary data into a Perl array, and then the hook packs it back into a string. The intermediate array creation and destruction is completely useless. Same thing, of course, for the <a href="#pack"><code>pack</code></a> case.</p>
+
+<p>Here&#39;s a clever way to handle this. Just tag <code>buf</code> as binary</p>
+
+<pre><code>  $c-&gt;tag(&#39;String.buf&#39;, Format =&gt; &#39;Binary&#39;);</code></pre>
+
+<p>and use the following hooks instead:</p>
+
+<pre><code>  sub string_unpack2 {
+    my $s = shift;
+    substr $s-&gt;{buf}, 0, $s-&gt;{len};
+  }
+  
+  sub string_pack2 {
+    my $s = shift;
+    return {
+      len =&gt; length $s,
+      buf =&gt; $s,
+    }
+  }
+  
+  $c-&gt;tag(&#39;String&#39;, Hooks =&gt; { pack   =&gt; \&amp;string_pack2,
+                               unpack =&gt; \&amp;string_unpack2 });</code></pre>
+
+<p>This will be exactly equivalent to the old code, but faster and probably even much easier to understand.</p>
+
+<p>But hooks are even more powerful. You can customize the arguments that are passed to your hooks and you can use <a href="#arg"><code>arg</code></a> to pass certain special arguments, such as the name of the type that is currently being processed by the hook.</p>
+
+<p>The following example shows how it is easily possible to peek into the perl internals using hooks.</p>
+
+<pre><code>  use Config;
+  
+  $c = new Convert::Binary::C %CC, OrderMembers =&gt; 1;
+  $c-&gt;Include([&quot;$Config{archlib}/CORE&quot;, @{$c-&gt;Include}]);
+  $c-&gt;parse(&lt;&lt;ENDC);
+  #include &quot;EXTERN.h&quot;
+  #include &quot;perl.h&quot;
+  ENDC
+  
+  $c-&gt;tag($_, Hooks =&gt; { unpack_ptr =&gt; [\&amp;unpack_ptr,
+                                        $c-&gt;arg(qw(SELF TYPE DATA))] })
+      for qw( XPVAV XPVHV );</code></pre>
+
+<p>First, we add the perl core include path and parse <i>perl.h</i>. Then, we add an <code>unpack_ptr</code> hook for a couple of the internal data types.</p>
+
+<p>The <code>unpack_ptr</code> and <code>pack_ptr</code> hooks are called whenever a pointer to a certain data structure is processed. This is by far the most experimental part of the hooks feature, as this includes <b>any</b> kind of pointer. There&#39;s no way for the hook to know the difference between a plain pointer, or a pointer to a pointer, or a pointer to an array (this is because the difference doesn&#39;t matter anywhere else in Convert::Binary::C).</p>
+
+<p>But the hook above makes use of another very interesting feature: It uses <a href="#arg"><code>arg</code></a> to pass special arguments to the hook subroutine. Usually, the hook subroutine is simply passed a single data argument. But using the above definition, it&#39;ll get a reference to the calling object (<code>SELF</code>), the name of the type being processed (<code>TYPE</code>) and the data (<code>DATA</code>).</p>
+
+<p>But how does our hook look like?</p>
+
+<pre><code>  sub unpack_ptr {
+    my($self, $type, $ptr) = @_;
+    $ptr or return &#39;&lt;NULL&gt;&#39;;
+    my $size = $self-&gt;sizeof($type);
+    $self-&gt;unpack($type, unpack(&quot;P$size&quot;, pack(&#39;I&#39;, $ptr)));
+  }</code></pre>
+
+<p>As you can see, the hook is rather simple. First, it receives the arguments mentioned above. It performs a quick check if the pointer is <code>NULL</code> and shouldn&#39;t be processed any further. Next, it determines the size of the type being processed. And finally, it&#39;ll just use the <code>P</code><i>n</i> unpack template to read from that memory location and recursively call <a href="#unpack"><code>unpack</code></a> to unpack the type. (And yes, this may of course again call other hooks.)</p>
+
+<p>Now, let&#39;s test that:</p>
+
+<pre><code>  my $ref = { foo =&gt; 42, bar =&gt; 4711 };
+  my $ptr = hex((&quot;$ref&quot; =~ /\(0x([[:xdigit:]]+)\)$/)[0]);
+  
+  print Dumper(unpack_ptr($c, &#39;AV&#39;, $ptr));</code></pre>
+
+<p>Just for the fun of it, we create a blessed array reference. But how do we get a pointer to the corresponding <code>AV</code>? This is rather easy, as the address of the <code>AV</code> is just the hex value that appears when using the array reference in string context. So we just grab that and turn it into decimal. All that&#39;s left to do is just call our hook, as it can already handle <code>AV</code> pointers. And this is what we get:</p>
+
+<pre><code>  $VAR1 = {
+    &#39;sv_any&#39; =&gt; {
+      &#39;xnv_u&#39; =&gt; {
+        &#39;xnv_nv&#39; =&gt; &#39;0&#39;,
+        &#39;xgv_stash&#39; =&gt; 0,
+        &#39;xpad_cop_seq&#39; =&gt; {
+          &#39;xlow&#39; =&gt; 0,
+          &#39;xhigh&#39; =&gt; 0
+        },
+        &#39;xbm_s&#39; =&gt; {
+          &#39;xbm_previous&#39; =&gt; 0,
+          &#39;xbm_flags&#39; =&gt; 0,
+          &#39;xbm_rare&#39; =&gt; 0
+        }
+      },
+      &#39;xav_fill&#39; =&gt; 2,
+      &#39;xav_max&#39; =&gt; 7,
+      &#39;xiv_u&#39; =&gt; {
+        &#39;xivu_iv&#39; =&gt; 2,
+        &#39;xivu_uv&#39; =&gt; 2,
+        &#39;xivu_p1&#39; =&gt; 2,
+        &#39;xivu_i32&#39; =&gt; 2,
+        &#39;xivu_namehek&#39; =&gt; 2,
+        &#39;xivu_hv&#39; =&gt; 2
+      },
+      &#39;xmg_u&#39; =&gt; {
+        &#39;xmg_magic&#39; =&gt; 0,
+        &#39;xmg_ourstash&#39; =&gt; 0
+      },
+      &#39;xmg_stash&#39; =&gt; 0
+    },
+    &#39;sv_refcnt&#39; =&gt; 1,
+    &#39;sv_flags&#39; =&gt; 536870924,
+    &#39;sv_u&#39; =&gt; {
+      &#39;svu_pv&#39; =&gt; 142054140,
+      &#39;svu_iv&#39; =&gt; 142054140,
+      &#39;svu_uv&#39; =&gt; 142054140,
+      &#39;svu_rv&#39; =&gt; 142054140,
+      &#39;svu_array&#39; =&gt; 142054140,
+      &#39;svu_hash&#39; =&gt; 142054140,
+      &#39;svu_gp&#39; =&gt; 142054140
+    }
+  };</code></pre>
+
+<p>Even though it is rather easy to do such stuff using <code>unpack_ptr</code> hooks, you should really know what you&#39;re doing and do it with extreme care because of the limitations mentioned above. It&#39;s really easy to run into segmentation faults when you&#39;re dereferencing pointers that point to memory which you don&#39;t own.</p>
+
+<h3 id="Performance">Performance</h3>
+
+<p>Using hooks isn&#39;t for free. In performance-critical applications you have to keep in mind that hooks are actually perl subroutines and that they are called once for every value of a registered type that is being packed or unpacked. If only about 10% of the values require hooks to be called, you&#39;ll hardly notice the difference (if your hooks are implemented efficiently, that is). But if all values would require hooks to be called, that alone could easily make packing and unpacking very slow.</p>
+
+<h2 id="Tag-Order">Tag Order</h2>
+
+<p>Since it is possible to attach multiple tags to a single type, the order in which the tags are processed is important. Here&#39;s a small table that shows the processing order.</p>
+
+<pre><code>  pack        unpack
+  ---------------------
+  Hooks       Format
+  Format      ByteOrder
+  ByteOrder   Hooks</code></pre>
+
+<p>As a general rule, the <a href="#The-Hooks-Tag"><code>Hooks</code></a> tag is always the first thing processed when packing data, and the last thing processed when unpacking data.</p>
+
+<p>The <a href="#The-Format-Tag"><code>Format</code></a> and <a href="#The-ByteOrder-Tag"><code>ByteOrder</code></a> tags are exclusive, but when both are given the <a href="#The-Format-Tag"><code>Format</code></a> tag wins.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<dl>
+
+<dt id="new1"><code>new</code></dt>
+<dd>
+
+</dd>
+<dt id="new-OPTION1-VALUE1-OPTION2-VALUE2"><code>new</code> OPTION1 =&gt; VALUE1, OPTION2 =&gt; VALUE2, ...</dt>
+<dd>
+
+<p>The constructor is used to create a new Convert::Binary::C object. You can simply use</p>
+
+<pre><code>  $c = new Convert::Binary::C;</code></pre>
+
+<p>without additional arguments to create an object, or you can optionally pass any arguments to the constructor that are described for the <a href="#configure"><code>configure</code></a> method.</p>
+
+</dd>
+</dl>
+
+<h2 id="configure">configure</h2>
+
+<dl>
+
+<dt id="configure1"><code>configure</code></dt>
+<dd>
+
+</dd>
+<dt id="configure-OPTION"><code>configure</code> OPTION</dt>
+<dd>
+
+</dd>
+<dt id="configure-OPTION1-VALUE1-OPTION2-VALUE2"><code>configure</code> OPTION1 =&gt; VALUE1, OPTION2 =&gt; VALUE2, ...</dt>
+<dd>
+
+<p>This method can be used to configure an existing Convert::Binary::C object or to retrieve its current configuration.</p>
+
+<p>To configure the object, the list of options consists of key and value pairs and must therefore contain an even number of elements. <a href="#configure"><code>configure</code></a> (and also <a href="#new"><code>new</code></a> if used with configuration options) will throw an exception if you pass an odd number of elements. Configuration will normally look like this:</p>
+
+<pre><code>  $c-&gt;configure(ByteOrder =&gt; &#39;BigEndian&#39;, IntSize =&gt; 2);</code></pre>
+
+<p>To retrieve the current value of a configuration option, you must pass a single argument to <a href="#configure"><code>configure</code></a> that holds the name of the option, just like</p>
+
+<pre><code>  $order = $c-&gt;configure(&#39;ByteOrder&#39;);</code></pre>
+
+<p>If you want to get the values of all configuration options at once, you can call <a href="#configure"><code>configure</code></a> without any arguments and it will return a reference to a hash table that holds the whole object configuration. This can be conveniently used with the <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Data/Dumper.html">Data::Dumper</a> module, for example:</p>
+
+<pre><code>  use Convert::Binary::C;
+  use Data::Dumper;
+  
+  $c = new Convert::Binary::C Define  =&gt; [&#39;DEBUGGING&#39;, &#39;FOO=123&#39;],
+                              Include =&gt; [&#39;/usr/include&#39;];
+  
+  print Dumper($c-&gt;configure);</code></pre>
+
+<p>Which will print something like this:</p>
+
+<pre><code>  $VAR1 = {
+    &#39;Define&#39; =&gt; [
+      &#39;DEBUGGING&#39;,
+      &#39;FOO=123&#39;
+    ],
+    &#39;StdCVersion&#39; =&gt; 199901,
+    &#39;ByteOrder&#39; =&gt; &#39;LittleEndian&#39;,
+    &#39;LongSize&#39; =&gt; 4,
+    &#39;IntSize&#39; =&gt; 4,
+    &#39;HostedC&#39; =&gt; 1,
+    &#39;ShortSize&#39; =&gt; 2,
+    &#39;HasMacroVAARGS&#39; =&gt; 1,
+    &#39;Assert&#39; =&gt; [],
+    &#39;UnsignedChars&#39; =&gt; 0,
+    &#39;DoubleSize&#39; =&gt; 8,
+    &#39;CharSize&#39; =&gt; 1,
+    &#39;EnumType&#39; =&gt; &#39;Integer&#39;,
+    &#39;PointerSize&#39; =&gt; 4,
+    &#39;EnumSize&#39; =&gt; 4,
+    &#39;DisabledKeywords&#39; =&gt; [],
+    &#39;FloatSize&#39; =&gt; 4,
+    &#39;Alignment&#39; =&gt; 1,
+    &#39;LongLongSize&#39; =&gt; 8,
+    &#39;LongDoubleSize&#39; =&gt; 12,
+    &#39;KeywordMap&#39; =&gt; {},
+    &#39;Include&#39; =&gt; [
+      &#39;/usr/include&#39;
+    ],
+    &#39;HasCPPComments&#39; =&gt; 1,
+    &#39;Bitfields&#39; =&gt; {
+      &#39;Engine&#39; =&gt; &#39;Generic&#39;
+    },
+    &#39;UnsignedBitfields&#39; =&gt; 0,
+    &#39;Warnings&#39; =&gt; 0,
+    &#39;CompoundAlignment&#39; =&gt; 1,
+    &#39;OrderMembers&#39; =&gt; 0
+  };</code></pre>
+
+<p>Since you may not always want to write a <a href="#configure"><code>configure</code></a> call when you only want to change a single configuration item, you can use any configuration option name as a method name, like:</p>
+
+<pre><code>  $c-&gt;ByteOrder(&#39;LittleEndian&#39;) if $c-&gt;IntSize &lt; 4;</code></pre>
+
+<p>(Yes, the example doesn&#39;t make very much sense... ;-)</p>
+
+<p>However, you should keep in mind that configuration methods that can take lists (namely <code>Include</code>, <code>Define</code> and <code>Assert</code>, but not <code>DisabledKeywords</code>) may behave slightly different than their <a href="#configure"><code>configure</code></a> equivalent. If you pass these methods a single argument that is an array reference, the current list will be <b>replaced</b> by the new one, which is just the behaviour of the corresponding <a href="#configure"><code>configure</code></a> call. So the following are equivalent:</p>
+
+<pre><code>  $c-&gt;configure(Define =&gt; [&#39;foo&#39;, &#39;bar=123&#39;]);
+  $c-&gt;Define([&#39;foo&#39;, &#39;bar=123&#39;]);</code></pre>
+
+<p>But if you pass a list of strings instead of an array reference (which cannot be done when using <a href="#configure"><code>configure</code></a>), the new list items are <b>appended</b> to the current list, so</p>
+
+<pre><code>  $c = new Convert::Binary::C Include =&gt; [&#39;/include&#39;];
+  $c-&gt;Include(&#39;/usr/include&#39;, &#39;/usr/local/include&#39;);
+  print Dumper($c-&gt;Include);
+  
+  $c-&gt;Include([&#39;/usr/local/include&#39;]);
+  print Dumper($c-&gt;Include);</code></pre>
+
+<p>will first print all three include paths, but finally only <code>/usr/local/include</code> will be configured:</p>
+
+<pre><code>  $VAR1 = [
+    &#39;/include&#39;,
+    &#39;/usr/include&#39;,
+    &#39;/usr/local/include&#39;
+  ];
+  $VAR1 = [
+    &#39;/usr/local/include&#39;
+  ];</code></pre>
+
+<p>Furthermore, configuration methods can be chained together, as they return a reference to their object if called as a set method. So, if you like, you can configure your object like this:</p>
+
+<pre><code>  $c = Convert::Binary::C-&gt;new(IntSize =&gt; 4)
+         -&gt;Define(qw( __DEBUG__ DB_LEVEL=3 ))
+         -&gt;ByteOrder(&#39;BigEndian&#39;);
+  
+  $c-&gt;configure(EnumType =&gt; &#39;Both&#39;, Alignment =&gt; 4)
+    -&gt;Include(&#39;/usr/include&#39;, &#39;/usr/local/include&#39;);</code></pre>
+
+<p>In the example above, <code>qw( ... )</code> is the word list quoting operator. It returns a list of all non-whitespace sequences, and is especially useful for configuring preprocessor defines or assertions. The following assignments are equivalent:</p>
+
+<pre><code>  @array = (&#39;one&#39;, &#39;two&#39;, &#39;three&#39;);
+  @array = qw(one two three);</code></pre>
+
+<p>You can configure the following options. Unknown options, as well as invalid values for an option, will cause the object to throw exceptions.</p>
+
+<dl>
+
+<dt id="IntSize-0-1-2-4-8"><code>IntSize</code> =&gt; 0 | 1 | 2 | 4 | 8</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by an integer. This is in most cases 2 or 4. If you set it to zero, the size of an integer on the host system will be used. This is also the default unless overridden by <code>CBC_DEFAULT_INT_SIZE</code> at compile time.</p>
+
+</dd>
+<dt id="CharSize-0-1-2-4-8"><code>CharSize</code> =&gt; 0 | 1 | 2 | 4 | 8</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a <code>char</code>. This rarely needs to be changed, except for some platforms that don&#39;t care about bytes, for example DSPs. If you set this to zero, the size of a <code>char</code> on the host system will be used. This is also the default unless overridden by <code>CBC_DEFAULT_CHAR_SIZE</code> at compile time.</p>
+
+</dd>
+<dt id="ShortSize-0-1-2-4-8"><code>ShortSize</code> =&gt; 0 | 1 | 2 | 4 | 8</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a short integer. Although integers explicitly declared as <code>short</code> should be always 16 bit, there are compilers that make a short 8 bit wide. If you set it to zero, the size of a short integer on the host system will be used. This is also the default unless overridden by <code>CBC_DEFAULT_SHORT_SIZE</code> at compile time.</p>
+
+</dd>
+<dt id="LongSize-0-1-2-4-8"><code>LongSize</code> =&gt; 0 | 1 | 2 | 4 | 8</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a long integer. If set to zero, the size of a long integer on the host system will be used. This is also the default unless overridden by <code>CBC_DEFAULT_LONG_SIZE</code> at compile time.</p>
+
+</dd>
+<dt id="LongLongSize-0-1-2-4-8"><code>LongLongSize</code> =&gt; 0 | 1 | 2 | 4 | 8</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a long long integer. If set to zero, the size of a long long integer on the host system, or 8, will be used. This is also the default unless overridden by <code>CBC_DEFAULT_LONG_LONG_SIZE</code> at compile time.</p>
+
+</dd>
+<dt id="FloatSize-0-1-2-4-8-12-16"><code>FloatSize</code> =&gt; 0 | 1 | 2 | 4 | 8 | 12 | 16</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a single precision floating point value. If you set it to zero, the size of a <code>float</code> on the host system will be used. This is also the default unless overridden by <code>CBC_DEFAULT_FLOAT_SIZE</code> at compile time. For details on floating point support, see <a href="#FLOATING-POINT-VALUES">&quot;FLOATING POINT VALUES&quot;</a>.</p>
+
+</dd>
+<dt id="DoubleSize-0-1-2-4-8-12-16"><code>DoubleSize</code> =&gt; 0 | 1 | 2 | 4 | 8 | 12 | 16</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a double precision floating point value. If you set it to zero, the size of a <code>double</code> on the host system will be used. This is also the default unless overridden by <code>CBC_DEFAULT_DOUBLE_SIZE</code> at compile time. For details on floating point support, see <a href="#FLOATING-POINT-VALUES">&quot;FLOATING POINT VALUES&quot;</a>.</p>
+
+</dd>
+<dt id="LongDoubleSize-0-1-2-4-8-12-16"><code>LongDoubleSize</code> =&gt; 0 | 1 | 2 | 4 | 8 | 12 | 16</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a double precision floating point value. If you set it to zero, the size of a <code>long double</code> on the host system, or 12 will be used. This is also the default unless overridden by <code>CBC_DEFAULT_LONG_DOUBLE_SIZE</code> at compile time. For details on floating point support, see <a href="#FLOATING-POINT-VALUES">&quot;FLOATING POINT VALUES&quot;</a>.</p>
+
+</dd>
+<dt id="PointerSize-0-1-2-4-8"><code>PointerSize</code> =&gt; 0 | 1 | 2 | 4 | 8</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by a pointer. This is in most cases 2 or 4. If you set it to zero, the size of a pointer on the host system will be used. This is also the default unless overridden by <code>CBC_DEFAULT_PTR_SIZE</code> at compile time.</p>
+
+</dd>
+<dt id="EnumSize--1-0-1-2-4-8"><code>EnumSize</code> =&gt; -1 | 0 | 1 | 2 | 4 | 8</dt>
+<dd>
+
+<p>Set the number of bytes that are occupied by an enumeration type. On most systems, this is equal to the size of an integer, which is also the default. However, for some compilers, the size of an enumeration type depends on the size occupied by the largest enumerator. So the size may vary between 1 and 8. If you have</p>
+
+<pre><code>  enum foo {
+    ONE = 100, TWO = 200
+  };</code></pre>
+
+<p>this will occupy one byte because the enum can be represented as an unsigned one-byte value. However,</p>
+
+<pre><code>  enum foo {
+    ONE = -100, TWO = 200
+  };</code></pre>
+
+<p>will occupy two bytes, because the -100 forces the type to be signed, and 200 doesn&#39;t fit into a signed one-byte value. Therefore, the type used is a signed two-byte value. If this is the behaviour you need, set the EnumSize to <code>0</code>.</p>
+
+<p>Some compilers try to follow this strategy, but don&#39;t care whether the enumeration has signed values or not. They always declare an enum as signed. On such a compiler, given</p>
+
+<pre><code>  enum one { ONE = -100, TWO = 100 };
+  enum two { ONE =  100, TWO = 200 };</code></pre>
+
+<p>enum <code>one</code> will occupy only one byte, while enum <code>two</code> will occupy two bytes, even though it could be represented by a unsigned one-byte value. If this is the behaviour of your compiler, set EnumSize to <code>-1</code>.</p>
+
+</dd>
+<dt id="Alignment-0-1-2-4-8-16"><code>Alignment</code> =&gt; 0 | 1 | 2 | 4 | 8 | 16</dt>
+<dd>
+
+<p>Set the struct member alignment. This option controls where padding bytes are inserted between struct members. It globally sets the alignment for all structs/unions. However, this can be overridden from within the source code with the common <code>pack</code> pragma as explained in <a href="#Supported-pragma-directives">&quot;Supported pragma directives&quot;</a>. The default alignment is 1, which means no padding bytes are inserted. A setting of <code>0</code> means <i>native</i> alignment, i.e. the alignment of the system that Convert::Binary::C has been compiled on. You can determine the native properties using the <a href="#native"><code>native</code></a> function.</p>
+
+<p>The <code>Alignment</code> option is similar to the <code>-Zp[n]</code> option of the Intel compiler. It globally specifies the maximum boundary to which struct members are aligned. Consider the following structure and the sizes of <code>char</code>, <code>short</code>, <code>long</code> and <code>double</code> being 1, 2, 4 and 8, respectively.</p>
+
+<pre><code>  struct align {
+    char   a;
+    short  b, c;
+    long   d;
+    double e;
+  };</code></pre>
+
+<p>With an alignment of 1 (the default), the struct members would be packed tightly:</p>
+
+<pre><code>  0   1   2   3   4   5   6   7   8   9  10  11  12
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  | a |   b   |   c   |       d       |             ...
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  
+     12  13  14  15  16  17
+      +---+---+---+---+---+
+  ...     e               |
+      +---+---+---+---+---+</code></pre>
+
+<p>With an alignment of 2, the struct members larger than one byte would be aligned to 2-byte boundaries, which results in a single padding byte between <code>a</code> and <code>b</code>.</p>
+
+<pre><code>  0   1   2   3   4   5   6   7   8   9  10  11  12
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  | a | * |   b   |   c   |       d       |         ...
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  
+     12  13  14  15  16  17  18
+      +---+---+---+---+---+---+
+  ...         e               |
+      +---+---+---+---+---+---+</code></pre>
+
+<p>With an alignment of 4, the struct members of size 2 would be aligned to 2-byte boundaries and larger struct members would be aligned to 4-byte boundaries:</p>
+
+<pre><code>  0   1   2   3   4   5   6   7   8   9  10  11  12
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  | a | * |   b   |   c   | * | * |       d       | ...
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  
+     12  13  14  15  16  17  18  19  20
+      +---+---+---+---+---+---+---+---+
+  ... |               e               |
+      +---+---+---+---+---+---+---+---+</code></pre>
+
+<p>This layout of the struct members allows the compiler to generate optimized code because aligned members can be accessed more easily by the underlying architecture.</p>
+
+<p>Finally, setting the alignment to 8 will align <code>double</code>s to 8-byte boundaries:</p>
+
+<pre><code>  0   1   2   3   4   5   6   7   8   9  10  11  12
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  | a | * |   b   |   c   | * | * |       d       | ...
+  +---+---+---+---+---+---+---+---+---+---+---+---+
+  
+     12  13  14  15  16  17  18  19  20  21  22  23  24
+      +---+---+---+---+---+---+---+---+---+---+---+---+
+  ... | * | * | * | * |               e               |
+      +---+---+---+---+---+---+---+---+---+---+---+---+</code></pre>
+
+<p>Further increasing the alignment does not alter the layout of our structure, as only members larger that 8 bytes would be affected.</p>
+
+<p>The alignment of a structure depends on its largest member and on the setting of the <code>Alignment</code> option. With <code>Alignment</code> set to 2, a structure holding a <code>long</code> would be aligned to a 2-byte boundary, while a structure containing only <code>char</code>s would have no alignment restrictions. (Unfortunately, that&#39;s not the whole story. See the <code>CompoundAlignment</code> option for details.)</p>
+
+<p>Here&#39;s another example. Assuming 8-byte alignment, the following two structs will both have a size of 16 bytes:</p>
+
+<pre><code>  struct one {
+    char   c;
+    double d;
+  };
+  
+  struct two {
+    double d;
+    char   c;
+  };</code></pre>
+
+<p>This is clear for <code>struct one</code>, because the member <code>d</code> has to be aligned to an 8-byte boundary, and thus 7 padding bytes are inserted after <code>c</code>. But for <code>struct two</code>, the padding bytes are inserted <b>at the end</b> of the structure, which doesn&#39;t make much sense immediately. However, it makes perfect sense if you think about an array of <code>struct two</code>. Each <code>double</code> has to be aligned to an 8-byte boundary, an thus each array element would have to occupy 16 bytes. With that in mind, it would be strange if a <code>struct two</code> variable would have a different size. And it would make the widely used construct</p>
+
+<pre><code>  struct two array[] = { {1.0, 0}, {2.0, 1} };
+  int elements = sizeof(array) / sizeof(struct two);</code></pre>
+
+<p>impossible.</p>
+
+<p>The alignment behaviour described here seems to be common for all compilers. However, not all compilers have an option to configure their default alignment.</p>
+
+</dd>
+<dt id="CompoundAlignment-0-1-2-4-8-16"><code>CompoundAlignment</code> =&gt; 0 | 1 | 2 | 4 | 8 | 16</dt>
+<dd>
+
+<p>Usually, the alignment of a compound (i.e. a <code>struct</code> or a <code>union</code>) depends only on its largest member and on the setting of the <code>Alignment</code> option. There are, however, architectures and compilers where compounds can have different alignment constraints.</p>
+
+<p>For most platforms and compilers, the alignment constraint for compounds is 1 byte. That is, on most platforms</p>
+
+<pre><code>  struct onebyte {
+    char byte;
+  };</code></pre>
+
+<p>will have an alignment of 1 and also a size of 1. But if you take an ARM architecture, the above <code>struct onebyte</code> will have an alignment of 4, and thus also a size of 4.</p>
+
+<p>You can configure this by setting <code>CompoundAlignment</code> to 4. This will ensure that the alignment of compounds is always 4.</p>
+
+<p>Setting <code>CompoundAlignment</code> to <code>0</code> means <i>native</i> compound alignment, i.e. the compound alignment of the system that Convert::Binary::C has been compiled on. You can determine the native properties using the <a href="#native"><code>native</code></a> function.</p>
+
+<p>There are also compilers for certain platforms that allow you to adjust the compound alignment. If you&#39;re not aware of the fact that your compiler/architecture has a compound alignment other than 1, strange things can happen. If, for example, the compound alignment is 2 and you have something like</p>
+
+<pre><code>  typedef unsigned char U8;
+  
+  struct msg_head {
+    U8 cmd;
+    struct {
+      U8 hi;
+      U8 low;
+    } crc16;
+    U8 len;
+  };</code></pre>
+
+<p>there will be one padding byte inserted before the embedded <code>crc16</code> struct and after the <code>len</code> member, which is most probably not what was intended:</p>
+
+<pre><code>  0     1     2     3     4     5     6
+  +-----+-----+-----+-----+-----+-----+
+  | cmd |  *  | hi  | low | len |  *  |
+  +-----+-----+-----+-----+-----+-----+</code></pre>
+
+<p>Note that both <code>#pragma pack</code> and the <code>Alignment</code> option can override <code>CompoundAlignment</code>. If you set <code>CompoundAlignment</code> to 4, but <code>Alignment</code> to 2, compounds will actually be aligned on 2-byte boundaries.</p>
+
+</dd>
+<dt id="ByteOrder-BigEndian-LittleEndian"><code>ByteOrder</code> =&gt; &#39;BigEndian&#39; | &#39;LittleEndian&#39;</dt>
+<dd>
+
+<p>Set the byte order for integers larger than a single byte. Little endian (Intel, least significant byte first) and big endian (Motorola, most significant byte first) byte order are supported. The default byte order is the same as the byte order of the host system unless overridden by <code>CBC_DEFAULT_BYTEORDER</code> at compile time.</p>
+
+</dd>
+<dt id="EnumType-Integer-String-Both"><code>EnumType</code> =&gt; &#39;Integer&#39; | &#39;String&#39; | &#39;Both&#39;</dt>
+<dd>
+
+<p>This option controls the type that enumeration constants will have in data structures returned by the <a href="#unpack"><code>unpack</code></a> method. If you have the following definitions:</p>
+
+<pre><code>  typedef enum {
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
+    THURSDAY, FRIDAY, SATURDAY
+  } Weekday;
+  
+  typedef enum {
+    JANUARY, FEBRUARY, MARCH, APRIL, MAY, JUNE, JULY,
+    AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER
+  } Month;
+  
+  typedef struct {
+    int     year;
+    Month   month;
+    int     day;
+    Weekday weekday;
+  } Date;</code></pre>
+
+<p>and a byte string that holds a packed Date struct, then you&#39;ll get the following results from a call to the <a href="#unpack"><code>unpack</code></a> method.</p>
+
+<dl>
+
+<dt id="Integer"><code>Integer</code></dt>
+<dd>
+
+<p>Enumeration constants are returned as plain integers. This is fast, but may be not very useful. It is also the default.</p>
+
+<pre><code>  $date = {
+    &#39;weekday&#39; =&gt; 1,
+    &#39;month&#39; =&gt; 0,
+    &#39;day&#39; =&gt; 7,
+    &#39;year&#39; =&gt; 2002
+  };</code></pre>
+
+</dd>
+<dt id="String"><code>String</code></dt>
+<dd>
+
+<p>Enumeration constants are returned as strings. This will create a string constant for every unpacked enumeration constant and thus consumes more time and memory. However, the result may be more useful.</p>
+
+<pre><code>  $date = {
+    &#39;weekday&#39; =&gt; &#39;MONDAY&#39;,
+    &#39;month&#39; =&gt; &#39;JANUARY&#39;,
+    &#39;day&#39; =&gt; 7,
+    &#39;year&#39; =&gt; 2002
+  };</code></pre>
+
+</dd>
+<dt id="Both"><code>Both</code></dt>
+<dd>
+
+<p>Enumeration constants are returned as double typed scalars. If evaluated in string context, the enumeration constant will be a string, if evaluated in numeric context, the enumeration constant will be an integer.</p>
+
+<pre><code>  $date = $c-&gt;EnumType(&#39;Both&#39;)-&gt;unpack(&#39;Date&#39;, $binary);
+  
+  printf &quot;Weekday = %s (%d)\n\n&quot;, $date-&gt;{weekday},
+                                  $date-&gt;{weekday};
+  
+  if ($date-&gt;{month} == 0) {
+    print &quot;It&#39;s $date-&gt;{month}, happy new year!\n\n&quot;;
+  }
+  
+  print Dumper($date);</code></pre>
+
+<p>This will print:</p>
+
+<pre><code>  Weekday = MONDAY (1)
+  
+  It&#39;s JANUARY, happy new year!
+  
+  $VAR1 = {
+    &#39;weekday&#39; =&gt; &#39;MONDAY&#39;,
+    &#39;month&#39; =&gt; &#39;JANUARY&#39;,
+    &#39;day&#39; =&gt; 7,
+    &#39;year&#39; =&gt; 2002
+  };</code></pre>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="DisabledKeywords-KEYWORDS"><code>DisabledKeywords</code> =&gt; [ KEYWORDS ]</dt>
+<dd>
+
+<p>This option allows you to selectively deactivate certain keywords in the C parser. Some C compilers don&#39;t have the complete ANSI keyword set, i.e. they don&#39;t recognize the keywords <code>const</code> or <code>void</code>, for example. If you do</p>
+
+<pre><code>  typedef int void;</code></pre>
+
+<p>on such a compiler, this will usually be ok. But if you parse this with an ANSI compiler, it will be a syntax error. To parse the above code correctly, you have to disable the <code>void</code> keyword in the Convert::Binary::C parser:</p>
+
+<pre><code>  $c-&gt;DisabledKeywords([qw( void )]);</code></pre>
+
+<p>By default, the Convert::Binary::C parser will recognize the keywords <code>inline</code> and <code>restrict</code>. If your compiler doesn&#39;t have these new keywords, it usually doesn&#39;t matter. Only if you&#39;re using the keywords as identifiers, like in</p>
+
+<pre><code>  typedef struct inline {
+    int a, b;
+  } restrict;</code></pre>
+
+<p>you&#39;ll have to disable these ISO-C99 keywords:</p>
+
+<pre><code>  $c-&gt;DisabledKeywords([qw( inline restrict )]);</code></pre>
+
+<p>The parser allows you to disable the following keywords:</p>
+
+<pre><code>  asm
+  auto
+  const
+  double
+  enum
+  extern
+  float
+  inline
+  long
+  register
+  restrict
+  short
+  signed
+  static
+  unsigned
+  void
+  volatile</code></pre>
+
+</dd>
+<dt id="KeywordMap-KEYWORD-TOKEN"><code>KeywordMap</code> =&gt; { KEYWORD =&gt; TOKEN, ... }</dt>
+<dd>
+
+<p>This option allows you to add new keywords to the parser. These new keywords can either be mapped to existing tokens or simply ignored. For example, recent versions of the GNU compiler recognize the keywords <code>__signed__</code> and <code>__extension__</code>. The first one obviously is a synonym for <code>signed</code>, while the second one is only a marker for a language extension.</p>
+
+<p>Using the preprocessor, you could of course do the following:</p>
+
+<pre><code>  $c-&gt;Define(qw( __signed__=signed __extension__= ));</code></pre>
+
+<p>However, the preprocessor symbols could be undefined or redefined in the code, and</p>
+
+<pre><code>  #ifdef __signed__
+  # undef __signed__
+  #endif
+  
+  typedef __extension__ __signed__ long long s_quad;</code></pre>
+
+<p>would generate a parse error, because <code>__signed__</code> is an unexpected identifier.</p>
+
+<p>Instead of utilizing the preprocessor, you&#39;ll have to create mappings for the new keywords directly in the parser using <code>KeywordMap</code>. In the above example, you want to map <code>__signed__</code> to the built-in C keyword <code>signed</code> and ignore <code>__extension__</code>. This could be done with the following code:</p>
+
+<pre><code>  $c-&gt;KeywordMap({ __signed__    =&gt; &#39;signed&#39;,
+                   __extension__ =&gt; undef });</code></pre>
+
+<p>You can specify any valid identifier as hash key, and either a valid C keyword or <code>undef</code> as hash value. Having configured the object that way, you could parse even</p>
+
+<pre><code>  #ifdef __signed__
+  # undef __signed__
+  #endif
+  
+  typedef __extension__ __signed__ long long s_quad;</code></pre>
+
+<p>without problems.</p>
+
+<p>Note that <code>KeywordMap</code> and <code>DisabledKeywords</code> perfectly work together. You could, for example, disable the <code>signed</code> keyword, but still have <code>__signed__</code> mapped to the original <code>signed</code> token:</p>
+
+<pre><code>  $c-&gt;configure(DisabledKeywords =&gt; [ &#39;signed&#39; ],
+                KeywordMap       =&gt; { __signed__  =&gt; &#39;signed&#39; });</code></pre>
+
+<p>This would allow you to define</p>
+
+<pre><code>  typedef __signed__ long signed;</code></pre>
+
+<p>which would normally be a syntax error because <code>signed</code> cannot be used as an identifier.</p>
+
+</dd>
+<dt id="UnsignedChars-0-1"><code>UnsignedChars</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>Use this boolean option if you want characters to be unsigned if specified without an explicit <code>signed</code> or <code>unsigned</code> type specifier. By default, characters are signed.</p>
+
+</dd>
+<dt id="UnsignedBitfields-0-1"><code>UnsignedBitfields</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>Use this boolean option if you want bitfields to be unsigned if specified without an explicit <code>signed</code> or <code>unsigned</code> type specifier. By default, bitfields are signed.</p>
+
+</dd>
+<dt id="Warnings-0-1"><code>Warnings</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>Use this boolean option if you want warnings to be issued during the parsing of source code. Currently, warnings are only reported by the preprocessor, so don&#39;t expect the output to cover everything.</p>
+
+<p>By default, warnings are turned off and only errors will be reported. However, even these errors are turned off if you run without the <code>-w</code> flag.</p>
+
+</dd>
+<dt id="HasCPPComments-0-1"><code>HasCPPComments</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>Use this option to turn C++ comments on or off. By default, C++ comments are enabled. Disabling C++ comments may be necessary if your code includes strange things like:</p>
+
+<pre><code>  one = 4 //* &lt;- divide */ 4;
+  two = 2;</code></pre>
+
+<p>With C++ comments, the above will be interpreted as</p>
+
+<pre><code>  one = 4
+  two = 2;</code></pre>
+
+<p>which will obviously be a syntax error, but without C++ comments, it will be interpreted as</p>
+
+<pre><code>  one = 4 / 4;
+  two = 2;</code></pre>
+
+<p>which is correct.</p>
+
+</dd>
+<dt id="HasMacroVAARGS-0-1"><code>HasMacroVAARGS</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>Use this option to turn the <code>__VA_ARGS__</code> macro expansion on or off. If this is enabled (which is the default), you can use variable length argument lists in your preprocessor macros.</p>
+
+<pre><code>  #define DEBUG( ... )  fprintf( stderr, __VA_ARGS__ )</code></pre>
+
+<p>There&#39;s normally no reason to turn that feature off.</p>
+
+</dd>
+<dt id="StdCVersion-undef-INTEGER"><code>StdCVersion</code> =&gt; undef | INTEGER</dt>
+<dd>
+
+<p>Use this option to change the value of the preprocessor&#39;s predefined <code>__STDC_VERSION__</code> macro. When set to <code>undef</code>, the macro will not be defined.</p>
+
+</dd>
+<dt id="HostedC-undef-0-1"><code>HostedC</code> =&gt; undef | 0 | 1</dt>
+<dd>
+
+<p>Use this option to change the value of the preprocessor&#39;s predefined <code>__STDC_HOSTED__</code> macro. When set to <code>undef</code>, the macro will not be defined.</p>
+
+</dd>
+<dt id="Include-INCLUDES"><code>Include</code> =&gt; [ INCLUDES ]</dt>
+<dd>
+
+<p>Use this option to set the include path for the internal preprocessor. The option value is a reference to an array of strings, each string holding a directory that should be searched for includes.</p>
+
+</dd>
+<dt id="Define-DEFINES"><code>Define</code> =&gt; [ DEFINES ]</dt>
+<dd>
+
+<p>Use this option to define symbols in the preprocessor. The option value is, again, a reference to an array of strings. Each string can be either just a symbol or an assignment to a symbol. This is completely equivalent to what the <code>-D</code> option does for most preprocessors.</p>
+
+<p>The following will define the symbol <code>FOO</code> and define <code>BAR</code> to be <code>12345</code>:</p>
+
+<pre><code>  $c-&gt;configure(Define =&gt; [qw( FOO BAR=12345 )]);</code></pre>
+
+</dd>
+<dt id="Assert-ASSERTIONS"><code>Assert</code> =&gt; [ ASSERTIONS ]</dt>
+<dd>
+
+<p>Use this option to make assertions in the preprocessor. If you don&#39;t know what assertions are, don&#39;t be concerned, since they&#39;re deprecated anyway. They are, however, used in some system&#39;s include files. The value is an array reference, just like for the macro definitions. Only the way the assertions are defined is a bit different and mimics the way they are defined with the <code>#assert</code> directive:</p>
+
+<pre><code>  $c-&gt;configure(Assert =&gt; [&#39;foo(bar)&#39;]);</code></pre>
+
+</dd>
+<dt id="OrderMembers-0-1"><code>OrderMembers</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>When using <a href="#unpack"><code>unpack</code></a> on compounds and iterating over the returned hash, the order of the compound members is generally not preserved due to the nature of hash tables. It is not even guaranteed that the order is the same between different runs of the same program. This can be very annoying if you simply use to dump your data structures and the compound members always show up in a different order.</p>
+
+<p>By setting <code>OrderMembers</code> to a non-zero value, all hashes returned by <a href="#unpack"><code>unpack</code></a> are tied to a class that preserves the order of the hash keys. This way, all compound members will be returned in the correct order just as they are defined in your C code.</p>
+
+<pre><code>  use Convert::Binary::C;
+  use Data::Dumper;
+  
+  $c = Convert::Binary::C-&gt;new-&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  struct test {
+    char one;
+    char two;
+    struct {
+      char never;
+      char change;
+      char this;
+      char order;
+    } three;
+    char four;
+  };
+  ENDC
+  
+  $data = &quot;Convert&quot;;
+  
+  $u1 = $c-&gt;unpack(&#39;test&#39;, $data);
+  $c-&gt;OrderMembers(1);
+  $u2 = $c-&gt;unpack(&#39;test&#39;, $data);
+  
+  print Data::Dumper-&gt;Dump([$u1, $u2], [qw(u1 u2)]);</code></pre>
+
+<p>This will print something like:</p>
+
+<pre><code>  $u1 = {
+    &#39;three&#39; =&gt; {
+      &#39;change&#39; =&gt; 118,
+      &#39;order&#39; =&gt; 114,
+      &#39;this&#39; =&gt; 101,
+      &#39;never&#39; =&gt; 110
+    },
+    &#39;one&#39; =&gt; 67,
+    &#39;two&#39; =&gt; 111,
+    &#39;four&#39; =&gt; 116
+  };
+  $u2 = {
+    &#39;one&#39; =&gt; 67,
+    &#39;two&#39; =&gt; 111,
+    &#39;three&#39; =&gt; {
+      &#39;never&#39; =&gt; 110,
+      &#39;change&#39; =&gt; 118,
+      &#39;this&#39; =&gt; 101,
+      &#39;order&#39; =&gt; 114
+    },
+    &#39;four&#39; =&gt; 116
+  };</code></pre>
+
+<p>To be able to use this option, you have to install either the <a>Tie::Hash::Indexed</a> or the <a>Tie::IxHash</a> module. If both are installed, Convert::Binary::C will give preference to <a>Tie::Hash::Indexed</a> because it&#39;s faster.</p>
+
+<p>When using this option, you should keep in mind that tied hashes are significantly slower and consume more memory than ordinary hashes, even when the class they&#39;re tied to is implemented efficiently. So don&#39;t turn this option on if you don&#39;t have to.</p>
+
+<p>You can also influence hash member ordering by using the <a href="#CBC_ORDER_MEMBERS"><code>CBC_ORDER_MEMBERS</code></a> environment variable.</p>
+
+</dd>
+<dt id="Bitfields-OPTION-VALUE"><code>Bitfields</code> =&gt; { OPTION =&gt; VALUE, ... }</dt>
+<dd>
+
+<p>Use this option to specify and configure a bitfield layouting engine. You can choose an engine by passing its name to the <code>Engine</code> option, like:</p>
+
+<pre><code>  $c-&gt;configure(Bitfields =&gt; { Engine =&gt; &#39;Generic&#39; });</code></pre>
+
+<p>Each engine can have its own set of options, although currently none of them does.</p>
+
+<p>You can choose between the following bitfield engines:</p>
+
+<dl>
+
+<dt id="Generic"><code>Generic</code></dt>
+<dd>
+
+<p>This engine implements the behaviour of most UNIX C compilers, including GCC. It does not handle packed bitfields yet.</p>
+
+</dd>
+<dt id="Microsoft"><code>Microsoft</code></dt>
+<dd>
+
+<p>This engine implements the behaviour of Microsoft&#39;s <code>cl</code> compiler. It should be fairly complete and can handle packed bitfields.</p>
+
+</dd>
+<dt id="Simple1"><code>Simple</code></dt>
+<dd>
+
+<p>This engine is only used for testing the bitfield infrastructure in Convert::Binary::C. There&#39;s usually no reason to use it.</p>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<p>You can reconfigure all options even after you have parsed some code. The changes will be applied to the already parsed definitions. This works as long as array lengths are not affected by the changes. If you have Alignment and IntSize set to 4 and parse code like this</p>
+
+<pre><code>  typedef struct {
+    char abc;
+    int  day;
+  } foo;
+  
+  struct bar {
+    foo  zap[2*sizeof(foo)];
+  };</code></pre>
+
+<p>the array <code>zap</code> in <code>struct bar</code> will obviously have 16 elements. If you reconfigure the alignment to 1 now, the size of <code>foo</code> is now 5 instead of 8. While the alignment is adjusted correctly, the number of elements in array <code>zap</code> will still be 16 and will not be changed to 10.</p>
+
+</dd>
+</dl>
+
+<h2 id="parse">parse</h2>
+
+<dl>
+
+<dt id="parse-CODE"><code>parse</code> CODE</dt>
+<dd>
+
+<p>Parses a string of valid C code. All enumeration, compound and type definitions are extracted. You can call the <a href="#parse"><code>parse</code></a> and <a href="#parse_file"><code>parse_file</code></a> methods as often as you like to add further definitions to the Convert::Binary::C object.</p>
+
+<p><a href="#parse"><code>parse</code></a> will throw an exception if an error occurs. On success, the method returns a reference to its object.</p>
+
+<p>See <a href="#Parsing-C-code">&quot;Parsing C code&quot;</a> for an example.</p>
+
+</dd>
+</dl>
+
+<h2 id="parse_file">parse_file</h2>
+
+<dl>
+
+<dt id="parse_file-FILE"><code>parse_file</code> FILE</dt>
+<dd>
+
+<p>Parses a C source file. All enumeration, compound and type definitions are extracted. You can call the <a href="#parse"><code>parse</code></a> and <a href="#parse_file"><code>parse_file</code></a> methods as often as you like to add further definitions to the Convert::Binary::C object.</p>
+
+<p><a href="#parse_file"><code>parse_file</code></a> will search the include path given via the <code>Include</code> option for the file if it cannot find it in the current directory.</p>
+
+<p><a href="#parse_file"><code>parse_file</code></a> will throw an exception if an error occurs. On success, the method returns a reference to its object.</p>
+
+<p>See <a href="#Parsing-C-code">&quot;Parsing C code&quot;</a> for an example.</p>
+
+<p>When calling <a href="#parse"><code>parse</code></a> or <a href="#parse_file"><code>parse_file</code></a> multiple times, you may use types previously defined, but you are not allowed to redefine types. The state of the preprocessor is also saved, so you may also use defines from a previous parse. This works only as long as the preprocessor is not reset. See <a href="#Preprocessor-configuration">&quot;Preprocessor configuration&quot;</a> for details.</p>
+
+<p>When you&#39;re parsing C source files instead of C header files, note that local definitions are ignored. This means that type definitions hidden within functions will not be recognized by Convert::Binary::C. This is necessary because different functions (even different blocks within the same function) can define types with the same name:</p>
+
+<pre><code>  void my_func(int i)
+  {
+    if (i &lt; 10)
+    {
+      enum digit { ONE, TWO, THREE } x = ONE;
+      printf(&quot;%d, %d\n&quot;, i, x);
+    }
+    else
+    {
+      enum digit { THREE, TWO, ONE } x = ONE;
+      printf(&quot;%d, %d\n&quot;, i, x);
+    }
+  }</code></pre>
+
+<p>The above is a valid piece of C code, but it&#39;s not possible for Convert::Binary::C to distinguish between the different definitions of <code>enum digit</code>, as they&#39;re only defined locally within the corresponding block.</p>
+
+</dd>
+</dl>
+
+<h2 id="clean">clean</h2>
+
+<dl>
+
+<dt id="clean1"><code>clean</code></dt>
+<dd>
+
+<p>Clears all information that has been collected during previous calls to <a href="#parse"><code>parse</code></a> or <a href="#parse_file"><code>parse_file</code></a>. You can use this method if you want to parse some entirely different code, but with the same configuration.</p>
+
+<p>The <a href="#clean"><code>clean</code></a> method returns a reference to its object.</p>
+
+</dd>
+</dl>
+
+<h2 id="clone">clone</h2>
+
+<dl>
+
+<dt id="clone1"><code>clone</code></dt>
+<dd>
+
+<p>Makes the object return an exact independent copy of itself.</p>
+
+<pre><code>  $c = new Convert::Binary::C Include =&gt; [&#39;/usr/include&#39;];
+  $c-&gt;parse_file(&#39;definitions.c&#39;);
+  $clone = $c-&gt;clone;</code></pre>
+
+<p>The above code is technically equivalent (Mostly. Actually, using <a href="#sourcify"><code>sourcify</code></a> and <a href="#parse"><code>parse</code></a> might alter the order of the parsed data, which would make methods such as <a href="#compound"><code>compound</code></a> return the definitions in a different order.) to:</p>
+
+<pre><code>  $c = new Convert::Binary::C Include =&gt; [&#39;/usr/include&#39;];
+  $c-&gt;parse_file(&#39;definitions.c&#39;);
+  $clone = new Convert::Binary::C %{$c-&gt;configure};
+  $clone-&gt;parse($c-&gt;sourcify);</code></pre>
+
+<p>Using <a href="#clone"><code>clone</code></a> is just a lot faster.</p>
+
+</dd>
+</dl>
+
+<h2 id="def">def</h2>
+
+<dl>
+
+<dt id="def-NAME"><code>def</code> NAME</dt>
+<dd>
+
+</dd>
+<dt id="def-TYPE"><code>def</code> TYPE</dt>
+<dd>
+
+<p>If you need to know if a definition for a certain type name exists, use this method. You pass it the name of an enum, struct, union or typedef, and it will return a non-empty string being either <code>&quot;enum&quot;</code>, <code>&quot;struct&quot;</code>, <code>&quot;union&quot;</code>, or <code>&quot;typedef&quot;</code> if there&#39;s a definition for the type in question, an empty string if there&#39;s no such definition, or <code>undef</code> if the name is completely unknown. If the type can be interpreted as a basic type, <code>&quot;basic&quot;</code> will be returned.</p>
+
+<p>If you pass in a <a href="#UNDERSTANDING-TYPES">TYPE</a>, the output will be slightly different. If the specified member exists, the <a href="#def"><code>def</code></a> method will return <code>&quot;member&quot;</code>. If the member doesn&#39;t exist, or if the type cannot have members, the empty string will be returned. Again, if the name of the type is completely unknown, <code>undef</code> will be returned. This may be useful if you want to check if a certain member exists within a compound, for example.</p>
+
+<pre><code>  use Convert::Binary::C;
+  
+  my $c = Convert::Binary::C-&gt;new-&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  
+  typedef struct __not  not;
+  typedef struct __not *ptr;
+  
+  struct foo {
+    enum bar *xxx;
+  };
+  
+  typedef int quad[4];
+  
+  ENDC
+  
+  for my $type (qw( not ptr foo bar xxx foo.xxx foo.abc xxx.yyy
+                    quad quad[3] quad[5] quad[-3] short[1] ),
+                &#39;unsigned long&#39;)
+  {
+    my $def = $c-&gt;def($type);
+    printf &quot;%-14s  =&gt;  %s\n&quot;,
+            $type,     defined $def ? &quot;&#39;$def&#39;&quot; : &#39;undef&#39;;
+  }</code></pre>
+
+<p>The following would be returned by the <a href="#def"><code>def</code></a> method:</p>
+
+<pre><code>  not             =&gt;  &#39;&#39;
+  ptr             =&gt;  &#39;typedef&#39;
+  foo             =&gt;  &#39;struct&#39;
+  bar             =&gt;  &#39;&#39;
+  xxx             =&gt;  undef
+  foo.xxx         =&gt;  &#39;member&#39;
+  foo.abc         =&gt;  &#39;&#39;
+  xxx.yyy         =&gt;  undef
+  quad            =&gt;  &#39;typedef&#39;
+  quad[3]         =&gt;  &#39;member&#39;
+  quad[5]         =&gt;  &#39;member&#39;
+  quad[-3]        =&gt;  &#39;member&#39;
+  short[1]        =&gt;  undef
+  unsigned long   =&gt;  &#39;basic&#39;</code></pre>
+
+<p>So, if <a href="#def"><code>def</code></a> returns a non-empty string, you can safely use any other method with that type&#39;s name or with that member expression.</p>
+
+<p>Concerning arrays, note that the index into an array doesn&#39;t need to be within the bounds of the array&#39;s definition, just like in C. In the above example, <code>quad[5]</code> and <code>quad[-3]</code> are valid members of the <code>quad</code> array, even though it is declared to have only four elements.</p>
+
+<p>In cases where the typedef namespace overlaps with the namespace of enums/structs/unions, the <a href="#def"><code>def</code></a> method will give preference to the typedef and will thus return the string <code>&quot;typedef&quot;</code>. You could however force interpretation as an enum, struct or union by putting <code>&quot;enum&quot;</code>, <code>&quot;struct&quot;</code> or <code>&quot;union&quot;</code> in front of the type&#39;s name.</p>
+
+</dd>
+</dl>
+
+<h2 id="defined">defined</h2>
+
+<dl>
+
+<dt id="defined-MACRO"><code>defined</code> MACRO</dt>
+<dd>
+
+<p>You can use the <a href="#defined"><code>defined</code></a> method to find out if a certain macro is defined, just like you would use the <code>defined</code> operator of the preprocessor. For example, the following code</p>
+
+<pre><code>  use Convert::Binary::C;
+  
+  my $c = Convert::Binary::C-&gt;new-&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  
+  #define ADD(a, b) ((a) + (b))
+  
+  #if 1
+  # define DEFINED
+  #else
+  # define UNDEFINED
+  #endif
+  
+  ENDC
+  
+  for my $macro (qw( ADD DEFINED UNDEFINED )) {
+    my $not = $c-&gt;defined($macro) ? &#39;&#39; : &#39; not&#39;;
+    print &quot;Macro &#39;$macro&#39; is$not defined.\n&quot;;
+  }</code></pre>
+
+<p>would print:</p>
+
+<pre><code>  Macro &#39;ADD&#39; is defined.
+  Macro &#39;DEFINED&#39; is defined.
+  Macro &#39;UNDEFINED&#39; is not defined.</code></pre>
+
+<p>You have to keep in mind that this works only as long as the preprocessor is not reset. See <a href="#Preprocessor-configuration">&quot;Preprocessor configuration&quot;</a> for details.</p>
+
+</dd>
+</dl>
+
+<h2 id="pack">pack</h2>
+
+<dl>
+
+<dt id="pack-TYPE"><code>pack</code> TYPE</dt>
+<dd>
+
+</dd>
+<dt id="pack-TYPE-DATA"><code>pack</code> TYPE, DATA</dt>
+<dd>
+
+</dd>
+<dt id="pack-TYPE-DATA-STRING"><code>pack</code> TYPE, DATA, STRING</dt>
+<dd>
+
+<p>Use this method to pack a complex data structure into a binary string according to a type definition that has been previously parsed. DATA must be a scalar matching the type definition. C structures and unions are represented by references to Perl hashes, C arrays by references to Perl arrays.</p>
+
+<pre><code>  use Convert::Binary::C;
+  use Data::Dumper;
+  use Data::Hexdumper;
+  
+  $c = Convert::Binary::C-&gt;new( ByteOrder =&gt; &#39;BigEndian&#39;
+                              , LongSize  =&gt; 4
+                              , ShortSize =&gt; 2
+                              )
+                         -&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  struct test {
+    char    ary[3];
+    union {
+      short word[2];
+      long  quad;
+    }       uni;
+  };
+  ENDC</code></pre>
+
+<p>Hashes don&#39;t have to contain a key for each compound member and arrays may be truncated:</p>
+
+<pre><code>  $binary = $c-&gt;pack(&#39;test&#39;, { ary =&gt; [1, 2], uni =&gt; { quad =&gt; 42 } });</code></pre>
+
+<p>Elements not defined in the Perl data structure will be set to zero in the packed byte string. If you pass <code>undef</code> as or simply omit the second parameter, the whole string will be initialized with zero bytes. On success, the packed byte string is returned.</p>
+
+<pre><code>  print hexdump(data =&gt; $binary);</code></pre>
+
+<p>The above code would print:</p>
+
+<pre><code>    0x0000 : 01 02 00 00 00 00 2A                            : ......*</code></pre>
+
+<p>You could also use <a href="#unpack"><code>unpack</code></a> and dump the data structure.</p>
+
+<pre><code>  $unpacked = $c-&gt;unpack(&#39;test&#39;, $binary);
+  print Data::Dumper-&gt;Dump([$unpacked], [&#39;unpacked&#39;]);</code></pre>
+
+<p>This would print:</p>
+
+<pre><code>  $unpacked = {
+    &#39;uni&#39; =&gt; {
+      &#39;word&#39; =&gt; [
+        0,
+        42
+      ],
+      &#39;quad&#39; =&gt; 42
+    },
+    &#39;ary&#39; =&gt; [
+      1,
+      2,
+      0
+    ]
+  };</code></pre>
+
+<p>If <a href="#UNDERSTANDING-TYPES">TYPE</a> refers to a compound object, you may pack any member of that compound object. Simply add a <a href="#Member-Expressions">member expression</a> to the type name, just as you would access the member in C:</p>
+
+<pre><code>  $array = $c-&gt;pack(&#39;test.ary&#39;, [1, 2, 3]);
+  print hexdump(data =&gt; $array);
+  
+  $value = $c-&gt;pack(&#39;test.uni.word[1]&#39;, 2);
+  print hexdump(data =&gt; $value);</code></pre>
+
+<p>This would give you:</p>
+
+<pre><code>    0x0000 : 01 02 03                                        : ...
+    0x0000 : 00 02                                           : ..</code></pre>
+
+<p>Call <a href="#pack"><code>pack</code></a> with the optional STRING argument if you want to use an existing binary string to insert the data. If called in a void context, <a href="#pack"><code>pack</code></a> will directly modify the string you passed as the third argument. Otherwise, a copy of the string is created, and <a href="#pack"><code>pack</code></a> will modify and return the copy, so the original string will remain unchanged.</p>
+
+<p>The 3-argument version may be useful if you want to change only a few members of a complex data structure without having to <a href="#unpack"><code>unpack</code></a> everything, change the members, and then <a href="#pack"><code>pack</code></a> again (which could waste lots of memory and CPU cycles). So, instead of doing something like</p>
+
+<pre><code>  $test = $c-&gt;unpack(&#39;test&#39;, $binary);
+  $test-&gt;{uni}{quad} = 4711;
+  $new = $c-&gt;pack(&#39;test&#39;, $test);</code></pre>
+
+<p>to change the <code>uni.quad</code> member of <code>$packed</code>, you could simply do either</p>
+
+<pre><code>  $new = $c-&gt;pack(&#39;test&#39;, { uni =&gt; { quad =&gt; 4711 } }, $binary);</code></pre>
+
+<p>or</p>
+
+<pre><code>  $c-&gt;pack(&#39;test&#39;, { uni =&gt; { quad =&gt; 4711 } }, $binary);</code></pre>
+
+<p>while the latter would directly modify <code>$packed</code>. Besides this code being a lot shorter (and perhaps even more readable), it can be significantly faster if you&#39;re dealing with really big data blocks.</p>
+
+<p>If the length of the input string is less than the size required by the type, the string (or its copy) is extended and the extended part is initialized to zero. If the length is more than the size required by the type, the string is kept at that length, and also a copy would be an exact copy of that string.</p>
+
+<pre><code>  $too_short = pack &quot;C*&quot;, (1 .. 4);
+  $too_long  = pack &quot;C*&quot;, (1 .. 20);
+  
+  $c-&gt;pack(&#39;test&#39;, { uni =&gt; { quad =&gt; 0x4711 } }, $too_short);
+  print &quot;too_short:\n&quot;, hexdump(data =&gt; $too_short);
+  
+  $copy = $c-&gt;pack(&#39;test&#39;, { uni =&gt; { quad =&gt; 0x4711 } }, $too_long);
+  print &quot;\ncopy:\n&quot;, hexdump(data =&gt; $copy);</code></pre>
+
+<p>This would print:</p>
+
+<pre><code>  too_short:
+    0x0000 : 01 02 03 00 00 47 11                            : .....G.
+  
+  copy:
+    0x0000 : 01 02 03 00 00 47 11 08 09 0A 0B 0C 0D 0E 0F 10 : .....G..........
+    0x0010 : 11 12 13 14                                     : ....</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="unpack">unpack</h2>
+
+<dl>
+
+<dt id="unpack-TYPE-STRING"><code>unpack</code> TYPE, STRING</dt>
+<dd>
+
+<p>Use this method to unpack a binary string and create an arbitrarily complex Perl data structure based on a previously parsed type definition.</p>
+
+<pre><code>  use Convert::Binary::C;
+  use Data::Dumper;
+  
+  $c = Convert::Binary::C-&gt;new( ByteOrder =&gt; &#39;BigEndian&#39;
+                              , LongSize  =&gt; 4
+                              , ShortSize =&gt; 2
+                              )
+                         -&gt;parse( &lt;&lt;&#39;ENDC&#39; );
+  struct test {
+    char    ary[3];
+    union {
+      short word[2];
+      long *quad;
+    }       uni;
+  };
+  ENDC
+  
+  # Generate some binary dummy data
+  $binary = pack &quot;C*&quot;, 1 .. $c-&gt;sizeof(&#39;test&#39;);</code></pre>
+
+<p>On failure, e.g. if the specified type cannot be found, the method will throw an exception. On success, a reference to a complex Perl data structure is returned, which can directly be dumped using the <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Data/Dumper.html">Data::Dumper</a> module:</p>
+
+<pre><code>  $unpacked = $c-&gt;unpack(&#39;test&#39;, $binary);
+  print Dumper($unpacked);</code></pre>
+
+<p>This would print:</p>
+
+<pre><code>  $VAR1 = {
+    &#39;uni&#39; =&gt; {
+      &#39;word&#39; =&gt; [
+        1029,
+        1543
+      ],
+      &#39;quad&#39; =&gt; 67438087
+    },
+    &#39;ary&#39; =&gt; [
+      1,
+      2,
+      3
+    ]
+  };</code></pre>
+
+<p>If <a href="#UNDERSTANDING-TYPES">TYPE</a> refers to a compound object, you may unpack any member of that compound object. Simply add a <a href="#Member-Expressions">member expression</a> to the type name, just as you would access the member in C:</p>
+
+<pre><code>  $binary2 = substr $binary, $c-&gt;offsetof(&#39;test&#39;, &#39;uni.word&#39;);
+  
+  $unpack1 = $unpacked-&gt;{uni}{word};
+  $unpack2 = $c-&gt;unpack(&#39;test.uni.word&#39;, $binary2);
+  
+  print Data::Dumper-&gt;Dump([$unpack1, $unpack2], [qw(unpack1 unpack2)]);</code></pre>
+
+<p>You will find that the output is exactly the same for both <code>$unpack1</code> and <code>$unpack2</code>:</p>
+
+<pre><code>  $unpack1 = [
+    1029,
+    1543
+  ];
+  $unpack2 = [
+    1029,
+    1543
+  ];</code></pre>
+
+<p>When <a href="#unpack"><code>unpack</code></a> is called in list context, it will unpack as many elements as possible from STRING, including zero if STRING is not long enough.</p>
+
+</dd>
+</dl>
+
+<h2 id="initializer">initializer</h2>
+
+<dl>
+
+<dt id="initializer-TYPE"><code>initializer</code> TYPE</dt>
+<dd>
+
+</dd>
+<dt id="initializer-TYPE-DATA"><code>initializer</code> TYPE, DATA</dt>
+<dd>
+
+<p>The <a href="#initializer"><code>initializer</code></a> method can be used retrieve an initializer string for a certain <a href="#UNDERSTANDING-TYPES">TYPE</a>. This can be useful if you have to initialize only a couple of members in a huge compound type or if you simply want to generate initializers automatically.</p>
+
+<pre><code>  struct date {
+    unsigned year : 12;
+    unsigned month:  4;
+    unsigned day  :  5;
+    unsigned hour :  5;
+    unsigned min  :  6;
+  };
+  
+  typedef struct {
+    enum { DATE, QWORD } type;
+    short number;
+    union {
+      struct date   date;
+      unsigned long qword;
+    } choice;
+  } data;</code></pre>
+
+<p>Given the above code has been parsed</p>
+
+<pre><code>  $init = $c-&gt;initializer(&#39;data&#39;);
+  print &quot;data x = $init;\n&quot;;</code></pre>
+
+<p>would print the following:</p>
+
+<pre><code>  data x = {
+        0,
+        0,
+        {
+                {
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                }
+        }
+  };</code></pre>
+
+<p>You could directly put that into a C program, although it probably isn&#39;t very useful yet. It becomes more useful if you actually specify how you want to initialize the type:</p>
+
+<pre><code>  $data = {
+    type   =&gt; &#39;QWORD&#39;,
+    choice =&gt; {
+      date  =&gt; { month =&gt; 12, day =&gt; 24 },
+      qword =&gt; 4711,
+    },
+    stuff =&gt; &#39;yes?&#39;,
+  };
+  
+  $init = $c-&gt;initializer(&#39;data&#39;, $data);
+  print &quot;data x = $init;\n&quot;;</code></pre>
+
+<p>This would print the following:</p>
+
+<pre><code>  data x = {
+        QWORD,
+        0,
+        {
+                {
+                        0,
+                        12,
+                        24,
+                        0,
+                        0
+                }
+        }
+  };</code></pre>
+
+<p>As only the first member of a <code>union</code> can be initialized, <code>choice.qword</code> is ignored. You will not be warned about the fact that you probably tried to initialize a member other than the first. This is considered a feature, because it allows you to use <a href="#unpack"><code>unpack</code></a> to generate the initializer data:</p>
+
+<pre><code>  $data = $c-&gt;unpack(&#39;data&#39;, $binary);
+  $init = $c-&gt;initializer(&#39;data&#39;, $data);</code></pre>
+
+<p>Since <a href="#unpack"><code>unpack</code></a> unpacks all union members, you would otherwise have to delete all but the first one previous to feeding it into <a href="#initializer"><code>initializer</code></a>.</p>
+
+<p>Also, <code>stuff</code> is ignored, because it actually isn&#39;t a member of <code>data</code>. You won&#39;t be warned about that either.</p>
+
+</dd>
+</dl>
+
+<h2 id="sizeof">sizeof</h2>
+
+<dl>
+
+<dt id="sizeof-TYPE"><code>sizeof</code> TYPE</dt>
+<dd>
+
+<p>This method will return the size of a C type in bytes. If it cannot find the type, it will throw an exception.</p>
+
+<p>If the type defines some kind of compound object, you may ask for the size of a <a href="#Member-Expressions">member</a> of that compound object:</p>
+
+<pre><code>  $size = $c-&gt;sizeof(&#39;test.uni.word[1]&#39;);</code></pre>
+
+<p>This would set <code>$size</code> to <code>2</code>.</p>
+
+</dd>
+</dl>
+
+<h2 id="typeof">typeof</h2>
+
+<dl>
+
+<dt id="typeof-TYPE"><code>typeof</code> TYPE</dt>
+<dd>
+
+<p>This method will return the type of a C member. While this only makes sense for compound types, it&#39;s legal to also use it for non-compound types. If it cannot find the type, it will throw an exception.</p>
+
+<p>The <a href="#typeof"><code>typeof</code></a> method can be used on any valid <a href="#Member-Expressions">member</a>, even on arrays or unnamed types. It will always return a string that holds the name (or in case of unnamed types only the class) of the type, optionally followed by a <code>&#39;*&#39;</code> character to indicate it&#39;s a pointer type, and optionally followed by one or more array dimensions if it&#39;s an array type. If the type is a bitfield, the type name is followed by a colon and the number of bits.</p>
+
+<pre><code>  struct test {
+    char    ary[3];
+    union {
+      short word[2];
+      long *quad;
+    }       uni;
+    struct {
+      unsigned short six:6;
+      unsigned short ten:10;
+    }       bits;
+  };</code></pre>
+
+<p>Given the above C code has been parsed, calls to <a href="#typeof"><code>typeof</code></a> would return the following values:</p>
+
+<pre><code>  $c-&gt;typeof(&#39;test&#39;)             =&gt; &#39;struct test&#39;
+  $c-&gt;typeof(&#39;test.ary&#39;)         =&gt; &#39;char [3]&#39;
+  $c-&gt;typeof(&#39;test.uni&#39;)         =&gt; &#39;union&#39;
+  $c-&gt;typeof(&#39;test.uni.quad&#39;)    =&gt; &#39;long *&#39;
+  $c-&gt;typeof(&#39;test.uni.word&#39;)    =&gt; &#39;short [2]&#39;
+  $c-&gt;typeof(&#39;test.uni.word[1]&#39;) =&gt; &#39;short&#39;
+  $c-&gt;typeof(&#39;test.bits&#39;)        =&gt; &#39;struct&#39;
+  $c-&gt;typeof(&#39;test.bits.six&#39;)    =&gt; &#39;unsigned short :6&#39;
+  $c-&gt;typeof(&#39;test.bits.ten&#39;)    =&gt; &#39;unsigned short :10&#39;</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="offsetof">offsetof</h2>
+
+<dl>
+
+<dt id="offsetof-TYPE-MEMBER"><code>offsetof</code> TYPE, MEMBER</dt>
+<dd>
+
+<p>You can use <a href="#offsetof"><code>offsetof</code></a> just like the C macro of same denominator. It will simply return the offset (in bytes) of <a href="#Member-Expressions">MEMBER</a> relative to <a href="#UNDERSTANDING-TYPES">TYPE</a>.</p>
+
+<pre><code>  use Convert::Binary::C;
+  
+  $c = Convert::Binary::C-&gt;new( Alignment   =&gt; 4
+                              , LongSize    =&gt; 4
+                              , PointerSize =&gt; 4
+                              )
+                         -&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  typedef struct {
+    char abc;
+    long day;
+    int *ptr;
+  } week;
+  
+  struct test {
+    week zap[8];
+  };
+  ENDC
+  
+  @args = (
+    [&#39;test&#39;,        &#39;zap[5].day&#39;  ],
+    [&#39;test.zap[2]&#39;, &#39;day&#39;         ],
+    [&#39;test&#39;,        &#39;zap[5].day+1&#39;],
+    [&#39;test&#39;,        &#39;zap[-3].ptr&#39; ],
+  );
+  
+  for (@args) {
+    my $offset = eval { $c-&gt;offsetof(@$_) };
+    printf &quot;\$c-&gt;offsetof(&#39;%s&#39;, &#39;%s&#39;) =&gt; $offset\n&quot;, @$_;
+  }</code></pre>
+
+<p>The final loop will print:</p>
+
+<pre><code>  $c-&gt;offsetof(&#39;test&#39;, &#39;zap[5].day&#39;) =&gt; 64
+  $c-&gt;offsetof(&#39;test.zap[2]&#39;, &#39;day&#39;) =&gt; 4
+  $c-&gt;offsetof(&#39;test&#39;, &#39;zap[5].day+1&#39;) =&gt; 65
+  $c-&gt;offsetof(&#39;test&#39;, &#39;zap[-3].ptr&#39;) =&gt; -28</code></pre>
+
+<ul>
+
+<li><p>The first iteration simply shows that the offset of <code>zap[5].day</code> is 64 relative to the beginning of <code>struct test</code>.</p>
+
+</li>
+<li><p>You may additionally specify a member for the type passed as the first argument, as shown in the second iteration.</p>
+
+</li>
+<li><p>The <a href="#Offsets">offset suffix</a> is also supported by <a href="#offsetof"><code>offsetof</code></a>, so the third iteration will correctly print 65.</p>
+
+</li>
+<li><p>The last iteration demonstrates that even out-of-bounds array indices are handled correctly, just as they are handled in C.</p>
+
+</li>
+</ul>
+
+<p>Unlike the C macro, <a href="#offsetof"><code>offsetof</code></a> also works on array types.</p>
+
+<pre><code>  $offset = $c-&gt;offsetof(&#39;test.zap&#39;, &#39;[3].ptr+2&#39;);
+  print &quot;offset = $offset&quot;;</code></pre>
+
+<p>This will print:</p>
+
+<pre><code>  offset = 46</code></pre>
+
+<p>If <a href="#UNDERSTANDING-TYPES">TYPE</a> is a compound, <a href="#Member-Expressions">MEMBER</a> may optionally be prefixed with a dot, so</p>
+
+<pre><code>  printf &quot;offset = %d\n&quot;, $c-&gt;offsetof(&#39;week&#39;, &#39;day&#39;);
+  printf &quot;offset = %d\n&quot;, $c-&gt;offsetof(&#39;week&#39;, &#39;.day&#39;);</code></pre>
+
+<p>are both equivalent and will print</p>
+
+<pre><code>  offset = 4
+  offset = 4</code></pre>
+
+<p>This allows one to</p>
+
+<ul>
+
+<li><p>use the C macro style, without a leading dot, and</p>
+
+</li>
+<li><p>directly use the output of the <a href="#member"><code>member</code></a> method, which includes a leading dot for compound types, as input for the <a href="#Member-Expressions">MEMBER</a> argument.</p>
+
+</li>
+</ul>
+
+</dd>
+</dl>
+
+<h2 id="member">member</h2>
+
+<dl>
+
+<dt id="member-TYPE"><code>member</code> TYPE</dt>
+<dd>
+
+</dd>
+<dt id="member-TYPE-OFFSET"><code>member</code> TYPE, OFFSET</dt>
+<dd>
+
+<p>You can think of <a href="#member"><code>member</code></a> as being the reverse of the <a href="#offsetof"><code>offsetof</code></a> method. However, as this is more complex, there&#39;s no equivalent to <a href="#member"><code>member</code></a> in the C language.</p>
+
+<p>Usually this method is used if you want to retrieve the name of the member that is located at a specific offset of a previously parsed type.</p>
+
+<pre><code>  use Convert::Binary::C;
+  
+  $c = Convert::Binary::C-&gt;new( Alignment   =&gt; 4
+                              , LongSize    =&gt; 4
+                              , PointerSize =&gt; 4
+                              )
+                         -&gt;parse(&lt;&lt;&#39;ENDC&#39;);
+  typedef struct {
+    char abc;
+    long day;
+    int *ptr;
+  } week;
+  
+  struct test {
+    week zap[8];
+  };
+  ENDC
+  
+  for my $offset (24, 39, 69, 99) {
+    print &quot;\$c-&gt;member(&#39;test&#39;, $offset)&quot;;
+    my $member = eval { $c-&gt;member(&#39;test&#39;, $offset) };
+    print $@ ? &quot;\n  exception: $@&quot; : &quot; =&gt; &#39;$member&#39;\n&quot;;
+  }</code></pre>
+
+<p>This will print:</p>
+
+<pre><code>  $c-&gt;member(&#39;test&#39;, 24) =&gt; &#39;.zap[2].abc&#39;
+  $c-&gt;member(&#39;test&#39;, 39) =&gt; &#39;.zap[3]+3&#39;
+  $c-&gt;member(&#39;test&#39;, 69) =&gt; &#39;.zap[5].ptr+1&#39;
+  $c-&gt;member(&#39;test&#39;, 99)
+    exception: Offset 99 out of range (0 &lt;= offset &lt; 96) </code></pre>
+
+<ul>
+
+<li><p>The output of the first iteration is obvious. The member <code>zap[2].abc</code> is located at offset 24 of <code>struct test</code>.</p>
+
+</li>
+<li><p>In the second iteration, the offset points into a region of padding bytes and thus no member of <code>week</code> can be named. Instead of a member name the offset relative to <code>zap[3]</code> is appended.</p>
+
+</li>
+<li><p>In the third iteration, the offset points to <code>zap[5].ptr</code>. However, <code>zap[5].ptr</code> is located at 68, not at 69, and thus the remaining offset of 1 is also appended.</p>
+
+</li>
+<li><p>The last iteration causes an exception because the offset of 99 is not valid for <code>struct test</code> since the size of <code>struct test</code> is only 96. You might argue that this is inconsistent, since <a href="#offsetof"><code>offsetof</code></a> can also handle out-of-bounds array members. But as soon as you have more than one level of array nesting, there&#39;s an infinite number of out-of-bounds members for a single given offset, so it would be impossible to return a list of all members.</p>
+
+</li>
+</ul>
+
+<p>You can additionally specify a member for the type passed as the first argument:</p>
+
+<pre><code>  $member = $c-&gt;member(&#39;test.zap[2]&#39;, 6);
+  print $member;</code></pre>
+
+<p>This will print:</p>
+
+<pre><code>  .day+2</code></pre>
+
+<p>Like <a href="#offsetof"><code>offsetof</code></a>, <a href="#member"><code>member</code></a> also works on array types:</p>
+
+<pre><code>  $member = $c-&gt;member(&#39;test.zap&#39;, 42);
+  print $member;</code></pre>
+
+<p>This will print:</p>
+
+<pre><code>  [3].day+2</code></pre>
+
+<p>While the behaviour for <code>struct</code>s is quite obvious, the behaviour for <code>union</code>s is rather tricky. As a single offset usually references more than one member of a union, there are certain rules that the algorithm uses for determining the <i>best</i> member.</p>
+
+<ul>
+
+<li><p>The first non-compound member that is referenced without an offset has the highest priority.</p>
+
+</li>
+<li><p>If no member is referenced without an offset, the first non-compound member that is referenced with an offset will be returned.</p>
+
+</li>
+<li><p>Otherwise the first padding region that is encountered will be taken.</p>
+
+</li>
+</ul>
+
+<p>As an example, given 4-byte-alignment and the union</p>
+
+<pre><code>  union choice {
+    struct {
+      char  color[2];
+      long  size;
+      char  taste;
+    }       apple;
+    char    grape[3];
+    struct {
+      long  weight;
+      short price[3];
+    }       melon;
+  };</code></pre>
+
+<p>the <a href="#member"><code>member</code></a> method would return what is shown in the <i>Member</i> column of the following table. The <i>Type</i> column shows the result of the <a href="#typeof"><code>typeof</code></a> method when passing the corresponding member.</p>
+
+<pre><code>  Offset   Member               Type
+  --------------------------------------
+     0     .apple.color[0]      &#39;char&#39;
+     1     .apple.color[1]      &#39;char&#39;
+     2     .grape[2]            &#39;char&#39;
+     3     .melon.weight+3      &#39;long&#39;
+     4     .apple.size          &#39;long&#39;
+     5     .apple.size+1        &#39;long&#39;
+     6     .melon.price[1]      &#39;short&#39;
+     7     .apple.size+3        &#39;long&#39;
+     8     .apple.taste         &#39;char&#39;
+     9     .melon.price[2]+1    &#39;short&#39;
+    10     .apple+10            &#39;struct&#39;
+    11     .apple+11            &#39;struct&#39;</code></pre>
+
+<p>It&#39;s like having a stack of all the union members and looking through the stack for the shiniest piece you can see. The beginning of a member (denoted by uppercase letters) is always shinier than the rest of a member, while padding regions (denoted by dashes) aren&#39;t shiny at all.</p>
+
+<pre><code>  Offset   0   1   2   3   4   5   6   7   8   9  10  11
+  -------------------------------------------------------
+  apple   (C) (C)  -   -  (S) (s)  s  (s) (T)  -  (-) (-)
+  grape    G   G  (G)
+  melon    W   w   w  (w)  P   p  (P)  p   P  (p)  -   -</code></pre>
+
+<p>If you look through that stack from top to bottom, you&#39;ll end up at the parenthesized members.</p>
+
+<p>Alternatively, if you&#39;re not only interested in the <i>best</i> member, you can call <a href="#member"><code>member</code></a> in list context, which makes it return <i>all</i> members referenced by the given offset.</p>
+
+<pre><code>  Offset   Member               Type
+  --------------------------------------
+     0     .apple.color[0]      &#39;char&#39;
+           .grape[0]            &#39;char&#39;
+           .melon.weight        &#39;long&#39;
+     1     .apple.color[1]      &#39;char&#39;
+           .grape[1]            &#39;char&#39;
+           .melon.weight+1      &#39;long&#39;
+     2     .grape[2]            &#39;char&#39;
+           .melon.weight+2      &#39;long&#39;
+           .apple+2             &#39;struct&#39;
+     3     .melon.weight+3      &#39;long&#39;
+           .apple+3             &#39;struct&#39;
+     4     .apple.size          &#39;long&#39;
+           .melon.price[0]      &#39;short&#39;
+     5     .apple.size+1        &#39;long&#39;
+           .melon.price[0]+1    &#39;short&#39;
+     6     .melon.price[1]      &#39;short&#39;
+           .apple.size+2        &#39;long&#39;
+     7     .apple.size+3        &#39;long&#39;
+           .melon.price[1]+1    &#39;short&#39;
+     8     .apple.taste         &#39;char&#39;
+           .melon.price[2]      &#39;short&#39;
+     9     .melon.price[2]+1    &#39;short&#39;
+           .apple+9             &#39;struct&#39;
+    10     .apple+10            &#39;struct&#39;
+           .melon+10            &#39;struct&#39;
+    11     .apple+11            &#39;struct&#39;
+           .melon+11            &#39;struct&#39;</code></pre>
+
+<p>The first member returned is always the <i>best</i> member. The other members are sorted according to the rules given above. This means that members referenced without an offset are followed by members referenced with an offset. Padding regions will be at the end.</p>
+
+<p>If OFFSET is not given in the method call, <a href="#member"><code>member</code></a> will return a list of <i>all</i> possible members of <a href="#UNDERSTANDING-TYPES">TYPE</a>.</p>
+
+<pre><code>  print &quot;$_\n&quot; for $c-&gt;member(&#39;choice&#39;);</code></pre>
+
+<p>This will print:</p>
+
+<pre><code>  .apple.color[0]
+  .apple.color[1]
+  .apple.size
+  .apple.taste
+  .grape[0]
+  .grape[1]
+  .grape[2]
+  .melon.weight
+  .melon.price[0]
+  .melon.price[1]
+  .melon.price[2]</code></pre>
+
+<p>In scalar context, the number of possible members is returned.</p>
+
+</dd>
+</dl>
+
+<h2 id="tag">tag</h2>
+
+<dl>
+
+<dt id="tag-TYPE"><code>tag</code> TYPE</dt>
+<dd>
+
+</dd>
+<dt id="tag-TYPE-TAG"><code>tag</code> TYPE, TAG</dt>
+<dd>
+
+</dd>
+<dt id="tag-TYPE-TAG1-VALUE1-TAG2-VALUE2"><code>tag</code> TYPE, TAG1 =&gt; VALUE1, TAG2 =&gt; VALUE2, ...</dt>
+<dd>
+
+<p>The <a href="#tag"><code>tag</code></a> method can be used to tag properties to a <a href="#UNDERSTANDING-TYPES">TYPE</a>. It&#39;s a bit like having <a href="#configure"><code>configure</code></a> for individual types.</p>
+
+<p>See <a href="#USING-TAGS">&quot;USING TAGS&quot;</a> for an example.</p>
+
+<p>Note that while you can tag whole types as well as compound members, it is not possible to tag array members, i.e. you cannot treat, for example, <code>a[1]</code> and <code>a[2]</code> differently.</p>
+
+<p>Also note that in code like this</p>
+
+<pre><code>  struct test {
+    int a;
+    struct {
+      int x;
+    } b, c;
+  };</code></pre>
+
+<p>if you tag <code>test.b.x</code>, this will also tag <code>test.c.x</code> implicitly.</p>
+
+<p>It is also possible to tag basic types if you really want to do that, for example:</p>
+
+<pre><code>  $c-&gt;tag(&#39;int&#39;, Format =&gt; &#39;Binary&#39;);</code></pre>
+
+<p>To remove a tag from a type, you can either set that tag to <code>undef</code>, for example</p>
+
+<pre><code>  $c-&gt;tag(&#39;test&#39;, Hooks =&gt; undef);</code></pre>
+
+<p>or use <a href="#untag"><code>untag</code></a>.</p>
+
+<p>To see if a tag is attached to a type or to get the value of a tag, pass only the type and tag name to <a href="#tag"><code>tag</code></a>:</p>
+
+<pre><code>  $c-&gt;tag(&#39;test.a&#39;, Format =&gt; &#39;Binary&#39;);
+  
+  $hooks = $c-&gt;tag(&#39;test.a&#39;, &#39;Hooks&#39;);
+  $format = $c-&gt;tag(&#39;test.a&#39;, &#39;Format&#39;);</code></pre>
+
+<p>This will give you:</p>
+
+<pre><code>  $hooks = undef;
+  $format = &#39;Binary&#39;;</code></pre>
+
+<p>To see which tags are attached to a type, pass only the type. The <a href="#tag"><code>tag</code></a> method will now return a hash reference containing all tags attached to the type:</p>
+
+<pre><code>  $tags = $c-&gt;tag(&#39;test.a&#39;);</code></pre>
+
+<p>This will give you:</p>
+
+<pre><code>  $tags = {
+    &#39;Format&#39; =&gt; &#39;Binary&#39;
+  };</code></pre>
+
+<p><a href="#tag"><code>tag</code></a> will throw an exception if an error occurs. If called as a &#39;set&#39; method, it will return a reference to its object, allowing you to chain together consecutive method calls.</p>
+
+<p>Note that when a compound is inlined, tags attached to the inlined compound are ignored, for example:</p>
+
+<pre><code>  $c-&gt;parse(&lt;&lt;ENDC);
+  struct header {
+    int id;
+    int len;
+    unsigned flags;
+  };
+  
+  struct message {
+    struct header;
+    short samples[32];
+  };
+  ENDC
+  
+  for my $type (qw( header message header.len )) {
+    $c-&gt;tag($type, Hooks =&gt; { unpack =&gt; sub { print &quot;unpack: $type\n&quot;; @_ } });
+  }
+  
+  for my $type (qw( header message )) {
+    print &quot;[unpacking $type]\n&quot;;
+    $u = $c-&gt;unpack($type, $data);
+  }</code></pre>
+
+<p>This will print:</p>
+
+<pre><code>  [unpacking header]
+  unpack: header.len
+  unpack: header
+  [unpacking message]
+  unpack: header.len
+  unpack: message</code></pre>
+
+<p>As you can see from the above output, tags attached to members of inlined compounds (<code>header.len</code> are still handled.</p>
+
+<p>The following tags can be configured:</p>
+
+<dl>
+
+<dt id="Format-Binary-String"><code>Format</code> =&gt; &#39;Binary&#39; | &#39;String&#39;</dt>
+<dd>
+
+<p>The <code>Format</code> tag allows you to control the way binary data is converted by <a href="#pack"><code>pack</code></a> and <a href="#unpack"><code>unpack</code></a>.</p>
+
+<p>If you tag a <code>TYPE</code> as <code>Binary</code>, it will not be converted at all, i.e. it will be passed through as a binary string.</p>
+
+<p>If you tag it as <code>String</code>, it will be treated like a null-terminated C string, i.e. <a href="#unpack"><code>unpack</code></a> will convert the C string to a Perl string and vice versa.</p>
+
+<p>See <a href="#The-Format-Tag">&quot;The Format Tag&quot;</a> for an example.</p>
+
+</dd>
+<dt id="ByteOrder-BigEndian-LittleEndian1"><code>ByteOrder</code> =&gt; &#39;BigEndian&#39; | &#39;LittleEndian&#39;</dt>
+<dd>
+
+<p>The <code>ByteOrder</code> tag allows you to explicitly set the byte order of a <a href="#UNDERSTANDING-TYPES">TYPE</a>.</p>
+
+<p>See <a href="#The-ByteOrder-Tag">&quot;The ByteOrder Tag&quot;</a> for an example.</p>
+
+</dd>
+<dt id="Dimension"><code>Dimension</code> =&gt; &#39;*&#39;</dt>
+<dd>
+
+</dd>
+<dt id="Dimension-VALUE"><code>Dimension</code> =&gt; VALUE</dt>
+<dd>
+
+</dd>
+<dt id="Dimension-MEMBER"><code>Dimension</code> =&gt; MEMBER</dt>
+<dd>
+
+</dd>
+<dt id="Dimension-SUB"><code>Dimension</code> =&gt; SUB</dt>
+<dd>
+
+</dd>
+<dt id="Dimension-SUB-ARGS"><code>Dimension</code> =&gt; [ SUB, ARGS ]</dt>
+<dd>
+
+<p>The <code>Dimension</code> tag allows you to alter the size of an array dynamically.</p>
+
+<p>You can tag fixed size arrays as being flexible using <code>&#39;*&#39;</code>. This is useful if you cannot use flexible array members in your source code.</p>
+
+<pre><code>  $c-&gt;tag(&#39;type.array&#39;, Dimension =&gt; &#39;*&#39;);</code></pre>
+
+<p>You can also tag an array to have a fixed size different from the one it was originally declared with.</p>
+
+<pre><code>  $c-&gt;tag(&#39;type.array&#39;, Dimension =&gt; 42);</code></pre>
+
+<p>If the array is a member of a compound, you can also tag it with to have a size corresponding to the value of another member in that compound.</p>
+
+<pre><code>  $c-&gt;tag(&#39;type.array&#39;, Dimension =&gt; &#39;count&#39;);</code></pre>
+
+<p>Finally, you can specify a subroutine that is called when the size of the array needs to be determined.</p>
+
+<pre><code>  $c-&gt;tag(&#39;type.array&#39;, Dimension =&gt; \&amp;get_count);</code></pre>
+
+<p>By default, and if the array is a compound member, that subroutine will be passed a reference to the hash storing the data for the compound.</p>
+
+<p>You can also instruct Convert::Binary::C to pass additional arguments to the subroutine by passing an array reference instead of the subroutine reference. This array contains the subroutine reference as well as a list of arguments. It is possible to define certain special arguments using the <a href="#arg"><code>arg</code></a> method.</p>
+
+<pre><code>  $c-&gt;tag(&#39;type.array&#39;, Dimension =&gt; [\&amp;get_count, $c-&gt;arg(&#39;SELF&#39;), 42]);</code></pre>
+
+<p>See <a href="#The-Dimension-Tag">&quot;The Dimension Tag&quot;</a> for various examples.</p>
+
+</dd>
+<dt id="Hooks-HOOK-SUB-HOOK-SUB-ARGS"><code>Hooks</code> =&gt; { HOOK =&gt; SUB, HOOK =&gt; [ SUB, ARGS ], ... }, ...</dt>
+<dd>
+
+<p>The <code>Hooks</code> tag allows you to register subroutines as hooks.</p>
+
+<p>Hooks are called whenever a certain <code>TYPE</code> is packed or unpacked. Hooks are currently considered an <b>experimental</b> feature.</p>
+
+<p><code>HOOK</code> can be one of the following:</p>
+
+<pre><code>  pack
+  unpack
+  pack_ptr
+  unpack_ptr</code></pre>
+
+<p><code>pack</code> and <code>unpack</code> hooks are called when processing their <code>TYPE</code>, while <code>pack_ptr</code> and <code>unpack_ptr</code> hooks are called when processing pointers to their <code>TYPE</code>.</p>
+
+<p><code>SUB</code> is a reference to a subroutine that usually takes one input argument, processes it and returns one output argument.</p>
+
+<p>Alternatively, you can pass a custom list of arguments to the hook by using an array reference instead of <code>SUB</code> that holds the subroutine reference in the first element and the arguments to be passed to the subroutine as the other elements. This way, you can even pass special arguments to the hook using the <a href="#arg"><code>arg</code></a> method.</p>
+
+<p>Here are a few examples for registering hooks:</p>
+
+<pre><code>  $c-&gt;tag(&#39;ObjectType&#39;, Hooks =&gt; {
+            pack   =&gt; \&amp;obj_pack,
+            unpack =&gt; \&amp;obj_unpack
+          });
+  
+  $c-&gt;tag(&#39;ProtocolId&#39;, Hooks =&gt; {
+            unpack =&gt; sub { $protos[$_[0]] }
+          });
+  
+  $c-&gt;tag(&#39;ProtocolId&#39;, Hooks =&gt; {
+            unpack_ptr =&gt; [sub {
+                             sprintf &quot;$_[0]:{0x%X}&quot;, $_[1]
+                           },
+                           $c-&gt;arg(&#39;TYPE&#39;, &#39;DATA&#39;)
+                          ],
+          });</code></pre>
+
+<p>Note that the above example registers both an <code>unpack</code> hook and an <code>unpack_ptr</code> hook for <code>ProtocolId</code> with two separate calls to <a href="#tag"><code>tag</code></a>. As long as you don&#39;t explicitly overwrite a previously registered hook, it won&#39;t be modified or removed by registering other hooks for the same <code>TYPE</code>.</p>
+
+<p>To remove all registered hooks for a type, simply remove the <code>Hooks</code> tag:</p>
+
+<pre><code>  $c-&gt;untag(&#39;ProtocolId&#39;, &#39;Hooks&#39;);</code></pre>
+
+<p>To remove only a single hook, pass <code>undef</code> as <code>SUB</code> instead of a subroutine reference:</p>
+
+<pre><code>  $c-&gt;tag(&#39;ObjectType&#39;, Hooks =&gt; { pack =&gt; undef });</code></pre>
+
+<p>If all hooks are removed, the whole <code>Hooks</code> tag is removed.</p>
+
+<p>See <a href="#The-Hooks-Tag">&quot;The Hooks Tag&quot;</a> for examples on how to use hooks.</p>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<h2 id="untag">untag</h2>
+
+<dl>
+
+<dt id="untag-TYPE"><code>untag</code> TYPE</dt>
+<dd>
+
+</dd>
+<dt id="untag-TYPE-TAG1-TAG2"><code>untag</code> TYPE, TAG1, TAG2, ...</dt>
+<dd>
+
+<p>Use the <a href="#untag"><code>untag</code></a> method to remove one, more, or all tags from a type. If you don&#39;t pass any tag names, all tags attached to the type will be removed. Otherwise only the listed tags will be removed.</p>
+
+<p>See <a href="#USING-TAGS">&quot;USING TAGS&quot;</a> for an example.</p>
+
+</dd>
+</dl>
+
+<h2 id="arg">arg</h2>
+
+<dl>
+
+<dt id="arg-ARG"><code>arg</code> &#39;ARG&#39;, ...</dt>
+<dd>
+
+<p>Creates placeholders for special arguments to be passed to hooks or other subroutines. These arguments are currently:</p>
+
+<dl>
+
+<dt id="SELF"><code>SELF</code></dt>
+<dd>
+
+<p>A reference to the calling Convert::Binary::C object. This may be useful if you need to work with the object inside the subroutine.</p>
+
+</dd>
+<dt id="TYPE"><code>TYPE</code></dt>
+<dd>
+
+<p>The name of the type that is currently being processed by the hook.</p>
+
+</dd>
+<dt id="DATA"><code>DATA</code></dt>
+<dd>
+
+<p>The data argument that is passed to the subroutine.</p>
+
+</dd>
+<dt id="HOOK"><code>HOOK</code></dt>
+<dd>
+
+<p>The type of the hook as which the subroutine has been called, for example <code>pack</code> or <code>unpack_ptr</code>.</p>
+
+</dd>
+</dl>
+
+<p><a href="#arg"><code>arg</code></a> will return a placeholder for each argument it is being passed. Note that not all arguments may be supported depending on the context of the subroutine.</p>
+
+</dd>
+</dl>
+
+<h2 id="dependencies">dependencies</h2>
+
+<dl>
+
+<dt id="dependencies1"><code>dependencies</code></dt>
+<dd>
+
+<p>After some code has been parsed using either the <a href="#parse"><code>parse</code></a> or <a href="#parse_file"><code>parse_file</code></a> methods, the <a href="#dependencies"><code>dependencies</code></a> method can be used to retrieve information about all files that the object depends on, i.e. all files that have been parsed.</p>
+
+<p>In scalar context, the method returns a hash reference. Each key is the name of a file. The values are again hash references, each of which holds the size, modification time (mtime), and change time (ctime) of the file at the moment it was parsed.</p>
+
+<pre><code>  use Convert::Binary::C;
+  use Data::Dumper;
+  
+  #----------------------------------------------------------
+  # Create object, set include path, parse &#39;string.h&#39; header
+  #----------------------------------------------------------
+  my $c = Convert::Binary::C-&gt;new
+          -&gt;Include(&#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include&#39;,
+                    &#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include-fixed&#39;,
+                    &#39;/usr/include&#39;)
+          -&gt;parse_file(&#39;string.h&#39;);
+  
+  #----------------------------------------------------------
+  # Get dependencies of the object, extract dependency files
+  #----------------------------------------------------------
+  my $depend = $c-&gt;dependencies;
+  my @files  = keys %$depend;
+  
+  #-----------------------------
+  # Dump dependencies and files
+  #-----------------------------
+  print Data::Dumper-&gt;Dump([$depend, \@files],
+                        [qw( depend   *files )]);</code></pre>
+
+<p>The above code would print something like this:</p>
+
+<pre><code>  $depend = {
+    &#39;/usr/include/features.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300268052,
+      &#39;mtime&#39; =&gt; 1300267911,
+      &#39;size&#39; =&gt; 12511
+    },
+    &#39;/usr/include/gnu/stubs-32.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300268051,
+      &#39;mtime&#39; =&gt; 1300268010,
+      &#39;size&#39; =&gt; 624
+    },
+    &#39;/usr/include/sys/cdefs.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300268051,
+      &#39;mtime&#39; =&gt; 1300267957,
+      &#39;size&#39; =&gt; 13195
+    },
+    &#39;/usr/include/gnu/stubs.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300268051,
+      &#39;mtime&#39; =&gt; 1300267911,
+      &#39;size&#39; =&gt; 315
+    },
+    &#39;/usr/include/string.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300268052,
+      &#39;mtime&#39; =&gt; 1300267944,
+      &#39;size&#39; =&gt; 22572
+    },
+    &#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include/stddef.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300365679,
+      &#39;mtime&#39; =&gt; 1300363914,
+      &#39;size&#39; =&gt; 12542
+    },
+    &#39;/usr/include/bits/wordsize.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300268051,
+      &#39;mtime&#39; =&gt; 1300267937,
+      &#39;size&#39; =&gt; 873
+    },
+    &#39;/usr/include/xlocale.h&#39; =&gt; {
+      &#39;ctime&#39; =&gt; 1300268051,
+      &#39;mtime&#39; =&gt; 1300267915,
+      &#39;size&#39; =&gt; 1764
+    }
+  };
+  @files = (
+    &#39;/usr/include/features.h&#39;,
+    &#39;/usr/include/gnu/stubs-32.h&#39;,
+    &#39;/usr/include/sys/cdefs.h&#39;,
+    &#39;/usr/include/gnu/stubs.h&#39;,
+    &#39;/usr/include/string.h&#39;,
+    &#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include/stddef.h&#39;,
+    &#39;/usr/include/bits/wordsize.h&#39;,
+    &#39;/usr/include/xlocale.h&#39;
+  );</code></pre>
+
+<p>In list context, the method returns the names of all files that have been parsed, i.e. the following lines are equivalent:</p>
+
+<pre><code>  @files = keys %{$c-&gt;dependencies};
+  @files = $c-&gt;dependencies;</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="sourcify">sourcify</h2>
+
+<dl>
+
+<dt id="sourcify1"><code>sourcify</code></dt>
+<dd>
+
+</dd>
+<dt id="sourcify-CONFIG"><code>sourcify</code> CONFIG</dt>
+<dd>
+
+<p>Returns a string that holds the C source code necessary to represent all parsed C data structures.</p>
+
+<pre><code>  use Convert::Binary::C;
+  
+  $c = new Convert::Binary::C;
+  $c-&gt;parse(&lt;&lt;&#39;END&#39;);
+  
+  #define ADD(a, b) ((a) + (b))
+  #define NUMBER 42
+  
+  typedef struct _mytype mytype;
+  
+  struct _mytype {
+    union {
+      int         iCount;
+      enum count *pCount;
+    } counter;
+  #pragma pack( push, 1 )
+    struct {
+      char string[NUMBER];
+      int  array[NUMBER/sizeof(int)];
+    } storage;
+  #pragma pack( pop )
+    mytype *next;
+  };
+  
+  enum count { ZERO, ONE, TWO, THREE };
+  
+  END
+  
+  print $c-&gt;sourcify;</code></pre>
+
+<p>The above code would print something like this:</p>
+
+<pre><code>  /* typedef predeclarations */
+  
+  typedef struct _mytype mytype;
+  
+  /* defined enums */
+  
+  enum count
+  {
+        ZERO,
+        ONE,
+        TWO,
+        THREE
+  };
+  
+  
+  /* defined structs and unions */
+  
+  struct _mytype
+  {
+        union
+        {
+                int iCount;
+                enum count *pCount;
+        } counter;
+  #pragma pack(push, 1)
+        struct
+        {
+                char string[42];
+                int array[10];
+        } storage;
+  #pragma pack(pop)
+        mytype *next;
+  };</code></pre>
+
+<p>The purpose of the <a href="#sourcify"><code>sourcify</code></a> method is to enable some kind of platform-independent caching. The C code generated by <a href="#sourcify"><code>sourcify</code></a> can be parsed by any standard C compiler, as well as of course by the Convert::Binary::C parser. However, the code may be significantly shorter than the code that has originally been parsed.</p>
+
+<p>When parsing a typical header file, it&#39;s easily possible that you need to open dozens of other files that are included from that file, and end up parsing several hundred kilobytes of C code. Since most of it is usually preprocessor directives, function prototypes and comments, the <a href="#sourcify"><code>sourcify</code></a> function strips this down to a few kilobytes. Saving the <a href="#sourcify"><code>sourcify</code></a> string and parsing it next time instead of the original code may be a lot faster.</p>
+
+<p>The <a href="#sourcify"><code>sourcify</code></a> method takes a hash reference as an optional argument. It can be used to tweak the method&#39;s output. The following options can be configured.</p>
+
+<dl>
+
+<dt id="Context-0-1"><code>Context</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>Turns preprocessor context information on or off. If this is turned on, <a href="#sourcify"><code>sourcify</code></a> will insert <code>#line</code> preprocessor directives in its output. So in the above example</p>
+
+<pre><code>  print $c-&gt;sourcify({ Context =&gt; 1 });</code></pre>
+
+<p>would print:</p>
+
+<pre><code>  /* typedef predeclarations */
+  
+  typedef struct _mytype mytype;
+  
+  /* defined enums */
+  
+  
+  #line 21 &quot;[buffer]&quot;
+  enum count
+  {
+        ZERO,
+        ONE,
+        TWO,
+        THREE
+  };
+  
+  
+  /* defined structs and unions */
+  
+  
+  #line 7 &quot;[buffer]&quot;
+  struct _mytype
+  {
+  #line 8 &quot;[buffer]&quot;
+        union
+        {
+                int iCount;
+                enum count *pCount;
+        } counter;
+  #pragma pack(push, 1)
+  #line 13 &quot;[buffer]&quot;
+        struct
+        {
+                char string[42];
+                int array[10];
+        } storage;
+  #pragma pack(pop)
+        mytype *next;
+  };</code></pre>
+
+<p>Note that <code>&quot;[buffer]&quot;</code> refers to the here-doc buffer when using <a href="#parse"><code>parse</code></a>.</p>
+
+</dd>
+<dt id="Defines-0-1"><code>Defines</code> =&gt; 0 | 1</dt>
+<dd>
+
+<p>Turn this on if you want all the defined macros to be part of the source code output. Given the example code above</p>
+
+<pre><code>  print $c-&gt;sourcify({ Defines =&gt; 1 });</code></pre>
+
+<p>would print:</p>
+
+<pre><code>  /* typedef predeclarations */
+  
+  typedef struct _mytype mytype;
+  
+  /* defined enums */
+  
+  enum count
+  {
+        ZERO,
+        ONE,
+        TWO,
+        THREE
+  };
+  
+  
+  /* defined structs and unions */
+  
+  struct _mytype
+  {
+        union
+        {
+                int iCount;
+                enum count *pCount;
+        } counter;
+  #pragma pack(push, 1)
+        struct
+        {
+                char string[42];
+                int array[10];
+        } storage;
+  #pragma pack(pop)
+        mytype *next;
+  };
+  
+  /* preprocessor defines */
+  
+  #define ADD(a, b) ((a) + (b))
+  #define NUMBER 42</code></pre>
+
+<p>The macro definitions always appear at the end of the source code. The order of the macro definitions is undefined.</p>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<p>The following methods can be used to retrieve information about the definitions that have been parsed. The examples given in the description for <a href="#enum"><code>enum</code></a>, <a href="#compound"><code>compound</code></a> and <a href="#typedef"><code>typedef</code></a> all assume this piece of C code has been parsed:</p>
+
+<pre><code>  #define ABC_SIZE 2
+  #define MULTIPLY(x, y) ((x)*(y))
+  
+  #ifdef ABC_SIZE
+  # define DEFINED
+  #else
+  # define NOT_DEFINED
+  #endif
+  
+  typedef unsigned long U32;
+  typedef void *any;
+  
+  enum __socket_type
+  {
+    SOCK_STREAM    = 1,
+    SOCK_DGRAM     = 2,
+    SOCK_RAW       = 3,
+    SOCK_RDM       = 4,
+    SOCK_SEQPACKET = 5,
+    SOCK_PACKET    = 10
+  };
+  
+  struct STRUCT_SV {
+    void *sv_any;
+    U32   sv_refcnt;
+    U32   sv_flags;
+  };
+  
+  typedef union {
+    int abc[ABC_SIZE];
+    struct xxx {
+      int a;
+      int b;
+    }   ab[3][4];
+    any ptr;
+  } test;</code></pre>
+
+<h2 id="enum_names">enum_names</h2>
+
+<dl>
+
+<dt id="enum_names1"><code>enum_names</code></dt>
+<dd>
+
+<p>Returns a list of identifiers of all defined enumeration objects. Enumeration objects don&#39;t necessarily have an identifier, so something like</p>
+
+<pre><code>  enum { A, B, C };</code></pre>
+
+<p>will obviously not appear in the list returned by the <a href="#enum_names"><code>enum_names</code></a> method. Also, enumerations that are not defined within the source code - like in</p>
+
+<pre><code>  struct foo {
+    enum weekday *pWeekday;
+    unsigned long year;
+  };</code></pre>
+
+<p>where only a pointer to the <code>weekday</code> enumeration object is used - will not be returned, even though they have an identifier. So for the above two enumerations, <a href="#enum_names"><code>enum_names</code></a> will return an empty list:</p>
+
+<pre><code>  @names = $c-&gt;enum_names;</code></pre>
+
+<p>The only way to retrieve a list of all enumeration identifiers is to use the <a href="#enum"><code>enum</code></a> method without additional arguments. You can get a list of all enumeration objects that have an identifier by using</p>
+
+<pre><code>  @enums = map { $_-&gt;{identifier} || () } $c-&gt;enum;</code></pre>
+
+<p>but these may not have a definition. Thus, the two arrays would look like this:</p>
+
+<pre><code>  @names = ();
+  @enums = (&#39;weekday&#39;);</code></pre>
+
+<p>The <a href="#def"><code>def</code></a> method returns a true value for all identifiers returned by <a href="#enum_names"><code>enum_names</code></a>.</p>
+
+</dd>
+</dl>
+
+<h2 id="enum">enum</h2>
+
+<dl>
+
+<dt id="enum1">enum</dt>
+<dd>
+
+</dd>
+<dt id="enum-LIST"><code>enum</code> LIST</dt>
+<dd>
+
+<p>Returns a list of references to hashes containing detailed information about all enumerations that have been parsed.</p>
+
+<p>If a list of enumeration identifiers is passed to the method, the returned list will only contain hash references for those enumerations. The enumeration identifiers may optionally be prefixed by <code>enum</code>.</p>
+
+<p>If an enumeration identifier cannot be found, the returned list will contain an undefined value at that position.</p>
+
+<p>In scalar context, the number of enumerations will be returned as long as the number of arguments to the method call is not 1. In the latter case, a hash reference holding information for the enumeration will be returned.</p>
+
+<p>The list returned by the <a href="#enum"><code>enum</code></a> method looks similar to this:</p>
+
+<pre><code>  @enum = (
+    {
+      &#39;enumerators&#39; =&gt; {
+        &#39;SOCK_STREAM&#39; =&gt; 1,
+        &#39;SOCK_RAW&#39; =&gt; 3,
+        &#39;SOCK_SEQPACKET&#39; =&gt; 5,
+        &#39;SOCK_RDM&#39; =&gt; 4,
+        &#39;SOCK_PACKET&#39; =&gt; 10,
+        &#39;SOCK_DGRAM&#39; =&gt; 2
+      },
+      &#39;identifier&#39; =&gt; &#39;__socket_type&#39;,
+      &#39;context&#39; =&gt; &#39;definitions.c(13)&#39;,
+      &#39;size&#39; =&gt; 4,
+      &#39;sign&#39; =&gt; 0
+    }
+  );</code></pre>
+
+<dl>
+
+<dt id="identifier"><code>identifier</code></dt>
+<dd>
+
+<p>holds the enumeration identifier. This key is not present if the enumeration has no identifier.</p>
+
+</dd>
+<dt id="context"><code>context</code></dt>
+<dd>
+
+<p>is the context in which the enumeration is defined. This is the filename followed by the line number in parentheses.</p>
+
+</dd>
+<dt id="enumerators"><code>enumerators</code></dt>
+<dd>
+
+<p>is a reference to a hash table that holds all enumerators of the enumeration.</p>
+
+</dd>
+<dt id="sign"><code>sign</code></dt>
+<dd>
+
+<p>is a boolean indicating if the enumeration is signed (i.e. has negative values).</p>
+
+</dd>
+</dl>
+
+<p>One useful application may be to create a hash table that holds all enumerators of all defined enumerations:</p>
+
+<pre><code>  %enum = map %{ $_-&gt;{enumerators} || {} }, $c-&gt;enum;</code></pre>
+
+<p>The <code>%enum</code> hash table would then be:</p>
+
+<pre><code>  %enum = (
+    &#39;SOCK_STREAM&#39; =&gt; 1,
+    &#39;SOCK_RAW&#39; =&gt; 3,
+    &#39;SOCK_SEQPACKET&#39; =&gt; 5,
+    &#39;SOCK_RDM&#39; =&gt; 4,
+    &#39;SOCK_DGRAM&#39; =&gt; 2,
+    &#39;SOCK_PACKET&#39; =&gt; 10
+  );</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="compound_names">compound_names</h2>
+
+<dl>
+
+<dt id="compound_names1"><code>compound_names</code></dt>
+<dd>
+
+<p>Returns a list of identifiers of all structs and unions (compound data structures) that are defined in the parsed source code. Like enumerations, compounds don&#39;t need to have an identifier, nor do they need to be defined.</p>
+
+<p>Again, the only way to retrieve information about all struct and union objects is to use the <a href="#compound"><code>compound</code></a> method and don&#39;t pass it any arguments. If you should need a list of all struct and union identifiers, you can use:</p>
+
+<pre><code>  @compound = map { $_-&gt;{identifier} || () } $c-&gt;compound;</code></pre>
+
+<p>The <a href="#def"><code>def</code></a> method returns a true value for all identifiers returned by <a href="#compound_names"><code>compound_names</code></a>.</p>
+
+<p>If you need the names of only the structs or only the unions, use the <a href="#struct_names"><code>struct_names</code></a> and <a href="#union_names"><code>union_names</code></a> methods respectively.</p>
+
+</dd>
+</dl>
+
+<h2 id="compound">compound</h2>
+
+<dl>
+
+<dt id="compound1"><code>compound</code></dt>
+<dd>
+
+</dd>
+<dt id="compound-LIST"><code>compound</code> LIST</dt>
+<dd>
+
+<p>Returns a list of references to hashes containing detailed information about all compounds (structs and unions) that have been parsed.</p>
+
+<p>If a list of struct/union identifiers is passed to the method, the returned list will only contain hash references for those compounds. The identifiers may optionally be prefixed by <code>struct</code> or <code>union</code>, which limits the search to the specified kind of compound.</p>
+
+<p>If an identifier cannot be found, the returned list will contain an undefined value at that position.</p>
+
+<p>In scalar context, the number of compounds will be returned as long as the number of arguments to the method call is not 1. In the latter case, a hash reference holding information for the compound will be returned.</p>
+
+<p>The list returned by the <a href="#compound"><code>compound</code></a> method looks similar to this:</p>
+
+<pre><code>  @compound = (
+    {
+      &#39;identifier&#39; =&gt; &#39;STRUCT_SV&#39;,
+      &#39;align&#39; =&gt; 1,
+      &#39;context&#39; =&gt; &#39;definitions.c(23)&#39;,
+      &#39;pack&#39; =&gt; 0,
+      &#39;type&#39; =&gt; &#39;struct&#39;,
+      &#39;declarations&#39; =&gt; [
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;*sv_any&#39;,
+              &#39;size&#39; =&gt; 4,
+              &#39;offset&#39; =&gt; 0
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;void&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;sv_refcnt&#39;,
+              &#39;size&#39; =&gt; 4,
+              &#39;offset&#39; =&gt; 4
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;U32&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;sv_flags&#39;,
+              &#39;size&#39; =&gt; 4,
+              &#39;offset&#39; =&gt; 8
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;U32&#39;
+        }
+      ],
+      &#39;size&#39; =&gt; 12
+    },
+    {
+      &#39;identifier&#39; =&gt; &#39;xxx&#39;,
+      &#39;align&#39; =&gt; 1,
+      &#39;context&#39; =&gt; &#39;definitions.c(31)&#39;,
+      &#39;pack&#39; =&gt; 0,
+      &#39;type&#39; =&gt; &#39;struct&#39;,
+      &#39;declarations&#39; =&gt; [
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;a&#39;,
+              &#39;size&#39; =&gt; 4,
+              &#39;offset&#39; =&gt; 0
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;int&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;b&#39;,
+              &#39;size&#39; =&gt; 4,
+              &#39;offset&#39; =&gt; 4
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;int&#39;
+        }
+      ],
+      &#39;size&#39; =&gt; 8
+    },
+    {
+      &#39;align&#39; =&gt; 1,
+      &#39;context&#39; =&gt; &#39;definitions.c(29)&#39;,
+      &#39;pack&#39; =&gt; 0,
+      &#39;type&#39; =&gt; &#39;union&#39;,
+      &#39;declarations&#39; =&gt; [
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;abc[2]&#39;,
+              &#39;size&#39; =&gt; 8,
+              &#39;offset&#39; =&gt; 0
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;int&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;ab[3][4]&#39;,
+              &#39;size&#39; =&gt; 96,
+              &#39;offset&#39; =&gt; 0
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;struct xxx&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;ptr&#39;,
+              &#39;size&#39; =&gt; 4,
+              &#39;offset&#39; =&gt; 0
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;any&#39;
+        }
+      ],
+      &#39;size&#39; =&gt; 96
+    }
+  );</code></pre>
+
+<dl>
+
+<dt id="identifier1"><code>identifier</code></dt>
+<dd>
+
+<p>holds the struct or union identifier. This key is not present if the compound has no identifier.</p>
+
+</dd>
+<dt id="context1"><code>context</code></dt>
+<dd>
+
+<p>is the context in which the struct or union is defined. This is the filename followed by the line number in parentheses.</p>
+
+</dd>
+<dt id="type"><code>type</code></dt>
+<dd>
+
+<p>is either &#39;struct&#39; or &#39;union&#39;.</p>
+
+</dd>
+<dt id="size"><code>size</code></dt>
+<dd>
+
+<p>is the size of the struct or union.</p>
+
+</dd>
+<dt id="align"><code>align</code></dt>
+<dd>
+
+<p>is the alignment of the struct or union.</p>
+
+</dd>
+<dt id="pack1"><code>pack</code></dt>
+<dd>
+
+<p>is the struct member alignment if the compound is packed, or zero otherwise.</p>
+
+</dd>
+<dt id="declarations"><code>declarations</code></dt>
+<dd>
+
+<p>is an array of hash references describing each struct declaration:</p>
+
+<dl>
+
+<dt id="type1"><code>type</code></dt>
+<dd>
+
+<p>is the type of the struct declaration. This may be a string or a reference to a hash describing the type.</p>
+
+</dd>
+<dt id="declarators"><code>declarators</code></dt>
+<dd>
+
+<p>is an array of hashes describing each declarator:</p>
+
+<dl>
+
+<dt id="declarator"><code>declarator</code></dt>
+<dd>
+
+<p>is a string representation of the declarator.</p>
+
+</dd>
+<dt id="offset"><code>offset</code></dt>
+<dd>
+
+<p>is the offset of the struct member represented by the current declarator relative to the beginning of the struct or union.</p>
+
+</dd>
+<dt id="size1"><code>size</code></dt>
+<dd>
+
+<p>is the size occupied by the struct member represented by the current declarator.</p>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<p>It may be useful to have separate lists for structs and unions. One way to retrieve such lists would be to use</p>
+
+<pre><code>  push @{$_-&gt;{type} eq &#39;union&#39; ? \@unions : \@structs}, $_
+      for $c-&gt;compound;</code></pre>
+
+<p>However, you should use the <a href="#struct"><code>struct</code></a> and <a href="#union"><code>union</code></a> methods, which is a lot simpler:</p>
+
+<pre><code>  @structs = $c-&gt;struct;
+  @unions  = $c-&gt;union;</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="struct_names">struct_names</h2>
+
+<dl>
+
+<dt id="struct_names1"><code>struct_names</code></dt>
+<dd>
+
+<p>Returns a list of all defined struct identifiers. This is equivalent to calling <a href="#compound_names"><code>compound_names</code></a>, just that it only returns the names of the struct identifiers and doesn&#39;t return the names of the union identifiers.</p>
+
+</dd>
+</dl>
+
+<h2 id="struct">struct</h2>
+
+<dl>
+
+<dt id="struct1"><code>struct</code></dt>
+<dd>
+
+</dd>
+<dt id="struct-LIST"><code>struct</code> LIST</dt>
+<dd>
+
+<p>Like the <a href="#compound"><code>compound</code></a> method, but only allows for structs.</p>
+
+</dd>
+</dl>
+
+<h2 id="union_names">union_names</h2>
+
+<dl>
+
+<dt id="union_names1"><code>union_names</code></dt>
+<dd>
+
+<p>Returns a list of all defined union identifiers. This is equivalent to calling <a href="#compound_names"><code>compound_names</code></a>, just that it only returns the names of the union identifiers and doesn&#39;t return the names of the struct identifiers.</p>
+
+</dd>
+</dl>
+
+<h2 id="union">union</h2>
+
+<dl>
+
+<dt id="union1"><code>union</code></dt>
+<dd>
+
+</dd>
+<dt id="union-LIST"><code>union</code> LIST</dt>
+<dd>
+
+<p>Like the <a href="#compound"><code>compound</code></a> method, but only allows for unions.</p>
+
+</dd>
+</dl>
+
+<h2 id="typedef_names">typedef_names</h2>
+
+<dl>
+
+<dt id="typedef_names1"><code>typedef_names</code></dt>
+<dd>
+
+<p>Returns a list of all defined typedef identifiers. Typedefs that do not specify a type that you could actually work with will not be returned.</p>
+
+<p>The <a href="#def"><code>def</code></a> method returns a true value for all identifiers returned by <a href="#typedef_names"><code>typedef_names</code></a>.</p>
+
+</dd>
+</dl>
+
+<h2 id="typedef">typedef</h2>
+
+<dl>
+
+<dt id="typedef1"><code>typedef</code></dt>
+<dd>
+
+</dd>
+<dt id="typedef-LIST"><code>typedef</code> LIST</dt>
+<dd>
+
+<p>Returns a list of references to hashes containing detailed information about all typedefs that have been parsed.</p>
+
+<p>If a list of typedef identifiers is passed to the method, the returned list will only contain hash references for those typedefs.</p>
+
+<p>If an identifier cannot be found, the returned list will contain an undefined value at that position.</p>
+
+<p>In scalar context, the number of typedefs will be returned as long as the number of arguments to the method call is not 1. In the latter case, a hash reference holding information for the typedef will be returned.</p>
+
+<p>The list returned by the <a href="#typedef"><code>typedef</code></a> method looks similar to this:</p>
+
+<pre><code>  @typedef = (
+    {
+      &#39;declarator&#39; =&gt; &#39;U32&#39;,
+      &#39;type&#39; =&gt; &#39;unsigned long&#39;
+    },
+    {
+      &#39;declarator&#39; =&gt; &#39;*any&#39;,
+      &#39;type&#39; =&gt; &#39;void&#39;
+    },
+    {
+      &#39;declarator&#39; =&gt; &#39;test&#39;,
+      &#39;type&#39; =&gt; {
+        &#39;align&#39; =&gt; 1,
+        &#39;context&#39; =&gt; &#39;definitions.c(29)&#39;,
+        &#39;pack&#39; =&gt; 0,
+        &#39;type&#39; =&gt; &#39;union&#39;,
+        &#39;declarations&#39; =&gt; [
+          {
+            &#39;declarators&#39; =&gt; [
+              {
+                &#39;declarator&#39; =&gt; &#39;abc[2]&#39;,
+                &#39;size&#39; =&gt; 8,
+                &#39;offset&#39; =&gt; 0
+              }
+            ],
+            &#39;type&#39; =&gt; &#39;int&#39;
+          },
+          {
+            &#39;declarators&#39; =&gt; [
+              {
+                &#39;declarator&#39; =&gt; &#39;ab[3][4]&#39;,
+                &#39;size&#39; =&gt; 96,
+                &#39;offset&#39; =&gt; 0
+              }
+            ],
+            &#39;type&#39; =&gt; &#39;struct xxx&#39;
+          },
+          {
+            &#39;declarators&#39; =&gt; [
+              {
+                &#39;declarator&#39; =&gt; &#39;ptr&#39;,
+                &#39;size&#39; =&gt; 4,
+                &#39;offset&#39; =&gt; 0
+              }
+            ],
+            &#39;type&#39; =&gt; &#39;any&#39;
+          }
+        ],
+        &#39;size&#39; =&gt; 96
+      }
+    }
+  );</code></pre>
+
+<dl>
+
+<dt id="declarator1"><code>declarator</code></dt>
+<dd>
+
+<p>is the type declarator.</p>
+
+</dd>
+<dt id="type2"><code>type</code></dt>
+<dd>
+
+<p>is the type specification. This may be a string or a reference to a hash describing the type. See <a href="#enum"><code>enum</code></a> and <a href="#compound"><code>compound</code></a> for a description on how to interpret this hash.</p>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<h2 id="macro_names">macro_names</h2>
+
+<dl>
+
+<dt id="macro_names1"><code>macro_names</code></dt>
+<dd>
+
+<p>Returns a list of all defined macro names.</p>
+
+<p>The list returned by the <a href="#macro_names"><code>macro_names</code></a> method looks similar to this:</p>
+
+<pre><code>  @macro_names = (
+    &#39;__STDC_VERSION__&#39;,
+    &#39;__STDC_HOSTED__&#39;,
+    &#39;DEFINED&#39;,
+    &#39;MULTIPLY&#39;,
+    &#39;ABC_SIZE&#39;
+  );</code></pre>
+
+<p>This works only as long as the preprocessor is not reset. See <a href="#Preprocessor-configuration">&quot;Preprocessor configuration&quot;</a> for details.</p>
+
+</dd>
+</dl>
+
+<h2 id="macro">macro</h2>
+
+<dl>
+
+<dt id="macro1"><code>macro</code></dt>
+<dd>
+
+</dd>
+<dt id="macro-LIST"><code>macro</code> LIST</dt>
+<dd>
+
+<p>Returns the definitions for all defined macros.</p>
+
+<p>If a list of macro names is passed to the method, the returned list will only contain the definitions for those macros. For undefined macros, <code>undef</code> will be returned.</p>
+
+<p>The list returned by the <a href="#macro"><code>macro</code></a> method looks similar to this:</p>
+
+<pre><code>  @macro = (
+    &#39;__STDC_VERSION__ 199901L&#39;,
+    &#39;__STDC_HOSTED__ 1&#39;,
+    &#39;DEFINED&#39;,
+    &#39;MULTIPLY(x, y) ((x)*(y))&#39;,
+    &#39;ABC_SIZE 2&#39;
+  );</code></pre>
+
+<p>This works only as long as the preprocessor is not reset. See <a href="#Preprocessor-configuration">&quot;Preprocessor configuration&quot;</a> for details.</p>
+
+</dd>
+</dl>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>You can alternatively call the following functions as methods on Convert::Binary::C objects.</p>
+
+<h2 id="feature">feature</h2>
+
+<dl>
+
+<dt id="feature-STRING"><code>feature</code> STRING</dt>
+<dd>
+
+<p>Checks if Convert::Binary::C was built with certain features. For example,</p>
+
+<pre><code>  print &quot;debugging version&quot;
+      if Convert::Binary::C::feature(&#39;debug&#39;);</code></pre>
+
+<p>will check if Convert::Binary::C was built with debugging support enabled. The <code>feature</code> function returns <code>1</code> if the feature is enabled, <code>0</code> if the feature is disabled, and <code>undef</code> if the feature is unknown. Currently the only features that can be checked are <code>ieeefp</code> and <code>debug</code>.</p>
+
+<p>You can enable or disable certain features at compile time of the module by using the</p>
+
+<pre><code>  perl Makefile.PL enable-feature disable-feature</code></pre>
+
+<p>syntax.</p>
+
+</dd>
+</dl>
+
+<h2 id="native">native</h2>
+
+<dl>
+
+<dt id="native1"><code>native</code></dt>
+<dd>
+
+</dd>
+<dt id="native-STRING"><code>native</code> STRING</dt>
+<dd>
+
+<p>Returns the value of a property of the native system that Convert::Binary::C was built on. For example,</p>
+
+<pre><code>  $size = Convert::Binary::C::native(&#39;IntSize&#39;);</code></pre>
+
+<p>will fetch the size of an <code>int</code> on the native system. The following properties can be queried:</p>
+
+<pre><code>  Alignment
+  ByteOrder
+  CharSize
+  CompoundAlignment
+  DoubleSize
+  EnumSize
+  FloatSize
+  HostedC
+  IntSize
+  LongDoubleSize
+  LongLongSize
+  LongSize
+  PointerSize
+  ShortSize
+  StdCVersion
+  UnsignedBitfields
+  UnsignedChars</code></pre>
+
+<p>You can also call <a href="#native"><code>native</code></a> without arguments, in which case it will return a reference to a hash with all properties, like:</p>
+
+<pre><code>  $native = {
+    &#39;StdCVersion&#39; =&gt; undef,
+    &#39;ByteOrder&#39; =&gt; &#39;LittleEndian&#39;,
+    &#39;LongSize&#39; =&gt; 4,
+    &#39;IntSize&#39; =&gt; 4,
+    &#39;HostedC&#39; =&gt; 1,
+    &#39;ShortSize&#39; =&gt; 2,
+    &#39;UnsignedChars&#39; =&gt; 0,
+    &#39;DoubleSize&#39; =&gt; 8,
+    &#39;CharSize&#39; =&gt; 1,
+    &#39;EnumSize&#39; =&gt; 4,
+    &#39;PointerSize&#39; =&gt; 4,
+    &#39;FloatSize&#39; =&gt; 4,
+    &#39;LongLongSize&#39; =&gt; 8,
+    &#39;Alignment&#39; =&gt; 4,
+    &#39;LongDoubleSize&#39; =&gt; 12,
+    &#39;UnsignedBitfields&#39; =&gt; 0,
+    &#39;CompoundAlignment&#39; =&gt; 1
+  };</code></pre>
+
+<p>The contents of that hash are suitable for passing them to the <a href="#configure"><code>configure</code></a> method.</p>
+
+</dd>
+</dl>
+
+<h1 id="DEBUGGING">DEBUGGING</h1>
+
+<p>Like perl itself, Convert::Binary::C can be compiled with debugging support that can then be selectively enabled at runtime. You can specify whether you like to build Convert::Binary::C with debugging support or not by explicitly giving an argument to <i>Makefile.PL</i>. Use</p>
+
+<pre><code>  perl Makefile.PL enable-debug</code></pre>
+
+<p>to enable debugging, or</p>
+
+<pre><code>  perl Makefile.PL disable-debug</code></pre>
+
+<p>to disable debugging. The default will depend on how your perl binary was built. If it was built with <code>-DDEBUGGING</code>, Convert::Binary::C will be built with debugging support, too.</p>
+
+<p>Once you have built Convert::Binary::C with debugging support, you can use the following syntax to enable debug output. Instead of</p>
+
+<pre><code>  use Convert::Binary::C;</code></pre>
+
+<p>you simply say</p>
+
+<pre><code>  use Convert::Binary::C debug =&gt; &#39;all&#39;;</code></pre>
+
+<p>which will enable all debug output. However, I don&#39;t recommend to enable all debug output, because that can be a fairly large amount.</p>
+
+<h2 id="Debugging-options">Debugging options</h2>
+
+<p>Instead of saying <code>all</code>, you can pass a string that consists of one or more of the following characters:</p>
+
+<pre><code>  m   enable memory allocation tracing
+  M   enable memory allocation &amp; assertion tracing
+  
+  h   enable hash table debugging
+  H   enable hash table dumps
+  
+  d   enable debug output from the XS module
+  c   enable debug output from the ctlib
+  t   enable debug output about type objects
+  
+  l   enable debug output from the C lexer
+  p   enable debug output from the C parser
+  P   enable debug output from the C preprocessor
+  r   enable debug output from the #pragma parser
+  
+  y   enable debug output from yacc (bison)</code></pre>
+
+<p>So the following might give you a brief overview of what&#39;s going on inside Convert::Binary::C:</p>
+
+<pre><code>  use Convert::Binary::C debug =&gt; &#39;dct&#39;;</code></pre>
+
+<p>When you want to debug memory allocation using</p>
+
+<pre><code>  use Convert::Binary::C debug =&gt; &#39;m&#39;;</code></pre>
+
+<p>you can use the Perl script <i>check_alloc.pl</i> that resides in the <i>ctlib/util/tool</i> directory to extract statistics about memory usage and information about memory leaks from the resulting debug output.</p>
+
+<h2 id="Redirecting-debug-output">Redirecting debug output</h2>
+
+<p>By default, all debug output is written to <code>stderr</code>. You can, however, redirect the debug output to a file with the <code>debugfile</code> option:</p>
+
+<pre><code>  use Convert::Binary::C debug     =&gt; &#39;dcthHm&#39;,
+                         debugfile =&gt; &#39;./debug.out&#39;;</code></pre>
+
+<p>If the file cannot be opened, you&#39;ll receive a warning and the output will go the <code>stderr</code> way again.</p>
+
+<p>Alternatively, you can use the environment variables <a href="#CBC_DEBUG_OPT"><code>CBC_DEBUG_OPT</code></a> and <a href="#CBC_DEBUG_FILE"><code>CBC_DEBUG_FILE</code></a> to turn on debug output.</p>
+
+<p>If Convert::Binary::C is built without debugging support, passing the <code>debug</code> or <code>debugfile</code> options will cause a warning to be issued. The corresponding environment variables will simply be ignored.</p>
+
+<h1 id="ENVIRONMENT">ENVIRONMENT</h1>
+
+<h2 id="CBC_ORDER_MEMBERS"><code>CBC_ORDER_MEMBERS</code></h2>
+
+<p>Setting this variable to a non-zero value will globally turn on hash key ordering for compound members. Have a look at the <code>OrderMembers</code> option for details.</p>
+
+<p>Setting the variable to the name of a perl module will additionally use this module instead of the predefined modules for member ordering to tie the hashes to.</p>
+
+<h2 id="CBC_DEBUG_OPT"><code>CBC_DEBUG_OPT</code></h2>
+
+<p>If Convert::Binary::C is built with debugging support, you can use this variable to specify the <a href="#Debugging-options">debugging options</a>.</p>
+
+<h2 id="CBC_DEBUG_FILE"><code>CBC_DEBUG_FILE</code></h2>
+
+<p>If Convert::Binary::C is built with debugging support, you can use this variable to <a href="#Redirecting-debug-output">redirect</a> the debug output to a file.</p>
+
+<h2 id="CBC_DISABLE_PARSER"><code>CBC_DISABLE_PARSER</code></h2>
+
+<p>This variable is intended purely for development. Setting it to a non-zero value disables the Convert::Binary::C parser, which means that no information is collected from the file or code that is parsed. However, the preprocessor will run, which is useful for benchmarking the preprocessor.</p>
+
+<h1 id="FLEXIBLE-ARRAY-MEMBERS-AND-INCOMPLETE-TYPES">FLEXIBLE ARRAY MEMBERS AND INCOMPLETE TYPES</h1>
+
+<p>Flexible array members are a feature introduced with ISO-C99. It&#39;s a common problem that you have a variable length data field at the end of a structure, for example an array of characters at the end of a message struct. ISO-C99 allows you to write this as:</p>
+
+<pre><code>  struct message {
+    long header;
+    char data[];
+  };</code></pre>
+
+<p>The advantage is that you clearly indicate that the size of the appended data is variable, and that the <code>data</code> member doesn&#39;t contribute to the size of the <code>message</code> structure.</p>
+
+<p>When packing or unpacking data, Convert::Binary::C deals with flexible array members as if their length was adjustable. For example, <a href="#unpack"><code>unpack</code></a> will adapt the length of the array depending on the input string:</p>
+
+<pre><code>  $msg1 = $c-&gt;unpack(&#39;message&#39;, &#39;abcdefg&#39;);
+  $msg2 = $c-&gt;unpack(&#39;message&#39;, &#39;abcdefghijkl&#39;);</code></pre>
+
+<p>The following data is unpacked:</p>
+
+<pre><code>  $msg1 = {
+    &#39;data&#39; =&gt; [
+      101,
+      102,
+      103
+    ],
+    &#39;header&#39; =&gt; 1633837924
+  };
+  $msg2 = {
+    &#39;data&#39; =&gt; [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108
+    ],
+    &#39;header&#39; =&gt; 1633837924
+  };</code></pre>
+
+<p>Similarly, pack will adjust the length of the output string according to the data you feed in:</p>
+
+<pre><code>  use Data::Hexdumper;
+  
+  $msg = {
+    header =&gt; 4711,
+    data   =&gt; [0x10, 0x20, 0x30, 0x40, 0x77..0x88],
+  };
+  
+  $data = $c-&gt;pack(&#39;message&#39;, $msg);
+  
+  print hexdump(data =&gt; $data);</code></pre>
+
+<p>This would print:</p>
+
+<pre><code>    0x0000 : 00 00 12 67 10 20 30 40 77 78 79 7A 7B 7C 7D 7E : ...g..0@wxyz{|}~
+    0x0010 : 7F 80 81 82 83 84 85 86 87 88                   : ..........</code></pre>
+
+<p>Incomplete types such as</p>
+
+<pre><code>  typedef unsigned long array[];</code></pre>
+
+<p>are handled in exactly the same way. Thus, you can easily</p>
+
+<pre><code>  $array = $c-&gt;unpack(&#39;array&#39;, &#39;?&#39;x20);</code></pre>
+
+<p>which will unpack the following array:</p>
+
+<pre><code>  $array = [
+    1061109567,
+    1061109567,
+    1061109567,
+    1061109567,
+    1061109567
+  ];</code></pre>
+
+<p>You can also alter the length of an array using the <a href="#The-Dimension-Tag"><code>Dimension</code></a> tag.</p>
+
+<h1 id="FLOATING-POINT-VALUES">FLOATING POINT VALUES</h1>
+
+<p>When using Convert::Binary::C to handle floating point values, you have to be aware of some limitations.</p>
+
+<p>You&#39;re usually safe if all your platforms are using the IEEE floating point format. During the Convert::Binary::C build process, the <code>ieeefp</code> feature will automatically be enabled if the host is using IEEE floating point. You can check for this feature at runtime using the <a href="#feature"><code>feature</code></a> function:</p>
+
+<pre><code>  if (Convert::Binary::C::feature(&#39;ieeefp&#39;)) {
+    # do something
+  }</code></pre>
+
+<p>When IEEE floating point support is enabled, the module can also handle floating point values of a different byteorder.</p>
+
+<p>If your host platform is not using IEEE floating point, the <code>ieeefp</code> feature will be disabled. Convert::Binary::C then will be more restrictive, refusing to handle any non-native floating point values.</p>
+
+<p>However, Convert::Binary::C cannot detect the floating point format used by your target platform. It can only try to prevent problems in obvious cases. If you know your target platform has a completely different floating point format, don&#39;t use floating point conversion at all.</p>
+
+<p>Whenever Convert::Binary::C detects that it cannot properly do floating point value conversion, it will issue a warning and will not attempt to convert the floating point value.</p>
+
+<h1 id="BITFIELDS">BITFIELDS</h1>
+
+<p>Bitfield support in Convert::Binary::C is currently in an <b>experimental</b> state. You are encouraged to test it, but you should not blindly rely on its results.</p>
+
+<p>You are also encouraged to supply layouting algorithms for compilers whose bitfield implementation is not handled correctly at the moment. Even better that the plain algorithm is of course a patch that adds a new bitfield layouting engine.</p>
+
+<p>While bitfields may not be handled correctly by the conversion routines yet, they are always parsed correctly. This means that you can reliably use the declarator fields as returned by the <a href="#struct"><code>struct</code></a> or <a href="#typedef"><code>typedef</code></a> methods. Given the following source</p>
+
+<pre><code>  struct bitfield {
+    int seven:7;
+    int :1;
+    int four:4, :0;
+    int integer;
+  };</code></pre>
+
+<p>a call to <a href="#struct"><code>struct</code></a> will return</p>
+
+<pre><code>  @struct = (
+    {
+      &#39;identifier&#39; =&gt; &#39;bitfield&#39;,
+      &#39;align&#39; =&gt; 1,
+      &#39;context&#39; =&gt; &#39;bitfields.c(1)&#39;,
+      &#39;pack&#39; =&gt; 0,
+      &#39;type&#39; =&gt; &#39;struct&#39;,
+      &#39;declarations&#39; =&gt; [
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;seven:7&#39;
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;int&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;:1&#39;
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;int&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;four:4&#39;
+            },
+            {
+              &#39;declarator&#39; =&gt; &#39;:0&#39;
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;int&#39;
+        },
+        {
+          &#39;declarators&#39; =&gt; [
+            {
+              &#39;declarator&#39; =&gt; &#39;integer&#39;,
+              &#39;size&#39; =&gt; 4,
+              &#39;offset&#39; =&gt; 4
+            }
+          ],
+          &#39;type&#39; =&gt; &#39;int&#39;
+        }
+      ],
+      &#39;size&#39; =&gt; 8
+    }
+  );</code></pre>
+
+<p>No size/offset keys will currently be returned for bitfield entries.</p>
+
+<h1 id="MULTITHREADING">MULTITHREADING</h1>
+
+<p>Convert::Binary::C was designed to be thread-safe.</p>
+
+<h1 id="INHERITANCE">INHERITANCE</h1>
+
+<p>If you wish to derive a new class from Convert::Binary::C, this is relatively easy. Despite their XS implementation, Convert::Binary::C objects are actually blessed hash references.</p>
+
+<p>The XS data is stored in a read-only hash value for the key that is the empty string. So it is safe to use any non-empty hash key when deriving your own class. In addition, Convert::Binary::C does quite a lot of checks to detect corruption in the object hash.</p>
+
+<p>If you store private data in the hash, you should override the <code>clone</code> method and provide the necessary code to clone your private data. You&#39;ll have to call <code>SUPER::clone</code>, but this will only clone the Convert::Binary::C part of the object.</p>
+
+<p>For an example of a derived class, you can have a look at Convert::Binary::C::Cached.</p>
+
+<h1 id="PORTABILITY">PORTABILITY</h1>
+
+<p>Convert::Binary::C should build and run on most of the platforms that Perl runs on:</p>
+
+<ul>
+
+<li><p>Various Linux systems</p>
+
+</li>
+<li><p>Various BSD systems</p>
+
+</li>
+<li><p>HP-UX</p>
+
+</li>
+<li><p>Compaq/HP Tru64 Unix</p>
+
+</li>
+<li><p>Mac-OS X</p>
+
+</li>
+<li><p>Cygwin</p>
+
+</li>
+<li><p>Windows 98/NT/2000/XP</p>
+
+</li>
+</ul>
+
+<p>Also, many architectures are supported:</p>
+
+<ul>
+
+<li><p>Various Intel Pentium and Itanium systems</p>
+
+</li>
+<li><p>Various Alpha systems</p>
+
+</li>
+<li><p>HP PA-RISC</p>
+
+</li>
+<li><p>Power-PC</p>
+
+</li>
+<li><p>StrongARM</p>
+
+</li>
+</ul>
+
+<p>The module should build with any perl binary from 5.004 up to the latest development version.</p>
+
+<h1 id="COMPARISON-WITH-SIMILAR-MODULES">COMPARISON WITH SIMILAR MODULES</h1>
+
+<p>Most of the time when you&#39;re really looking for Convert::Binary::C you&#39;ll actually end up finding one of the following modules. Some of them have different goals, so it&#39;s probably worth pointing out the differences.</p>
+
+<h2 id="C::Include">C::Include</h2>
+
+<p>Like Convert::Binary::C, this module aims at doing conversion from and to binary data based on C types. However, its configurability is very limited compared to Convert::Binary::C. Also, it does not parse all C code correctly. It&#39;s slower than Convert::Binary::C, doesn&#39;t have a preprocessor. On the plus side, it&#39;s written in pure Perl.</p>
+
+<h2 id="C::DynaLib::Struct">C::DynaLib::Struct</h2>
+
+<p>This module doesn&#39;t allow you to reuse your C source code. One main goal of Convert::Binary::C was to avoid code duplication or, even worse, having to maintain different representations of your data structures. Like C::Include, C::DynaLib::Struct is rather limited in its configurability.</p>
+
+<h2 id="Win32::API::Struct">Win32::API::Struct</h2>
+
+<p>This module has a special purpose. It aims at building structs for interfacing Perl code with Windows API code.</p>
+
+<h1 id="CREDITS">CREDITS</h1>
+
+<ul>
+
+<li><p>My love Jennifer for always being there, for filling my life with joy and last but not least for proofreading the documentation.</p>
+
+</li>
+<li><p>Alain Barbet &lt;alian@cpan.org&gt; for testing and debugging support.</p>
+
+</li>
+<li><p>Mitchell N. Charity for giving me pointers into various interesting directions.</p>
+
+</li>
+<li><p>Alexis Denis for making me improve (externally) and simplify (internally) floating point support. He can also be blamed (indirectly) for the <a href="#initializer"><code>initializer</code></a> method, as I need it in my effort to support bitfields some day.</p>
+
+</li>
+<li><p>Michael J. Hohmann &lt;mjh@scientist.de&gt; for endless discussions on our way to and back home from work, and for making me think about supporting <a href="#pack"><code>pack</code></a> and <a href="#unpack"><code>unpack</code></a> for compound members.</p>
+
+</li>
+<li><p>Thorsten Jens &lt;thojens@gmx.de&gt; for testing the package on various platforms.</p>
+
+</li>
+<li><p>Mark Overmeer &lt;mark@overmeer.net&gt; for suggesting the module name and giving invaluable feedback.</p>
+
+</li>
+<li><p>Thomas Pornin &lt;pornin@bolet.org&gt; for his excellent <code>ucpp</code> preprocessor library.</p>
+
+</li>
+<li><p>Marc Rosenthal for his suggestions and support.</p>
+
+</li>
+<li><p>James Roskind, as his C parser was a great starting point to fix all the problems I had with my original parser based only on the ANSI ruleset.</p>
+
+</li>
+<li><p>Gisbert W. Selke for spotting some interesting bugs and providing extensive reports.</p>
+
+</li>
+<li><p>Steffen Zimmermann for a prolific discussion on the cloning algorithm.</p>
+
+</li>
+</ul>
+
+<h1 id="MAILING-LIST">MAILING LIST</h1>
+
+<p>There&#39;s also a mailing list that you can join:</p>
+
+<pre><code>  convert-binary-c@yahoogroups.com</code></pre>
+
+<p>To subscribe, simply send mail to:</p>
+
+<pre><code>  convert-binary-c-subscribe@yahoogroups.com</code></pre>
+
+<p>You can use this mailing list for non-bug problems, questions or discussions.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>I&#39;m sure there are still lots of bugs in the code for this module. If you find any bugs, Convert::Binary::C doesn&#39;t seem to build on your system or any of its tests fail, please use the CPAN Request Tracker at <a href="http://rt.cpan.org/">http://rt.cpan.org/</a> to create a ticket for the module. Alternatively, just send a mail to &lt;mhx@cpan.org&gt;.</p>
+
+<h1 id="EXPERIMENTAL-FEATURES">EXPERIMENTAL FEATURES</h1>
+
+<p>Some features in Convert::Binary::C are marked as experimental. This has most probably one of the following reasons:</p>
+
+<ul>
+
+<li><p>The feature does not behave in exactly the way that I wish it did, possibly due to some limitations in the current design of the module.</p>
+
+</li>
+<li><p>The feature hasn&#39;t been tested enough and may completely fail to produce the expected results.</p>
+
+</li>
+</ul>
+
+<p>I hope to fix most issues with these experimental features someday, but this may mean that I have to change the way they currently work in a way that&#39;s not backwards compatible. So if any of these features is useful to you, you can use it, but you should be aware that the behaviour or the interface may change in future releases of this module.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<p>If you&#39;re interested in what I currently plan to improve (or fix), have a look at the <i>TODO</i> file.</p>
+
+<h1 id="POSTCARDS">POSTCARDS</h1>
+
+<p>If you&#39;re using my module and like it, you can show your appreciation by sending me a postcard from where you live. I won&#39;t urge you to do it, it&#39;s completely up to you. To me, this is just a very nice way of receiving feedback about my work. Please send your postcard to:</p>
+
+<pre><code>  Marcus Holland-Moritz
+  Kuppinger Weg 28
+  71116 Gaertringen
+  GERMANY</code></pre>
+
+<p>If you feel that sending a postcard is too much effort, you maybe want to rate the module at <a href="http://cpanratings.perl.org/">http://cpanratings.perl.org/</a>.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 2002-2015 Marcus Holland-Moritz. All rights reserved. This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<p>The <code>ucpp</code> library is (c) 1998-2002 Thomas Pornin. For license and redistribution details refer to <i>ctlib/ucpp/README</i>.</p>
+
+<p>Portions copyright (c) 1989, 1990 James A. Roskind.</p>
+
+<p>The include files located in <i>tests/include/include</i>, which are used in some of the test scripts are (c) 1991-1999, 2000, 2001 Free Software Foundation, Inc. They are neither required to create the binary nor linked to the source code of this module in any other way.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586168065.25505/Convert-Binary-C-0.78/blib/script/ccconfig.html">ccconfig</a>, <a href="../../../../lib/perl5/5.26.3/pod/perl.html">perl</a>, <a href="../../../../lib/perl5/5.26.3/pod/perldata.html">perldata</a>, <a href="../../../../lib/perl5/5.26.3/pod/perlop.html">perlop</a>, <a href="../../../../lib/perl5/5.26.3/pod/perlvar.html">perlvar</a>, <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Data/Dumper.html">Data::Dumper</a> and <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Scalar/Util.html">Scalar::Util</a>.</p>
+
+
+</body>
+
+</html>
+
+

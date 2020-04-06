@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#EXPORT">EXPORT</a></li>
+      <li><a href="#Methods">Methods</a></li>
+      <li><a href="#Method-Aliases">Method Aliases</a></li>
+    </ul>
+  </li>
+  <li><a href="#WARNING">WARNING</a></li>
+  <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Acme::Damn - &#39;Unbless&#39; Perl objects.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Acme::Damn;
+
+  my $ref = ... some reference ...
+  my $obj = bless $ref , &#39;Some::Class&#39;;
+  
+  ... do something with your object ...
+
+     $ref = damn $obj;   # recover the original reference (unblessed)
+
+  ... neither $ref nor $obj are Some::Class objects ...</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><b>Acme::Damn</b> provides a single routine, <b>damn()</b>, which takes a blessed reference (a Perl object), and <i>unblesses</i> it, to return the original reference.</p>
+
+<h2 id="EXPORT">EXPORT</h2>
+
+<p>By default, <b>Acme::Damn</b> exports the method <b>damn()</b> into the current namespace. Aliases for <b>damn()</b> (see below) may be imported upon request.</p>
+
+<h2 id="Methods">Methods</h2>
+
+<dl>
+
+<dt id="damn-object"><b>damn</b> <i>object</i></dt>
+<dd>
+
+<p><b>damn()</b> accepts a single blessed reference as its argument, and returns that reference unblessed. If <i>object</i> is not a blessed reference, then <b>damn()</b> will <code>die</code> with an error.</p>
+
+</dd>
+<dt id="bless-reference"><b>bless</b> <i>reference</i></dt>
+<dd>
+
+</dd>
+<dt id="bless-reference-package"><b>bless</b> <i>reference</i> [ , <i>package</i> ]</dt>
+<dd>
+
+</dd>
+<dt id="bless-reference-undef"><b>bless</b> <i>reference</i> [ , undef ]</dt>
+<dd>
+
+<p>Optionally, <b>Acme::Damn</b> will modify the behaviour of <code>bless</code> to allow the passing of an explicit <code>undef</code> as the target package to invoke <b>damn()</b>:</p>
+
+<pre><code>    use Acme::Damn  qw( bless );
+
+    my  $obj = ... some blessed reference ...;
+
+    # the following statements are equivalent
+    my  $ref = bless $obj , undef;
+    my  $ref = damn $obj;</code></pre>
+
+<p><b>NOTE:</b> The modification of <code>bless</code> is lexically scoped to the current package, and is <i>not</i> global.</p>
+
+</dd>
+</dl>
+
+<h2 id="Method-Aliases">Method Aliases</h2>
+
+<p>Not everyone likes to damn the same way or in the same language, so <b>Acme::Damn</b> offers the ability to specify any alias on import, provided that alias is a valid Perl subroutine name (i.e. all characters match <code>\w</code>).</p>
+
+<pre><code>  use Acme::Damn qw( unbless );
+  use Acme::Damn qw( foo );
+  use Acme::Damn qw( unblessthyself );
+  use Acme::Damn qw( recant );</code></pre>
+
+<p>Version 0.02 supported a defined list of aliases, and this has been replaced in v0.03 by the ability to import any alias for <code>damn()</code>.</p>
+
+<h1 id="WARNING">WARNING</h1>
+
+<p>Just as <code>bless</code> doesn&#39;t call an object&#39;s initialisation code, <code>damn</code> doesn&#39;t invoke an object&#39;s <code>DESTROY</code> method. For objects that need to be <code>DESTROY</code>ed, either don&#39;t <code>damn</code> them, or call <code>DESTROY</code> before judgement is passed.</p>
+
+<h1 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h1>
+
+<p>Thanks to Claes Jacobsson &lt;claes@surfar.nu&gt; for suggesting the use of aliases, and Bo Lindbergh &lt;blgl@cpan.org&gt; for the suggested modification of <code>bless</code>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#bless">bless</a>, <a href="../../../lib/perl5/5.26.3/pod/perlboot.html">perlboot</a>, <a href="../../../lib/perl5/5.26.3/pod/perltoot.html">perltoot</a>, <a href="../../../lib/perl5/5.26.3/pod/perltooc.html">perltooc</a>, <a href="../../../lib/perl5/5.26.3/pod/perlbot.html">perlbot</a>, <a href="../../../lib/perl5/5.26.3/pod/perlobj.html">perlobj</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ian Brayshaw, &lt;ibb@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>Copyright 2003-2016 Ian Brayshaw</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

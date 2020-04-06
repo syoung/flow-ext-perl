@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Timer - timers and timeouts, independent of any event loop</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> # This package is mostly obsoleted by Coro::AnyEvent.
+
+ use Coro::Timer qw(timeout);
+ # nothing exported by default</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This package has been mostly obsoleted by <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AnyEvent.html">Coro::AnyEvent</a>, the only really useful function left in here is <code>timeout</code>.</p>
+
+<dl>
+
+<dt id="flag-timeout-seconds">$flag = timeout $seconds</dt>
+<dd>
+
+<p>This function will wake up the current coroutine after $seconds seconds and sets $flag to true (it is false initially). If $flag goes out of scope earlier then nothing happens.</p>
+
+<p>This is used by Coro itself to implement the <code>timed_down</code>, <code>timed_wait</code> etc. primitives. It is used like this:</p>
+
+<pre><code>   sub timed_wait {
+      my $timeout = Coro::Timer::timeout 60;
+
+      while (condition false) {
+         Coro::schedule; # wait until woken up or timeout
+         return 0 if $timeout; # timed out
+      }
+
+      return 1; # condition satisfied
+   }</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,9 @@
+/flow/perl/bin/cpanm
+/flow/perl/html/bin/cpanm.html
+/flow/perl/html/site/lib/App/cpanminus.html
+/flow/perl/html/site/lib/App/cpanminus/fatscript.html
+/flow/perl/lib/perl5/site_perl/5.26.3/App/cpanminus.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/App/cpanminus/fatscript.pm
+/flow/perl/man/man1/cpanm.1
+/flow/perl/man/man3/App::cpanminus.3
+/flow/perl/man/man3/App::cpanminus::fatscript.3

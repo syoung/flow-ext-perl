@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Semaphore - counting semaphores</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro;
+
+ $sig = new Coro::Semaphore [initial value];
+
+ $sig-&gt;down; # wait for signal
+
+ # ... some other &quot;thread&quot;
+
+ $sig-&gt;up;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements counting semaphores. You can initialize a mutex with any level of parallel users, that is, you can initialize a sempahore that can be <code>down</code>ed more than once until it blocks. There is no owner associated with semaphores, so one thread can <code>down</code> it while another can <code>up</code> it (or vice versa), <code>up</code> can be called before <code>down</code> and so on: the semaphore is really just an integer counter that optionally blocks when it is 0.</p>
+
+<p>Counting semaphores are typically used to coordinate access to resources, with the semaphore count initialized to the number of free resources. Threads then increment the count when resources are added and decrement the count when resources are removed.</p>
+
+<p>You don&#39;t have to load <code>Coro::Semaphore</code> manually, it will be loaded automatically when you <code>use Coro</code> and call the <code>new</code> constructor.</p>
+
+<dl>
+
+<dt id="new-initial-count">new [initial count]</dt>
+<dd>
+
+<p>Creates a new sempahore object with the given initial lock count. The default lock count is 1, which means it is unlocked by default. Zero (or negative values) are also allowed, in which case the semaphore is locked by default.</p>
+
+</dd>
+<dt id="sem-count">$sem-&gt;count</dt>
+<dd>
+
+<p>Returns the current semaphore count. The semaphore can be down&#39;ed without blocking when the count is strictly higher than <code>0</code>.</p>
+
+</dd>
+<dt id="sem-adjust-diff">$sem-&gt;adjust ($diff)</dt>
+<dd>
+
+<p>Atomically adds the amount given to the current semaphore count. If the count becomes positive, wakes up any waiters. Does not block if the count becomes negative, however.</p>
+
+</dd>
+<dt id="sem-down">$sem-&gt;down</dt>
+<dd>
+
+<p>Decrement the counter, therefore &quot;locking&quot; the semaphore. This method waits until the semaphore is available if the counter is zero or less.</p>
+
+</dd>
+<dt id="sem-wait">$sem-&gt;wait</dt>
+<dd>
+
+<p>Similar to <code>down</code>, but does not actually decrement the counter. Instead, when this function returns, a following call to <code>down</code> or <code>try</code> is guaranteed to succeed without blocking, until the next thread switch (<code>cede</code> etc.).</p>
+
+<p>Note that using <code>wait</code> is much less efficient than using <code>down</code>, so try to prefer <code>down</code> whenever possible.</p>
+
+</dd>
+<dt id="sem-wait-callback">$sem-&gt;wait ($callback)</dt>
+<dd>
+
+<p>If you pass a callback argument to <code>wait</code>, it will not wait, but immediately return. The callback will be called as soon as the semaphore becomes available (which might be instantly), and gets passed the semaphore as first argument.</p>
+
+<p>The callback might <code>down</code> the semaphore exactly once, might wake up other threads, but is <i>NOT</i> allowed to block (switch to other threads).</p>
+
+</dd>
+<dt id="sem-up">$sem-&gt;up</dt>
+<dd>
+
+<p>Unlock the semaphore again.</p>
+
+</dd>
+<dt id="sem-try">$sem-&gt;try</dt>
+<dd>
+
+<p>Try to <code>down</code> the semaphore. Returns true when this was possible, otherwise return false and leave the semaphore unchanged.</p>
+
+</dd>
+<dt id="sem-waiters">$sem-&gt;waiters</dt>
+<dd>
+
+<p>In scalar context, returns the number of threads waiting for this semaphore. Might accidentally cause WW3 if called in other contexts, so don&#39;t use these.</p>
+
+</dd>
+<dt id="guard-sem-guard">$guard = $sem-&gt;guard</dt>
+<dd>
+
+<p>This method calls <code>down</code> and then creates a guard object. When the guard object is destroyed it automatically calls <code>up</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

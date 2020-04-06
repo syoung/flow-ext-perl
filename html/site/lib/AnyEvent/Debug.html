@@ -1,0 +1,202 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a></li>
+  <li><a href="#THE-AnyEvent::Debug::Wrapped-CLASS">THE AnyEvent::Debug::Wrapped CLASS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Debug - debugging utilities for AnyEvent</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent::Debug;
+
+   # create an interactive shell into the program
+   my $shell = AnyEvent::Debug::shell &quot;unix/&quot;, &quot;/home/schmorp/myshell&quot;;
+   # then on the shell: &quot;socat readline /home/schmorp/myshell&quot;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides functionality hopefully useful for debugging.</p>
+
+<p>At the moment, &quot;only&quot; an interactive shell is implemented. This shell allows you to interactively &quot;telnet into&quot; your program and execute Perl code, e.g. to look at global variables.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<dl>
+
+<dt id="shell-AnyEvent::Debug::shell-host-service">$shell = AnyEvent::Debug::shell $host, $service</dt>
+<dd>
+
+<p>This function binds on the given host and service port and returns a shell object, which determines the lifetime of the shell. Any number of connections are accepted on the port, and they will give you a very primitive shell that simply executes every line you enter.</p>
+
+<p>All commands will be executed &quot;blockingly&quot; with the socket <code>select</code>ed for output. For a less &quot;blocking&quot; interface see <a>Coro::Debug</a>.</p>
+
+<p>The commands will be executed in the <code>AnyEvent::Debug::shell</code> package, which currently has &quot;help&quot; and a few other commands, and can be freely modified by all shells. Code is evaluated under <code>use strict &#39;subs&#39;</code>.</p>
+
+<p>Every shell has a logging context (<code>$LOGGER</code>) that is attached to <code>$AnyEvent::Log::COLLECT</code>), which is especially useful to gether debug and trace messages.</p>
+
+<p>As a general programming guide, consider the beneficial aspects of using more global (<code>our</code>) variables than local ones (<code>my</code>) in package scope: Earlier all my modules tended to hide internal variables inside <code>my</code> variables, so users couldn&#39;t accidentally access them. Having interactive access to your programs changed that: having internal variables still in the global scope means you can debug them easier.</p>
+
+<p>As no authentication is done, in most cases it is best not to use a TCP port, but a unix domain socket, whcih can be put wherever you can access it, but not others:</p>
+
+<pre><code>   our $SHELL = AnyEvent::Debug::shell &quot;unix/&quot;, &quot;/home/schmorp/shell&quot;;</code></pre>
+
+<p>Then you can use a tool to connect to the shell, such as the ever versatile <code>socat</code>, which in addition can give you readline support:</p>
+
+<pre><code>   socat readline /home/schmorp/shell
+   # or:
+   cd /home/schmorp; socat readline unix:shell</code></pre>
+
+<p>Socat can even give you a persistent history:</p>
+
+<pre><code>   socat readline,history=.anyevent-history unix:shell</code></pre>
+
+<p>Binding on <code>127.0.0.1</code> (or <code>::1</code>) might be a less secure but sitll not totally insecure (on single-user machines) alternative to let you use other tools, such as telnet:</p>
+
+<pre><code>   our $SHELL = AnyEvent::Debug::shell &quot;127.1&quot;, &quot;1357&quot;;</code></pre>
+
+<p>And then:</p>
+
+<pre><code>   telnet localhost 1357</code></pre>
+
+</dd>
+<dt id="AnyEvent::Debug::wrap-level">AnyEvent::Debug::wrap [$level]</dt>
+<dd>
+
+<p>Sets the instrumenting/wrapping level of all watchers that are being created after this call. If no <code>$level</code> has been specified, then it toggles between <code>0</code> and <code>1</code>.</p>
+
+<p>The default wrap level is <code>0</code>, or whatever <code>$ENV{PERL_ANYEVENT_DEBUG_WRAP}</code> specifies.</p>
+
+<p>A level of <code>0</code> disables wrapping, i.e. AnyEvent works normally, and in its most efficient mode.</p>
+
+<p>A level of <code>1</code> or higher enables wrapping, which replaces all watchers by AnyEvent::Debug::Wrapped objects, stores the location where a watcher was created and wraps the callback to log all invocations at &quot;trace&quot; loglevel if tracing is enabled fore the watcher. The initial state of tracing when creating a watcher is taken from the global variable <code>$AnyEvent:Debug::TRACE</code>. The default value of that variable is <code>1</code>, but it can make sense to set it to <code>0</code> and then do <code>local $AnyEvent::Debug::TRACE = 1</code> in a block where you create &quot;interesting&quot; watchers. Tracing can also be enabled and disabled later by calling the watcher&#39;s <code>trace</code> method.</p>
+
+<p>The wrapper will also count how many times the callback was invoked and will record up to ten runtime errors with corresponding backtraces. It will also log runtime errors at &quot;error&quot; loglevel.</p>
+
+<p>To see the trace messages, you can invoke your program with <code>PERL_ANYEVENT_VERBOSE=9</code>, or you can use AnyEvent::Log to divert the trace messages in any way you like (the EXAMPLES section in <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a> has some examples).</p>
+
+<p>A level of <code>2</code> does everything that level <code>1</code> does, but also stores a full backtrace of the location the watcher was created, which slows down watcher creation considerably.</p>
+
+<p>Every wrapped watcher will be linked into <code>%AnyEvent::Debug::Wrapped</code>, with its address as key. The <code>wl</code> command in the debug shell can be used to list watchers.</p>
+
+<p>Instrumenting can increase the size of each watcher multiple times, and, especially when backtraces are involved, also slows down watcher creation a lot.</p>
+
+<p>Also, enabling and disabling instrumentation will not recover the full performance that you had before wrapping (the AE::xxx functions will stay slower, for example).</p>
+
+<p>If you are developing your program, also consider using AnyEvent::Strict to check for common mistakes.</p>
+
+</dd>
+<dt id="AnyEvent::Debug::path2mod-path">AnyEvent::Debug::path2mod $path</dt>
+<dd>
+
+<p>Tries to replace a path (e.g. the file name returned by caller) by a module name. Returns the path unchanged if it fails.</p>
+
+<p>Example:</p>
+
+<pre><code>   print AnyEvent::Debug::path2mod &quot;/usr/lib/perl5/AnyEvent/Debug.pm&quot;;
+   # might print &quot;AnyEvent::Debug&quot;</code></pre>
+
+</dd>
+<dt id="AnyEvent::Debug::cb2str-cb">AnyEvent::Debug::cb2str $cb</dt>
+<dd>
+
+<p>Using various gambits, tries to convert a callback (e.g. a code reference) into a more useful string.</p>
+
+<p>Very useful if you debug a program and have some callback, but you want to know where in the program the callback is actually defined.</p>
+
+</dd>
+<dt id="AnyEvent::Debug::backtrace-skip">AnyEvent::Debug::backtrace [$skip]</dt>
+<dd>
+
+<p>Creates a backtrace (actually an AnyEvent::Debug::Backtrace object that you can stringify), not unlike the Carp module would. Unlike the Carp module it resolves some references (such as callbacks) to more user-friendly strings, has a more succinct output format and most importantly: doesn&#39;t leak memory like hell.</p>
+
+<p>The reason it creates an object is to save time, as formatting can be done at a later time. Still, creating a backtrace is a relatively slow operation.</p>
+
+</dd>
+</dl>
+
+<h1 id="THE-AnyEvent::Debug::Wrapped-CLASS">THE AnyEvent::Debug::Wrapped CLASS</h1>
+
+<p>All watchers created while the wrap level is non-zero will be wrapped inside an AnyEvent::Debug::Wrapped object. The address of the wrapped watcher will become its ID - every watcher will be stored in <code>$AnyEvent::Debug::Wrapped{$id}</code>.</p>
+
+<p>These wrapper objects can be stringified and have some methods defined on them.</p>
+
+<p>For debugging, of course, it can be helpful to look into these objects, which is why this is documented here, but this might change at any time in future versions.</p>
+
+<p>Each object is a relatively standard hash with the following members:</p>
+
+<pre><code>   type   =&gt; name of the method used ot create the watcher (e.g. C&lt;io&gt;, C&lt;timer&gt;).
+   w      =&gt; the actual watcher
+   rfile  =&gt; reference to the filename of the file the watcher was created in
+   line   =&gt; line number where it was created
+   sub    =&gt; function name (or a special string) which created the watcher
+   cur    =&gt; if created inside another watcher callback, this is the string rep of the other watcher
+   now    =&gt; the timestamp (AE::now) when the watcher was created
+   arg    =&gt; the arguments used to create the watcher (sans C&lt;cb&gt;)
+   cb     =&gt; the original callback used to create the watcher
+   called =&gt; the number of times the callback was called</code></pre>
+
+<p>Each object supports the following mehtods (warning: these are only available on wrapped watchers, so are best for interactive use via the debug shell).</p>
+
+<dl>
+
+<dt id="w-id">$w-&gt;id</dt>
+<dd>
+
+<p>Returns the numerical id of the watcher, as used in the debug shell.</p>
+
+</dd>
+<dt id="w-verbose">$w-&gt;verbose</dt>
+<dd>
+
+<p>Returns a multiline textual description of the watcher, including the first ten exceptions caught while executing the callback.</p>
+
+</dd>
+<dt id="w-trace-on">$w-&gt;trace ($on)</dt>
+<dd>
+
+<p>Enables (<code>$on</code> is true) or disables (<code>$on</code> is false) tracing on this watcher.</p>
+
+<p>To get tracing messages, both the global logging settings must have trace messages enabled for the context <code>AnyEvent::Debug</code> and tracing must be enabled for the wrapped watcher.</p>
+
+<p>To enable trace messages globally, the simplest way is to start the program with <code>PERL_ANYEVENT_VERBOSE=9</code> in the environment.</p>
+
+<p>Tracing for each individual watcher is enabled by default (unless <code>$AnyEvent::Debug::TRACE</code> has been set to false).</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

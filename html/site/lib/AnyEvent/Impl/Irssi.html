@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Impl::Irssi - AnyEvent adaptor for Irssi</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent;
+  
+   # this module gets loaded automatically when running under irssi</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides transparent support for AnyEvent. You don&#39;t have to do anything to make Irssi scripts work with AnyEvent.</p>
+
+<p>Limitations of this backend and implementation details:</p>
+
+<ul>
+
+<li><p>This backend does not support blocking waits.</p>
+
+<p>That means you must set a callback on any condvars, or otherwise make sure to never call <code>recv</code> on a condvar that hasn&#39;t been signalled yet.</p>
+
+</li>
+<li><p>Child exits will be handled by AnyEvent.</p>
+
+<p>AnyEvent will take over child handling, as Irssi only polls for children once/second and cannot handle unspecific child watchers.</p>
+
+<p>This <i>should</i> have no negative effect, as AnyEvent will emit a pidwait signal just like irssi itself would.</p>
+
+</li>
+<li><p>Artificial timer delays.</p>
+
+<p>Irssi artificially enforces timers to have at least a 10ms delay (by croaking, even).</p>
+
+<p>This means that some applications will be limited to a rate of 100Hz (for example, <a>Coro::AnyEvent</a> thread scheduling).</p>
+
+</li>
+<li><p>Irssi leaks memory like hell.</p>
+
+<p>Yeah.</p>
+
+</li>
+</ul>
+
+<p>Apart from that, documentation is notoriously wrong (e.g. file handles are not supported by <code>input_add</code>, contrary to documentation), hooking into irssi has to be done in... weird... ways, but otherwise, Irssi is surprisingly full-featured (for basically being a hack).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a>, <a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Irssi.html">Irssi</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

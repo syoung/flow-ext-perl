@@ -1,0 +1,194 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#FUNCTIONS">FUNCTIONS</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AE - simpler/faster/newer/cooler AnyEvent API</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use AnyEvent; # not AE
+
+  # file handle or descriptor readable
+  my $w = AE::io $fh, 0, sub { ...  };
+
+  # one-shot or repeating timers
+  my $w = AE::timer $seconds,         0, sub { ... }; # once
+  my $w = AE::timer $seconds, $interval, sub { ... }; # repeated
+
+  print AE::now;  # prints current event loop time
+  print AE::time; # think Time::HiRes::time or simply CORE::time.
+
+  # POSIX signal
+  my $w = AE::signal TERM =&gt; sub { ... };
+
+  # child process exit
+  my $w = AE::child $pid, sub {
+     my ($pid, $status) = @_;
+     ...
+  };
+
+  # called when event loop idle (if applicable)
+  my $w = AE::idle sub { ... };
+
+  my $cv = AE::cv; # stores whether a condition was flagged
+  $cv-&gt;send; # wake up current and all future recv&#39;s
+  $cv-&gt;recv; # enters &quot;main loop&quot; till $condvar gets -&gt;send
+  # use a condvar in callback mode:
+  $cv-&gt;cb (sub { $_[0]-&gt;recv });</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module documents the new simpler AnyEvent API.</p>
+
+<p>The rationale for the new API is that experience with <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> shows that this API actually &quot;works&quot;, despite its lack of extensibility, leading to a shorter, easier and faster API.</p>
+
+<p>The main differences from AnyEvent is that function calls are used instead of method calls, and that no named arguments are used.</p>
+
+<p>This makes calls to watcher creation functions really short, which can make a program more readable despite the lack of named parameters. Function calls also allow more static type checking than method calls, so many mistakes are caught at compile-time with this API.</p>
+
+<p>Also, some backends (Perl and EV) are so fast that the method call overhead is very noticeable (with EV it increases the execution time five- to six-fold, with Perl the method call overhead is about a factor of two).</p>
+
+<p>Note that the <code>AE</code> API is an alternative to, not the future version of, the AnyEvent API. Both APIs can be used interchangeably and there are no plans to &quot;switch&quot;, so if in doubt, feel free to use the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> API in new code.</p>
+
+<p>As the AE API is complementary, not everything in the AnyEvent API is available, and you still need to use AnyEvent for the finer stuff. Also, you should not <code>use AE</code> directly, <code>use AnyEvent</code> will provide the AE namespace.</p>
+
+<p>At the moment, these functions will become slower then their method-call counterparts when using <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Strict.html">AnyEvent::Strict</a> or <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Debug.html">AnyEvent::Debug</a>::wrap.</p>
+
+<h2 id="FUNCTIONS">FUNCTIONS</h2>
+
+<p>This section briefly describes the alternative watcher constructors and other functions available inside the <code>AE</code> namespace. Semantics are not described here; please refer to the description of the function or method with the same name in the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> manpage for the details.</p>
+
+<dl>
+
+<dt id="w-AE::io-fh_or_fd-watch_write-cb">$w = AE::io $fh_or_fd, $watch_write, $cb</dt>
+<dd>
+
+<p>Creates an I/O watcher that listens for read events (<code>$watch_write</code> false) or write events (<code>$watch_write</code> is true) on the file handle or file descriptor <code>$fh_or_fd</code>.</p>
+
+<p>The callback <code>$cb</code> is invoked as soon and as long as I/O of the type specified by <code>$watch_write</code>) can be done on the file handle/descriptor.</p>
+
+<p>Example: wait until STDIN becomes readable.</p>
+
+<pre><code>  $stdin_ready = AE::io *STDIN, 0, sub { scalar &lt;STDIN&gt; };</code></pre>
+
+<p>Example: wait until STDOUT becomes writable and print something.</p>
+
+<pre><code>  $stdout_ready = AE::io *STDOUT, 1, sub { print STDOUT &quot;woaw\n&quot; };</code></pre>
+
+</dd>
+<dt id="w-AE::timer-after-interval-cb">$w = AE::timer $after, $interval, $cb</dt>
+<dd>
+
+<p>Creates a timer watcher that invokes the callback <code>$cb</code> after at least <code>$after</code> second have passed (<code>$after</code> can be negative or <code>0</code>).</p>
+
+<p>If <code>$interval</code> is <code>0</code>, then the callback will only be invoked once, otherwise it must be a positive number of seconds that specifies the interval between successive invocations of the callback.</p>
+
+<p>Example: print &quot;too late&quot; after at least one second has passed.</p>
+
+<pre><code>  $timer_once = AE::timer 1, 0, sub { print &quot;too late\n&quot; };</code></pre>
+
+<p>Example: print &quot;blubb&quot; once a second, starting as soon as possible.</p>
+
+<pre><code>  $timer_repeated = AE::timer 0, 1, sub { print &quot;blubb\n&quot; };</code></pre>
+
+</dd>
+<dt id="w-AE::signal-signame-cb">$w = AE::signal $signame, $cb</dt>
+<dd>
+
+<p>Invoke the callback <code>$cb</code> each time one or more occurrences of the named signal <code>$signame</code> are detected.</p>
+
+</dd>
+<dt id="w-AE::child-pid-cb">$w = AE::child $pid, $cb</dt>
+<dd>
+
+<p>Invokes the callback <code>$cb</code> when the child with the given <code>$pid</code> exits (or all children, when <code>$pid</code> is zero).</p>
+
+<p>The callback will get the actual pid and exit status as arguments.</p>
+
+</dd>
+<dt id="w-AE::idle-cb">$w = AE::idle $cb</dt>
+<dd>
+
+<p>Invoke the callback <code>$cb</code> each time the event loop is &quot;idle&quot; (has no events outstanding), but do not prevent the event loop from polling for more events.</p>
+
+</dd>
+<dt id="cv-AE::cv">$cv = AE::cv</dt>
+<dd>
+
+</dd>
+<dt id="cv-AE::cv-BLOCK">$cv = AE::cv { BLOCK }</dt>
+<dd>
+
+<p>Create a new condition variable. The first form is identical to <code>AnyEvent-&gt;condvar</code>, the second form additionally sets the callback (as if the <code>cb</code> method is called on the condition variable).</p>
+
+</dd>
+<dt id="AE::now">AE::now</dt>
+<dd>
+
+<p>Returns the current event loop time (may be cached by the event loop).</p>
+
+</dd>
+<dt id="AE::now_update">AE::now_update</dt>
+<dd>
+
+<p>Ensures that the current event loop time is up to date.</p>
+
+</dd>
+<dt id="AE::time">AE::time</dt>
+<dd>
+
+<p>Return the current time (not cached, always consults a hardware clock).</p>
+
+</dd>
+<dt id="AE::postpone-BLOCK">AE::postpone { BLOCK }</dt>
+<dd>
+
+<p>Exactly the same as <code>AnyEvent:::postpone</code>.</p>
+
+</dd>
+<dt id="AE::log-level-msg-args">AE::log $level, $msg[, @args]</dt>
+<dd>
+
+<p>Exactly the same as <code>AnyEvent::log</code> (or <code>AnyEvent::Log::log</code>).</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

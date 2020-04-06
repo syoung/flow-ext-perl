@@ -1,0 +1,559 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../displayToc.js"></script>
+<script language="JavaScript" src="../tocParas.js"></script>
+<script language="JavaScript" src="../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#COMMANDS">COMMANDS</a></li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>cpanm - get, unpack build and install modules from CPAN</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  cpanm Test::More                                 # install Test::More
+  cpanm MIYAGAWA/Plack-0.99_05.tar.gz              # full distribution path
+  cpanm http://example.org/LDS/CGI.pm-3.20.tar.gz  # install from URL
+  cpanm ~/dists/MyCompany-Enterprise-1.00.tar.gz   # install from a local file
+  cpanm --interactive Task::Kensho                 # Configure interactively
+  cpanm .                                          # install from local directory
+  cpanm --installdeps .                            # install all the deps for the current directory
+  cpanm -L extlib Plack                            # install Plack and all non-core deps into extlib
+  cpanm --mirror http://cpan.cpantesters.org/ DBI  # use the fast-syncing mirror
+  cpanm --from https://cpan.metacpan.org/ Plack    # use only the HTTPS mirror</code></pre>
+
+<h1 id="COMMANDS">COMMANDS</h1>
+
+<dl>
+
+<dt id="arguments">(arguments)</dt>
+<dd>
+
+<p>Command line arguments can be either a module name, distribution file, local file path, HTTP URL or git repository URL. Following commands will all work as you expect.</p>
+
+<pre><code>    cpanm Plack
+    cpanm Plack/Request.pm
+    cpanm MIYAGAWA/Plack-1.0000.tar.gz
+    cpanm /path/to/Plack-1.0000.tar.gz
+    cpanm http://cpan.metacpan.org/authors/id/M/MI/MIYAGAWA/Plack-0.9990.tar.gz
+    cpanm git://github.com/plack/Plack.git</code></pre>
+
+<p>Additionally, you can use the notation using <code>~</code> and <code>@</code> to specify version for a given module. <code>~</code> specifies the version requirement in the <a href="../lib/perl5/5.26.3/CPAN/Meta/Spec.html">CPAN::Meta::Spec</a> format, while <code>@</code> pins the exact version, and is a shortcut for <code>~&quot;== VERSION&quot;</code>.</p>
+
+<pre><code>    cpanm Plack~1.0000                 # 1.0000 or later
+    cpanm Plack~&quot;&gt;= 1.0000, &lt; 2.0000&quot;  # latest of 1.xxxx
+    cpanm Plack@0.9990                 # specific version. same as Plack~&quot;== 0.9990&quot;</code></pre>
+
+<p>The version query including specific version or range will be sent to <a>MetaCPAN</a> to search for previous releases. The query will search for BackPAN archives by default, unless you specify <code>--dev</code> option, in which case, archived versions will be filtered out.</p>
+
+<p>For a git repository, you can specify a branch, tag, or commit SHA to build. The default is <code>master</code></p>
+
+<pre><code>    cpanm git://github.com/plack/Plack.git@1.0000        # tag
+    cpanm git://github.com/plack/Plack.git@devel         # branch</code></pre>
+
+</dd>
+<dt id="i---install">-i, --install</dt>
+<dd>
+
+<p>Installs the modules. This is a default behavior and this is just a compatibility option to make it work like <a href="../bin/cpan.html">cpan</a> or <a>cpanp</a>.</p>
+
+</dd>
+<dt id="self-upgrade">--self-upgrade</dt>
+<dd>
+
+<p>Upgrades itself. It&#39;s just an alias for:</p>
+
+<pre><code>  cpanm App::cpanminus</code></pre>
+
+</dd>
+<dt id="info">--info</dt>
+<dd>
+
+<p>Displays the distribution information in <code>AUTHOR/Dist-Name-ver.tar.gz</code> format in the standard out.</p>
+
+</dd>
+<dt id="installdeps">--installdeps</dt>
+<dd>
+
+<p>Installs the dependencies of the target distribution but won&#39;t build itself. Handy if you want to try the application from a version controlled repository such as git.</p>
+
+<pre><code>  cpanm --installdeps .</code></pre>
+
+</dd>
+<dt id="look">--look</dt>
+<dd>
+
+<p>Download and unpack the distribution and then open the directory with your shell. Handy to poke around the source code or do manual testing.</p>
+
+</dd>
+<dt id="h---help">-h, --help</dt>
+<dd>
+
+<p>Displays the help message.</p>
+
+</dd>
+<dt id="V---version">-V, --version</dt>
+<dd>
+
+<p>Displays the version number.</p>
+
+</dd>
+</dl>
+
+<h1 id="OPTIONS">OPTIONS</h1>
+
+<p>You can specify the default options in <code>PERL_CPANM_OPT</code> environment variable.</p>
+
+<dl>
+
+<dt id="f---force">-f, --force</dt>
+<dd>
+
+<p>Force install modules even when testing failed.</p>
+
+</dd>
+<dt id="n---notest">-n, --notest</dt>
+<dd>
+
+<p>Skip the testing of modules. Use this only when you just want to save time for installing hundreds of distributions to the same perl and architecture you&#39;ve already tested to make sure it builds fine.</p>
+
+<p>Defaults to false, and you can say <code>--no-notest</code> to override when it is set in the default options in <code>PERL_CPANM_OPT</code>.</p>
+
+</dd>
+<dt id="test-only">--test-only</dt>
+<dd>
+
+<p>Run the tests only, and do not install the specified module or distributions. Handy if you want to verify the new (or even old) releases pass its unit tests without installing the module.</p>
+
+<p>Note that if you specify this option with a module or distribution that has dependencies, these dependencies will be installed if you don&#39;t currently have them.</p>
+
+</dd>
+<dt id="S---sudo">-S, --sudo</dt>
+<dd>
+
+<p>Switch to the root user with <code>sudo</code> when installing modules. Use this if you want to install modules to the system perl include path.</p>
+
+<p>Defaults to false, and you can say <code>--no-sudo</code> to override when it is set in the default options in <code>PERL_CPANM_OPT</code>.</p>
+
+</dd>
+<dt id="v---verbose">-v, --verbose</dt>
+<dd>
+
+<p>Makes the output verbose. It also enables the interactive configuration. (See --interactive)</p>
+
+</dd>
+<dt id="q---quiet">-q, --quiet</dt>
+<dd>
+
+<p>Makes the output even more quiet than the default. It only shows the successful/failed dependencies to the output.</p>
+
+</dd>
+<dt id="l---local-lib">-l, --local-lib</dt>
+<dd>
+
+<p>Sets the <a>local::lib</a> compatible path to install modules to. You don&#39;t need to set this if you already configure the shell environment variables using <a>local::lib</a>, but this can be used to override that as well.</p>
+
+</dd>
+<dt id="L---local-lib-contained">-L, --local-lib-contained</dt>
+<dd>
+
+<p>Same with <code>--local-lib</code> but with <a>--self-contained</a> set. All non-core dependencies will be installed even if they&#39;re already installed.</p>
+
+<p>For instance,</p>
+
+<pre><code>  cpanm -L extlib Plack</code></pre>
+
+<p>would install Plack and all of its non-core dependencies into the directory <code>extlib</code>, which can be loaded from your application with:</p>
+
+<pre><code>  use local::lib &#39;/path/to/extlib&#39;;</code></pre>
+
+<p>Note that this option does <b>NOT</b> reliably work with perl installations supplied by operating system vendors that strips standard modules from perl, such as RHEL, Fedora and CentOS, <b>UNLESS</b> you also install packages supplying all the modules that have been stripped. For these systems you will probably want to install the <code>perl-core</code> meta-package which does just that.</p>
+
+</dd>
+<dt id="self-contained">--self-contained</dt>
+<dd>
+
+<p>When examining the dependencies, assume no non-core modules are installed on the system. Handy if you want to bundle application dependencies in one directory so you can distribute to other machines.</p>
+
+</dd>
+<dt id="exclude-vendor">--exclude-vendor</dt>
+<dd>
+
+<p>Don&#39;t include modules installed under the &#39;vendor&#39; paths when searching for core modules when the <code>--self-contained</code> flag is in effect. This restores the behaviour from before version 1.7023</p>
+
+</dd>
+<dt id="mirror">--mirror</dt>
+<dd>
+
+<p>Specifies the base URL for the CPAN mirror to use, such as <code>http://cpan.cpantesters.org/</code> (you can omit the trailing slash). You can specify multiple mirror URLs by repeating the command line option.</p>
+
+<p>You can use a local directory that has a CPAN mirror structure (created by tools such as <a>OrePAN</a> or <a>Pinto</a>) by using a special URL scheme <code>file://</code>. If the given URL begins with `/` (without any scheme), it is considered as a file scheme as well.</p>
+
+<pre><code>  cpanm --mirror file:///path/to/mirror
+  cpanm --mirror ~/minicpan      # Because shell expands ~ to /home/user</code></pre>
+
+<p>Defaults to <code>http://www.cpan.org/</code>.</p>
+
+</dd>
+<dt id="mirror-only">--mirror-only</dt>
+<dd>
+
+<p>Download the mirror&#39;s 02packages.details.txt.gz index file instead of querying the CPAN Meta DB. This will also effectively opt out sending your local perl versions to backend database servers such as CPAN Meta DB and MetaCPAN.</p>
+
+<p>Select this option if you are using a local mirror of CPAN, such as minicpan when you&#39;re offline, or your own CPAN index (a.k.a darkpan).</p>
+
+</dd>
+<dt id="from--M">--from, -M</dt>
+<dd>
+
+<pre><code>  cpanm -M https://cpan.metacpan.org/
+  cpanm --from https://cpan.metacpan.org/</code></pre>
+
+<p>Use the given mirror URL and its index as the <i>only</i> source to search and download modules from.</p>
+
+<p>It works similar to <code>--mirror</code> and <code>--mirror-only</code> combined, with a small difference: unlike <code>--mirror</code> which <i>appends</i> the URL to the list of mirrors, <code>--from</code> (or <code>-M</code> for short) uses the specified URL as its <i>only</i> source to download index and modules from. This makes the option always override the default mirror, which might have been set via global options such as the one set by <code>PERL_CPANM_OPT</code> environment variable.</p>
+
+<p><b>Tip:</b> It might be useful if you name these options with your shell aliases, like:</p>
+
+<pre><code>  alias minicpanm=&#39;cpanm --from ~/minicpan&#39;
+  alias darkpan=&#39;cpanm --from http://mycompany.example.com/DPAN&#39;</code></pre>
+
+</dd>
+<dt id="mirror-index">--mirror-index</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Specifies the file path to <code>02packages.details.txt</code> for module search index.</p>
+
+</dd>
+<dt id="cpanmetadb">--cpanmetadb</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Specifies an alternate URI for CPAN MetaDB index lookups.</p>
+
+</dd>
+<dt id="metacpan">--metacpan</dt>
+<dd>
+
+<p>Prefers MetaCPAN API over CPAN MetaDB.</p>
+
+</dd>
+<dt id="cpanfile">--cpanfile</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Specified an alternate path for cpanfile to search for, when <code>--installdeps</code> command is in use. Defaults to <code>cpanfile</code>.</p>
+
+</dd>
+<dt id="prompt">--prompt</dt>
+<dd>
+
+<p>Prompts when a test fails so that you can skip, force install, retry or look in the shell to see what&#39;s going wrong. It also prompts when one of the dependency failed if you want to proceed the installation.</p>
+
+<p>Defaults to false, and you can say <code>--no-prompt</code> to override if it&#39;s set in the default options in <code>PERL_CPANM_OPT</code>.</p>
+
+</dd>
+<dt id="dev">--dev</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: search for a newer developer release as well. Defaults to false.</p>
+
+</dd>
+<dt id="reinstall">--reinstall</dt>
+<dd>
+
+<p>cpanm, when given a module name in the command line (i.e. <code>cpanm Plack</code>), checks the locally installed version first and skips if it is already installed. This option makes it skip the check, so:</p>
+
+<pre><code>  cpanm --reinstall Plack</code></pre>
+
+<p>would reinstall <a>Plack</a> even if your locally installed version is latest, or even newer (which would happen if you install a developer release from version control repositories).</p>
+
+<p>Defaults to false.</p>
+
+</dd>
+<dt id="interactive">--interactive</dt>
+<dd>
+
+<p>Makes the configuration (such as <code>Makefile.PL</code> and <code>Build.PL</code>) interactive, so you can answer questions in the distribution that requires custom configuration or Task:: distributions.</p>
+
+<p>Defaults to false, and you can say <code>--no-interactive</code> to override when it&#39;s set in the default options in <code>PERL_CPANM_OPT</code>.</p>
+
+</dd>
+<dt id="pp---pureperl">--pp, --pureperl</dt>
+<dd>
+
+<p>Prefer Pure perl build of modules by setting <code>PUREPERL_ONLY=1</code> for MakeMaker and <code>--pureperl-only</code> for Build.PL based distributions. Note that not all of the CPAN modules support this convention yet.</p>
+
+</dd>
+<dt id="with-recommends---with-suggests">--with-recommends, --with-suggests</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Installs dependencies declared as <code>recommends</code> and <code>suggests</code> respectively, per META spec. When these dependencies fail to install, cpanm continues the installation, since they&#39;re just recommendation/suggestion.</p>
+
+<p>Enabling this could potentially make a circular dependency for a few modules on CPAN, when <code>recommends</code> adds a module that <code>recommends</code> back the module in return.</p>
+
+<p>There&#39;s also <code>--without-recommend</code> and <code>--without-suggests</code> to override the default decision made earlier in <code>PERL_CPANM_OPT</code>.</p>
+
+<p>Defaults to false for both.</p>
+
+</dd>
+<dt id="with-develop">--with-develop</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Installs develop phase dependencies in META files or <code>cpanfile</code> when used with <code>--installdeps</code>. Defaults to false.</p>
+
+</dd>
+<dt id="with-configure">--with-configure</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Installs configure phase dependencies in <code>cpanfile</code> when used with <code>--installdeps</code>. Defaults to false.</p>
+
+</dd>
+<dt id="with-feature---without-feature---with-all-features">--with-feature, --without-feature, --with-all-features</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Specifies the feature to enable, if a module supports optional features per META spec 2.0.</p>
+
+<pre><code>    cpanm --with-feature=opt_csv Spreadsheet::Read</code></pre>
+
+<p>the features can also be interactively chosen when <code>--interactive</code> option is enabled.</p>
+
+<p><code>--with-all-features</code> enables all the optional features, and <code>--without-feature</code> can select a feature to disable.</p>
+
+</dd>
+<dt id="configure-timeout---build-timeout---test-timeout">--configure-timeout, --build-timeout, --test-timeout</dt>
+<dd>
+
+<p>Specify the timeout length (in seconds) to wait for the configure, build and test process. Current default values are: 60 for configure, 3600 for build and 1800 for test.</p>
+
+</dd>
+<dt id="configure-args---build-args---test-args---install-args">--configure-args, --build-args, --test-args, --install-args</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Pass arguments for configure/build/test/install commands respectively, for a given module to install.</p>
+
+<pre><code>    cpanm DBD::mysql --configure-args=&quot;--cflags=... --libs=...&quot;</code></pre>
+
+<p>The argument is only enabled for the module passed as a command line argument, not dependencies.</p>
+
+</dd>
+<dt id="scandeps">--scandeps</dt>
+<dd>
+
+<p><b>DEPRECATED</b>: Scans the depencencies of given modules and output the tree in a text format. (See <code>--format</code> below for more options)</p>
+
+<p>Because this command doesn&#39;t actually install any distributions, it will be useful that by typing:</p>
+
+<pre><code>  cpanm --scandeps Catalyst::Runtime</code></pre>
+
+<p>you can make sure what modules will be installed.</p>
+
+<p>This command takes into account which modules you already have installed in your system. If you want to see what modules will be installed against a vanilla perl installation, you might want to combine it with <code>-L</code> option.</p>
+
+</dd>
+<dt id="format">--format</dt>
+<dd>
+
+<p><b>DEPRECATED</b>: Determines what format to display the scanned dependency tree. Available options are <code>tree</code>, <code>json</code>, <code>yaml</code> and <code>dists</code>.</p>
+
+<dl>
+
+<dt id="tree">tree</dt>
+<dd>
+
+<p>Displays the tree in a plain text format. This is the default value.</p>
+
+</dd>
+<dt id="json-yaml">json, yaml</dt>
+<dd>
+
+<p>Outputs the tree in a JSON or YAML format. <a href="../lib/perl5/5.26.3/JSON.html">JSON</a> and <a href="../lib/perl5/5.26.3/CPAN/Meta/YAML.html">YAML</a> modules need to be installed respectively. The output tree is represented as a recursive tuple of:</p>
+
+<pre><code>  [ distribution, dependencies ]</code></pre>
+
+<p>and the container is an array containing the root elements. Note that there may be multiple root nodes, since you can give multiple modules to the <code>--scandeps</code> command.</p>
+
+</dd>
+<dt id="dists">dists</dt>
+<dd>
+
+<p><code>dists</code> is a special output format, where it prints the distribution filename in the <i>depth first order</i> after the dependency resolution, like:</p>
+
+<pre><code>  GAAS/MIME-Base64-3.13.tar.gz
+  GAAS/URI-1.58.tar.gz
+  PETDANCE/HTML-Tagset-3.20.tar.gz
+  GAAS/HTML-Parser-3.68.tar.gz
+  GAAS/libwww-perl-5.837.tar.gz</code></pre>
+
+<p>which means you can install these distributions in this order without extra dependencies. When combined with <code>-L</code> option, it will be useful to replay installations on other machines.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="save-dists">--save-dists</dt>
+<dd>
+
+<p>Specifies the optional directory path to copy downloaded tarballs in the CPAN mirror compatible directory structure i.e. <i>authors/id/A/AU/AUTHORS/Foo-Bar-version.tar.gz</i></p>
+
+<p>If the distro tarball did not come from CPAN, for example from a local file or from GitHub, then it will be saved under <i>vendor/Foo-Bar-version.tar.gz</i>.</p>
+
+</dd>
+<dt id="uninst-shadows">--uninst-shadows</dt>
+<dd>
+
+<p>Uninstalls the shadow files of the distribution that you&#39;re installing. This eliminates the confusion if you&#39;re trying to install core (dual-life) modules from CPAN against perl 5.10 or older, or modules that used to be XS-based but switched to pure perl at some version.</p>
+
+<p>If you run cpanm as root and use <code>INSTALL_BASE</code> or equivalent to specify custom installation path, you SHOULD disable this option so you won&#39;t accidentally uninstall dual-life modules from the core include path.</p>
+
+<p>Defaults to true if your perl version is smaller than 5.12, and you can disable that with <code>--no-uninst-shadows</code>.</p>
+
+<p><b>NOTE</b>: Since version 1.3000 this flag is turned off by default for perl newer than 5.12, since with 5.12 @INC contains site_perl directory <i>before</i> the perl core library path, and uninstalling shadows is not necessary anymore and does more harm by deleting files from the core library path.</p>
+
+</dd>
+<dt id="uninstall--U">--uninstall, -U</dt>
+<dd>
+
+<p>Uninstalls a module from the library path. It finds a packlist for given modules, and removes all the files included in the same distribution.</p>
+
+<p>If you enable local::lib, it only removes files from the local::lib directory.</p>
+
+<p>If you try to uninstall a module in <code>perl</code> directory (i.e. core module), an error will be thrown.</p>
+
+<p>A dialog will be prompted to confirm the files to be deleted. If you pass <code>-f</code> option as well, the dialog will be skipped and uninstallation will be forced.</p>
+
+</dd>
+<dt id="cascade-search">--cascade-search</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Specifies whether to cascade search when you specify multiple mirrors and a mirror doesn&#39;t have a module or has a lower version of the module than requested. Defaults to false.</p>
+
+</dd>
+<dt id="skip-installed">--skip-installed</dt>
+<dd>
+
+<p>Specifies whether a module given in the command line is skipped if its latest version is already installed. Defaults to true.</p>
+
+<p><b>NOTE</b>: The <code>PERL5LIB</code> environment variable have to be correctly set for this to work with modules installed using <a>local::lib</a>, unless you always use the <code>-l</code> option.</p>
+
+</dd>
+<dt id="skip-satisfied">--skip-satisfied</dt>
+<dd>
+
+<p><b>EXPERIMENTAL</b>: Specifies whether a module (and version) given in the command line is skipped if it&#39;s already installed.</p>
+
+<p>If you run:</p>
+
+<pre><code>  cpanm --skip-satisfied CGI DBI~1.2</code></pre>
+
+<p>cpanm won&#39;t install them if you already have CGI (for whatever versions) or have DBI with version higher than 1.2. It is similar to <code>--skip-installed</code> but while <code>--skip-installed</code> checks if the <i>latest</i> version of CPAN is installed, <code>--skip-satisfied</code> checks if a requested version (or not, which means any version) is installed.</p>
+
+<p>Defaults to false.</p>
+
+</dd>
+<dt id="verify">--verify</dt>
+<dd>
+
+<p>Verify the integrity of distribution files retrieved from PAUSE using CHECKSUMS and SIGNATURES (if found). Defaults to false.</p>
+
+</dd>
+<dt id="report-perl-version">--report-perl-version</dt>
+<dd>
+
+<p>Whether it reports the locally installed perl version to the various web server as part of User-Agent. Defaults to true unless CI related environment variables such as <code>TRAVIS</code>, <code>CI</code> or <code>AUTOMATED_TESTING</code> is enabled. You can disable it by using <code>--no-report-perl-version</code>.</p>
+
+</dd>
+<dt id="auto-cleanup">--auto-cleanup</dt>
+<dd>
+
+<p>Specifies the number of days in which cpanm&#39;s work directories expire. Defaults to 7, which means old work directories will be cleaned up in one week.</p>
+
+<p>You can set the value to <code>0</code> to make cpan never cleanup those directories.</p>
+
+</dd>
+<dt id="man-pages">--man-pages</dt>
+<dd>
+
+<p>Generates man pages for executables (man1) and libraries (man3).</p>
+
+<p>Defaults to true (man pages generated) unless <code>-L|--local-lib-contained</code> option is supplied in which case it&#39;s set to false. You can disable it with <code>--no-man-pages</code>.</p>
+
+</dd>
+<dt id="lwp">--lwp</dt>
+<dd>
+
+<p>Uses <a href="../lib/perl5/site_perl/5.26.3/LWP.html">LWP</a> module to download stuff over HTTP. Defaults to true, and you can say <code>--no-lwp</code> to disable using LWP, when you want to upgrade LWP from CPAN on some broken perl systems.</p>
+
+</dd>
+<dt id="wget">--wget</dt>
+<dd>
+
+<p>Uses GNU Wget (if available) to download stuff. Defaults to true, and you can say <code>--no-wget</code> to disable using Wget (versions of Wget older than 1.9 don&#39;t support the <code>--retry-connrefused</code> option used by cpanm).</p>
+
+</dd>
+<dt id="curl">--curl</dt>
+<dd>
+
+<p>Uses cURL (if available) to download stuff. Defaults to true, and you can say <code>--no-curl</code> to disable using cURL.</p>
+
+<p>Normally with <code>--lwp</code>, <code>--wget</code> and <code>--curl</code> options set to true (which is the default) cpanm tries <a href="../lib/perl5/site_perl/5.26.3/LWP.html">LWP</a>, Wget, cURL and <a href="../lib/perl5/5.26.3/HTTP/Tiny.html">HTTP::Tiny</a> (in that order) and uses the first one available.</p>
+
+</dd>
+</dl>
+
+<h1 id="ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</h1>
+
+<dl>
+
+<dt id="PERL_CPANM_HOME">PERL_CPANM_HOME</dt>
+<dd>
+
+<p>The directory cpanm should use to store downloads and build and test modules. Defaults to the <code>.cpanm</code> directory in your user&#39;s home directory.</p>
+
+</dd>
+<dt id="PERL_CPANM_OPT">PERL_CPANM_OPT</dt>
+<dd>
+
+<p>If set, adds a set of default options to every cpanm command. These options come first, and so are overridden by command-line options.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../root/.cpanm/work/1586167840.24036/App-cpanminus-1.7044/blib/lib/App/cpanminus.html">App::cpanminus</a></p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2010- Tatsuhiko Miyagawa.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Tatsuhiko Miyagawa</p>
+
+
+</body>
+
+</html>
+
+

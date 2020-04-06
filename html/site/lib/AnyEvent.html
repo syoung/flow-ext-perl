@@ -1,0 +1,1687 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#INTRODUCTION-TUTORIAL">INTRODUCTION/TUTORIAL</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#WHY-YOU-SHOULD-USE-THIS-MODULE-OR-NOT">WHY YOU SHOULD USE THIS MODULE (OR NOT)</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#WATCHERS">WATCHERS</a>
+    <ul>
+      <li><a href="#I-O-WATCHERS">I/O WATCHERS</a></li>
+      <li><a href="#TIME-WATCHERS">TIME WATCHERS</a>
+        <ul>
+          <li><a href="#TIMING-ISSUES">TIMING ISSUES</a></li>
+        </ul>
+      </li>
+      <li><a href="#SIGNAL-WATCHERS">SIGNAL WATCHERS</a>
+        <ul>
+          <li><a href="#Restart-Behaviour">Restart Behaviour</a></li>
+          <li><a href="#Safe-Unsafe-Signals">Safe/Unsafe Signals</a></li>
+          <li><a href="#Signal-Races-Delays-and-Workarounds">Signal Races, Delays and Workarounds</a></li>
+        </ul>
+      </li>
+      <li><a href="#CHILD-PROCESS-WATCHERS">CHILD PROCESS WATCHERS</a></li>
+      <li><a href="#IDLE-WATCHERS">IDLE WATCHERS</a></li>
+      <li><a href="#CONDITION-VARIABLES">CONDITION VARIABLES</a>
+        <ul>
+          <li><a href="#METHODS-FOR-PRODUCERS">METHODS FOR PRODUCERS</a></li>
+          <li><a href="#METHODS-FOR-CONSUMERS">METHODS FOR CONSUMERS</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#SUPPORTED-EVENT-LOOPS-BACKENDS">SUPPORTED EVENT LOOPS/BACKENDS</a></li>
+  <li><a href="#GLOBAL-VARIABLES-AND-FUNCTIONS">GLOBAL VARIABLES AND FUNCTIONS</a></li>
+  <li><a href="#WHAT-TO-DO-IN-A-MODULE">WHAT TO DO IN A MODULE</a></li>
+  <li><a href="#WHAT-TO-DO-IN-THE-MAIN-PROGRAM">WHAT TO DO IN THE MAIN PROGRAM</a>
+    <ul>
+      <li><a href="#MAINLOOP-EMULATION">MAINLOOP EMULATION</a></li>
+    </ul>
+  </li>
+  <li><a href="#OTHER-MODULES">OTHER MODULES</a></li>
+  <li><a href="#SIMPLIFIED-AE-API">SIMPLIFIED AE API</a></li>
+  <li><a href="#ERROR-AND-EXCEPTION-HANDLING">ERROR AND EXCEPTION HANDLING</a></li>
+  <li><a href="#ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</a></li>
+  <li><a href="#SUPPLYING-YOUR-OWN-EVENT-MODEL-INTERFACE">SUPPLYING YOUR OWN EVENT MODEL INTERFACE</a></li>
+  <li><a href="#EXAMPLE-PROGRAM">EXAMPLE PROGRAM</a></li>
+  <li><a href="#REAL-WORLD-EXAMPLE">REAL-WORLD EXAMPLE</a></li>
+  <li><a href="#BENCHMARKS">BENCHMARKS</a>
+    <ul>
+      <li><a href="#BENCHMARKING-ANYEVENT-OVERHEAD">BENCHMARKING ANYEVENT OVERHEAD</a>
+        <ul>
+          <li><a href="#Explanation-of-the-columns">Explanation of the columns</a></li>
+          <li><a href="#Results">Results</a></li>
+          <li><a href="#Discussion">Discussion</a></li>
+          <li><a href="#Summary">Summary</a></li>
+        </ul>
+      </li>
+      <li><a href="#BENCHMARKING-THE-LARGE-SERVER-CASE">BENCHMARKING THE LARGE SERVER CASE</a>
+        <ul>
+          <li><a href="#Explanation-of-the-columns1">Explanation of the columns</a></li>
+          <li><a href="#Results1">Results</a></li>
+          <li><a href="#Discussion1">Discussion</a></li>
+          <li><a href="#Summary1">Summary</a></li>
+        </ul>
+      </li>
+      <li><a href="#BENCHMARKING-SMALL-SERVERS">BENCHMARKING SMALL SERVERS</a>
+        <ul>
+          <li><a href="#Results2">Results</a></li>
+          <li><a href="#Discussion2">Discussion</a></li>
+          <li><a href="#Summary2">Summary</a></li>
+        </ul>
+      </li>
+      <li><a href="#THE-IO::Lambda-BENCHMARK">THE IO::Lambda BENCHMARK</a></li>
+    </ul>
+  </li>
+  <li><a href="#SIGNALS">SIGNALS</a></li>
+  <li><a href="#RECOMMENDED-OPTIONAL-MODULES">RECOMMENDED/OPTIONAL MODULES</a></li>
+  <li><a href="#FORK">FORK</a></li>
+  <li><a href="#SECURITY-CONSIDERATIONS">SECURITY CONSIDERATIONS</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent - the DBI of event loop programming</p>
+
+<p>EV, Event, Glib, Tk, UV, Perl, Event::Lib, Irssi, rxvt-unicode, IO::Async, Qt, FLTK and POE are various supported event loops/environments.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent;
+
+   # if you prefer function calls, look at the AE manpage for
+   # an alternative API.
+
+   # file handle or descriptor readable
+   my $w = AnyEvent-&gt;io (fh =&gt; $fh, poll =&gt; &quot;r&quot;, cb =&gt; sub { ...  });
+
+   # one-shot or repeating timers
+   my $w = AnyEvent-&gt;timer (after =&gt; $seconds, cb =&gt; sub { ...  });
+   my $w = AnyEvent-&gt;timer (after =&gt; $seconds, interval =&gt; $seconds, cb =&gt; ...);
+
+   print AnyEvent-&gt;now;  # prints current event loop time
+   print AnyEvent-&gt;time; # think Time::HiRes::time or simply CORE::time.
+
+   # POSIX signal
+   my $w = AnyEvent-&gt;signal (signal =&gt; &quot;TERM&quot;, cb =&gt; sub { ... });
+
+   # child process exit
+   my $w = AnyEvent-&gt;child (pid =&gt; $pid, cb =&gt; sub {
+      my ($pid, $status) = @_;
+      ...
+   });
+
+   # called when event loop idle (if applicable)
+   my $w = AnyEvent-&gt;idle (cb =&gt; sub { ... });
+
+   my $w = AnyEvent-&gt;condvar; # stores whether a condition was flagged
+   $w-&gt;send; # wake up current and all future recv&#39;s
+   $w-&gt;recv; # enters &quot;main loop&quot; till $condvar gets -&gt;send
+   # use a condvar in callback mode:
+   $w-&gt;cb (sub { $_[0]-&gt;recv });</code></pre>
+
+<h1 id="INTRODUCTION-TUTORIAL">INTRODUCTION/TUTORIAL</h1>
+
+<p>This manpage is mainly a reference manual. If you are interested in a tutorial or some gentle introduction, have a look at the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Intro.html">AnyEvent::Intro</a> manpage.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>An FAQ document is available as <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/FAQ.html">AnyEvent::FAQ</a>.</p>
+
+<p>There also is a mailinglist for discussing all things AnyEvent, and an IRC channel, too.</p>
+
+<p>See the AnyEvent project page at the <b>Schmorpforge Ta-Sa Software Repository</b>, at <a href="http://anyevent.schmorp.de">http://anyevent.schmorp.de</a>, for more info.</p>
+
+<h1 id="WHY-YOU-SHOULD-USE-THIS-MODULE-OR-NOT">WHY YOU SHOULD USE THIS MODULE (OR NOT)</h1>
+
+<p>Glib, POE, IO::Async, Event... CPAN offers event models by the dozen nowadays. So what is different about AnyEvent?</p>
+
+<p>Executive Summary: AnyEvent is <i>compatible</i>, AnyEvent is <i>free of policy</i> and AnyEvent is <i>small and efficient</i>.</p>
+
+<p>First and foremost, <i>AnyEvent is not an event model</i> itself, it only interfaces to whatever event model the main program happens to use, in a pragmatic way. For event models and certain classes of immortals alike, the statement &quot;there can only be one&quot; is a bitter reality: In general, only one event loop can be active at the same time in a process. AnyEvent cannot change this, but it can hide the differences between those event loops.</p>
+
+<p>The goal of AnyEvent is to offer module authors the ability to do event programming (waiting for I/O or timer events) without subscribing to a religion, a way of living, and most importantly: without forcing your module users into the same thing by forcing them to use the same event model you use.</p>
+
+<p>For modules like POE or IO::Async (which is a total misnomer as it is actually doing all I/O <i>synchronously</i>...), using them in your module is like joining a cult: After you join, you are dependent on them and you cannot use anything else, as they are simply incompatible to everything that isn&#39;t them. What&#39;s worse, all the potential users of your module are <i>also</i> forced to use the same event loop you use.</p>
+
+<p>AnyEvent is different: AnyEvent + POE works fine. AnyEvent + Glib works fine. AnyEvent + Tk works fine etc. etc. but none of these work together with the rest: POE + EV? No go. Tk + Event? No go. Again: if your module uses one of those, every user of your module has to use it, too. But if your module uses AnyEvent, it works transparently with all event models it supports (including stuff like IO::Async, as long as those use one of the supported event loops. It is easy to add new event loops to AnyEvent, too, so it is future-proof).</p>
+
+<p>In addition to being free of having to use <i>the one and only true event model</i>, AnyEvent also is free of bloat and policy: with POE or similar modules, you get an enormous amount of code and strict rules you have to follow. AnyEvent, on the other hand, is lean and to the point, by only offering the functionality that is necessary, in as thin as a wrapper as technically possible.</p>
+
+<p>Of course, AnyEvent comes with a big (and fully optional!) toolbox of useful functionality, such as an asynchronous DNS resolver, 100% non-blocking connects (even with TLS/SSL, IPv6 and on broken platforms such as Windows) and lots of real-world knowledge and workarounds for platform bugs and differences.</p>
+
+<p>Now, if you <i>do want</i> lots of policy (this can arguably be somewhat useful) and you want to force your users to use the one and only event model, you should <i>not</i> use this module.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> provides a uniform interface to various event loops. This allows module authors to use event loop functionality without forcing module users to use a specific event loop implementation (since more than one event loop cannot coexist peacefully).</p>
+
+<p>The interface itself is vaguely similar, but not identical to the <a href="../../lib/perl5/5.26.3/Test2/Tools/Event.html">Event</a> module.</p>
+
+<p>During the first call of any watcher-creation method, the module tries to detect the currently loaded event loop by probing whether one of the following modules is already loaded: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Loop.html">AnyEvent::Loop</a>, <a href="../../lib/perl5/5.26.3/Test2/Tools/Event.html">Event</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">Glib</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Tk.html">Tk</a>, <a>Event::Lib</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Qt.html">Qt</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">POE</a>. The first one found is used. If none are detected, the module tries to load the first four modules in the order given; but note that if <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> is not available, the pure-perl <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Loop.html">AnyEvent::Loop</a> should always work, so the other two are not normally tried.</p>
+
+<p>Because AnyEvent first checks for modules that are already loaded, loading an event model explicitly before first using AnyEvent will likely make that model the default. For example:</p>
+
+<pre><code>   use Tk;
+   use AnyEvent;
+
+   # .. AnyEvent will likely default to Tk</code></pre>
+
+<p>The <i>likely</i> means that, if any module loads another event model and starts using it, all bets are off - this case should be very rare though, as very few modules hardcode event loops without announcing this very loudly.</p>
+
+<p>The pure-perl implementation of AnyEvent is called <code>AnyEvent::Loop</code>. Like other event modules you can load it explicitly and enjoy the high availability of that event loop :)</p>
+
+<h1 id="WATCHERS">WATCHERS</h1>
+
+<p>AnyEvent has the central concept of a <i>watcher</i>, which is an object that stores relevant data for each kind of event you are waiting for, such as the callback to call, the file handle to watch, etc.</p>
+
+<p>These watchers are normal Perl objects with normal Perl lifetime. After creating a watcher it will immediately &quot;watch&quot; for events and invoke the callback when the event occurs (of course, only when the event model is in control).</p>
+
+<p>Note that <b>callbacks must not permanently change global variables</b> potentially in use by the event loop (such as <code>$_</code> or <code>$[</code>) and that <b>callbacks must not <code>die</code></b>. The former is good programming practice in Perl and the latter stems from the fact that exception handling differs widely between event loops.</p>
+
+<p>To disable a watcher you have to destroy it (e.g. by setting the variable you store it in to <code>undef</code> or otherwise deleting all references to it).</p>
+
+<p>All watchers are created by calling a method on the <code>AnyEvent</code> class.</p>
+
+<p>Many watchers either are used with &quot;recursion&quot; (repeating timers for example), or need to refer to their watcher object in other ways.</p>
+
+<p>One way to achieve that is this pattern:</p>
+
+<pre><code>   my $w; $w = AnyEvent-&gt;type (arg =&gt; value ..., cb =&gt; sub {
+      # you can use $w here, for example to undef it
+      undef $w;
+   });</code></pre>
+
+<p>Note that <code>my $w; $w =</code> combination. This is necessary because in Perl, my variables are only visible after the statement in which they are declared.</p>
+
+<h2 id="I-O-WATCHERS">I/O WATCHERS</h2>
+
+<pre><code>   $w = AnyEvent-&gt;io (
+      fh   =&gt; &lt;filehandle_or_fileno&gt;,
+      poll =&gt; &lt;&quot;r&quot; or &quot;w&quot;&gt;,
+      cb   =&gt; &lt;callback&gt;,
+   );</code></pre>
+
+<p>You can create an I/O watcher by calling the <code>AnyEvent-&gt;io</code> method with the following mandatory key-value pairs as arguments:</p>
+
+<p><code>fh</code> is the Perl <i>file handle</i> (or a naked file descriptor) to watch for events (AnyEvent might or might not keep a reference to this file handle). Note that only file handles pointing to things for which non-blocking operation makes sense are allowed. This includes sockets, most character devices, pipes, fifos and so on, but not for example files or block devices.</p>
+
+<p><code>poll</code> must be a string that is either <code>r</code> or <code>w</code>, which creates a watcher waiting for &quot;r&quot;eadable or &quot;w&quot;ritable events, respectively.</p>
+
+<p><code>cb</code> is the callback to invoke each time the file handle becomes ready.</p>
+
+<p>Although the callback might get passed parameters, their value and presence is undefined and you cannot rely on them. Portable AnyEvent callbacks cannot use arguments passed to I/O watcher callbacks.</p>
+
+<p>The I/O watcher might use the underlying file descriptor or a copy of it. You must not close a file handle as long as any watcher is active on the underlying file descriptor.</p>
+
+<p>Some event loops issue spurious readiness notifications, so you should always use non-blocking calls when reading/writing from/to your file handles.</p>
+
+<p>Example: wait for readability of STDIN, then read a line and disable the watcher.</p>
+
+<pre><code>   my $w; $w = AnyEvent-&gt;io (fh =&gt; \*STDIN, poll =&gt; &#39;r&#39;, cb =&gt; sub {
+      chomp (my $input = &lt;STDIN&gt;);
+      warn &quot;read: $input\n&quot;;
+      undef $w;
+   });</code></pre>
+
+<h2 id="TIME-WATCHERS">TIME WATCHERS</h2>
+
+<pre><code>   $w = AnyEvent-&gt;timer (after =&gt; &lt;seconds&gt;, cb =&gt; &lt;callback&gt;);
+
+   $w = AnyEvent-&gt;timer (
+      after    =&gt; &lt;fractional_seconds&gt;,
+      interval =&gt; &lt;fractional_seconds&gt;,
+      cb       =&gt; &lt;callback&gt;,
+   );</code></pre>
+
+<p>You can create a time watcher by calling the <code>AnyEvent-&gt;timer</code> method with the following mandatory arguments:</p>
+
+<p><code>after</code> specifies after how many seconds (fractional values are supported) the callback should be invoked. <code>cb</code> is the callback to invoke in that case.</p>
+
+<p>Although the callback might get passed parameters, their value and presence is undefined and you cannot rely on them. Portable AnyEvent callbacks cannot use arguments passed to time watcher callbacks.</p>
+
+<p>The callback will normally be invoked only once. If you specify another parameter, <code>interval</code>, as a strictly positive number (&gt; 0), then the callback will be invoked regularly at that interval (in fractional seconds) after the first invocation. If <code>interval</code> is specified with a false value, then it is treated as if it were not specified at all.</p>
+
+<p>The callback will be rescheduled before invoking the callback, but no attempt is made to avoid timer drift in most backends, so the interval is only approximate.</p>
+
+<p>Example: fire an event after 7.7 seconds.</p>
+
+<pre><code>   my $w = AnyEvent-&gt;timer (after =&gt; 7.7, cb =&gt; sub {
+      warn &quot;timeout\n&quot;;
+   });
+
+   # to cancel the timer:
+   undef $w;</code></pre>
+
+<p>Example 2: fire an event after 0.5 seconds, then roughly every second.</p>
+
+<pre><code>   my $w = AnyEvent-&gt;timer (after =&gt; 0.5, interval =&gt; 1, cb =&gt; sub {
+      warn &quot;timeout\n&quot;;
+   });</code></pre>
+
+<h3 id="TIMING-ISSUES">TIMING ISSUES</h3>
+
+<p>There are two ways to handle timers: based on real time (relative, &quot;fire in 10 seconds&quot;) and based on wallclock time (absolute, &quot;fire at 12 o&#39;clock&quot;).</p>
+
+<p>While most event loops expect timers to specified in a relative way, they use absolute time internally. This makes a difference when your clock &quot;jumps&quot;, for example, when ntp decides to set your clock backwards from the wrong date of 2014-01-01 to 2008-01-01, a watcher that is supposed to fire &quot;after a second&quot; might actually take six years to finally fire.</p>
+
+<p>AnyEvent cannot compensate for this. The only event loop that is conscious of these issues is <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a>, which offers both relative (ev_timer, based on true relative time) and absolute (ev_periodic, based on wallclock time) timers.</p>
+
+<p>AnyEvent always prefers relative timers, if available, matching the AnyEvent API.</p>
+
+<p>AnyEvent has two additional methods that return the &quot;current time&quot;:</p>
+
+<dl>
+
+<dt id="AnyEvent-time">AnyEvent-&gt;time</dt>
+<dd>
+
+<p>This returns the &quot;current wallclock time&quot; as a fractional number of seconds since the Epoch (the same thing as <code>time</code> or <code>Time::HiRes::time</code> return, and the result is guaranteed to be compatible with those).</p>
+
+<p>It progresses independently of any event loop processing, i.e. each call will check the system clock, which usually gets updated frequently.</p>
+
+</dd>
+<dt id="AnyEvent-now">AnyEvent-&gt;now</dt>
+<dd>
+
+<p>This also returns the &quot;current wallclock time&quot;, but unlike <code>time</code>, above, this value might change only once per event loop iteration, depending on the event loop (most return the same time as <code>time</code>, above). This is the time that AnyEvent&#39;s timers get scheduled against.</p>
+
+<p><i>In almost all cases (in all cases if you don&#39;t care), this is the function to call when you want to know the current time.</i></p>
+
+<p>This function is also often faster then <code>AnyEvent-&gt;time</code>, and thus the preferred method if you want some timestamp (for example, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> uses this to update its activity timeouts).</p>
+
+<p>The rest of this section is only of relevance if you try to be very exact with your timing; you can skip it without a bad conscience.</p>
+
+<p>For a practical example of when these times differ, consider <a>Event::Lib</a> and <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> and the following set-up:</p>
+
+<p>The event loop is running and has just invoked one of your callbacks at time=500 (assume no other callbacks delay processing). In your callback, you wait a second by executing <code>sleep 1</code> (blocking the process for a second) and then (at time=501) you create a relative timer that fires after three seconds.</p>
+
+<p>With <a>Event::Lib</a>, <code>AnyEvent-&gt;time</code> and <code>AnyEvent-&gt;now</code> will both return <code>501</code>, because that is the current time, and the timer will be scheduled to fire at time=504 (<code>501</code> + <code>3</code>).</p>
+
+<p>With <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a>, <code>AnyEvent-&gt;time</code> returns <code>501</code> (as that is the current time), but <code>AnyEvent-&gt;now</code> returns <code>500</code>, as that is the time the last event processing phase started. With <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a>, your timer gets scheduled to run at time=503 (<code>500</code> + <code>3</code>).</p>
+
+<p>In one sense, <a>Event::Lib</a> is more exact, as it uses the current time regardless of any delays introduced by event processing. However, most callbacks do not expect large delays in processing, so this causes a higher drift (and a lot more system calls to get the current time).</p>
+
+<p>In another sense, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> is more exact, as your timer will be scheduled at the same time, regardless of how long event processing actually took.</p>
+
+<p>In either case, if you care (and in most cases, you don&#39;t), then you can get whatever behaviour you want with any event loop, by taking the difference between <code>AnyEvent-&gt;time</code> and <code>AnyEvent-&gt;now</code> into account.</p>
+
+</dd>
+<dt id="AnyEvent-now_update">AnyEvent-&gt;now_update</dt>
+<dd>
+
+<p>Some event loops (such as <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> or <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Loop.html">AnyEvent::Loop</a>) cache the current time for each loop iteration (see the discussion of <a>AnyEvent-&gt;now</a>, above).</p>
+
+<p>When a callback runs for a long time (or when the process sleeps), then this &quot;current&quot; time will differ substantially from the real time, which might affect timers and time-outs.</p>
+
+<p>When this is the case, you can call this method, which will update the event loop&#39;s idea of &quot;current time&quot;.</p>
+
+<p>A typical example would be a script in a web server (e.g. <code>mod_perl</code>) - when mod_perl executes the script, then the event loop will have the wrong idea about the &quot;current time&quot; (being potentially far in the past, when the script ran the last time). In that case you should arrange a call to <code>AnyEvent-&gt;now_update</code> each time the web server process wakes up again (e.g. at the start of your script, or in a handler).</p>
+
+<p>Note that updating the time <i>might</i> cause some events to be handled.</p>
+
+</dd>
+</dl>
+
+<h2 id="SIGNAL-WATCHERS">SIGNAL WATCHERS</h2>
+
+<pre><code>   $w = AnyEvent-&gt;signal (signal =&gt; &lt;uppercase_signal_name&gt;, cb =&gt; &lt;callback&gt;);</code></pre>
+
+<p>You can watch for signals using a signal watcher, <code>signal</code> is the signal <i>name</i> in uppercase and without any <code>SIG</code> prefix, <code>cb</code> is the Perl callback to be invoked whenever a signal occurs.</p>
+
+<p>Although the callback might get passed parameters, their value and presence is undefined and you cannot rely on them. Portable AnyEvent callbacks cannot use arguments passed to signal watcher callbacks.</p>
+
+<p>Multiple signal occurrences can be clumped together into one callback invocation, and callback invocation will be synchronous. Synchronous means that it might take a while until the signal gets handled by the process, but it is guaranteed not to interrupt any other callbacks.</p>
+
+<p>The main advantage of using these watchers is that you can share a signal between multiple watchers, and AnyEvent will ensure that signals will not interrupt your program at bad times.</p>
+
+<p>This watcher might use <code>%SIG</code> (depending on the event loop used), so programs overwriting those signals directly will likely not work correctly.</p>
+
+<p>Example: exit on SIGINT</p>
+
+<pre><code>   my $w = AnyEvent-&gt;signal (signal =&gt; &quot;INT&quot;, cb =&gt; sub { exit 1 });</code></pre>
+
+<h3 id="Restart-Behaviour">Restart Behaviour</h3>
+
+<p>While restart behaviour is up to the event loop implementation, most will not restart syscalls (that includes <a>Async::Interrupt</a> and AnyEvent&#39;s pure perl implementation).</p>
+
+<h3 id="Safe-Unsafe-Signals">Safe/Unsafe Signals</h3>
+
+<p>Perl signals can be either &quot;safe&quot; (synchronous to opcode handling) or &quot;unsafe&quot; (asynchronous) - the former might delay signal delivery indefinitely, the latter might corrupt your memory.</p>
+
+<p>AnyEvent signal handlers are, in addition, synchronous to the event loop, i.e. they will not interrupt your running perl program but will only be called as part of the normal event handling (just like timer, I/O etc. callbacks, too).</p>
+
+<h3 id="Signal-Races-Delays-and-Workarounds">Signal Races, Delays and Workarounds</h3>
+
+<p>Many event loops (e.g. Glib, Tk, Qt, IO::Async) do not support attaching callbacks to signals in a generic way, which is a pity, as you cannot do race-free signal handling in perl, requiring C libraries for this. AnyEvent will try to do its best, which means in some cases, signals will be delayed. The maximum time a signal might be delayed is 10 seconds by default, but can be overriden via <code>$ENV{PERL_ANYEVENT_MAX_SIGNAL_LATENCY}</code> or <code>$AnyEvent::MAX_SIGNAL_LATENCY</code> - see the <a href="#ENVIRONMENT-VARIABLES">&quot;ENVIRONMENT VARIABLES&quot;</a> section for details.</p>
+
+<p>All these problems can be avoided by installing the optional <a>Async::Interrupt</a> module, which works with most event loops. It will not work with inherently broken event loops such as <a href="../../lib/perl5/5.26.3/Test2/Tools/Event.html">Event</a> or <a>Event::Lib</a> (and not with <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">POE</a> currently). For those, you just have to suffer the delays.</p>
+
+<h2 id="CHILD-PROCESS-WATCHERS">CHILD PROCESS WATCHERS</h2>
+
+<pre><code>   $w = AnyEvent-&gt;child (pid =&gt; &lt;process id&gt;, cb =&gt; &lt;callback&gt;);</code></pre>
+
+<p>You can also watch for a child process exit and catch its exit status.</p>
+
+<p>The child process is specified by the <code>pid</code> argument (on some backends, using <code>0</code> watches for any child process exit, on others this will croak). The watcher will be triggered only when the child process has finished and an exit status is available, not on any trace events (stopped/continued).</p>
+
+<p>The callback will be called with the pid and exit status (as returned by waitpid), so unlike other watcher types, you <i>can</i> rely on child watcher callback arguments.</p>
+
+<p>This watcher type works by installing a signal handler for <code>SIGCHLD</code>, and since it cannot be shared, nothing else should use SIGCHLD or reap random child processes (waiting for specific child processes, e.g. inside <code>system</code>, is just fine).</p>
+
+<p>There is a slight catch to child watchers, however: you usually start them <i>after</i> the child process was created, and this means the process could have exited already (and no SIGCHLD will be sent anymore).</p>
+
+<p>Not all event models handle this correctly (neither POE nor IO::Async do, see their AnyEvent::Impl manpages for details), but even for event models that <i>do</i> handle this correctly, they usually need to be loaded before the process exits (i.e. before you fork in the first place). AnyEvent&#39;s pure perl event loop handles all cases correctly regardless of when you start the watcher.</p>
+
+<p>This means you cannot create a child watcher as the very first thing in an AnyEvent program, you <i>have</i> to create at least one watcher before you <code>fork</code> the child (alternatively, you can call <code>AnyEvent::detect</code>).</p>
+
+<p>As most event loops do not support waiting for child events, they will be emulated by AnyEvent in most cases, in which case the latency and race problems mentioned in the description of signal watchers apply.</p>
+
+<p>Example: fork a process and wait for it</p>
+
+<pre><code>   my $done = AnyEvent-&gt;condvar;
+  
+   # this forks and immediately calls exit in the child. this
+   # normally has all sorts of bad consequences for your parent,
+   # so take this as an example only. always fork and exec,
+   # or call POSIX::_exit, in real code.
+   my $pid = fork or exit 5;
+  
+   my $w = AnyEvent-&gt;child (
+      pid =&gt; $pid,
+      cb  =&gt; sub {
+         my ($pid, $status) = @_;
+         warn &quot;pid $pid exited with status $status&quot;;
+         $done-&gt;send;
+      },
+   );
+  
+   # do something else, then wait for process exit
+   $done-&gt;recv;</code></pre>
+
+<h2 id="IDLE-WATCHERS">IDLE WATCHERS</h2>
+
+<pre><code>   $w = AnyEvent-&gt;idle (cb =&gt; &lt;callback&gt;);</code></pre>
+
+<p>This will repeatedly invoke the callback after the process becomes idle, until either the watcher is destroyed or new events have been detected.</p>
+
+<p>Idle watchers are useful when there is a need to do something, but it is not so important (or wise) to do it instantly. The callback will be invoked only when there is &quot;nothing better to do&quot;, which is usually defined as &quot;all outstanding events have been handled and no new events have been detected&quot;. That means that idle watchers ideally get invoked when the event loop has just polled for new events but none have been detected. Instead of blocking to wait for more events, the idle watchers will be invoked.</p>
+
+<p>Unfortunately, most event loops do not really support idle watchers (only EV, Event and Glib do it in a usable fashion) - for the rest, AnyEvent will simply call the callback &quot;from time to time&quot;.</p>
+
+<p>Example: read lines from STDIN, but only process them when the program is otherwise idle:</p>
+
+<pre><code>   my @lines; # read data
+   my $idle_w;
+   my $io_w = AnyEvent-&gt;io (fh =&gt; \*STDIN, poll =&gt; &#39;r&#39;, cb =&gt; sub {
+      push @lines, scalar &lt;STDIN&gt;;
+
+      # start an idle watcher, if not already done
+      $idle_w ||= AnyEvent-&gt;idle (cb =&gt; sub {
+         # handle only one line, when there are lines left
+         if (my $line = shift @lines) {
+            print &quot;handled when idle: $line&quot;;
+         } else {
+            # otherwise disable the idle watcher again
+            undef $idle_w;
+         }
+      });
+   });</code></pre>
+
+<h2 id="CONDITION-VARIABLES">CONDITION VARIABLES</h2>
+
+<pre><code>   $cv = AnyEvent-&gt;condvar;
+
+   $cv-&gt;send (&lt;list&gt;);
+   my @res = $cv-&gt;recv;</code></pre>
+
+<p>If you are familiar with some event loops you will know that all of them require you to run some blocking &quot;loop&quot;, &quot;run&quot; or similar function that will actively watch for new events and call your callbacks.</p>
+
+<p>AnyEvent is slightly different: it expects somebody else to run the event loop and will only block when necessary (usually when told by the user).</p>
+
+<p>The tool to do that is called a &quot;condition variable&quot;, so called because they represent a condition that must become true.</p>
+
+<p>Now is probably a good time to look at the examples further below.</p>
+
+<p>Condition variables can be created by calling the <code>AnyEvent-&gt;condvar</code> method, usually without arguments. The only argument pair allowed is <code>cb</code>, which specifies a callback to be called when the condition variable becomes true, with the condition variable as the first argument (but not the results).</p>
+
+<p>After creation, the condition variable is &quot;false&quot; until it becomes &quot;true&quot; by calling the <code>send</code> method (or calling the condition variable as if it were a callback, read about the caveats in the description for the <code>-&gt;send</code> method).</p>
+
+<p>Since condition variables are the most complex part of the AnyEvent API, here are some different mental models of what they are - pick the ones you can connect to:</p>
+
+<ul>
+
+<li><p>Condition variables are like callbacks - you can call them (and pass them instead of callbacks). Unlike callbacks however, you can also wait for them to be called.</p>
+
+</li>
+<li><p>Condition variables are signals - one side can emit or send them, the other side can wait for them, or install a handler that is called when the signal fires.</p>
+
+</li>
+<li><p>Condition variables are like &quot;Merge Points&quot; - points in your program where you merge multiple independent results/control flows into one.</p>
+
+</li>
+<li><p>Condition variables represent a transaction - functions that start some kind of transaction can return them, leaving the caller the choice between waiting in a blocking fashion, or setting a callback.</p>
+
+</li>
+<li><p>Condition variables represent future values, or promises to deliver some result, long before the result is available.</p>
+
+</li>
+</ul>
+
+<p>Condition variables are very useful to signal that something has finished, for example, if you write a module that does asynchronous http requests, then a condition variable would be the ideal candidate to signal the availability of results. The user can either act when the callback is called or can synchronously <code>-&gt;recv</code> for the results.</p>
+
+<p>You can also use them to simulate traditional event loops - for example, you can block your main program until an event occurs - for example, you could <code>-&gt;recv</code> in your main program until the user clicks the Quit button of your app, which would <code>-&gt;send</code> the &quot;quit&quot; event.</p>
+
+<p>Note that condition variables recurse into the event loop - if you have two pieces of code that call <code>-&gt;recv</code> in a round-robin fashion, you lose. Therefore, condition variables are good to export to your caller, but you should avoid making a blocking wait yourself, at least in callbacks, as this asks for trouble.</p>
+
+<p>Condition variables are represented by hash refs in perl, and the keys used by AnyEvent itself are all named <code>_ae_XXX</code> to make subclassing easy (it is often useful to build your own transaction class on top of AnyEvent). To subclass, use <code>AnyEvent::CondVar</code> as base class and call its <code>new</code> method in your own <code>new</code> method.</p>
+
+<p>There are two &quot;sides&quot; to a condition variable - the &quot;producer side&quot; which eventually calls <code>-&gt; send</code>, and the &quot;consumer side&quot;, which waits for the send to occur.</p>
+
+<p>Example: wait for a timer.</p>
+
+<pre><code>   # condition: &quot;wait till the timer is fired&quot;
+   my $timer_fired = AnyEvent-&gt;condvar;
+
+   # create the timer - we could wait for, say
+   # a handle becomign ready, or even an
+   # AnyEvent::HTTP request to finish, but
+   # in this case, we simply use a timer:
+   my $w = AnyEvent-&gt;timer (
+      after =&gt; 1,
+      cb    =&gt; sub { $timer_fired-&gt;send },
+   );
+
+   # this &quot;blocks&quot; (while handling events) till the callback
+   # calls -&gt;send
+   $timer_fired-&gt;recv;</code></pre>
+
+<p>Example: wait for a timer, but take advantage of the fact that condition variables are also callable directly.</p>
+
+<pre><code>   my $done = AnyEvent-&gt;condvar;
+   my $delay = AnyEvent-&gt;timer (after =&gt; 5, cb =&gt; $done);
+   $done-&gt;recv;</code></pre>
+
+<p>Example: Imagine an API that returns a condvar and doesn&#39;t support callbacks. This is how you make a synchronous call, for example from the main program:</p>
+
+<pre><code>   use AnyEvent::CouchDB;
+
+   ...
+
+   my @info = $couchdb-&gt;info-&gt;recv;</code></pre>
+
+<p>And this is how you would just set a callback to be called whenever the results are available:</p>
+
+<pre><code>   $couchdb-&gt;info-&gt;cb (sub {
+      my @info = $_[0]-&gt;recv;
+   });</code></pre>
+
+<h3 id="METHODS-FOR-PRODUCERS">METHODS FOR PRODUCERS</h3>
+
+<p>These methods should only be used by the producing side, i.e. the code/module that eventually sends the signal. Note that it is also the producer side which creates the condvar in most cases, but it isn&#39;t uncommon for the consumer to create it as well.</p>
+
+<dl>
+
+<dt id="cv-send">$cv-&gt;send (...)</dt>
+<dd>
+
+<p>Flag the condition as ready - a running <code>-&gt;recv</code> and all further calls to <code>recv</code> will (eventually) return after this method has been called. If nobody is waiting the send will be remembered.</p>
+
+<p>If a callback has been set on the condition variable, it is called immediately from within send.</p>
+
+<p>Any arguments passed to the <code>send</code> call will be returned by all future <code>-&gt;recv</code> calls.</p>
+
+<p>Condition variables are overloaded so one can call them directly (as if they were a code reference). Calling them directly is the same as calling <code>send</code>.</p>
+
+</dd>
+<dt id="cv-croak-error">$cv-&gt;croak ($error)</dt>
+<dd>
+
+<p>Similar to send, but causes all calls to <code>-&gt;recv</code> to invoke <code>Carp::croak</code> with the given error message/object/scalar.</p>
+
+<p>This can be used to signal any errors to the condition variable user/consumer. Doing it this way instead of calling <code>croak</code> directly delays the error detection, but has the overwhelming advantage that it diagnoses the error at the place where the result is expected, and not deep in some event callback with no connection to the actual code causing the problem.</p>
+
+</dd>
+<dt id="cv-begin-group-callback">$cv-&gt;begin ([group callback])</dt>
+<dd>
+
+</dd>
+<dt id="cv-end">$cv-&gt;end</dt>
+<dd>
+
+<p>These two methods can be used to combine many transactions/events into one. For example, a function that pings many hosts in parallel might want to use a condition variable for the whole process.</p>
+
+<p>Every call to <code>-&gt;begin</code> will increment a counter, and every call to <code>-&gt;end</code> will decrement it. If the counter reaches <code>0</code> in <code>-&gt;end</code>, the (last) callback passed to <code>begin</code> will be executed, passing the condvar as first argument. That callback is <i>supposed</i> to call <code>-&gt;send</code>, but that is not required. If no group callback was set, <code>send</code> will be called without any arguments.</p>
+
+<p>You can think of <code>$cv-&gt;send</code> giving you an OR condition (one call sends), while <code>$cv-&gt;begin</code> and <code>$cv-&gt;end</code> giving you an AND condition (all <code>begin</code> calls must be <code>end</code>&#39;ed before the condvar sends).</p>
+
+<p>Let&#39;s start with a simple example: you have two I/O watchers (for example, STDOUT and STDERR for a program), and you want to wait for both streams to close before activating a condvar:</p>
+
+<pre><code>   my $cv = AnyEvent-&gt;condvar;
+
+   $cv-&gt;begin; # first watcher
+   my $w1 = AnyEvent-&gt;io (fh =&gt; $fh1, cb =&gt; sub {
+      defined sysread $fh1, my $buf, 4096
+         or $cv-&gt;end;
+   });
+
+   $cv-&gt;begin; # second watcher
+   my $w2 = AnyEvent-&gt;io (fh =&gt; $fh2, cb =&gt; sub {
+      defined sysread $fh2, my $buf, 4096
+         or $cv-&gt;end;
+   });
+
+   $cv-&gt;recv;</code></pre>
+
+<p>This works because for every event source (EOF on file handle), there is one call to <code>begin</code>, so the condvar waits for all calls to <code>end</code> before sending.</p>
+
+<p>The ping example mentioned above is slightly more complicated, as the there are results to be passed back, and the number of tasks that are begun can potentially be zero:</p>
+
+<pre><code>   my $cv = AnyEvent-&gt;condvar;
+
+   my %result;
+   $cv-&gt;begin (sub { shift-&gt;send (\%result) });
+
+   for my $host (@list_of_hosts) {
+      $cv-&gt;begin;
+      ping_host_then_call_callback $host, sub {
+         $result{$host} = ...;
+         $cv-&gt;end;
+      };
+   }
+
+   $cv-&gt;end;
+
+   ...
+
+   my $results = $cv-&gt;recv;</code></pre>
+
+<p>This code fragment supposedly pings a number of hosts and calls <code>send</code> after results for all then have have been gathered - in any order. To achieve this, the code issues a call to <code>begin</code> when it starts each ping request and calls <code>end</code> when it has received some result for it. Since <code>begin</code> and <code>end</code> only maintain a counter, the order in which results arrive is not relevant.</p>
+
+<p>There is an additional bracketing call to <code>begin</code> and <code>end</code> outside the loop, which serves two important purposes: first, it sets the callback to be called once the counter reaches <code>0</code>, and second, it ensures that <code>send</code> is called even when <code>no</code> hosts are being pinged (the loop doesn&#39;t execute once).</p>
+
+<p>This is the general pattern when you &quot;fan out&quot; into multiple (but potentially zero) subrequests: use an outer <code>begin</code>/<code>end</code> pair to set the callback and ensure <code>end</code> is called at least once, and then, for each subrequest you start, call <code>begin</code> and for each subrequest you finish, call <code>end</code>.</p>
+
+</dd>
+</dl>
+
+<h3 id="METHODS-FOR-CONSUMERS">METHODS FOR CONSUMERS</h3>
+
+<p>These methods should only be used by the consuming side, i.e. the code awaits the condition.</p>
+
+<dl>
+
+<dt id="cv-recv">$cv-&gt;recv</dt>
+<dd>
+
+<p>Wait (blocking if necessary) until the <code>-&gt;send</code> or <code>-&gt;croak</code> methods have been called on <code>$cv</code>, while servicing other watchers normally.</p>
+
+<p>You can only wait once on a condition - additional calls are valid but will return immediately.</p>
+
+<p>If an error condition has been set by calling <code>-&gt;croak</code>, then this function will call <code>croak</code>.</p>
+
+<p>In list context, all parameters passed to <code>send</code> will be returned, in scalar context only the first one will be returned.</p>
+
+<p>Note that doing a blocking wait in a callback is not supported by any event loop, that is, recursive invocation of a blocking <code>-&gt;recv</code> is not allowed and the <code>recv</code> call will <code>croak</code> if such a condition is detected. This requirement can be dropped by relying on <a>Coro::AnyEvent</a> , which allows you to do a blocking <code>-&gt;recv</code> from any thread that doesn&#39;t run the event loop itself. <a>Coro::AnyEvent</a> is loaded automatically when <a>Coro</a> is used with <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a>, so code does not need to do anything special to take advantage of that: any code that would normally block your program because it calls <code>recv</code>, be executed in an <code>async</code> thread instead without blocking other threads.</p>
+
+<p>Not all event models support a blocking wait - some die in that case (programs might want to do that to stay interactive), so <i>if you are using this from a module, never require a blocking wait</i>. Instead, let the caller decide whether the call will block or not (for example, by coupling condition variables with some kind of request results and supporting callbacks so the caller knows that getting the result will not block, while still supporting blocking waits if the caller so desires).</p>
+
+<p>You can ensure that <code>-&gt;recv</code> never blocks by setting a callback and only calling <code>-&gt;recv</code> from within that callback (or at a later time). This will work even when the event loop does not support blocking waits otherwise.</p>
+
+</dd>
+<dt id="bool-cv-ready">$bool = $cv-&gt;ready</dt>
+<dd>
+
+<p>Returns true when the condition is &quot;true&quot;, i.e. whether <code>send</code> or <code>croak</code> have been called.</p>
+
+</dd>
+<dt id="cb-cv-cb-cb--cv">$cb = $cv-&gt;cb ($cb-&gt;($cv))</dt>
+<dd>
+
+<p>This is a mutator function that returns the callback set (or <code>undef</code> if not) and optionally replaces it before doing so.</p>
+
+<p>The callback will be called when the condition becomes &quot;true&quot;, i.e. when <code>send</code> or <code>croak</code> are called, with the only argument being the condition variable itself. If the condition is already true, the callback is called immediately when it is set. Calling <code>recv</code> inside the callback or at any later time is guaranteed not to block.</p>
+
+<p>Additionally, when the callback is invoked, it is also removed from the condvar (reset to <code>undef</code>), so the condvar does not keep a reference to the callback after invocation.</p>
+
+</dd>
+</dl>
+
+<h1 id="SUPPORTED-EVENT-LOOPS-BACKENDS">SUPPORTED EVENT LOOPS/BACKENDS</h1>
+
+<p>The following backend classes are part of the AnyEvent distribution (every class has its own manpage):</p>
+
+<dl>
+
+<dt id="Backends-that-are-autoprobed-when-no-other-event-loop-can-be-found">Backends that are autoprobed when no other event loop can be found.</dt>
+<dd>
+
+<p>EV is the preferred backend when no other event loop seems to be in use. If EV is not installed, then AnyEvent will fall back to its own pure-perl implementation, which is available everywhere as it comes with AnyEvent itself.</p>
+
+<pre><code>   AnyEvent::Impl::EV        based on EV (interface to libev, best choice).
+   AnyEvent::Impl::Perl      pure-perl AnyEvent::Loop, fast and portable.</code></pre>
+
+</dd>
+<dt id="Backends-that-are-transparently-being-picked-up-when-they-are-used">Backends that are transparently being picked up when they are used.</dt>
+<dd>
+
+<p>These will be used if they are already loaded when the first watcher is created, in which case it is assumed that the application is using them. This means that AnyEvent will automatically pick the right backend when the main program loads an event module before anything starts to create watchers. Nothing special needs to be done by the main program.</p>
+
+<pre><code>   AnyEvent::Impl::Event     based on Event, very stable, few glitches.
+   AnyEvent::Impl::Glib      based on Glib, slow but very stable.
+   AnyEvent::Impl::Tk        based on Tk, very broken.
+   AnyEvent::Impl::UV        based on UV, innovated square wheels.
+   AnyEvent::Impl::EventLib  based on Event::Lib, leaks memory and worse.
+   AnyEvent::Impl::POE       based on POE, very slow, some limitations.
+   AnyEvent::Impl::Irssi     used when running within irssi.
+   AnyEvent::Impl::IOAsync   based on IO::Async.
+   AnyEvent::Impl::Cocoa     based on Cocoa::EventLoop.
+   AnyEvent::Impl::FLTK      based on FLTK (fltk 2 binding).</code></pre>
+
+</dd>
+<dt id="Backends-with-special-needs">Backends with special needs.</dt>
+<dd>
+
+<p>Qt requires the Qt::Application to be instantiated first, but will otherwise be picked up automatically. As long as the main program instantiates the application before any AnyEvent watchers are created, everything should just work.</p>
+
+<pre><code>   AnyEvent::Impl::Qt        based on Qt.</code></pre>
+
+</dd>
+<dt id="Event-loops-that-are-indirectly-supported-via-other-backends">Event loops that are indirectly supported via other backends.</dt>
+<dd>
+
+<p>Some event loops can be supported via other modules:</p>
+
+<p>There is no direct support for WxWidgets (<a>Wx</a>) or <a>Prima</a>.</p>
+
+<p><b>WxWidgets</b> has no support for watching file handles. However, you can use WxWidgets through the POE adaptor, as POE has a Wx backend that simply polls 20 times per second, which was considered to be too horrible to even consider for AnyEvent.</p>
+
+<p><b>Prima</b> is not supported as nobody seems to be using it, but it has a POE backend, so it can be supported through POE.</p>
+
+<p>AnyEvent knows about both <a>Prima</a> and <a>Wx</a>, however, and will try to load <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">POE</a> when detecting them, in the hope that POE will pick them up, in which case everything will be automatic.</p>
+
+</dd>
+<dt id="Known-event-loops-outside-the-AnyEvent-distribution">Known event loops outside the AnyEvent distribution</dt>
+<dd>
+
+<p>The following event loops or programs support AnyEvent by providing their own AnyEvent backend. They will be picked up automatically.</p>
+
+<pre><code>   urxvt::anyevent           available to rxvt-unicode extensions</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="GLOBAL-VARIABLES-AND-FUNCTIONS">GLOBAL VARIABLES AND FUNCTIONS</h1>
+
+<p>These are not normally required to use AnyEvent, but can be useful to write AnyEvent extension modules.</p>
+
+<dl>
+
+<dt id="AnyEvent::MODEL">$AnyEvent::MODEL</dt>
+<dd>
+
+<p>Contains <code>undef</code> until the first watcher is being created, before the backend has been autodetected.</p>
+
+<p>Afterwards it contains the event model that is being used, which is the name of the Perl class implementing the model. This class is usually one of the <code>AnyEvent::Impl::xxx</code> modules, but can be any other class in the case AnyEvent has been extended at runtime (e.g. in <i>rxvt-unicode</i> it will be <code>urxvt::anyevent</code>).</p>
+
+</dd>
+<dt id="AnyEvent::detect">AnyEvent::detect</dt>
+<dd>
+
+<p>Returns <code>$AnyEvent::MODEL</code>, forcing autodetection of the event model if necessary. You should only call this function right before you would have created an AnyEvent watcher anyway, that is, as late as possible at runtime, and not e.g. during initialisation of your module.</p>
+
+<p>The effect of calling this function is as if a watcher had been created (specifically, actions that happen &quot;when the first watcher is created&quot; happen when calling detetc as well).</p>
+
+<p>If you need to do some initialisation before AnyEvent watchers are created, use <code>post_detect</code>.</p>
+
+</dd>
+<dt id="guard-AnyEvent::post_detect-BLOCK">$guard = AnyEvent::post_detect { BLOCK }</dt>
+<dd>
+
+<p>Arranges for the code block to be executed as soon as the event model is autodetected (or immediately if that has already happened).</p>
+
+<p>The block will be executed <i>after</i> the actual backend has been detected (<code>$AnyEvent::MODEL</code> is set), so it is possible to do some initialisation only when AnyEvent is actually initialised - see the sources of <a>AnyEvent::AIO</a> to see how this is used.</p>
+
+<p>The most common usage is to create some global watchers, without forcing event module detection too early. For example, <a>AnyEvent::AIO</a> creates and installs the global <a>IO::AIO</a> watcher in a <code>post_detect</code> block to avoid autodetecting the event module at load time.</p>
+
+<p>If called in scalar or list context, then it creates and returns an object that automatically removes the callback again when it is destroyed (or <code>undef</code> when the hook was immediately executed). See <a>AnyEvent::AIO</a> for a case where this is useful.</p>
+
+<p>Example: Create a watcher for the IO::AIO module and store it in <code>$WATCHER</code>, but do so only do so after the event loop is initialised.</p>
+
+<pre><code>   our WATCHER;
+
+   my $guard = AnyEvent::post_detect {
+      $WATCHER = AnyEvent-&gt;io (fh =&gt; IO::AIO::poll_fileno, poll =&gt; &#39;r&#39;, cb =&gt; \&amp;IO::AIO::poll_cb);
+   };
+
+   # the ||= is important in case post_detect immediately runs the block,
+   # as to not clobber the newly-created watcher. assigning both watcher and
+   # post_detect guard to the same variable has the advantage of users being
+   # able to just C&lt;undef $WATCHER&gt; if the watcher causes them grief.
+
+   $WATCHER ||= $guard;</code></pre>
+
+</dd>
+<dt id="AnyEvent::post_detect">@AnyEvent::post_detect</dt>
+<dd>
+
+<p>This is a lower level interface then <code>AnyEvent::post_detect</code> (the function). This variable is mainly useful for modules that can do something useful when AnyEvent is used and thus want to know when it is initialised, but do not need to even load it by default. This array provides the means to hook into AnyEvent passively, without loading it.</p>
+
+<p>Here is how it works: If there are any code references in this array (you can <code>push</code> to it before or after loading AnyEvent), then they will be called directly after the event loop has been chosen.</p>
+
+<p>You should check <code>$AnyEvent::MODEL</code> before adding to this array, though: if it is defined then the event loop has already been detected, and the array will be ignored.</p>
+
+<p>Best use <code>AnyEvent::post_detect { BLOCK }</code> when your application allows it, as it takes care of these details.</p>
+
+<p>Example: To load Coro::AnyEvent whenever Coro and AnyEvent are used together, you could put this into Coro (this is the actual code used by Coro to accomplish this):</p>
+
+<pre><code>   if (defined $AnyEvent::MODEL) {
+      # AnyEvent already initialised, so load Coro::AnyEvent
+      require Coro::AnyEvent;
+   } else {
+      # AnyEvent not yet initialised, so make sure to load Coro::AnyEvent
+      # as soon as it is
+      push @AnyEvent::post_detect, sub { require Coro::AnyEvent };
+   }</code></pre>
+
+</dd>
+<dt id="AnyEvent::postpone-BLOCK">AnyEvent::postpone { BLOCK }</dt>
+<dd>
+
+<p>Arranges for the block to be executed as soon as possible, but not before the call itself returns. In practise, the block will be executed just before the event loop polls for new events, or shortly afterwards.</p>
+
+<p>This function never returns anything (to make the <code>return postpone { ... }</code> idiom more useful.</p>
+
+<p>To understand the usefulness of this function, consider a function that asynchronously does something for you and returns some transaction object or guard to let you cancel the operation. For example, <code>AnyEvent::Socket::tcp_connect</code>:</p>
+
+<pre><code>   # start a connection attempt unless one is active
+   $self-&gt;{connect_guard} ||= AnyEvent::Socket::tcp_connect &quot;www.example.net&quot;, 80, sub {
+      delete $self-&gt;{connect_guard};
+      ...
+   };</code></pre>
+
+<p>Imagine that this function could instantly call the callback, for example, because it detects an obvious error such as a negative port number. Invoking the callback before the function returns causes problems however: the callback will be called and will try to delete the guard object. But since the function hasn&#39;t returned yet, there is nothing to delete. When the function eventually returns it will assign the guard object to <code>$self-&gt;{connect_guard}</code>, where it will likely never be deleted, so the program thinks it is still trying to connect.</p>
+
+<p>This is where <code>AnyEvent::postpone</code> should be used. Instead of calling the callback directly on error:</p>
+
+<pre><code>   $cb-&gt;(undef), return # signal error to callback, BAD!
+      if $some_error_condition;</code></pre>
+
+<p>It should use <code>postpone</code>:</p>
+
+<pre><code>   AnyEvent::postpone { $cb-&gt;(undef) }, return # signal error to callback, later
+      if $some_error_condition;</code></pre>
+
+</dd>
+<dt id="AnyEvent::log-level-msg-args">AnyEvent::log $level, $msg[, @args]</dt>
+<dd>
+
+<p>Log the given <code>$msg</code> at the given <code>$level</code>.</p>
+
+<p>If <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a> is not loaded then this function makes a simple test to see whether the message will be logged. If the test succeeds it will load AnyEvent::Log and call <code>AnyEvent::Log::log</code> - consequently, look at the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a> documentation for details.</p>
+
+<p>If the test fails it will simply return. Right now this happens when a numerical loglevel is used and it is larger than the level specified via <code>$ENV{PERL_ANYEVENT_VERBOSE}</code>.</p>
+
+<p>If you want to sprinkle loads of logging calls around your code, consider creating a logger callback with the <code>AnyEvent::Log::logger</code> function, which can reduce typing, codesize and can reduce the logging overhead enourmously.</p>
+
+</dd>
+<dt id="AnyEvent::fh_block-filehandle">AnyEvent::fh_block $filehandle</dt>
+<dd>
+
+</dd>
+<dt id="AnyEvent::fh_unblock-filehandle">AnyEvent::fh_unblock $filehandle</dt>
+<dd>
+
+<p>Sets blocking or non-blocking behaviour for the given filehandle.</p>
+
+</dd>
+</dl>
+
+<h1 id="WHAT-TO-DO-IN-A-MODULE">WHAT TO DO IN A MODULE</h1>
+
+<p>As a module author, you should <code>use AnyEvent</code> and call AnyEvent methods freely, but you should not load a specific event module or rely on it.</p>
+
+<p>Be careful when you create watchers in the module body - AnyEvent will decide which event module to use as soon as the first method is called, so by calling AnyEvent in your module body you force the user of your module to load the event module first.</p>
+
+<p>Never call <code>-&gt;recv</code> on a condition variable unless you <i>know</i> that the <code>-&gt;send</code> method has been called on it already. This is because it will stall the whole program, and the whole point of using events is to stay interactive.</p>
+
+<p>It is fine, however, to call <code>-&gt;recv</code> when the user of your module requests it (i.e. if you create a http request object ad have a method called <code>results</code> that returns the results, it may call <code>-&gt;recv</code> freely, as the user of your module knows what she is doing. Always).</p>
+
+<h1 id="WHAT-TO-DO-IN-THE-MAIN-PROGRAM">WHAT TO DO IN THE MAIN PROGRAM</h1>
+
+<p>There will always be a single main program - the only place that should dictate which event model to use.</p>
+
+<p>If the program is not event-based, it need not do anything special, even when it depends on a module that uses an AnyEvent. If the program itself uses AnyEvent, but does not care which event loop is used, all it needs to do is <code>use AnyEvent</code>. In either case, AnyEvent will choose the best available loop implementation.</p>
+
+<p>If the main program relies on a specific event model - for example, in Gtk2 programs you have to rely on the Glib module - you should load the event module before loading AnyEvent or any module that uses it: generally speaking, you should load it as early as possible. The reason is that modules might create watchers when they are loaded, and AnyEvent will decide on the event model to use as soon as it creates watchers, and it might choose the wrong one unless you load the correct one yourself.</p>
+
+<p>You can chose to use a pure-perl implementation by loading the <code>AnyEvent::Loop</code> module, which gives you similar behaviour everywhere, but letting AnyEvent chose the model is generally better.</p>
+
+<h2 id="MAINLOOP-EMULATION">MAINLOOP EMULATION</h2>
+
+<p>Sometimes (often for short test scripts, or even standalone programs who only want to use AnyEvent), you do not want to run a specific event loop.</p>
+
+<p>In that case, you can use a condition variable like this:</p>
+
+<pre><code>   AnyEvent-&gt;condvar-&gt;recv;</code></pre>
+
+<p>This has the effect of entering the event loop and looping forever.</p>
+
+<p>Note that usually your program has some exit condition, in which case it is better to use the &quot;traditional&quot; approach of storing a condition variable somewhere, waiting for it, and sending it when the program should exit cleanly.</p>
+
+<h1 id="OTHER-MODULES">OTHER MODULES</h1>
+
+<p>The following is a non-exhaustive list of additional modules that use AnyEvent as a client and can therefore be mixed easily with other AnyEvent modules and other event loops in the same program. Some of the modules come as part of AnyEvent, the others are available via CPAN (see <a href="http://search.cpan.org/search?m=module&amp;q=anyevent%3A%3A*">http://search.cpan.org/search?m=module&amp;q=anyevent%3A%3A*</a> for a longer non-exhaustive list), and the list is heavily biased towards modules of the AnyEvent author himself :)</p>
+
+<dl>
+
+<dt id="AnyEvent::Util-part-of-the-AnyEvent-distribution"><a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Util.html">AnyEvent::Util</a> (part of the AnyEvent distribution)</dt>
+<dd>
+
+<p>Contains various utility functions that replace often-used blocking functions such as <code>inet_aton</code> with event/callback-based versions.</p>
+
+</dd>
+<dt id="AnyEvent::Socket-part-of-the-AnyEvent-distribution"><a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a> (part of the AnyEvent distribution)</dt>
+<dd>
+
+<p>Provides various utility functions for (internet protocol) sockets, addresses and name resolution. Also functions to create non-blocking tcp connections or tcp servers, with IPv6 and SRV record support and more.</p>
+
+</dd>
+<dt id="AnyEvent::Handle-part-of-the-AnyEvent-distribution"><a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> (part of the AnyEvent distribution)</dt>
+<dd>
+
+<p>Provide read and write buffers, manages watchers for reads and writes, supports raw and formatted I/O, I/O queued and fully transparent and non-blocking SSL/TLS (via <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a>).</p>
+
+</dd>
+<dt id="AnyEvent::DNS-part-of-the-AnyEvent-distribution"><a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/DNS.html">AnyEvent::DNS</a> (part of the AnyEvent distribution)</dt>
+<dd>
+
+<p>Provides rich asynchronous DNS resolver capabilities.</p>
+
+</dd>
+<dt id="AnyEvent::HTTP-AnyEvent::IRC-AnyEvent::XMPP-AnyEvent::GPSD-AnyEvent::IGS-AnyEvent::FCP"><a>AnyEvent::HTTP</a>, <a>AnyEvent::IRC</a>, <a>AnyEvent::XMPP</a>, <a>AnyEvent::GPSD</a>, <a>AnyEvent::IGS</a>, <a>AnyEvent::FCP</a></dt>
+<dd>
+
+<p>Implement event-based interfaces to the protocols of the same name (for the curious, IGS is the International Go Server and FCP is the Freenet Client Protocol).</p>
+
+</dd>
+<dt id="AnyEvent::AIO-part-of-the-AnyEvent-distribution"><a>AnyEvent::AIO</a> (part of the AnyEvent distribution)</dt>
+<dd>
+
+<p>Truly asynchronous (as opposed to non-blocking) I/O, should be in the toolbox of every event programmer. AnyEvent::AIO transparently fuses <a>IO::AIO</a> and AnyEvent together, giving AnyEvent access to event-based file I/O, and much more.</p>
+
+</dd>
+<dt id="AnyEvent::Fork-AnyEvent::Fork::RPC-AnyEvent::Fork::Pool-AnyEvent::Fork::Remote"><a>AnyEvent::Fork</a>, <a>AnyEvent::Fork::RPC</a>, <a>AnyEvent::Fork::Pool</a>, <a>AnyEvent::Fork::Remote</a></dt>
+<dd>
+
+<p>These let you safely fork new subprocesses, either locally or remotely (e.g.v ia ssh), using some RPC protocol or not, without the limitations normally imposed by fork (AnyEvent works fine for example). Dynamically-resized worker pools are obviously included as well.</p>
+
+<p>And they are quite tiny and fast as well - &quot;abusing&quot; <a>AnyEvent::Fork</a> just to exec external programs can easily beat using <code>fork</code> and <code>exec</code> (or even <code>system</code>) in most programs.</p>
+
+</dd>
+<dt id="AnyEvent::Filesys::Notify"><a>AnyEvent::Filesys::Notify</a></dt>
+<dd>
+
+<p>AnyEvent is good for non-blocking stuff, but it can&#39;t detect file or path changes (e.g. &quot;watch this directory for new files&quot;, &quot;watch this file for changes&quot;). The <a>AnyEvent::Filesys::Notify</a> module promises to do just that in a portbale fashion, supporting inotify on GNU/Linux and some weird, without doubt broken, stuff on OS X to monitor files. It can fall back to blocking scans at regular intervals transparently on other platforms, so it&#39;s about as portable as it gets.</p>
+
+<p>(I haven&#39;t used it myself, but it seems the biggest problem with it is it quite bad performance).</p>
+
+</dd>
+<dt id="AnyEvent::DBI"><a>AnyEvent::DBI</a></dt>
+<dd>
+
+<p>Executes <a href="../../lib/perl5/5.26.3/x86_64-linux-thread-multi/DBI.html">DBI</a> requests asynchronously in a proxy process for you, notifying you in an event-based way when the operation is finished.</p>
+
+</dd>
+<dt id="AnyEvent::FastPing"><a>AnyEvent::FastPing</a></dt>
+<dd>
+
+<p>The fastest ping in the west.</p>
+
+</dd>
+<dt id="Coro"><a>Coro</a></dt>
+<dd>
+
+<p>Has special support for AnyEvent via <a>Coro::AnyEvent</a>, which allows you to simply invert the flow control - don&#39;t call us, we will call you:</p>
+
+<pre><code>   async {
+      Coro::AnyEvent::sleep 5; # creates a 5s timer and waits for it
+      print &quot;5 seconds later!\n&quot;;
+
+      Coro::AnyEvent::readable *STDIN; # uses an I/O watcher
+      my $line = &lt;STDIN&gt;; # works for ttys
+
+      AnyEvent::HTTP::http_get &quot;url&quot;, Coro::rouse_cb;
+      my ($body, $hdr) = Coro::rouse_wait;
+   };</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="SIMPLIFIED-AE-API">SIMPLIFIED AE API</h1>
+
+<p>Starting with version 5.0, AnyEvent officially supports a second, much simpler, API that is designed to reduce the calling, typing and memory overhead by using function call syntax and a fixed number of parameters.</p>
+
+<p>See the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AE.html">AE</a> manpage for details.</p>
+
+<h1 id="ERROR-AND-EXCEPTION-HANDLING">ERROR AND EXCEPTION HANDLING</h1>
+
+<p>In general, AnyEvent does not do any error handling - it relies on the caller to do that if required. The <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Strict.html">AnyEvent::Strict</a> module (see also the <code>PERL_ANYEVENT_STRICT</code> environment variable, below) provides strict checking of all AnyEvent methods, however, which is highly useful during development.</p>
+
+<p>As for exception handling (i.e. runtime errors and exceptions thrown while executing a callback), this is not only highly event-loop specific, but also not in any way wrapped by this module, as this is the job of the main program.</p>
+
+<p>The pure perl event loop simply re-throws the exception (usually within <code>condvar-&gt;recv</code>), the <a href="../../lib/perl5/5.26.3/Test2/Tools/Event.html">Event</a> and <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> modules call <code>$Event/EV::DIED-&gt;()</code>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">Glib</a> uses <code>install_exception_handler</code> and so on.</p>
+
+<h1 id="ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</h1>
+
+<p>AnyEvent supports a number of environment variables that tune the runtime behaviour. They are usually evaluated when AnyEvent is loaded, initialised, or a submodule that uses them is loaded. Many of them also cause AnyEvent to load additional modules - for example, <code>PERL_ANYEVENT_DEBUG_WRAP</code> causes the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Debug.html">AnyEvent::Debug</a> module to be loaded.</p>
+
+<p>All the environment variables documented here start with <code>PERL_ANYEVENT_</code>, which is what AnyEvent considers its own namespace. Other modules are encouraged (but by no means required) to use <code>PERL_ANYEVENT_SUBMODULE</code> if they have registered the AnyEvent::Submodule namespace on CPAN, for any submodule. For example, <a>AnyEvent::HTTP</a> could be expected to use <code>PERL_ANYEVENT_HTTP_PROXY</code> (it should not access env variables starting with <code>AE_</code>, see below).</p>
+
+<p>All variables can also be set via the <code>AE_</code> prefix, that is, instead of setting <code>PERL_ANYEVENT_VERBOSE</code> you can also set <code>AE_VERBOSE</code>. In case there is a clash btween anyevent and another program that uses <code>AE_something</code> you can set the corresponding <code>PERL_ANYEVENT_something</code> variable to the empty string, as those variables take precedence.</p>
+
+<p>When AnyEvent is first loaded, it copies all <code>AE_xxx</code> env variables to their <code>PERL_ANYEVENT_xxx</code> counterpart unless that variable already exists. If taint mode is on, then AnyEvent will remove <i>all</i> environment variables starting with <code>PERL_ANYEVENT_</code> from <code>%ENV</code> (or replace them with <code>undef</code> or the empty string, if the corresaponding <code>AE_</code> variable is set).</p>
+
+<p>The exact algorithm is currently:</p>
+
+<pre><code>   1. if taint mode enabled, delete all PERL_ANYEVENT_xyz variables from %ENV
+   2. copy over AE_xyz to PERL_ANYEVENT_xyz unless the latter alraedy exists
+   3. if taint mode enabled, set all PERL_ANYEVENT_xyz variables to undef.</code></pre>
+
+<p>This ensures that child processes will not see the <code>AE_</code> variables.</p>
+
+<p>The following environment variables are currently known to AnyEvent:</p>
+
+<dl>
+
+<dt id="PERL_ANYEVENT_VERBOSE"><code>PERL_ANYEVENT_VERBOSE</code></dt>
+<dd>
+
+<p>By default, AnyEvent will log messages with loglevel <code>4</code> (<code>error</code>) or higher (see <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a>). You can set this environment variable to a numerical loglevel to make AnyEvent more (or less) talkative.</p>
+
+<p>If you want to do more than just set the global logging level you should have a look at <code>PERL_ANYEVENT_LOG</code>, which allows much more complex specifications.</p>
+
+<p>When set to <code>0</code> (<code>off</code>), then no messages whatsoever will be logged with everything else at defaults.</p>
+
+<p>When set to <code>5</code> or higher (<code>warn</code>), AnyEvent warns about unexpected conditions, such as not being able to load the event model specified by <code>PERL_ANYEVENT_MODEL</code>, or a guard callback throwing an exception - this is the minimum recommended level for use during development.</p>
+
+<p>When set to <code>7</code> or higher (info), AnyEvent reports which event model it chooses.</p>
+
+<p>When set to <code>8</code> or higher (debug), then AnyEvent will report extra information on which optional modules it loads and how it implements certain features.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_LOG"><code>PERL_ANYEVENT_LOG</code></dt>
+<dd>
+
+<p>Accepts rather complex logging specifications. For example, you could log all <code>debug</code> messages of some module to stderr, warnings and above to stderr, and errors and above to syslog, with:</p>
+
+<pre><code>   PERL_ANYEVENT_LOG=Some::Module=debug,+log:filter=warn,+%syslog:%syslog=error,syslog</code></pre>
+
+<p>For the rather extensive details, see <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a>.</p>
+
+<p>This variable is evaluated when AnyEvent (or <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a>) is loaded, so will take effect even before AnyEvent has initialised itself.</p>
+
+<p>Note that specifying this environment variable causes the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a> module to be loaded, while <code>PERL_ANYEVENT_VERBOSE</code> does not, so only using the latter saves a few hundred kB of memory unless a module explicitly needs the extra features of AnyEvent::Log.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_STRICT"><code>PERL_ANYEVENT_STRICT</code></dt>
+<dd>
+
+<p>AnyEvent does not do much argument checking by default, as thorough argument checking is very costly. Setting this variable to a true value will cause AnyEvent to load <code>AnyEvent::Strict</code> and then to thoroughly check the arguments passed to most method calls. If it finds any problems, it will croak.</p>
+
+<p>In other words, enables &quot;strict&quot; mode.</p>
+
+<p>Unlike <code>use strict</code> (or its modern cousin, <code>use <a>common::sense</a></code>, it is definitely recommended to keep it off in production. Keeping <code>PERL_ANYEVENT_STRICT=1</code> in your environment while developing programs can be very useful, however.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_DEBUG_SHELL"><code>PERL_ANYEVENT_DEBUG_SHELL</code></dt>
+<dd>
+
+<p>If this env variable is nonempty, then its contents will be interpreted by <code>AnyEvent::Socket::parse_hostport</code> and <code>AnyEvent::Debug::shell</code> (after replacing every occurance of <code>$$</code> by the process pid). The shell object is saved in <code>$AnyEvent::Debug::SHELL</code>.</p>
+
+<p>This happens when the first watcher is created.</p>
+
+<p>For example, to bind a debug shell on a unix domain socket in <i>/tmp/debug&lt;pid&gt;.sock</i>, you could use this:</p>
+
+<pre><code>   PERL_ANYEVENT_DEBUG_SHELL=/tmp/debug\$\$.sock perlprog
+   # connect with e.g.: socat readline /tmp/debug123.sock</code></pre>
+
+<p>Or to bind to tcp port 4545 on localhost:</p>
+
+<pre><code>   PERL_ANYEVENT_DEBUG_SHELL=127.0.0.1:4545 perlprog
+   # connect with e.g.: telnet localhost 4545</code></pre>
+
+<p>Note that creating sockets in <i>/tmp</i> or on localhost is very unsafe on multiuser systems.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_DEBUG_WRAP"><code>PERL_ANYEVENT_DEBUG_WRAP</code></dt>
+<dd>
+
+<p>Can be set to <code>0</code>, <code>1</code> or <code>2</code> and enables wrapping of all watchers for debugging purposes. See <code>AnyEvent::Debug::wrap</code> for details.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_MODEL"><code>PERL_ANYEVENT_MODEL</code></dt>
+<dd>
+
+<p>This can be used to specify the event model to be used by AnyEvent, before auto detection and -probing kicks in.</p>
+
+<p>It normally is a string consisting entirely of ASCII letters (e.g. <code>EV</code> or <code>IOAsync</code>). The string <code>AnyEvent::Impl::</code> gets prepended and the resulting module name is loaded and - if the load was successful - used as event model backend. If it fails to load then AnyEvent will proceed with auto detection and -probing.</p>
+
+<p>If the string ends with <code>::</code> instead (e.g. <code>AnyEvent::Impl::EV::</code>) then nothing gets prepended and the module name is used as-is (hint: <code>::</code> at the end of a string designates a module name and quotes it appropriately).</p>
+
+<p>For example, to force the pure perl model (<a>AnyEvent::Loop::Perl</a>) you could start your program like this:</p>
+
+<pre><code>   PERL_ANYEVENT_MODEL=Perl perl ...</code></pre>
+
+</dd>
+<dt id="PERL_ANYEVENT_IO_MODEL"><code>PERL_ANYEVENT_IO_MODEL</code></dt>
+<dd>
+
+<p>The current file I/O model - see <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/IO.html">AnyEvent::IO</a> for more info.</p>
+
+<p>At the moment, only <code>Perl</code> (small, pure-perl, synchronous) and <code>IOAIO</code> (truly asynchronous) are supported. The default is <code>IOAIO</code> if <a>AnyEvent::AIO</a> can be loaded, otherwise it is <code>Perl</code>.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_PROTOCOLS"><code>PERL_ANYEVENT_PROTOCOLS</code></dt>
+<dd>
+
+<p>Used by both <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/DNS.html">AnyEvent::DNS</a> and <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a> to determine preferences for IPv4 or IPv6. The default is unspecified (and might change, or be the result of auto probing).</p>
+
+<p>Must be set to a comma-separated list of protocols or address families, current supported: <code>ipv4</code> and <code>ipv6</code>. Only protocols mentioned will be used, and preference will be given to protocols mentioned earlier in the list.</p>
+
+<p>This variable can effectively be used for denial-of-service attacks against local programs (e.g. when setuid), although the impact is likely small, as the program has to handle connection and other failures anyways.</p>
+
+<p>Examples: <code>PERL_ANYEVENT_PROTOCOLS=ipv4,ipv6</code> - prefer IPv4 over IPv6, but support both and try to use both. <code>PERL_ANYEVENT_PROTOCOLS=ipv4</code> - only support IPv4, never try to resolve or contact IPv6 addresses. <code>PERL_ANYEVENT_PROTOCOLS=ipv6,ipv4</code> support either IPv4 or IPv6, but prefer IPv6 over IPv4.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_HOSTS"><code>PERL_ANYEVENT_HOSTS</code></dt>
+<dd>
+
+<p>This variable, if specified, overrides the <i>/etc/hosts</i> file used by <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a><code>::resolve_sockaddr</code>, i.e. hosts aliases will be read from that file instead.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_EDNS0"><code>PERL_ANYEVENT_EDNS0</code></dt>
+<dd>
+
+<p>Used by <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/DNS.html">AnyEvent::DNS</a> to decide whether to use the EDNS0 extension for DNS. This extension is generally useful to reduce DNS traffic, especially when DNSSEC is involved, but some (broken) firewalls drop such DNS packets, which is why it is off by default.</p>
+
+<p>Setting this variable to <code>1</code> will cause <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/DNS.html">AnyEvent::DNS</a> to announce EDNS0 in its DNS requests.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_MAX_FORKS"><code>PERL_ANYEVENT_MAX_FORKS</code></dt>
+<dd>
+
+<p>The maximum number of child processes that <code>AnyEvent::Util::fork_call</code> will create in parallel.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_MAX_OUTSTANDING_DNS"><code>PERL_ANYEVENT_MAX_OUTSTANDING_DNS</code></dt>
+<dd>
+
+<p>The default value for the <code>max_outstanding</code> parameter for the default DNS resolver - this is the maximum number of parallel DNS requests that are sent to the DNS server.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_MAX_SIGNAL_LATENCY"><code>PERL_ANYEVENT_MAX_SIGNAL_LATENCY</code></dt>
+<dd>
+
+<p>Perl has inherently racy signal handling (you can basically choose between losing signals and memory corruption) - pure perl event loops (including <code>AnyEvent::Loop</code>, when <code>Async::Interrupt</code> isn&#39;t available) therefore have to poll regularly to avoid losing signals.</p>
+
+<p>Some event loops are racy, but don&#39;t poll regularly, and some event loops are written in C but are still racy. For those event loops, AnyEvent installs a timer that regularly wakes up the event loop.</p>
+
+<p>By default, the interval for this timer is <code>10</code> seconds, but you can override this delay with this environment variable (or by setting the <code>$AnyEvent::MAX_SIGNAL_LATENCY</code> variable before creating signal watchers).</p>
+
+<p>Lower values increase CPU (and energy) usage, higher values can introduce long delays when reaping children or waiting for signals.</p>
+
+<p>The <a>AnyEvent::Async</a> module, if available, will be used to avoid this polling (with most event loops).</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_RESOLV_CONF"><code>PERL_ANYEVENT_RESOLV_CONF</code></dt>
+<dd>
+
+<p>The absolute path to a <i>resolv.conf</i>-style file to use instead of <i>/etc/resolv.conf</i> (or the OS-specific configuration) in the default resolver, or the empty string to select the default configuration.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_CA_FILE-PERL_ANYEVENT_CA_PATH"><code>PERL_ANYEVENT_CA_FILE</code>, <code>PERL_ANYEVENT_CA_PATH</code>.</dt>
+<dd>
+
+<p>When neither <code>ca_file</code> nor <code>ca_path</code> was specified during <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a> context creation, and either of these environment variables are nonempty, they will be used to specify CA certificate locations instead of a system-dependent default.</p>
+
+</dd>
+<dt id="PERL_ANYEVENT_AVOID_GUARD-and-PERL_ANYEVENT_AVOID_ASYNC_INTERRUPT"><code>PERL_ANYEVENT_AVOID_GUARD</code> and <code>PERL_ANYEVENT_AVOID_ASYNC_INTERRUPT</code></dt>
+<dd>
+
+<p>When these are set to <code>1</code>, then the respective modules are not loaded. Mostly good for testing AnyEvent itself.</p>
+
+</dd>
+</dl>
+
+<h1 id="SUPPLYING-YOUR-OWN-EVENT-MODEL-INTERFACE">SUPPLYING YOUR OWN EVENT MODEL INTERFACE</h1>
+
+<p>This is an advanced topic that you do not normally need to use AnyEvent in a module. This section is only of use to event loop authors who want to provide AnyEvent compatibility.</p>
+
+<p>If you need to support another event library which isn&#39;t directly supported by AnyEvent, you can supply your own interface to it by pushing, before the first watcher gets created, the package name of the event module and the package name of the interface to use onto <code>@AnyEvent::REGISTRY</code>. You can do that before and even without loading AnyEvent, so it is reasonably cheap.</p>
+
+<p>Example:</p>
+
+<pre><code>   push @AnyEvent::REGISTRY, [urxvt =&gt; urxvt::anyevent::];</code></pre>
+
+<p>This tells AnyEvent to (literally) use the <code>urxvt::anyevent::</code> package/class when it finds the <code>urxvt</code> package/module is already loaded.</p>
+
+<p>When AnyEvent is loaded and asked to find a suitable event model, it will first check for the presence of urxvt by trying to <code>use</code> the <code>urxvt::anyevent</code> module.</p>
+
+<p>The class should provide implementations for all watcher types. See <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">AnyEvent::Impl::EV</a> (source code), <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">AnyEvent::Impl::Glib</a> (Source code) and so on for actual examples. Use <code>perldoc -m AnyEvent::Impl::Glib</code> to see the sources.</p>
+
+<p>If you don&#39;t provide <code>signal</code> and <code>child</code> watchers than AnyEvent will provide suitable (hopefully) replacements.</p>
+
+<p>The above example isn&#39;t fictitious, the <i>rxvt-unicode</i> (a.k.a. urxvt) terminal emulator uses the above line as-is. An interface isn&#39;t included in AnyEvent because it doesn&#39;t make sense outside the embedded interpreter inside <i>rxvt-unicode</i>, and it is updated and maintained as part of the <i>rxvt-unicode</i> distribution.</p>
+
+<p><i>rxvt-unicode</i> also cheats a bit by not providing blocking access to condition variables: code blocking while waiting for a condition will <code>die</code>. This still works with most modules/usages, and blocking calls must not be done in an interactive application, so it makes sense.</p>
+
+<h1 id="EXAMPLE-PROGRAM">EXAMPLE PROGRAM</h1>
+
+<p>The following program uses an I/O watcher to read data from STDIN, a timer to display a message once per second, and a condition variable to quit the program when the user enters quit:</p>
+
+<pre><code>   use AnyEvent;
+
+   my $cv = AnyEvent-&gt;condvar;
+
+   my $io_watcher = AnyEvent-&gt;io (
+      fh   =&gt; \*STDIN,
+      poll =&gt; &#39;r&#39;,
+      cb   =&gt; sub {
+         warn &quot;io event &lt;$_[0]&gt;\n&quot;;   # will always output &lt;r&gt;
+         chomp (my $input = &lt;STDIN&gt;); # read a line
+         warn &quot;read: $input\n&quot;;       # output what has been read
+         $cv-&gt;send if $input =~ /^q/i; # quit program if /^q/i
+      },
+   );
+
+   my $time_watcher = AnyEvent-&gt;timer (after =&gt; 1, interval =&gt; 1, cb =&gt; sub {
+      warn &quot;timeout\n&quot;; # print &#39;timeout&#39; at most every second
+   });
+
+   $cv-&gt;recv; # wait until user enters /^q/i</code></pre>
+
+<h1 id="REAL-WORLD-EXAMPLE">REAL-WORLD EXAMPLE</h1>
+
+<p>Consider the <a>Net::FCP</a> module. It features (among others) the following API calls, which are to freenet what HTTP GET requests are to http:</p>
+
+<pre><code>   my $data = $fcp-&gt;client_get ($url); # blocks
+
+   my $transaction = $fcp-&gt;txn_client_get ($url); # does not block
+   $transaction-&gt;cb ( sub { ... } ); # set optional result callback
+   my $data = $transaction-&gt;result; # possibly blocks</code></pre>
+
+<p>The <code>client_get</code> method works like <code>LWP::Simple::get</code>: it requests the given URL and waits till the data has arrived. It is defined to be:</p>
+
+<pre><code>   sub client_get { $_[0]-&gt;txn_client_get ($_[1])-&gt;result }</code></pre>
+
+<p>And in fact is automatically generated. This is the blocking API of <a>Net::FCP</a>, and it works as simple as in any other, similar, module.</p>
+
+<p>More complicated is <code>txn_client_get</code>: It only creates a transaction (completion, result, ...) object and initiates the transaction.</p>
+
+<pre><code>   my $txn = bless { }, Net::FCP::Txn::;</code></pre>
+
+<p>It also creates a condition variable that is used to signal the completion of the request:</p>
+
+<pre><code>   $txn-&gt;{finished} = AnyAvent-&gt;condvar;</code></pre>
+
+<p>It then creates a socket in non-blocking mode.</p>
+
+<pre><code>   socket $txn-&gt;{fh}, ...;
+   fcntl $txn-&gt;{fh}, F_SETFL, O_NONBLOCK;
+   connect $txn-&gt;{fh}, ...
+      and !$!{EWOULDBLOCK}
+      and !$!{EINPROGRESS}
+      and Carp::croak &quot;unable to connect: $!\n&quot;;</code></pre>
+
+<p>Then it creates a write-watcher which gets called whenever an error occurs or the connection succeeds:</p>
+
+<pre><code>   $txn-&gt;{w} = AnyEvent-&gt;io (fh =&gt; $txn-&gt;{fh}, poll =&gt; &#39;w&#39;, cb =&gt; sub { $txn-&gt;fh_ready_w });</code></pre>
+
+<p>And returns this transaction object. The <code>fh_ready_w</code> callback gets called as soon as the event loop detects that the socket is ready for writing.</p>
+
+<p>The <code>fh_ready_w</code> method makes the socket blocking again, writes the request data and replaces the watcher by a read watcher (waiting for reply data). The actual code is more complicated, but that doesn&#39;t matter for this example:</p>
+
+<pre><code>   fcntl $txn-&gt;{fh}, F_SETFL, 0;
+   syswrite $txn-&gt;{fh}, $txn-&gt;{request}
+      or die &quot;connection or write error&quot;;
+   $txn-&gt;{w} = AnyEvent-&gt;io (fh =&gt; $txn-&gt;{fh}, poll =&gt; &#39;r&#39;, cb =&gt; sub { $txn-&gt;fh_ready_r });</code></pre>
+
+<p>Again, <code>fh_ready_r</code> waits till all data has arrived, and then stores the result and signals any possible waiters that the request has finished:</p>
+
+<pre><code>   sysread $txn-&gt;{fh}, $txn-&gt;{buf}, length $txn-&gt;{$buf};
+
+   if (end-of-file or data complete) {
+     $txn-&gt;{result} = $txn-&gt;{buf};
+     $txn-&gt;{finished}-&gt;send;
+     $txb-&gt;{cb}-&gt;($txn) of $txn-&gt;{cb}; # also call callback
+   }</code></pre>
+
+<p>The <code>result</code> method, finally, just waits for the finished signal (if the request was already finished, it doesn&#39;t wait, of course, and returns the data:</p>
+
+<pre><code>   $txn-&gt;{finished}-&gt;recv;
+   return $txn-&gt;{result};</code></pre>
+
+<p>The actual code goes further and collects all errors (<code>die</code>s, exceptions) that occurred during request processing. The <code>result</code> method detects whether an exception as thrown (it is stored inside the $txn object) and just throws the exception, which means connection errors and other problems get reported to the code that tries to use the result, not in a random callback.</p>
+
+<p>All of this enables the following usage styles:</p>
+
+<p>1. Blocking:</p>
+
+<pre><code>   my $data = $fcp-&gt;client_get ($url);</code></pre>
+
+<p>2. Blocking, but running in parallel:</p>
+
+<pre><code>   my @datas = map $_-&gt;result,
+                  map $fcp-&gt;txn_client_get ($_),
+                     @urls;</code></pre>
+
+<p>Both blocking examples work without the module user having to know anything about events.</p>
+
+<p>3a. Event-based in a main program, using any supported event module:</p>
+
+<pre><code>   use EV;
+
+   $fcp-&gt;txn_client_get ($url)-&gt;cb (sub {
+      my $txn = shift;
+      my $data = $txn-&gt;result;
+      ...
+   });
+
+   EV::run;</code></pre>
+
+<p>3b. The module user could use AnyEvent, too:</p>
+
+<pre><code>   use AnyEvent;
+
+   my $quit = AnyEvent-&gt;condvar;
+
+   $fcp-&gt;txn_client_get ($url)-&gt;cb (sub {
+      ...
+      $quit-&gt;send;
+   });
+
+   $quit-&gt;recv;</code></pre>
+
+<h1 id="BENCHMARKS">BENCHMARKS</h1>
+
+<p>To give you an idea of the performance and overheads that AnyEvent adds over the event loops themselves and to give you an impression of the speed of various event loops I prepared some benchmarks.</p>
+
+<h2 id="BENCHMARKING-ANYEVENT-OVERHEAD">BENCHMARKING ANYEVENT OVERHEAD</h2>
+
+<p>Here is a benchmark of various supported event models used natively and through AnyEvent. The benchmark creates a lot of timers (with a zero timeout) and I/O watchers (watching STDOUT, a pty, to become writable, which it is), lets them fire exactly once and destroys them again.</p>
+
+<p>Source code for this benchmark is found as <i>eg/bench</i> in the AnyEvent distribution. It uses the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AE.html">AE</a> interface, which makes a real difference for the EV and Perl backends only.</p>
+
+<h3 id="Explanation-of-the-columns">Explanation of the columns</h3>
+
+<p><i>watcher</i> is the number of event watchers created/destroyed. Since different event models feature vastly different performances, each event loop was given a number of watchers so that overall runtime is acceptable and similar between tested event loop (and keep them from crashing): Glib would probably take thousands of years if asked to process the same number of watchers as EV in this benchmark.</p>
+
+<p><i>bytes</i> is the number of bytes (as measured by the resident set size, RSS) consumed by each watcher. This method of measuring captures both C and Perl-based overheads.</p>
+
+<p><i>create</i> is the time, in microseconds (millionths of seconds), that it takes to create a single watcher. The callback is a closure shared between all watchers, to avoid adding memory overhead. That means closure creation and memory usage is not included in the figures.</p>
+
+<p><i>invoke</i> is the time, in microseconds, used to invoke a simple callback. The callback simply counts down a Perl variable and after it was invoked &quot;watcher&quot; times, it would <code>-&gt;send</code> a condvar once to signal the end of this phase.</p>
+
+<p><i>destroy</i> is the time, in microseconds, that it takes to destroy a single watcher.</p>
+
+<h3 id="Results">Results</h3>
+
+<pre><code>          name watchers bytes create invoke destroy comment
+         EV/EV   100000   223   0.47   0.43    0.27 EV native interface
+        EV/Any   100000   223   0.48   0.42    0.26 EV + AnyEvent watchers
+  Coro::EV/Any   100000   223   0.47   0.42    0.26 coroutines + Coro::Signal
+      Perl/Any   100000   431   2.70   0.74    0.92 pure perl implementation
+   Event/Event    16000   516  31.16  31.84    0.82 Event native interface
+     Event/Any    16000  1203  42.61  34.79    1.80 Event + AnyEvent watchers
+   IOAsync/Any    16000  1911  41.92  27.45   16.81 via IO::Async::Loop::IO_Poll
+   IOAsync/Any    16000  1726  40.69  26.37   15.25 via IO::Async::Loop::Epoll
+      Glib/Any    16000  1118  89.00  12.57   51.17 quadratic behaviour
+        Tk/Any     2000  1346  20.96  10.75    8.00 SEGV with &gt;&gt; 2000 watchers
+       POE/Any     2000  6951 108.97 795.32   14.24 via POE::Loop::Event
+       POE/Any     2000  6648  94.79 774.40  575.51 via POE::Loop::Select</code></pre>
+
+<h3 id="Discussion">Discussion</h3>
+
+<p>The benchmark does <i>not</i> measure scalability of the event loop very well. For example, a select-based event loop (such as the pure perl one) can never compete with an event loop that uses epoll when the number of file descriptors grows high. In this benchmark, all events become ready at the same time, so select/poll-based implementations get an unnatural speed boost.</p>
+
+<p>Also, note that the number of watchers usually has a nonlinear effect on overall speed, that is, creating twice as many watchers doesn&#39;t take twice the time - usually it takes longer. This puts event loops tested with a higher number of watchers at a disadvantage.</p>
+
+<p>To put the range of results into perspective, consider that on the benchmark machine, handling an event takes roughly 1600 CPU cycles with EV, 3100 CPU cycles with AnyEvent&#39;s pure perl loop and almost 3000000 CPU cycles with POE.</p>
+
+<p><code>EV</code> is the sole leader regarding speed and memory use, which are both maximal/minimal, respectively. When using the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AE.html">AE</a> API there is zero overhead (when going through the AnyEvent API create is about 5-6 times slower, with other times being equal, so still uses far less memory than any other event loop and is still faster than Event natively).</p>
+
+<p>The pure perl implementation is hit in a few sweet spots (both the constant timeout and the use of a single fd hit optimisations in the perl interpreter and the backend itself). Nevertheless this shows that it adds very little overhead in itself. Like any select-based backend its performance becomes really bad with lots of file descriptors (and few of them active), of course, but this was not subject of this benchmark.</p>
+
+<p>The <code>Event</code> module has a relatively high setup and callback invocation cost, but overall scores in on the third place.</p>
+
+<p><code>IO::Async</code> performs admirably well, about on par with <code>Event</code>, even when using its pure perl backend.</p>
+
+<p><code>Glib</code>&#39;s memory usage is quite a bit higher, but it features a faster callback invocation and overall ends up in the same class as <code>Event</code>. However, Glib scales extremely badly, doubling the number of watchers increases the processing time by more than a factor of four, making it completely unusable when using larger numbers of watchers (note that only a single file descriptor was used in the benchmark, so inefficiencies of <code>poll</code> do not account for this).</p>
+
+<p>The <code>Tk</code> adaptor works relatively well. The fact that it crashes with more than 2000 watchers is a big setback, however, as correctness takes precedence over speed. Nevertheless, its performance is surprising, as the file descriptor is dup()ed for each watcher. This shows that the dup() employed by some adaptors is not a big performance issue (it does incur a hidden memory cost inside the kernel which is not reflected in the figures above).</p>
+
+<p><code>POE</code>, regardless of underlying event loop (whether using its pure perl select-based backend or the Event module, the POE-EV backend couldn&#39;t be tested because it wasn&#39;t working) shows abysmal performance and memory usage with AnyEvent: Watchers use almost 30 times as much memory as EV watchers, and 10 times as much memory as Event (the high memory requirements are caused by requiring a session for each watcher). Watcher invocation speed is almost 900 times slower than with AnyEvent&#39;s pure perl implementation.</p>
+
+<p>The design of the POE adaptor class in AnyEvent can not really account for the performance issues, though, as session creation overhead is small compared to execution of the state machine, which is coded pretty optimally within <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">AnyEvent::Impl::POE</a> (and while everybody agrees that using multiple sessions is not a good approach, especially regarding memory usage, even the author of POE could not come up with a faster design).</p>
+
+<h3 id="Summary">Summary</h3>
+
+<ul>
+
+<li><p>Using EV through AnyEvent is faster than any other event loop (even when used without AnyEvent), but most event loops have acceptable performance with or without AnyEvent.</p>
+
+</li>
+<li><p>The overhead AnyEvent adds is usually much smaller than the overhead of the actual event loop, only with extremely fast event loops such as EV does AnyEvent add significant overhead.</p>
+
+</li>
+<li><p>You should avoid POE like the plague if you want performance or reasonable memory usage.</p>
+
+</li>
+</ul>
+
+<h2 id="BENCHMARKING-THE-LARGE-SERVER-CASE">BENCHMARKING THE LARGE SERVER CASE</h2>
+
+<p>This benchmark actually benchmarks the event loop itself. It works by creating a number of &quot;servers&quot;: each server consists of a socket pair, a timeout watcher that gets reset on activity (but never fires), and an I/O watcher waiting for input on one side of the socket. Each time the socket watcher reads a byte it will write that byte to a random other &quot;server&quot;.</p>
+
+<p>The effect is that there will be a lot of I/O watchers, only part of which are active at any one point (so there is a constant number of active fds for each loop iteration, but which fds these are is random). The timeout is reset each time something is read because that reflects how most timeouts work (and puts extra pressure on the event loops).</p>
+
+<p>In this benchmark, we use 10000 socket pairs (20000 sockets), of which 100 (1%) are active. This mirrors the activity of large servers with many connections, most of which are idle at any one point in time.</p>
+
+<p>Source code for this benchmark is found as <i>eg/bench2</i> in the AnyEvent distribution. It uses the <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AE.html">AE</a> interface, which makes a real difference for the EV and Perl backends only.</p>
+
+<h3 id="Explanation-of-the-columns1">Explanation of the columns</h3>
+
+<p><i>sockets</i> is the number of sockets, and twice the number of &quot;servers&quot; (as each server has a read and write socket end).</p>
+
+<p><i>create</i> is the time it takes to create a socket pair (which is nontrivial) and two watchers: an I/O watcher and a timeout watcher.</p>
+
+<p><i>request</i>, the most important value, is the time it takes to handle a single &quot;request&quot;, that is, reading the token from the pipe and forwarding it to another server. This includes deleting the old timeout and creating a new one that moves the timeout into the future.</p>
+
+<h3 id="Results1">Results</h3>
+
+<pre><code>     name sockets create  request 
+       EV   20000  62.66     7.99 
+     Perl   20000  68.32    32.64 
+  IOAsync   20000 174.06   101.15 epoll
+  IOAsync   20000 174.67   610.84 poll
+    Event   20000 202.69   242.91 
+     Glib   20000 557.01  1689.52 
+      POE   20000 341.54 12086.32 uses POE::Loop::Event</code></pre>
+
+<h3 id="Discussion1">Discussion</h3>
+
+<p>This benchmark <i>does</i> measure scalability and overall performance of the particular event loop.</p>
+
+<p>EV is again fastest. Since it is using epoll on my system, the setup time is relatively high, though.</p>
+
+<p>Perl surprisingly comes second. It is much faster than the C-based event loops Event and Glib.</p>
+
+<p>IO::Async performs very well when using its epoll backend, and still quite good compared to Glib when using its pure perl backend.</p>
+
+<p>Event suffers from high setup time as well (look at its code and you will understand why). Callback invocation also has a high overhead compared to the <code>$_-&gt;() for ..</code>-style loop that the Perl event loop uses. Event uses select or poll in basically all documented configurations.</p>
+
+<p>Glib is hit hard by its quadratic behaviour w.r.t. many watchers. It clearly fails to perform with many filehandles or in busy servers.</p>
+
+<p>POE is still completely out of the picture, taking over 1000 times as long as EV, and over 100 times as long as the Perl implementation, even though it uses a C-based event loop in this case.</p>
+
+<h3 id="Summary1">Summary</h3>
+
+<ul>
+
+<li><p>The pure perl implementation performs extremely well.</p>
+
+</li>
+<li><p>Avoid Glib or POE in large projects where performance matters.</p>
+
+</li>
+</ul>
+
+<h2 id="BENCHMARKING-SMALL-SERVERS">BENCHMARKING SMALL SERVERS</h2>
+
+<p>While event loops should scale (and select-based ones do not...) even to large servers, most programs we (or I :) actually write have only a few I/O watchers.</p>
+
+<p>In this benchmark, I use the same benchmark program as in the large server case, but it uses only eight &quot;servers&quot;, of which three are active at any one time. This should reflect performance for a small server relatively well.</p>
+
+<p>The columns are identical to the previous table.</p>
+
+<h3 id="Results2">Results</h3>
+
+<pre><code>    name sockets create request 
+      EV      16  20.00    6.54 
+    Perl      16  25.75   12.62 
+   Event      16  81.27   35.86 
+    Glib      16  32.63   15.48 
+     POE      16 261.87  276.28 uses POE::Loop::Event</code></pre>
+
+<h3 id="Discussion2">Discussion</h3>
+
+<p>The benchmark tries to test the performance of a typical small server. While knowing how various event loops perform is interesting, keep in mind that their overhead in this case is usually not as important, due to the small absolute number of watchers (that is, you need efficiency and speed most when you have lots of watchers, not when you only have a few of them).</p>
+
+<p>EV is again fastest.</p>
+
+<p>Perl again comes second. It is noticeably faster than the C-based event loops Event and Glib, although the difference is too small to really matter.</p>
+
+<p>POE also performs much better in this case, but is is still far behind the others.</p>
+
+<h3 id="Summary2">Summary</h3>
+
+<ul>
+
+<li><p>C-based event loops perform very well with small number of watchers, as the management overhead dominates.</p>
+
+</li>
+</ul>
+
+<h2 id="THE-IO::Lambda-BENCHMARK">THE IO::Lambda BENCHMARK</h2>
+
+<p>Recently I was told about the benchmark in the IO::Lambda manpage, which could be misinterpreted to make AnyEvent look bad. In fact, the benchmark simply compares IO::Lambda with POE, and IO::Lambda looks better (which shouldn&#39;t come as a surprise to anybody). As such, the benchmark is fine, and mostly shows that the AnyEvent backend from IO::Lambda isn&#39;t very optimal. But how would AnyEvent compare when used without the extra baggage? To explore this, I wrote the equivalent benchmark for AnyEvent.</p>
+
+<p>The benchmark itself creates an echo-server, and then, for 500 times, connects to the echo server, sends a line, waits for the reply, and then creates the next connection. This is a rather bad benchmark, as it doesn&#39;t test the efficiency of the framework or much non-blocking I/O, but it is a benchmark nevertheless.</p>
+
+<pre><code>   name                    runtime
+   Lambda/select           0.330 sec
+      + optimized          0.122 sec
+   Lambda/AnyEvent         0.327 sec
+      + optimized          0.138 sec
+   Raw sockets/select      0.077 sec
+   POE/select, components  0.662 sec
+   POE/select, raw sockets 0.226 sec
+   POE/select, optimized   0.404 sec
+
+   AnyEvent/select/nb      0.085 sec
+   AnyEvent/EV/nb          0.068 sec
+      +state machine       0.134 sec</code></pre>
+
+<p>The benchmark is also a bit unfair (my fault): the IO::Lambda/POE benchmarks actually make blocking connects and use 100% blocking I/O, defeating the purpose of an event-based solution. All of the newly written AnyEvent benchmarks use 100% non-blocking connects (using AnyEvent::Socket::tcp_connect and the asynchronous pure perl DNS resolver), so AnyEvent is at a disadvantage here, as non-blocking connects generally require a lot more bookkeeping and event handling than blocking connects (which involve a single syscall only).</p>
+
+<p>The last AnyEvent benchmark additionally uses <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>, which offers similar expressive power as POE and IO::Lambda, using conventional Perl syntax. This means that both the echo server and the client are 100% non-blocking, further placing it at a disadvantage.</p>
+
+<p>As you can see, the AnyEvent + EV combination even beats the hand-optimised &quot;raw sockets benchmark&quot;, while AnyEvent + its pure perl backend easily beats IO::Lambda and POE.</p>
+
+<p>And even the 100% non-blocking version written using the high-level (and slow :) <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> abstraction beats both POE and IO::Lambda higher level (&quot;unoptimised&quot;) abstractions by a large margin, even though it does all of DNS, tcp-connect and socket I/O in a non-blocking way.</p>
+
+<p>The two AnyEvent benchmarks programs can be found as <i>eg/ae0.pl</i> and <i>eg/ae2.pl</i> in the AnyEvent distribution, the remaining benchmarks are part of the IO::Lambda distribution and were used without any changes.</p>
+
+<h1 id="SIGNALS">SIGNALS</h1>
+
+<p>AnyEvent currently installs handlers for these signals:</p>
+
+<dl>
+
+<dt id="SIGCHLD">SIGCHLD</dt>
+<dd>
+
+<p>A handler for <code>SIGCHLD</code> is installed by AnyEvent&#39;s child watcher emulation for event loops that do not support them natively. Also, some event loops install a similar handler.</p>
+
+<p>Additionally, when AnyEvent is loaded and SIGCHLD is set to IGNORE, then AnyEvent will reset it to default, to avoid losing child exit statuses.</p>
+
+</dd>
+<dt id="SIGPIPE">SIGPIPE</dt>
+<dd>
+
+<p>A no-op handler is installed for <code>SIGPIPE</code> when <code>$SIG{PIPE}</code> is <code>undef</code> when AnyEvent gets loaded.</p>
+
+<p>The rationale for this is that AnyEvent users usually do not really depend on SIGPIPE delivery (which is purely an optimisation for shell use, or badly-written programs), but <code>SIGPIPE</code> can cause spurious and rare program exits as a lot of people do not expect <code>SIGPIPE</code> when writing to some random socket.</p>
+
+<p>The rationale for installing a no-op handler as opposed to ignoring it is that this way, the handler will be restored to defaults on exec.</p>
+
+<p>Feel free to install your own handler, or reset it to defaults.</p>
+
+</dd>
+</dl>
+
+<h1 id="RECOMMENDED-OPTIONAL-MODULES">RECOMMENDED/OPTIONAL MODULES</h1>
+
+<p>One of AnyEvent&#39;s main goals is to be 100% Pure-Perl(tm): only perl (and its built-in modules) are required to use it.</p>
+
+<p>That does not mean that AnyEvent won&#39;t take advantage of some additional modules if they are installed.</p>
+
+<p>This section explains which additional modules will be used, and how they affect AnyEvent&#39;s operation.</p>
+
+<dl>
+
+<dt id="Async::Interrupt"><a>Async::Interrupt</a></dt>
+<dd>
+
+<p>This slightly arcane module is used to implement fast signal handling: To my knowledge, there is no way to do completely race-free and quick signal handling in pure perl. To ensure that signals still get delivered, AnyEvent will start an interval timer to wake up perl (and catch the signals) with some delay (default is 10 seconds, look for <code>$AnyEvent::MAX_SIGNAL_LATENCY</code>).</p>
+
+<p>If this module is available, then it will be used to implement signal catching, which means that signals will not be delayed, and the event loop will not be interrupted regularly, which is more efficient (and good for battery life on laptops).</p>
+
+<p>This affects not just the pure-perl event loop, but also other event loops that have no signal handling on their own (e.g. Glib, Tk, Qt).</p>
+
+<p>Some event loops (POE, Event, Event::Lib) offer signal watchers natively, and either employ their own workarounds (POE) or use AnyEvent&#39;s workaround (using <code>$AnyEvent::MAX_SIGNAL_LATENCY</code>). Installing <a>Async::Interrupt</a> does nothing for those backends.</p>
+
+</dd>
+<dt id="EV"><a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a></dt>
+<dd>
+
+<p>This module isn&#39;t really &quot;optional&quot;, as it is simply one of the backend event loops that AnyEvent can use. However, it is simply the best event loop available in terms of features, speed and stability: It supports the AnyEvent API optimally, implements all the watcher types in XS, does automatic timer adjustments even when no monotonic clock is available, can take avdantage of advanced kernel interfaces such as <code>epoll</code> and <code>kqueue</code>, and is the fastest backend <i>by far</i>. You can even embed <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">Glib</a>/<a>Gtk2</a> in it (or vice versa, see <a>EV::Glib</a> and <a>Glib::EV</a>).</p>
+
+<p>If you only use backends that rely on another event loop (e.g. <code>Tk</code>), then this module will do nothing for you.</p>
+
+</dd>
+<dt id="Guard"><a href="../../lib/perl5/5.26.3/autodie/Scope/Guard.html">Guard</a></dt>
+<dd>
+
+<p>The guard module, when used, will be used to implement <code>AnyEvent::Util::guard</code>. This speeds up guards considerably (and uses a lot less memory), but otherwise doesn&#39;t affect guard operation much. It is purely used for performance.</p>
+
+</dd>
+<dt id="JSON-and-JSON::XS"><a href="../../lib/perl5/5.26.3/JSON.html">JSON</a> and <a>JSON::XS</a></dt>
+<dd>
+
+<p>One of these modules is required when you want to read or write JSON data via <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>. <a href="../../lib/perl5/5.26.3/JSON.html">JSON</a> is also written in pure-perl, but can take advantage of the ultra-high-speed <a>JSON::XS</a> module when it is installed.</p>
+
+</dd>
+<dt id="Net::SSLeay"><a href="../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a></dt>
+<dd>
+
+<p>Implementing TLS/SSL in Perl is certainly interesting, but not very worthwhile: If this module is installed, then <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> (with the help of <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a>), gains the ability to do TLS/SSL.</p>
+
+</dd>
+<dt id="Time::HiRes"><a href="../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Time/HiRes.html">Time::HiRes</a></dt>
+<dd>
+
+<p>This module is part of perl since release 5.008. It will be used when the chosen event library does not come with a timing source of its own. The pure-perl event loop (<a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Loop.html">AnyEvent::Loop</a>) will additionally load it to try to use a monotonic clock for timing stability.</p>
+
+</dd>
+<dt id="AnyEvent::AIO-and-IO::AIO"><a>AnyEvent::AIO</a> (and <a>IO::AIO</a>)</dt>
+<dd>
+
+<p>The default implementation of <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/IO.html">AnyEvent::IO</a> is to do I/O synchronously, stopping programs while they access the disk, which is fine for a lot of programs.</p>
+
+<p>Installing AnyEvent::AIO (and its IO::AIO dependency) makes it switch to a true asynchronous implementation, so event processing can continue even while waiting for disk I/O.</p>
+
+</dd>
+</dl>
+
+<h1 id="FORK">FORK</h1>
+
+<p>Most event libraries are not fork-safe. The ones who are usually are because they rely on inefficient but fork-safe <code>select</code> or <code>poll</code> calls - higher performance APIs such as BSD&#39;s kqueue or the dreaded Linux epoll are usually badly thought-out hacks that are incompatible with fork in one way or another. Only <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> is fully fork-aware and ensures that you continue event-processing in both parent and child (or both, if you know what you are doing).</p>
+
+<p>This means that, in general, you cannot fork and do event processing in the child if the event library was initialised before the fork (which usually happens when the first AnyEvent watcher is created, or the library is loaded).</p>
+
+<p>If you have to fork, you must either do so <i>before</i> creating your first watcher OR you must not use AnyEvent at all in the child OR you must do something completely out of the scope of AnyEvent (see below).</p>
+
+<p>The problem of doing event processing in the parent <i>and</i> the child is much more complicated: even for backends that <i>are</i> fork-aware or fork-safe, their behaviour is not usually what you want: fork clones all watchers, that means all timers, I/O watchers etc. are active in both parent and child, which is almost never what you want. Using <code>exec</code> to start worker children from some kind of manage prrocess is usually preferred, because it is much easier and cleaner, at the expense of having to have another binary.</p>
+
+<p>In addition to logical problems with fork, there are also implementation problems. For example, on POSIX systems, you cannot fork at all in Perl code if a thread (I am talking of pthreads here) was ever created in the process, and this is just the tip of the iceberg. In general, using fork from Perl is difficult, and attempting to use fork without an exec to implement some kind of parallel processing is almost certainly doomed.</p>
+
+<p>To safely fork and exec, you should use a module such as <a>Proc::FastSpawn</a> that let&#39;s you safely fork and exec new processes.</p>
+
+<p>If you want to do multiprocessing using processes, you can look at the <a>AnyEvent::Fork</a> module (and some related modules such as <a>AnyEvent::Fork::RPC</a>, <a>AnyEvent::Fork::Pool</a> and <a>AnyEvent::Fork::Remote</a>). This module allows you to safely create subprocesses without any limitations - you can use X11 toolkits or AnyEvent in the children created by <a>AnyEvent::Fork</a> safely and without any special precautions.</p>
+
+<h1 id="SECURITY-CONSIDERATIONS">SECURITY CONSIDERATIONS</h1>
+
+<p>AnyEvent can be forced to load any event model via $ENV{PERL_ANYEVENT_MODEL}. While this cannot (to my knowledge) be used to execute arbitrary code or directly gain access, it can easily be used to make the program hang or malfunction in subtle ways, as AnyEvent watchers will not be active when the program uses a different event model than specified in the variable.</p>
+
+<p>You can make AnyEvent completely ignore this variable by deleting it before the first watcher gets created, e.g. with a <code>BEGIN</code> block:</p>
+
+<pre><code>   BEGIN { delete $ENV{PERL_ANYEVENT_MODEL} }
+  
+   use AnyEvent;</code></pre>
+
+<p>Similar considerations apply to $ENV{PERL_ANYEVENT_VERBOSE}, as that can be used to probe what backend is used and gain other information (which is probably even less useful to an attacker than PERL_ANYEVENT_MODEL), and $ENV{PERL_ANYEVENT_STRICT}.</p>
+
+<p>Note that AnyEvent will remove <i>all</i> environment variables starting with <code>PERL_ANYEVENT_</code> from <code>%ENV</code> when it is loaded while taint mode is enabled.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Perl 5.8 has numerous memleaks that sometimes hit this module and are hard to work around. If you suffer from memleaks, first upgrade to Perl 5.10 and check wether the leaks still show up. (Perl 5.10.0 has other annoying memleaks, such as leaking on <code>map</code> and <code>grep</code> but it is usually not as pronounced).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>Tutorial/Introduction: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Intro.html">AnyEvent::Intro</a>.</p>
+
+<p>FAQ: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/FAQ.html">AnyEvent::FAQ</a>.</p>
+
+<p>Utility functions: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Util.html">AnyEvent::Util</a> (misc. grab-bag), <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a> (simply logging).</p>
+
+<p>Development/Debugging: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Strict.html">AnyEvent::Strict</a> (stricter checking), <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Debug.html">AnyEvent::Debug</a> (interactive shell, watcher tracing).</p>
+
+<p>Supported event modules: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Loop.html">AnyEvent::Loop</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a>, <a>EV::Glib</a>, <a>Glib::EV</a>, <a href="../../lib/perl5/5.26.3/Test2/Tools/Event.html">Event</a>, <a>Glib::Event</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">Glib</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Tk.html">Tk</a>, <a>Event::Lib</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Qt.html">Qt</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">POE</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/FLTK.html">FLTK</a>, <a>Cocoa::EventLoop</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/UV.html">UV</a>.</p>
+
+<p>Implementations: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">AnyEvent::Impl::EV</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Event.html">AnyEvent::Impl::Event</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">AnyEvent::Impl::Glib</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Tk.html">AnyEvent::Impl::Tk</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Perl.html">AnyEvent::Impl::Perl</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EventLib.html">AnyEvent::Impl::EventLib</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Qt.html">AnyEvent::Impl::Qt</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">AnyEvent::Impl::POE</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/IOAsync.html">AnyEvent::Impl::IOAsync</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Irssi.html">AnyEvent::Impl::Irssi</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/FLTK.html">AnyEvent::Impl::FLTK</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Cocoa.html">AnyEvent::Impl::Cocoa</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/UV.html">AnyEvent::Impl::UV</a>.</p>
+
+<p>Non-blocking handles, pipes, stream sockets, TCP clients and servers: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a>, <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a>.</p>
+
+<p>Asynchronous File I/O: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/IO.html">AnyEvent::IO</a>.</p>
+
+<p>Asynchronous DNS: <a href="../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/DNS.html">AnyEvent::DNS</a>.</p>
+
+<p>Thread support: <a>Coro</a>, <a>Coro::AnyEvent</a>, <a>Coro::EV</a>, <a>Coro::Event</a>.</p>
+
+<p>Nontrivial usage examples: <a>AnyEvent::GPSD</a>, <a>AnyEvent::IRC</a>, <a>AnyEvent::HTTP</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code>   Marc Lehmann &lt;schmorp@schmorp.de&gt;
+   http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

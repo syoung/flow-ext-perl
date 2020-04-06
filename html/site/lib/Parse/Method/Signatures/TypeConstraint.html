@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#ATTRIBUTES">ATTRIBUTES</a>
+    <ul>
+      <li><a href="#tc">tc</a></li>
+      <li><a href="#tc_callback">tc_callback</a></li>
+      <li><a href="#from_namespace">from_namespace</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#find_registered_constraint">find_registered_constraint</a></li>
+      <li><a href="#to_string">to_string</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Parse::Method::Signatures::TypeConstraint - turn parsed TC data into Moose TC object</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Class used to turn PPI elements into <a href="../../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Meta/TypeConstraint.html">Moose::Meta::TypeConstraint</a> objects.</p>
+
+<h1 id="ATTRIBUTES">ATTRIBUTES</h1>
+
+<h2 id="tc">tc</h2>
+
+<ul>
+
+<p><b>Lazy Build.</b></p>
+
+</ul>
+
+<p>The <a href="../../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Meta/TypeConstraint.html">Moose::Meta::TypeConstraint</a> object for this type constraint, built when requested. <a href="#tc_callback">&quot;tc_callback&quot;</a> will be called for each individual component type in turn.</p>
+
+<h2 id="tc_callback">tc_callback</h2>
+
+<ul>
+
+<p><b>Type:</b> CodeRef</p>
+
+<p><b>Default:</b> <a href="#find_registered_constraint">&quot;find_registered_constraint&quot;</a></p>
+
+</ul>
+
+<p>Callback used to turn type names into type objects. See <a href="../../../../../../../root/.cpanm/work/1586168422.2240/Parse-Method-Signatures-1.003019/blib/lib/Parse/Method/Signatures.html#type_constraint_callback">&quot;type_constraint_callback&quot; in Parse::Method::Signatures</a> for more details and an example.</p>
+
+<h2 id="from_namespace">from_namespace</h2>
+
+<ul>
+
+<p><b>Type:</b> ClassName</p>
+
+</ul>
+
+<p>If provided, then the default <code>tc_callback</code> will search for <a href="../../../../../lib/perl5/site_perl/5.26.3/MooseX/Types.html">MooseX::Types</a> in this package.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="find_registered_constraint">find_registered_constraint</h2>
+
+<p>Will search for an imported <a href="../../../../../lib/perl5/site_perl/5.26.3/MooseX/Types.html">MooseX::Types</a> in <a href="#from_namespace">&quot;from_namespace&quot;</a> (if provided). Failing that it will ask the <a href="../../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Meta/TypeConstraint/Registry.html">Moose::Meta::TypeConstraint::Registry</a> for a type with the given name.</p>
+
+<p>If all else fails, it will simple return the type as a string, so that Moose&#39;s auto-vivification of classnames to type will work.</p>
+
+<h2 id="to_string">to_string</h2>
+
+<p>String representation of the type constraint, approximately as parsed.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../../root/.cpanm/work/1586168422.2240/Parse-Method-Signatures-1.003019/blib/lib/Parse/Method/Signatures.html">Parse::Method::Signatures</a>, <a href="../../../../../lib/perl5/site_perl/5.26.3/MooseX/Types.html">MooseX::Types</a>, <a href="../../../../../lib/perl5/site_perl/5.26.3/MooseX/Types/Util.html">MooseX::Types::Util</a>.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Florian Ragwitz &lt;rafl@debian.org&gt;.</p>
+
+<p>Ash Berlin &lt;ash@cpan.org&gt;.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>Licensed under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

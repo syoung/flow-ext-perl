@@ -1,0 +1,91 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#INTERFACE">INTERFACE</a>
+    <ul>
+      <li><a href="#Command-line-interface">Command line interface</a></li>
+    </ul>
+  </li>
+  <li><a href="#ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</a>
+    <ul>
+      <li><a href="#TEST_LEAKTRACE-mode">TEST_LEAKTRACE=mode</a>
+        <ul>
+          <li><a href="#simple-DEFAULT">-simple (DEFAULT)</a></li>
+          <li><a href="#sv_dump">-sv_dump</a></li>
+          <li><a href="#lines">-lines</a></li>
+          <li><a href="#verbose">-verbose</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::LeakTrace::Script - A LeakTrace interface for whole scripts</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>        #!perl -w
+        use Test::LeakTrace::Script sub{
+                my($svref, $file, $line) = @_;
+
+                warn &quot;leaked $svref from $file line $line.\n&quot;;
+        };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a interface to <code>Test::LeakTrace</code> for whole scripts.</p>
+
+<h1 id="INTERFACE">INTERFACE</h1>
+
+<h2 id="Command-line-interface">Command line interface</h2>
+
+<pre><code>        $ perl -MTest::LeakTrace::Script script.pl
+
+        $ perl -MTest::LeakTrace::Script=-verbose script.pl
+
+        $ TEST_LEAKTRACE=-lines script.pl</code></pre>
+
+<h1 id="ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</h1>
+
+<h2 id="TEST_LEAKTRACE-mode">TEST_LEAKTRACE=mode</h2>
+
+<h3 id="simple-DEFAULT">-simple (DEFAULT)</h3>
+
+<h3 id="sv_dump">-sv_dump</h3>
+
+<h3 id="lines">-lines</h3>
+
+<h3 id="verbose">-verbose</h3>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586168246.29985/Test-LeakTrace-0.16/blib/lib/Test/LeakTrace.html">Test::LeakTrace</a>.</p>
+
+
+</body>
+
+</html>
+
+

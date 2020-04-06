@@ -1,0 +1,13 @@
+/flow/perl/bin/ap-update-html
+/flow/perl/bin/ap-user-guide
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools.pm
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools/Pod.pm
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools/TOC.pm
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools/TOC/HTML.pm
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools/TOC/RDF.pm
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools/TOC/tocTab.pm
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools/TOC/tocxml.pm
+/flow/perl/lib/perl5/5.26.3/ActivePerl/DocTools/Tree/HTML.pm
+/flow/perl/man/man1/ap-update-html.1
+/flow/perl/man/man1/ap-user-guide.1
+/flow/perl/man/man3/ActivePerl::DocTools::Pod.3

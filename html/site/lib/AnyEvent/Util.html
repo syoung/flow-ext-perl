@@ -1,0 +1,315 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Util - various utility functions.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent::Util;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements various utility functions, mostly replacing well-known functions by event-ised counterparts.</p>
+
+<p>All functions documented without <code>AnyEvent::Util::</code> prefix are exported by default.</p>
+
+<dl>
+
+<dt id="r-w-portable_pipe">($r, $w) = portable_pipe</dt>
+<dd>
+
+<p>Calling <code>pipe</code> in Perl is portable - except it doesn&#39;t really work on sucky windows platforms (at least not with most perls - cygwin&#39;s perl notably works fine): On windows, you actually get two file handles you cannot use select on.</p>
+
+<p>This function gives you a pipe that actually works even on the broken windows platform (by creating a pair of TCP sockets on windows, so do not expect any speed from that) and using <code>pipe</code> everywhere else.</p>
+
+<p>See <code>portable_socketpair</code>, below, for a bidirectional &quot;pipe&quot;.</p>
+
+<p>Returns the empty list on any errors.</p>
+
+</dd>
+<dt id="fh1-fh2-portable_socketpair">($fh1, $fh2) = portable_socketpair</dt>
+<dd>
+
+<p>Just like <code>portable_pipe</code>, above, but returns a bidirectional pipe (usually by calling <code>socketpair</code> to create a local loopback socket pair, except on windows, where it again returns two interconnected TCP sockets).</p>
+
+<p>Returns the empty list on any errors.</p>
+
+</dd>
+<dt id="fork_call-CODE-args-cb--res">fork_call { CODE } @args, $cb-&gt;(@res)</dt>
+<dd>
+
+<p>Executes the given code block asynchronously, by forking. Everything the block returns will be transferred to the calling process (by serialising and deserialising via <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Storable.html">Storable</a>).</p>
+
+<p>If there are any errors, then the <code>$cb</code> will be called without any arguments. In that case, either <code>$@</code> contains the exception (and <code>$!</code> is irrelevant), or <code>$!</code> contains an error number. In all other cases, <code>$@</code> will be <code>undef</code>ined.</p>
+
+<p>The code block must not ever call an event-polling function or use event-based programming that might cause any callbacks registered in the parent to run.</p>
+
+<p>Win32 spoilers: Due to the endlessly sucky and broken native windows perls (there is no way to cleanly exit a child process on that platform that doesn&#39;t also kill the parent), you have to make sure that your main program doesn&#39;t exit as long as any <code>fork_calls</code> are still in progress, otherwise the program won&#39;t exit. Also, on most windows platforms some memory will leak for every invocation. We are open for improvements that don&#39;t require XS hackery.</p>
+
+<p>Note that forking can be expensive in large programs (RSS 200MB+). On windows, it is abysmally slow, do not expect more than 5..20 forks/s on that sucky platform (note this uses perl&#39;s pseudo-threads, so avoid those like the plague).</p>
+
+<p>Example: poor man&#39;s async disk I/O (better use <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/IO.html">AnyEvent::IO</a> together with <a>IO::AIO</a>).</p>
+
+<pre><code>   fork_call {
+      open my $fh, &quot;&lt;/etc/passwd&quot;
+         or die &quot;passwd: $!&quot;;
+      local $/;
+      &lt;$fh&gt;
+   } sub {
+      my ($passwd) = @_;
+      ...
+   };</code></pre>
+
+</dd>
+<dt id="AnyEvent::Util::MAX_FORKS-default:-10">$AnyEvent::Util::MAX_FORKS [default: 10]</dt>
+<dd>
+
+<p>The maximum number of child processes that <code>fork_call</code> will fork in parallel. Any additional requests will be queued until a slot becomes free again.</p>
+
+<p>The environment variable <code>PERL_ANYEVENT_MAX_FORKS</code> is used to initialise this value.</p>
+
+</dd>
+<dt id="fh_nonblocking-fh-nonblocking">fh_nonblocking $fh, $nonblocking</dt>
+<dd>
+
+<p>Sets the blocking state of the given filehandle (true == nonblocking, false == blocking). Uses fcntl on anything sensible and ioctl FIONBIO on broken (i.e. windows) platforms.</p>
+
+<p>Instead of using this function, you could use <code>AnyEvent::fh_block</code> or <code>AnyEvent::fh_unblock</code>.</p>
+
+</dd>
+<dt id="guard-guard-CODE">$guard = guard { CODE }</dt>
+<dd>
+
+<p>This function creates a special object that, when destroyed, will execute the code block.</p>
+
+<p>This is often handy in continuation-passing style code to clean up some resource regardless of where you break out of a process.</p>
+
+<p>The <a href="../../../lib/perl5/5.26.3/autodie/Scope/Guard.html">Guard</a> module will be used to implement this function, if it is available. Otherwise a pure-perl implementation is used.</p>
+
+<p>While the code is allowed to throw exceptions in unusual conditions, it is not defined whether this exception will be reported (at the moment, the Guard module and AnyEvent&#39;s pure-perl implementation both try to report the error and continue).</p>
+
+<p>You can call one method on the returned object:</p>
+
+</dd>
+<dt id="guard-cancel">$guard-&gt;cancel</dt>
+<dd>
+
+<p>This simply causes the code block not to be invoked: it &quot;cancels&quot; the guard.</p>
+
+</dd>
+<dt id="AnyEvent::Util::close_all_fds_except-fds">AnyEvent::Util::close_all_fds_except @fds</dt>
+<dd>
+
+<p>This rarely-used function simply closes all file descriptors (or tries to) of the current process except the ones given as arguments.</p>
+
+<p>When you want to start a long-running background server, then it is often beneficial to do this, as too many C-libraries are too stupid to mark their internal fd&#39;s as close-on-exec.</p>
+
+<p>The function expects to be called shortly before an <code>exec</code> call.</p>
+
+<p>Example: close all fds except 0, 1, 2.</p>
+
+<pre><code>   close_all_fds_except 0, 2, 1;</code></pre>
+
+</dd>
+<dt id="cv-run_cmd-cmd-key-value">$cv = run_cmd $cmd, key =&gt; value...</dt>
+<dd>
+
+<p>Run a given external command, potentially redirecting file descriptors and return a condition variable that gets sent the exit status (like <code>$?</code>) when the program exits <i>and</i> all redirected file descriptors have been exhausted.</p>
+
+<p>The <code>$cmd</code> is either a single string, which is then passed to a shell, or an arrayref, which is passed to the <code>execvp</code> function (the first array element is used both for the executable name and argv[0]).</p>
+
+<p>The key-value pairs can be:</p>
+
+<dl>
+
+<dt id="filename">&quot;&gt;&quot; =&gt; $filename</dt>
+<dd>
+
+<p>Redirects program standard output into the specified filename, similar to <code>&gt;filename</code> in the shell.</p>
+
+</dd>
+<dt id="data">&quot;&gt;&quot; =&gt; \$data</dt>
+<dd>
+
+<p>Appends program standard output to the referenced scalar. The condvar will not be signalled before EOF or an error is signalled.</p>
+
+<p>Specifying the same scalar in multiple &quot;&gt;&quot; pairs is allowed, e.g. to redirect both stdout and stderr into the same scalar:</p>
+
+<pre><code>    &quot;&gt;&quot;  =&gt; \$output,
+    &quot;2&gt;&quot; =&gt; \$output,</code></pre>
+
+</dd>
+<dt id="filehandle">&quot;&gt;&quot; =&gt; $filehandle</dt>
+<dd>
+
+<p>Redirects program standard output to the given filehandle (or actually its underlying file descriptor).</p>
+
+</dd>
+<dt id="callback--data">&quot;&gt;&quot; =&gt; $callback-&gt;($data)</dt>
+<dd>
+
+<p>Calls the given callback each time standard output receives some data, passing it the data received. On EOF or error, the callback will be invoked once without any arguments.</p>
+
+<p>The condvar will not be signalled before EOF or an error is signalled.</p>
+
+</dd>
+<dt id="fd-see_above">&quot;fd&gt;&quot; =&gt; $see_above</dt>
+<dd>
+
+<p>Like &quot;&gt;&quot;, but redirects the specified fd number instead.</p>
+
+</dd>
+<dt id="see_above">&quot;&lt;&quot; =&gt; $see_above</dt>
+<dd>
+
+<p>The same, but redirects the program&#39;s standard input instead. The same forms as for &quot;&gt;&quot; are allowed.</p>
+
+<p>In the callback form, the callback is supposed to return data to be written, or the empty list or <code>undef</code> or a zero-length scalar to signal EOF.</p>
+
+<p>Similarly, either the write data must be exhausted or an error is to be signalled before the condvar is signalled, for both string-reference and callback forms.</p>
+
+</dd>
+<dt id="fd-see_above1">&quot;fd&lt;&quot; =&gt; $see_above</dt>
+<dd>
+
+<p>Like &quot;&lt;&quot;, but redirects the specified file descriptor instead.</p>
+
+</dd>
+<dt id="on_prepare-cb">on_prepare =&gt; $cb</dt>
+<dd>
+
+<p>Specify a callback that is executed just before the command is <code>exec</code>&#39;ed, in the child process. Be careful not to use any event handling or other services not available in the child.</p>
+
+<p>This can be useful to set up the environment in special ways, such as changing the priority of the command or manipulating signal handlers (e.g. setting <code>SIGINT</code> to <code>IGNORE</code>).</p>
+
+</dd>
+<dt id="close_all-boolean">close_all =&gt; $boolean</dt>
+<dd>
+
+<p>When <code>close_all</code> is enabled (default is disabled), then all extra file descriptors will be closed, except the ones that were redirected and <code>0</code>, <code>1</code> and <code>2</code>.</p>
+
+<p>See <code>close_all_fds_except</code> for more details.</p>
+
+</dd>
+<dt id="pid">&#39;$$&#39; =&gt; \$pid</dt>
+<dd>
+
+<p>A reference to a scalar which will receive the PID of the newly-created subprocess after <code>run_cmd</code> returns.</p>
+
+<p>Note the the PID might already have been recycled and used by an unrelated process at the time <code>run_cmd</code> returns, so it&#39;s not useful to send signals, use as a unique key in data structures and so on.</p>
+
+</dd>
+</dl>
+
+<p>Example: run <code>rm -rf /</code>, redirecting standard input, output and error to <i>/dev/null</i>.</p>
+
+<pre><code>   my $cv = run_cmd [qw(rm -rf /)],
+      &quot;&lt;&quot;, &quot;/dev/null&quot;,
+      &quot;&gt;&quot;, &quot;/dev/null&quot;,
+      &quot;2&gt;&quot;, &quot;/dev/null&quot;;
+   $cv-&gt;recv and die &quot;d&#39;oh! something survived!&quot;</code></pre>
+
+<p>Example: run <i>openssl</i> and create a self-signed certificate and key, storing them in <code>$cert</code> and <code>$key</code>. When finished, check the exit status in the callback and print key and certificate.</p>
+
+<pre><code>   my $cv = run_cmd [qw(openssl req
+                     -new -nodes -x509 -days 3650
+                     -newkey rsa:2048 -keyout /dev/fd/3
+                     -batch -subj /CN=AnyEvent
+                    )],
+      &quot;&lt;&quot;, &quot;/dev/null&quot;,
+      &quot;&gt;&quot; , \my $cert,
+      &quot;3&gt;&quot;, \my $key,
+      &quot;2&gt;&quot;, &quot;/dev/null&quot;;
+
+   $cv-&gt;cb (sub {
+      shift-&gt;recv and die &quot;openssl failed&quot;;
+
+      print &quot;$key\n$cert\n&quot;;
+   });</code></pre>
+
+</dd>
+<dt id="AnyEvent::Util::punycode_encode-string">AnyEvent::Util::punycode_encode $string</dt>
+<dd>
+
+<p>Punycode-encodes the given <code>$string</code> and returns its punycode form. Note that uppercase letters are <i>not</i> casefolded - you have to do that yourself.</p>
+
+<p>Croaks when it cannot encode the string.</p>
+
+</dd>
+<dt id="AnyEvent::Util::punycode_decode-string">AnyEvent::Util::punycode_decode $string</dt>
+<dd>
+
+<p>Tries to punycode-decode the given <code>$string</code> and return its unicode form. Again, uppercase letters are not casefoled, you have to do that yourself.</p>
+
+<p>Croaks when it cannot decode the string.</p>
+
+</dd>
+<dt id="AnyEvent::Util::idn_nameprep-idn-display">AnyEvent::Util::idn_nameprep $idn[, $display]</dt>
+<dd>
+
+<p>Implements the IDNA nameprep normalisation algorithm. Or actually the UTS#46 algorithm. Or maybe something similar - reality is complicated between IDNA2003, UTS#46 and IDNA2008. If <code>$display</code> is true then the name is prepared for display, otherwise it is prepared for lookup (default).</p>
+
+<p>If you have no clue what this means, look at <code>idn_to_ascii</code> instead.</p>
+
+<p>This function is designed to avoid using a lot of resources - it uses about 1MB of RAM (most of this due to Unicode::Normalize). Also, names that are already &quot;simple&quot; will only be checked for basic validity, without the overhead of full nameprep processing.</p>
+
+</dd>
+<dt id="domainname-AnyEvent::Util::idn_to_ascii-idn">$domainname = AnyEvent::Util::idn_to_ascii $idn</dt>
+<dd>
+
+<p>Converts the given unicode string (<code>$idn</code>, international domain name, e.g. &#x65E5;&#x672C;&#x8A9E;&#x3002;&#xFF2A;&#xFF30;) to a pure-ASCII domain name (this is usually called the &quot;IDN ToAscii&quot; transform). This transformation is idempotent, which means you can call it just in case and it will do the right thing.</p>
+
+<p>Unlike some other &quot;ToAscii&quot; implementations, this one works on full domain names and should never fail - if it cannot convert the name, then it will return it unchanged.</p>
+
+<p>This function is an amalgam of IDNA2003, UTS#46 and IDNA2008 - it tries to be reasonably compatible to other implementations, reasonably secure, as much as IDNs can be secure, and reasonably efficient when confronted with IDNs that are already valid DNS names.</p>
+
+</dd>
+<dt id="idn-AnyEvent::Util::idn_to_unicode-idn">$idn = AnyEvent::Util::idn_to_unicode $idn</dt>
+<dd>
+
+<p>Converts the given unicode string (<code>$idn</code>, international domain name, e.g. &#x65E5;&#x672C;&#x8A9E;&#x3002;&#xFF2A;&#xFF30;, www.deliantra.net, www.xn--l-0ga.de) to unicode form (this is usually called the &quot;IDN ToUnicode&quot; transform). This transformation is idempotent, which means you can call it just in case and it will do the right thing.</p>
+
+<p>Unlike some other &quot;ToUnicode&quot; implementations, this one works on full domain names and should never fail - if it cannot convert the name, then it will return it unchanged.</p>
+
+<p>This function is an amalgam of IDNA2003, UTS#46 and IDNA2008 - it tries to be reasonably compatible to other implementations, reasonably secure, as much as IDNs can be secure, and reasonably efficient when confronted with IDNs that are already valid DNS names.</p>
+
+<p>At the moment, this function simply calls <code>idn_nameprep $idn, 1</code>, returning its argument when that function fails.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

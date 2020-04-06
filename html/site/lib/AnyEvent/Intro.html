@@ -1,0 +1,1011 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#Introduction-to-AnyEvent">Introduction to AnyEvent</a></li>
+  <li><a href="#What-is-AnyEvent">What is AnyEvent?</a></li>
+  <li><a href="#Introduction-to-Event-Based-Programming">Introduction to Event-Based Programming</a>
+    <ul>
+      <li>
+        <ul>
+          <li><a href="#A-short-note-on-callbacks">A short note on callbacks</a></li>
+          <li><a href="#A-little-hint-to-catch-mistakes">A little hint to catch mistakes</a></li>
+        </ul>
+      </li>
+      <li><a href="#Condition-Variables">Condition Variables</a></li>
+      <li><a href="#The-main-loop">The &quot;main loop&quot;</a></li>
+      <li><a href="#Timers-and-other-event-sources">Timers and other event sources</a>
+        <ul>
+          <li><a href="#More-esoteric-sources">More esoteric sources</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#Network-programming-and-AnyEvent">Network programming and AnyEvent</a>
+    <ul>
+      <li><a href="#AnyEvent::DNS">AnyEvent::DNS</a></li>
+      <li><a href="#AnyEvent::Handle">AnyEvent::Handle</a></li>
+      <li><a href="#AnyEvent::Socket">AnyEvent::Socket</a></li>
+      <li><a href="#Implementing-a-parallel-finger-client-with-non-blocking-connects-and-AnyEvent::Socket">Implementing a parallel finger client with non-blocking connects and AnyEvent::Socket</a>
+        <ul>
+          <li><a href="#Using-the-finger-client">Using the finger client</a></li>
+          <li><a href="#Problems-with-the-implementation-and-how-to-fix-them">Problems with the implementation and how to fix them</a></li>
+        </ul>
+      </li>
+      <li><a href="#Implementing-simple-HTTP-and-HTTPS-GET-requests-with-AnyEvent::Handle">Implementing simple HTTP and HTTPS GET requests with AnyEvent::Handle</a>
+        <ul>
+          <li><a href="#The-write-queue">The write queue</a></li>
+          <li><a href="#The-read-queue">The read queue</a></li>
+          <li><a href="#Using-http_get">Using http_get</a></li>
+          <li><a href="#HTTPS">HTTPS</a></li>
+          <li><a href="#The-read-queue---revisited">The read queue - revisited</a></li>
+          <li><a href="#Your-own-read-queue-handler">Your own read queue handler</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#Debugging-aids">Debugging aids</a></li>
+  <li><a href="#Where-to-go-from-here">Where to go from here?</a></li>
+  <li><a href="#Authors">Authors</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Intro - an introductory tutorial to AnyEvent</p>
+
+<h1 id="Introduction-to-AnyEvent">Introduction to AnyEvent</h1>
+
+<p>This is a tutorial that will introduce you to the features of AnyEvent.</p>
+
+<p>The first part introduces the core AnyEvent module (after swamping you a bit in evangelism), which might already provide all you ever need: If you are only interested in AnyEvent&#39;s event handling capabilities, read no further.</p>
+
+<p>The second part focuses on network programming using sockets, for which AnyEvent offers a lot of support you can use, and a lot of workarounds around portability quirks.</p>
+
+<h1 id="What-is-AnyEvent">What is AnyEvent?</h1>
+
+<p>If you don&#39;t care for the whys and want to see code, skip this section!</p>
+
+<p>AnyEvent is first of all just a framework to do event-based programming. Typically such frameworks are an all-or-nothing thing: If you use one such framework, you can&#39;t (easily, or even at all) use another in the same program.</p>
+
+<p>AnyEvent is different - it is a thin abstraction layer on top of other event loops, just like DBI is an abstraction of many different database APIs. Its main purpose is to move the choice of the underlying framework (the event loop) from the module author to the program author using the module.</p>
+
+<p>That means you can write code that uses events to control what it does, without forcing other code in the same program to use the same underlying framework as you do - i.e. you can create a Perl module that is event-based using AnyEvent, and users of that module can still choose between using <a>Gtk2</a>, <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Tk.html">Tk</a>, <a href="../../../lib/perl5/5.26.3/Test2/Tools/Event.html">Event</a> (or run inside Irssi or rxvt-unicode) or any other supported event loop. AnyEvent even comes with its own pure-perl event loop implementation, so your code works regardless of other modules that might or might not be installed. The latter is important, as AnyEvent does not have any hard dependencies to other modules, which makes it easy to install, for example, when you lack a C compiler. No matter what environment, AnyEvent will just cope with it.</p>
+
+<p>A typical limitation of existing Perl modules such as <a>Net::IRC</a> is that they come with their own event loop: In <a>Net::IRC</a>, a program which uses it needs to start the event loop of <a>Net::IRC</a>. That means that one cannot integrate this module into a <a>Gtk2</a> GUI for instance, as that module, too, enforces the use of its own event loop (namely <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">Glib</a>).</p>
+
+<p>Another example is <a href="../../../lib/perl5/site_perl/5.26.3/LWP.html">LWP</a>: it provides no event interface at all. It&#39;s a pure blocking HTTP (and FTP etc.) client library, which usually means that you either have to start another process or have to fork for a HTTP request, or use threads (e.g. <a>Coro::LWP</a>), if you want to do something else while waiting for the request to finish.</p>
+
+<p>The motivation behind these designs is often that a module doesn&#39;t want to depend on some complicated XS-module (Net::IRC), or that it doesn&#39;t want to force the user to use some specific event loop at all (LWP), out of fear of severly limiting the usefulness of the module: If your module requires Glib, it will not run in a Tk program.</p>
+
+<p><a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> solves this dilemma, by <b>not</b> forcing module authors to either:</p>
+
+<dl>
+
+<dt id="write-their-own-event-loop-because-it-guarantees-the-availability-of-an-event-loop-everywhere---even-on-windows-with-no-extra-modules-installed">- write their own event loop (because it guarantees the availability of an event loop everywhere - even on windows with no extra modules installed).</dt>
+<dd>
+
+</dd>
+<dt id="choose-one-specific-event-loop-because-AnyEvent-works-with-most-event-loops-available-for-Perl">- choose one specific event loop (because AnyEvent works with most event loops available for Perl).</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>If the module author uses <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> for all his (or her) event needs (IO events, timers, signals, ...) then all other modules can just use his module and don&#39;t have to choose an event loop or adapt to his event loop. The choice of the event loop is ultimately made by the program author who uses all the modules and writes the main program. And even there he doesn&#39;t have to choose, he can just let <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> choose the most efficient event loop available on the system.</p>
+
+<p>Read more about this in the main documentation of the <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> module.</p>
+
+<h1 id="Introduction-to-Event-Based-Programming">Introduction to Event-Based Programming</h1>
+
+<p>So what exactly is programming using events? It quite simply means that instead of your code actively waiting for something, such as the user entering something on STDIN:</p>
+
+<pre><code>   $| = 1; print &quot;enter your name&gt; &quot;;
+
+   my $name = &lt;STDIN&gt;;</code></pre>
+
+<p>You instead tell your event framework to notify you in the event of some data being available on STDIN, by using a callback mechanism:</p>
+
+<pre><code>   use AnyEvent;
+
+   $| = 1; print &quot;enter your name&gt; &quot;;
+
+   my $name;
+
+   my $wait_for_input = AnyEvent-&gt;io (
+      fh   =&gt; \*STDIN, # which file handle to check
+      poll =&gt; &quot;r&quot;,     # which event to wait for (&quot;r&quot;ead data)
+      cb   =&gt; sub {    # what callback to execute
+         $name = &lt;STDIN&gt;; # read it
+      }
+   );
+
+   # do something else here</code></pre>
+
+<p>Looks more complicated, and surely is, but the advantage of using events is that your program can do something else instead of waiting for input (side note: combining AnyEvent with a thread package such as Coro can recoup much of the simplicity, effectively getting the best of two worlds).</p>
+
+<p>Waiting as done in the first example is also called &quot;blocking&quot; the process because you &quot;block&quot;/keep your process from executing anything else while you do so.</p>
+
+<p>The second example avoids blocking by only registering interest in a read event, which is fast and doesn&#39;t block your process. The callback will be called only when data is available and can be read without blocking.</p>
+
+<p>The &quot;interest&quot; is represented by an object returned by <code>AnyEvent-&gt;io</code> called a &quot;watcher&quot; object - thus named because it &quot;watches&quot; your file handle (or other event sources) for the event you are interested in.</p>
+
+<p>In the example above, we create an I/O watcher by calling the <code>AnyEvent-&gt;io</code> method. A lack of further interest in some event is expressed by simply forgetting about its watcher, for example by <code>undef</code>-ing the only variable it is stored in. AnyEvent will automatically clean up the watcher if it is no longer used, much like Perl closes your file handles if you no longer use them anywhere.</p>
+
+<h3 id="A-short-note-on-callbacks">A short note on callbacks</h3>
+
+<p>A common issue that hits people is the problem of passing parameters to callbacks. Programmers used to languages such as C or C++ are often used to a style where one passes the address of a function (a function reference) and some data value, e.g.:</p>
+
+<pre><code>   sub callback {
+      my ($arg) = @_;
+
+      $arg-&gt;method;
+   }
+
+   my $arg = ...;
+
+   call_me_back_later \&amp;callback, $arg;</code></pre>
+
+<p>This is clumsy, as the place where behaviour is specified (when the callback is registered) is often far away from the place where behaviour is implemented. It also doesn&#39;t use Perl syntax to invoke the code. There is also an abstraction penalty to pay as one has to <i>name</i> the callback, which often is unnecessary and leads to nonsensical or duplicated names.</p>
+
+<p>In Perl, one can specify behaviour much more directly by using <i>closures</i>. Closures are code blocks that take a reference to the enclosing scope(s) when they are created. This means lexical variables in scope when a closure is created can be used inside the closure:</p>
+
+<pre><code>   my $arg = ...;
+
+   call_me_back_later sub { $arg-&gt;method };</code></pre>
+
+<p>Under most circumstances, closures are faster, use fewer resources and result in much clearer code than the traditional approach. Faster, because parameter passing and storing them in local variables in Perl is relatively slow. Fewer resources, because closures take references to existing variables without having to create new ones, and clearer code because it is immediately obvious that the second example calls the <code>method</code> method when the callback is invoked.</p>
+
+<p>Apart from these, the strongest argument for using closures with AnyEvent is that AnyEvent does not allow passing parameters to the callback, so closures are the only way to achieve that in most cases :-&gt;</p>
+
+<h3 id="A-little-hint-to-catch-mistakes">A little hint to catch mistakes</h3>
+
+<p>AnyEvent does not check the parameters you pass in, at least not by default. to enable checking, simply start your program with <code>AE_STRICT=1</code> in the environment, or put <code>use AnyEvent::Strict</code> near the top of your program:</p>
+
+<pre><code>   AE_STRICT=1 perl myprogram</code></pre>
+
+<p>You can find more info on this and additional debugging aids later in this introduction.</p>
+
+<h2 id="Condition-Variables">Condition Variables</h2>
+
+<p>Back to the I/O watcher example: The code is not yet a fully working program, and will not work as-is. The reason is that your callback will not be invoked out of the blue; you have to run the event loop first. Also, event-based programs need to block sometimes too, such as when there is nothing to do, and everything is waiting for new events to arrive.</p>
+
+<p>In AnyEvent, this is done using condition variables. Condition variables are named &quot;condition variables&quot; because they represent a condition that is initially false and needs to be fulfilled.</p>
+
+<p>You can also call them &quot;merge points&quot;, &quot;sync points&quot;, &quot;rendezvous ports&quot; or even callbacks and many other things (and they are often called these names in other frameworks). The important point is that you can create them freely and later wait for them to become true.</p>
+
+<p>Condition variables have two sides - one side is the &quot;producer&quot; of the condition (whatever code detects and flags the condition), the other side is the &quot;consumer&quot; (the code that waits for that condition).</p>
+
+<p>In our example in the previous section, the producer is the event callback and there is no consumer yet - let&#39;s change that right now:</p>
+
+<pre><code>   use AnyEvent;
+
+   $| = 1; print &quot;enter your name&gt; &quot;;
+
+   my $name;
+
+   my $name_ready = AnyEvent-&gt;condvar;
+
+   my $wait_for_input = AnyEvent-&gt;io (
+      fh   =&gt; \*STDIN,
+      poll =&gt; &quot;r&quot;,
+      cb   =&gt; sub {
+         $name = &lt;STDIN&gt;;
+         $name_ready-&gt;send;
+      }
+   );
+
+   # do something else here
+
+   # now wait until the name is available:
+   $name_ready-&gt;recv;
+
+   undef $wait_for_input; # watcher no longer needed
+
+   print &quot;your name is $name\n&quot;;</code></pre>
+
+<p>This program creates an AnyEvent condvar by calling the <code>AnyEvent-&gt;condvar</code> method. It then creates a watcher as usual, but inside the callback it <code>send</code>s the <code>$name_ready</code> condition variable, which causes whoever is waiting on it to continue.</p>
+
+<p>The &quot;whoever&quot; in this case is the code that follows, which calls <code>$name_ready-&gt;recv</code>: The producer calls <code>send</code>, the consumer calls <code>recv</code>.</p>
+
+<p>If there is no <code>$name</code> available yet, then the call to <code>$name_ready-&gt;recv</code> will halt your program until the condition becomes true.</p>
+
+<p>As the names <code>send</code> and <code>recv</code> imply, you can actually send and receive data using this, for example, the above code could also be written like this, without an extra variable to store the name in:</p>
+
+<pre><code>   use AnyEvent;
+
+   $| = 1; print &quot;enter your name&gt; &quot;;
+
+   my $name_ready = AnyEvent-&gt;condvar;
+
+   my $wait_for_input = AnyEvent-&gt;io (
+      fh =&gt; \*STDIN, poll =&gt; &quot;r&quot;,
+      cb =&gt; sub { $name_ready-&gt;send (scalar &lt;STDIN&gt;) }
+   );
+
+   # do something else here
+
+   # now wait and fetch the name
+   my $name = $name_ready-&gt;recv;
+
+   undef $wait_for_input; # watcher no longer needed
+
+   print &quot;your name is $name\n&quot;;</code></pre>
+
+<p>You can pass any number of arguments to <code>send</code>, and every subsequent call to <code>recv</code> will return them.</p>
+
+<h2 id="The-main-loop">The &quot;main loop&quot;</h2>
+
+<p>Most event-based frameworks have something called a &quot;main loop&quot; or &quot;event loop run function&quot; or something similar.</p>
+
+<p>Just like in <code>recv</code> AnyEvent, these functions need to be called eventually so that your event loop has a chance of actually looking for the events you are interested in.</p>
+
+<p>For example, in a <a>Gtk2</a> program, the above example could also be written like this:</p>
+
+<pre><code>   use Gtk2 -init;
+   use AnyEvent;
+
+   ############################################
+   # create a window and some label
+
+   my $window = new Gtk2::Window &quot;toplevel&quot;;
+   $window-&gt;add (my $label = new Gtk2::Label &quot;soon replaced by name&quot;);
+
+   $window-&gt;show_all;
+
+   ############################################
+   # do our AnyEvent stuff
+
+   $| = 1; print &quot;enter your name&gt; &quot;;
+
+   my $wait_for_input = AnyEvent-&gt;io (
+      fh =&gt; \*STDIN, poll =&gt; &quot;r&quot;,
+      cb =&gt; sub {
+         # set the label
+         $label-&gt;set_text (scalar &lt;STDIN&gt;);
+         print &quot;enter another name&gt; &quot;;
+      }
+   );
+
+   ############################################
+   # Now enter Gtk2&#39;s event loop
+
+   main Gtk2;</code></pre>
+
+<p>No condition variable anywhere in sight - instead, we just read a line from STDIN and replace the text in the label. In fact, since nobody <code>undef</code>s <code>$wait_for_input</code> you can enter multiple lines.</p>
+
+<p>Instead of waiting for a condition variable, the program enters the Gtk2 main loop by calling <code>Gtk2-&gt;main</code>, which will block the program and wait for events to arrive.</p>
+
+<p>This also shows that AnyEvent is quite flexible - you didn&#39;t have to do anything to make the AnyEvent watcher use Gtk2 (actually Glib) - it just worked.</p>
+
+<p>Admittedly, the example is a bit silly - who would want to read names from standard input in a Gtk+ application? But imagine that instead of doing that, you make an HTTP request in the background and display its results. In fact, with event-based programming you can make many HTTP requests in parallel in your program and still provide feedback to the user and stay interactive.</p>
+
+<p>And in the next part you will see how to do just that - by implementing an HTTP request, on our own, with the utility modules AnyEvent comes with.</p>
+
+<p>Before that, however, let&#39;s briefly look at how you would write your program using only AnyEvent, without ever calling some other event loop&#39;s run function.</p>
+
+<p>In the example using condition variables, we used those to start waiting for events, and in fact, condition variables are the solution:</p>
+
+<pre><code>   my $quit_program = AnyEvent-&gt;condvar;
+
+   # create AnyEvent watchers (or not) here
+
+   $quit_program-&gt;recv;</code></pre>
+
+<p>If any of your watcher callbacks decide to quit (this is often called an &quot;unloop&quot; in other frameworks), they can just call <code>$quit_program-&gt;send</code>. Of course, they could also decide not to and call <code>exit</code> instead, or they could decide never to quit (e.g. in a long-running daemon program).</p>
+
+<p>If you don&#39;t need some clean quit functionality and just want to run the event loop, you can do this:</p>
+
+<pre><code>   AnyEvent-&gt;condvar-&gt;recv;</code></pre>
+
+<p>And this is, in fact, the closest to the idea of a main loop run function that AnyEvent offers.</p>
+
+<h2 id="Timers-and-other-event-sources">Timers and other event sources</h2>
+
+<p>So far, we have used only I/O watchers. These are useful mainly to find out whether a socket has data to read, or space to write more data. On sane operating systems this also works for console windows/terminals (typically on standard input), serial lines, all sorts of other devices, basically almost everything that has a file descriptor but isn&#39;t a file itself. (As usual, &quot;sane&quot; excludes windows - on that platform you would need different functions for all of these, complicating code immensely - think &quot;socket only&quot; on windows).</p>
+
+<p>However, I/O is not everything - the second most important event source is the clock. For example when doing an HTTP request you might want to time out when the server doesn&#39;t answer within some predefined amount of time.</p>
+
+<p>In AnyEvent, timer event watchers are created by calling the <code>AnyEvent-&gt;timer</code> method:</p>
+
+<pre><code>   use AnyEvent;
+
+   my $cv = AnyEvent-&gt;condvar;
+
+   my $wait_one_and_a_half_seconds = AnyEvent-&gt;timer (
+      after =&gt; 1.5,  # after how many seconds to invoke the cb?
+      cb    =&gt; sub { # the callback to invoke
+         $cv-&gt;send;
+      },
+   );
+
+   # can do something else here
+
+   # now wait till our time has come
+   $cv-&gt;recv;</code></pre>
+
+<p>Unlike I/O watchers, timers are only interested in the amount of seconds they have to wait. When (at least) that amount of time has passed, AnyEvent will invoke your callback.</p>
+
+<p>Unlike I/O watchers, which will call your callback as many times as there is data available, timers are normally one-shot: after they have &quot;fired&quot; once and invoked your callback, they are dead and no longer do anything.</p>
+
+<p>To get a repeating timer, such as a timer firing roughly once per second, you can specify an <code>interval</code> parameter:</p>
+
+<pre><code>   my $once_per_second = AnyEvent-&gt;timer (
+      after =&gt; 0,    # first invoke ASAP
+      interval =&gt; 1, # then invoke every second
+      cb    =&gt; sub { # the callback to invoke
+         $cv-&gt;send;
+      },
+   );</code></pre>
+
+<h3 id="More-esoteric-sources">More esoteric sources</h3>
+
+<p>AnyEvent also has some other, more esoteric event sources you can tap into: signal, child and idle watchers.</p>
+
+<p>Signal watchers can be used to wait for &quot;signal events&quot;, which means your process was sent a signal (such as <code>SIGTERM</code> or <code>SIGUSR1</code>).</p>
+
+<p>Child-process watchers wait for a child process to exit. They are useful when you fork a separate process and need to know when it exits, but you do not want to wait for that by blocking.</p>
+
+<p>Idle watchers invoke their callback when the event loop has handled all outstanding events, polled for new events and didn&#39;t find any, i.e., when your process is otherwise idle. They are useful if you want to do some non-trivial data processing that can be done when your program doesn&#39;t have anything better to do.</p>
+
+<p>All these watcher types are described in detail in the main <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> manual page.</p>
+
+<p>Sometimes you also need to know what the current time is: <code>AnyEvent-&gt;now</code> returns the time the event toolkit uses to schedule relative timers, and is usually what you want. It is often cached (which means it can be a bit outdated). In that case, you can use the more costly <code>AnyEvent-&gt;time</code> method which will ask your operating system for the current time, which is slower, but also more up to date.</p>
+
+<h1 id="Network-programming-and-AnyEvent">Network programming and AnyEvent</h1>
+
+<p>So far you have seen how to register event watchers and handle events.</p>
+
+<p>This is a great foundation to write network clients and servers, and might be all that your module (or program) ever requires, but writing your own I/O buffering again and again becomes tedious, not to mention that it attracts errors.</p>
+
+<p>While the core <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> module is still small and self-contained, the distribution comes with some very useful utility modules such as <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>, <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/DNS.html">AnyEvent::DNS</a> and <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a>. These can make your life as a non-blocking network programmer a lot easier.</p>
+
+<p>Here is a quick overview of these three modules:</p>
+
+<h2 id="AnyEvent::DNS"><a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/DNS.html">AnyEvent::DNS</a></h2>
+
+<p>This module allows fully asynchronous DNS resolution. It is used mainly by <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a> to resolve hostnames and service ports for you, but is a great way to do other DNS resolution tasks, such as reverse lookups of IP addresses for log files.</p>
+
+<h2 id="AnyEvent::Handle"><a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a></h2>
+
+<p>This module handles non-blocking IO on (socket-, pipe- etc.) file handles in an event based manner. It provides a wrapper object around your file handle that provides queueing and buffering of incoming and outgoing data for you.</p>
+
+<p>It also implements the most common data formats, such as text lines, or fixed and variable-width data blocks.</p>
+
+<h2 id="AnyEvent::Socket"><a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a></h2>
+
+<p>This module provides you with functions that handle socket creation and IP address magic. The two main functions are <code>tcp_connect</code> and <code>tcp_server</code>. The former will connect a (streaming) socket to an internet host for you and the later will make a server socket for you, to accept connections.</p>
+
+<p>This module also comes with transparent IPv6 support, this means: If you write your programs with this module, you will be IPv6 ready without doing anything special.</p>
+
+<p>It also works around a lot of portability quirks (especially on the windows platform), which makes it even easier to write your programs in a portable way (did you know that windows uses different error codes for all socket functions and that Perl does not know about these? That &quot;Unknown error 10022&quot; (which is <code>WSAEINVAL</code>) can mean that our <code>connect</code> call was successful? That unsuccessful TCP connects might never be reported back to your program? That <code>WSAEINPROGRESS</code> means your <code>connect</code> call was ignored instead of being in progress? AnyEvent::Socket works around all of these Windows/Perl bugs for you).</p>
+
+<h2 id="Implementing-a-parallel-finger-client-with-non-blocking-connects-and-AnyEvent::Socket">Implementing a parallel finger client with non-blocking connects and AnyEvent::Socket</h2>
+
+<p>The finger protocol is one of the simplest protocols in use on the internet. Or in use in the past, as almost nobody uses it anymore.</p>
+
+<p>It works by connecting to the finger port on another host, writing a single line with a user name and then reading the finger response, as specified by that user. OK, RFC 1288 specifies a vastly more complex protocol, but it basically boils down to this:</p>
+
+<pre><code>   # telnet freebsd.org finger
+   Trying 8.8.178.135...
+   Connected to freebsd.org (8.8.178.135).
+   Escape character is &#39;^]&#39;.
+   larry
+   Login: lile                             Name: Larry Lile
+   Directory: /home/lile                   Shell: /usr/local/bin/bash
+   No Mail.
+   Mail forwarded to: lile@stdio.com
+   No Plan.</code></pre>
+
+<p>So let&#39;s write a little AnyEvent function that makes a finger request:</p>
+
+<pre><code>   use AnyEvent;
+   use AnyEvent::Socket;
+
+   sub finger($$) {
+      my ($user, $host) = @_;
+
+      # use a condvar to return results
+      my $cv = AnyEvent-&gt;condvar;
+
+      # first, connect to the host
+      tcp_connect $host, &quot;finger&quot;, sub {
+         # the callback receives the socket handle - or nothing
+         my ($fh) = @_
+            or return $cv-&gt;send;
+
+         # now write the username
+         syswrite $fh, &quot;$user\015\012&quot;;
+
+         my $response;
+
+         # register a read watcher
+         my $read_watcher; $read_watcher = AnyEvent-&gt;io (
+            fh   =&gt; $fh,
+            poll =&gt; &quot;r&quot;,
+            cb   =&gt; sub {
+               my $len = sysread $fh, $response, 1024, length $response;
+
+               if ($len &lt;= 0) {
+                  # we are done, or an error occured, lets ignore the latter
+                  undef $read_watcher; # no longer interested
+                  $cv-&gt;send ($response); # send results
+               }
+            },
+         );
+      };
+
+      # pass $cv to the caller
+      $cv
+   }</code></pre>
+
+<p>That&#39;s a mouthful! Let&#39;s dissect this function a bit, first the overall function and execution flow:</p>
+
+<pre><code>   sub finger($$) {
+      my ($user, $host) = @_;
+
+      # use a condvar to return results
+      my $cv = AnyEvent-&gt;condvar;
+
+      # first, connect to the host
+      tcp_connect $host, &quot;finger&quot;, sub {
+         ...
+      };
+
+      $cv
+   }</code></pre>
+
+<p>This isn&#39;t too complicated, just a function with two parameters that creates a condition variable <code>$cv</code>, initiates a TCP connect to <code>$host</code>, and returns <code>$cv</code>. The caller can use the returned <code>$cv</code> to receive the finger response, but one could equally well pass a third argument, a callback, to the function.</p>
+
+<p>Since we are programming event&#39;ish, we do not wait for the connect to finish - it could block the program for a minute or longer!</p>
+
+<p>Instead, we pass <code>tcp_connect</code> a callback to invoke when the connect is done. The callback is called with the socket handle as its first argument if the connect succeeds, and no arguments otherwise. The important point is that it will always be called as soon as the outcome of the TCP connect is known.</p>
+
+<p>This style of programming is also called &quot;continuation style&quot;: the &quot;continuation&quot; is simply the way the program continues - normally at the next line after some statement (the exception is loops or things like <code>return</code>). When we are interested in events, however, we instead specify the &quot;continuation&quot; of our program by passing a closure, which makes that closure the &quot;continuation&quot; of the program.</p>
+
+<p>The <code>tcp_connect</code> call is like saying &quot;return now, and when the connection is established or the attempt failed, continue there&quot;.</p>
+
+<p>Now let&#39;s look at the callback/closure in more detail:</p>
+
+<pre><code>         # the callback receives the socket handle - or nothing
+         my ($fh) = @_
+            or return $cv-&gt;send;</code></pre>
+
+<p>The first thing the callback does is to save the socket handle in <code>$fh</code>. When there was an error (no arguments), then our instinct as expert Perl programmers would tell us to <code>die</code>:</p>
+
+<pre><code>         my ($fh) = @_
+            or die &quot;$host: $!&quot;;</code></pre>
+
+<p>While this would give good feedback to the user (if he happens to watch standard error), our program would probably stop working here, as we never report the results to anybody, certainly not the caller of our <code>finger</code> function, and most event loops continue even after a <code>die</code>!</p>
+
+<p>This is why we instead <code>return</code>, but also call <code>$cv-&gt;send</code> without any arguments to signal to the condvar consumer that something bad has happened. The return value of <code>$cv-&gt;send</code> is irrelevant, as is the return value of our callback. The <code>return</code> statement is used for the side effect of, well, returning immediately from the callback. Checking for errors and handling them this way is very common, which is why this compact idiom is so handy.</p>
+
+<p>As the next step in the finger protocol, we send the username to the finger daemon on the other side of our connection (the kernel.org finger service doesn&#39;t actually wait for a username, but the net is running out of finger servers fast):</p>
+
+<pre><code>         syswrite $fh, &quot;$user\015\012&quot;;</code></pre>
+
+<p>Note that this isn&#39;t 100% clean socket programming - the socket could, for whatever reasons, not accept our data. When writing a small amount of data like in this example it doesn&#39;t matter, as a socket buffer is almost always big enough for a mere &quot;username&quot;, but for real-world cases you might need to implement some kind of write buffering - or use <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>, which handles these matters for you, as shown in the next section.</p>
+
+<p>What we <i>do</i> have to do is implement our own read buffer - the response data could arrive late or in multiple chunks, and we cannot just wait for it (event-based programming, you know?).</p>
+
+<p>To do that, we register a read watcher on the socket which waits for data:</p>
+
+<pre><code>         my $read_watcher; $read_watcher = AnyEvent-&gt;io (
+            fh   =&gt; $fh,
+            poll =&gt; &quot;r&quot;,</code></pre>
+
+<p>There is a trick here, however: the read watcher isn&#39;t stored in a global variable, but in a local one - if the callback returns, it would normally destroy the variable and its contents, which would in turn unregister our watcher.</p>
+
+<p>To avoid that, we refer to the watcher variable in the watcher callback. This means that, when the <code>tcp_connect</code> callback returns, perl thinks (quite correctly) that the read watcher is still in use - namely inside the inner callback - and thus keeps it alive even if nothing else in the program refers to it anymore (it is much like Baron M&uuml;nchhausen keeping himself from dying by pulling himself out of a swamp).</p>
+
+<p>The trick, however, is that instead of:</p>
+
+<pre><code>   my $read_watcher = AnyEvent-&gt;io (...</code></pre>
+
+<p>The program does:</p>
+
+<pre><code>   my $read_watcher; $read_watcher = AnyEvent-&gt;io (...</code></pre>
+
+<p>The reason for this is a quirk in the way Perl works: variable names declared with <code>my</code> are only visible in the <i>next</i> statement. If the whole <code>AnyEvent-&gt;io</code> call, including the callback, would be done in a single statement, the callback could not refer to the <code>$read_watcher</code> variable to <code>undef</code>ine it, so it is done in two statements.</p>
+
+<p>Whether you&#39;d want to format it like this is of course a matter of style. This way emphasizes that the declaration and assignment really are one logical statement.</p>
+
+<p>The callback itself calls <code>sysread</code> for as many times as necessary, until <code>sysread</code> returns either an error or end-of-file:</p>
+
+<pre><code>            cb   =&gt; sub {
+               my $len = sysread $fh, $response, 1024, length $response;
+
+               if ($len &lt;= 0) {</code></pre>
+
+<p>Note that <code>sysread</code> has the ability to append data it reads to a scalar if we specify an offset, a feature which we make use of in this example.</p>
+
+<p>When <code>sysread</code> indicates we are done, the callback <code>undef</code>ines the watcher and then <code>send</code>s the response data to the condition variable. All this has the following effects:</p>
+
+<p>Undefining the watcher destroys it, as our callback was the only one still having a reference to it. When the watcher gets destroyed, it destroys the callback, which in turn means the <code>$fh</code> handle is no longer used, so that gets destroyed as well. The result is that all resources will be nicely cleaned up by perl for us.</p>
+
+<h3 id="Using-the-finger-client">Using the finger client</h3>
+
+<p>Now, we could probably write the same finger client in a simpler way if we used <code>IO::Socket::INET</code>, ignored the problem of multiple hosts and ignored IPv6 and a few other things that <code>tcp_connect</code> handles for us.</p>
+
+<p>But the main advantage is that we can not only run this finger function in the background, we even can run multiple sessions in parallel, like this:</p>
+
+<pre><code>   my $f1 = finger &quot;kuriyama&quot;, &quot;freebsd.org&quot;;
+   my $f2 = finger &quot;icculus?listarchives=1&quot;, &quot;icculus.org&quot;;
+   my $f3 = finger &quot;mikachu&quot;, &quot;icculus.org&quot;;
+
+   print &quot;kuriyama&#39;s gpg key\n&quot;    , $f1-&gt;recv, &quot;\n&quot;;
+   print &quot;icculus&#39; plan archive\n&quot; , $f2-&gt;recv, &quot;\n&quot;;
+   print &quot;mikachu&#39;s plan zomgn\n&quot;  , $f3-&gt;recv, &quot;\n&quot;;</code></pre>
+
+<p>It doesn&#39;t look like it, but in fact all three requests run in parallel. The code waits for the first finger request to finish first, but that doesn&#39;t keep it from executing them parallel: when the first <code>recv</code> call sees that the data isn&#39;t ready yet, it serves events for all three requests automatically, until the first request has finished.</p>
+
+<p>The second <code>recv</code> call might either find the data is already there, or it will continue handling events until that is the case, and so on.</p>
+
+<p>By taking advantage of network latencies, which allows us to serve other requests and events while we wait for an event on one socket, the overall time to do these three requests will be greatly reduced, typically all three are done in the same time as the slowest of the three requests.</p>
+
+<p>By the way, you do not actually have to wait in the <code>recv</code> method on an AnyEvent condition variable - after all, waiting is evil - you can also register a callback:</p>
+
+<pre><code>   $f1-&gt;cb (sub {
+      my $response = shift-&gt;recv;
+      # ...
+   });</code></pre>
+
+<p>The callback will be invoked only when <code>send</code> is called. In fact, instead of returning a condition variable you could also pass a third parameter to your finger function, the callback to invoke with the response:</p>
+
+<pre><code>   sub finger($$$) {
+      my ($user, $host, $cb) = @_;</code></pre>
+
+<p>How you implement it is a matter of taste - if you expect your function to be used mainly in an event-based program you would normally prefer to pass a callback directly. If you write a module and expect your users to use it &quot;synchronously&quot; often (for example, a simple http-get script would not really care much for events), then you would use a condition variable and tell them &quot;simply <code>-&gt;recv</code> the data&quot;.</p>
+
+<h3 id="Problems-with-the-implementation-and-how-to-fix-them">Problems with the implementation and how to fix them</h3>
+
+<p>To make this example more real-world-ready, we would not only implement some write buffering (for the paranoid, or maybe denial-of-service aware security expert), but we would also have to handle timeouts and maybe protocol errors.</p>
+
+<p>Doing this quickly gets unwieldy, which is why we introduce <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> in the next section, which takes care of all these details for you and lets you concentrate on the actual protocol.</p>
+
+<h2 id="Implementing-simple-HTTP-and-HTTPS-GET-requests-with-AnyEvent::Handle">Implementing simple HTTP and HTTPS GET requests with AnyEvent::Handle</h2>
+
+<p>The <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> module has been hyped quite a bit in this document so far, so let&#39;s see what it really offers.</p>
+
+<p>As finger is such a simple protocol, let&#39;s try something slightly more complicated: HTTP/1.0.</p>
+
+<p>An HTTP GET request works by sending a single request line that indicates what you want the server to do and the URI you want to act it on, followed by as many &quot;header&quot; lines (<code>Header: data</code>, same as e-mail headers) as required for the request, followed by an empty line.</p>
+
+<p>The response is formatted very similarly, first a line with the response status, then again as many header lines as required, then an empty line, followed by any data that the server might send.</p>
+
+<p>Again, let&#39;s try it out with <code>telnet</code> (I condensed the output a bit - if you want to see the full response, do it yourself).</p>
+
+<pre><code>   # telnet www.google.com 80
+   Trying 209.85.135.99...
+   Connected to www.google.com (209.85.135.99).
+   Escape character is &#39;^]&#39;.
+   GET /test HTTP/1.0
+
+   HTTP/1.0 404 Not Found
+   Date: Mon, 02 Jun 2008 07:05:54 GMT
+   Content-Type: text/html; charset=UTF-8
+
+   &lt;html&gt;&lt;head&gt;
+   [...]
+   Connection closed by foreign host.</code></pre>
+
+<p>The <code>GET ...</code> and the empty line were entered manually, the rest of the telnet output is google&#39;s response, in this case a <code>404 not found</code> one.</p>
+
+<p>So, here is how you would do it with <code>AnyEvent::Handle</code>:</p>
+
+<pre><code>   sub http_get {
+      my ($host, $uri, $cb) = @_;
+
+      # store results here
+      my ($response, $header, $body);
+
+      my $handle; $handle = new AnyEvent::Handle
+         connect  =&gt; [$host =&gt; &#39;http&#39;],
+         on_error =&gt; sub {
+            $cb-&gt;(&quot;HTTP/1.0 500 $!&quot;);
+            $handle-&gt;destroy; # explicitly destroy handle
+         },
+         on_eof   =&gt; sub {
+            $cb-&gt;($response, $header, $body);
+            $handle-&gt;destroy; # explicitly destroy handle
+         };
+
+      $handle-&gt;push_write (&quot;GET $uri HTTP/1.0\015\012\015\012&quot;);
+
+      # now fetch response status line
+      $handle-&gt;push_read (line =&gt; sub {
+         my ($handle, $line) = @_;
+         $response = $line;
+      });
+
+      # then the headers
+      $handle-&gt;push_read (line =&gt; &quot;\015\012\015\012&quot;, sub {
+         my ($handle, $line) = @_;
+         $header = $line;
+      });
+
+      # and finally handle any remaining data as body
+      $handle-&gt;on_read (sub {
+         $body .= $_[0]-&gt;rbuf;
+         $_[0]-&gt;rbuf = &quot;&quot;;
+      });
+   }</code></pre>
+
+<p>And now let&#39;s go through it step by step. First, as usual, the overall <code>http_get</code> function structure:</p>
+
+<pre><code>   sub http_get {
+      my ($host, $uri, $cb) = @_;
+
+      # store results here
+      my ($response, $header, $body);
+
+      my $handle; $handle = new AnyEvent::Handle
+         ... create handle object
+
+      ... push data to write
+
+      ... push what to expect to read queue
+   }</code></pre>
+
+<p>Unlike in the finger example, this time the caller has to pass a callback to <code>http_get</code>. Also, instead of passing a URL as one would expect, the caller has to provide the hostname and URI - normally you would use the <code>URI</code> module to parse a URL and separate it into those parts, but that is left to the inspired reader :)</p>
+
+<p>Since everything else is left to the caller, all <code>http_get</code> does is initiate the connection by creating the AnyEvent::Handle object (which calls <code>tcp_connect</code> for us) and leave everything else to its callback.</p>
+
+<p>The handle object is created, unsurprisingly, by calling the <code>new</code> method of <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>:</p>
+
+<pre><code>      my $handle; $handle = new AnyEvent::Handle
+         connect  =&gt; [$host =&gt; &#39;http&#39;],
+         on_error =&gt; sub {
+            $cb-&gt;(&quot;HTTP/1.0 500 $!&quot;);
+            $handle-&gt;destroy; # explicitly destroy handle
+         },
+         on_eof   =&gt; sub {
+            $cb-&gt;($response, $header, $body);
+            $handle-&gt;destroy; # explicitly destroy handle
+         };</code></pre>
+
+<p>The <code>connect</code> argument tells AnyEvent::Handle to call <code>tcp_connect</code> for the specified host and service/port.</p>
+
+<p>The <code>on_error</code> callback will be called on any unexpected error, such as a refused connection, or unexpected end-of-file while reading headers.</p>
+
+<p>Instead of having an extra mechanism to signal errors, connection errors are signalled by crafting a special &quot;response status line&quot;, like this:</p>
+
+<pre><code>   HTTP/1.0 500 Connection refused</code></pre>
+
+<p>This means the caller cannot distinguish (easily) between locally-generated errors and server errors, but it simplifies error handling for the caller a lot.</p>
+
+<p>The error callback also destroys the handle explicitly, because we are not interested in continuing after any errors. In AnyEvent::Handle callbacks you have to call <code>destroy</code> explicitly to destroy a handle. Outside of those callbacks you can just forget the object reference and it will be automatically cleaned up.</p>
+
+<p>Last but not least, we set an <code>on_eof</code> callback that is called when the other side indicates it has stopped writing data, which we will use to gracefully shut down the handle and report the results. This callback is only called when the read queue is empty - if the read queue expects some data and the handle gets an EOF from the other side this will be an error - after all, you did expect more to come.</p>
+
+<p>If you wanted to write a server using AnyEvent::Handle, you would use <code>tcp_accept</code> and then create the AnyEvent::Handle with the <code>fh</code> argument.</p>
+
+<h3 id="The-write-queue">The write queue</h3>
+
+<p>The next line sends the actual request:</p>
+
+<pre><code>   $handle-&gt;push_write (&quot;GET $uri HTTP/1.0\015\012\015\012&quot;);</code></pre>
+
+<p>No headers will be sent (this is fine for simple requests), so the whole request is just a single line followed by an empty line to signal the end of the headers to the server.</p>
+
+<p>The more interesting question is why the method is called <code>push_write</code> and not just write. The reason is that you can <i>always</i> add some write data without blocking, and to do this, AnyEvent::Handle needs some write queue internally - and <code>push_write</code> pushes some data onto the end of that queue, just like Perl&#39;s <code>push</code> pushes data onto the end of an array.</p>
+
+<p>The deeper reason is that at some point in the future, there might be <code>unshift_write</code> as well, and in any case, we will shortly meet <code>push_read</code> and <code>unshift_read</code>, and it&#39;s usually easiest to remember if all those functions have some symmetry in their name. So <code>push</code> is used as the opposite of <code>unshift</code> in AnyEvent::Handle, not as the opposite of <code>pull</code> - just like in Perl.</p>
+
+<p>Note that we call <code>push_write</code> right after creating the AnyEvent::Handle object, before it has had time to actually connect to the server. This is fine, pushing the read and write requests will queue them in the handle object until the connection has been established. Alternatively, we could do this &quot;on demand&quot; in the <code>on_connect</code> callback.</p>
+
+<p>If <code>push_write</code> is called with more than one argument, then you can do <i>formatted</i> I/O. For example, this would JSON-encode your data before pushing it to the write queue:</p>
+
+<pre><code>   $handle-&gt;push_write (json =&gt; [1, 2, 3]);</code></pre>
+
+<p>This pretty much summarises the write queue, there is little else to it.</p>
+
+<p>Reading the response is far more interesting, because it involves the more powerful and complex <i>read queue</i>:</p>
+
+<h3 id="The-read-queue">The read queue</h3>
+
+<p>The response consists of three parts: a single line with the response status, a single paragraph of headers ended by an empty line, and the request body, which is the remaining data on the connection.</p>
+
+<p>For the first two, we push two read requests onto the read queue:</p>
+
+<pre><code>   # now fetch response status line
+   $handle-&gt;push_read (line =&gt; sub {
+      my ($handle, $line) = @_;
+      $response = $line;
+   });
+
+   # then the headers
+   $handle-&gt;push_read (line =&gt; &quot;\015\012\015\012&quot;, sub {
+      my ($handle, $line) = @_;
+      $header = $line;
+   });</code></pre>
+
+<p>While one can just push a single callback to parse all the data on the queue, formatted I/O really comes to our aid here, since there is a ready-made &quot;read line&quot; read type. The first read expects a single line, ended by <code>\015\012</code> (the standard end-of-line marker in internet protocols).</p>
+
+<p>The second &quot;line&quot; is actually a single paragraph - instead of reading it line by line we tell <code>push_read</code> that the end-of-line marker is really <code>\015\012\015\012</code>, which is an empty line. The result is that the whole header paragraph will be treated as a single line and read. The word &quot;line&quot; is interpreted very freely, much like Perl itself does it.</p>
+
+<p>Note that push read requests are pushed immediately after creating the handle object - since AnyEvent::Handle provides a queue we can push as many requests as we want, and AnyEvent::Handle will handle them in order.</p>
+
+<p>There is, however, no read type for &quot;the remaining data&quot;. For that, we install our own <code>on_read</code> callback:</p>
+
+<pre><code>   # and finally handle any remaining data as body
+   $handle-&gt;on_read (sub {
+      $body .= $_[0]-&gt;rbuf;
+      $_[0]-&gt;rbuf = &quot;&quot;;
+   });</code></pre>
+
+<p>This callback is invoked every time data arrives and the read queue is empty - which in this example will only be the case when both response and header have been read. The <code>on_read</code> callback could actually have been specified when constructing the object, but doing it this way preserves logical ordering.</p>
+
+<p>The read callback adds the current read buffer to its <code>$body</code> variable and, most importantly, <i>empties</i> the buffer by assigning the empty string to it.</p>
+
+<p>Given these instructions, AnyEvent::Handle will handle incoming data - if all goes well, the callback will be invoked with the response data; if not, it will get an error.</p>
+
+<p>In general, you can implement pipelining (a semi-advanced feature of many protocols) very easily with AnyEvent::Handle: If you have a protocol with a request/response structure, your request methods/functions will all look like this (simplified):</p>
+
+<pre><code>   sub request {
+
+      # send the request to the server
+      $handle-&gt;push_write (...);
+
+      # push some response handlers
+      $handle-&gt;push_read (...);
+   }</code></pre>
+
+<p>This means you can queue as many requests as you want, and while AnyEvent::Handle goes through its read queue to handle the response data, the other side can work on the next request - queueing the request just appends some data to the write queue and installs a handler to be called later.</p>
+
+<p>You might ask yourself how to handle decisions you can only make <i>after</i> you have received some data (such as handling a short error response or a long and differently-formatted response). The answer to this problem is <code>unshift_read</code>, which we will introduce together with an example in the coming sections.</p>
+
+<h3 id="Using-http_get">Using <code>http_get</code></h3>
+
+<p>Finally, here is how you would use <code>http_get</code>:</p>
+
+<pre><code>   http_get &quot;www.google.com&quot;, &quot;/&quot;, sub {
+      my ($response, $header, $body) = @_;
+
+      print
+         $response, &quot;\n&quot;,
+         $body;
+   };</code></pre>
+
+<p>And of course, you can run as many of these requests in parallel as you want (and your memory supports).</p>
+
+<h3 id="HTTPS">HTTPS</h3>
+
+<p>Now, as promised, let&#39;s implement the same thing for HTTPS, or more correctly, let&#39;s change our <code>http_get</code> function into a function that speaks HTTPS instead.</p>
+
+<p>HTTPS is a standard TLS connection (<b>T</b>ransport <b>L</b>ayer <b>S</b>ecurity is the official name for what most people refer to as <code>SSL</code>) that contains standard HTTP protocol exchanges. The only other difference to HTTP is that by default it uses port <code>443</code> instead of port <code>80</code>.</p>
+
+<p>To implement these two differences we need two tiny changes, first, in the <code>connect</code> parameter, we replace <code>http</code> by <code>https</code> to connect to the https port:</p>
+
+<pre><code>         connect  =&gt; [$host =&gt; &#39;https&#39;],</code></pre>
+
+<p>The other change deals with TLS, which is something <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> does for us if the <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> module is available. To enable TLS with <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>, we pass an additional <code>tls</code> parameter to the call to <code>AnyEvent::Handle::new</code>:</p>
+
+<pre><code>         tls      =&gt; &quot;connect&quot;,</code></pre>
+
+<p>Specifying <code>tls</code> enables TLS, and the argument specifies whether AnyEvent::Handle is the server side (&quot;accept&quot;) or the client side (&quot;connect&quot;) for the TLS connection, as unlike TCP, there is a clear server/client relationship in TLS.</p>
+
+<p>That&#39;s all.</p>
+
+<p>Of course, all this should be handled transparently by <code>http_get</code> after parsing the URL. If you need this, see the part about exercising your inspiration earlier in this document. You could also use the <a>AnyEvent::HTTP</a> module from CPAN, which implements all this and works around a lot of quirks for you too.</p>
+
+<h3 id="The-read-queue---revisited">The read queue - revisited</h3>
+
+<p>HTTP always uses the same structure in its responses, but many protocols require parsing responses differently depending on the response itself.</p>
+
+<p>For example, in SMTP, you normally get a single response line:</p>
+
+<pre><code>   220 mail.example.net Neverusesendmail 8.8.8 &lt;mailme@example.net&gt;</code></pre>
+
+<p>But SMTP also supports multi-line responses:</p>
+
+<pre><code>   220-mail.example.net Neverusesendmail 8.8.8 &lt;mailme@example.net&gt;
+   220-hey guys
+   220 my response is longer than yours</code></pre>
+
+<p>To handle this, we need <code>unshift_read</code>. As the name (we hope) implies, <code>unshift_read</code> will not append your read request to the end of the read queue, but will prepend it to the queue instead.</p>
+
+<p>This is useful in the situation above: Just push your response-line read request when sending the SMTP command, and when handling it, you look at the line to see if more is to come, and <code>unshift_read</code> another reader callback if required, like this:</p>
+
+<pre><code>   my $response; # response lines end up in here
+
+   my $read_response; $read_response = sub {
+      my ($handle, $line) = @_;
+
+      $response .= &quot;$line\n&quot;;
+
+      # check for continuation lines (&quot;-&quot; as 4th character&quot;)
+      if ($line =~ /^...-/) {
+         # if yes, then unshift another line read
+         $handle-&gt;unshift_read (line =&gt; $read_response);
+
+      } else {
+         # otherwise we are done
+
+         # free callback
+         undef $read_response;
+         
+         print &quot;we are don reading: $response\n&quot;;
+      }
+   };
+
+   $handle-&gt;push_read (line =&gt; $read_response);</code></pre>
+
+<p>This recipe can be used for all similar parsing problems, for example in NNTP, the response code to some commands indicates that more data will be sent:</p>
+
+<pre><code>   $handle-&gt;push_write (&quot;article 42&quot;);
+
+   # read response line
+   $handle-&gt;push_read (line =&gt; sub {
+      my ($handle, $status) = @_;
+
+      # article data following?
+      if ($status =~ /^2/) {
+         # yes, read article body
+         
+         $handle-&gt;unshift_read (line =&gt; &quot;\012.\015\012&quot;, sub {
+            my ($handle, $body) = @_;
+
+            $finish-&gt;($status, $body);
+         });
+
+      } else {
+         # some error occured, no article data
+         
+         $finish-&gt;($status);
+      }
+   }
+         </code></pre>
+
+<h3 id="Your-own-read-queue-handler">Your own read queue handler</h3>
+
+<p>Sometimes your protocol doesn&#39;t play nice, and uses lines or chunks of data not formatted in a way handled out of the box by AnyEvent::Handle. In this case you have to implement your own read parser.</p>
+
+<p>To make up a contorted example, imagine you are looking for an even number of characters followed by a colon (&quot;:&quot;). Also imagine that AnyEvent::Handle has no <code>regex</code> read type which could be used, so you&#39;d have to do it manually.</p>
+
+<p>To implement a read handler for this, you would <code>push_read</code> (or <code>unshift_read</code>) a single code reference.</p>
+
+<p>This code reference will then be called each time there is (new) data available in the read buffer, and is expected to either successfully eat/consume some of that data (and return true) or to return false to indicate that it wants to be called again.</p>
+
+<p>If the code reference returns true, then it will be removed from the read queue (because it has parsed/consumed whatever it was supposed to consume), otherwise it stays in the front of it.</p>
+
+<p>The example above could be coded like this:</p>
+
+<pre><code>   $handle-&gt;push_read (sub {
+      my ($handle) = @_;
+
+      # check for even number of characters + &quot;:&quot;
+      # and remove the data if a match is found.
+      # if not, return false (actually nothing)
+
+      $handle-&gt;{rbuf} =~ s/^( (?:..)* ) ://x
+         or return;
+
+      # we got some data in $1, pass it to whoever wants it
+      $finish-&gt;($1);
+
+      # and return true to indicate we are done
+      1
+   });</code></pre>
+
+<h1 id="Debugging-aids">Debugging aids</h1>
+
+<p>Now that you have seen how to use AnyEvent, here&#39;s what to use when you don&#39;t use it correctly, or simply hit a bug somewhere and want to debug it:</p>
+
+<dl>
+
+<dt id="Enable-strict-argument-checking-during-development">Enable strict argument checking during development</dt>
+<dd>
+
+<p>AnyEvent does not, by default, do any argument checking. This can lead to strange and unexpected results especially if you are just trying to find your way with AnyEvent.</p>
+
+<p>AnyEvent supports a special &quot;strict&quot; mode - off by default - which does very strict argument checking, at the expense of slowing down your program. During development, however, this mode is very useful because it quickly catches the msot common errors.</p>
+
+<p>You can enable this strict mode either by having an environment variable <code>AE_STRICT</code> with a true value in your environment:</p>
+
+<pre><code>   AE_STRICT=1 perl myprog</code></pre>
+
+<p>Or you can write <code>use AnyEvent::Strict</code> in your program, which has the same effect (do not do this in production, however).</p>
+
+</dd>
+<dt id="Increase-verbosity-configure-logging">Increase verbosity, configure logging</dt>
+<dd>
+
+<p>AnyEvent, by default, only logs critical messages. If something doesn&#39;t work, maybe there was a warning about it that you didn&#39;t see because it was suppressed.</p>
+
+<p>So during development it is recommended to push up the logging level to at least warn level (<code>5</code>):</p>
+
+<pre><code>   AE_VERBOSE=5 perl myprog</code></pre>
+
+<p>Other levels that might be helpful are debug (<code>8</code>) or even trace (<code>9</code>).</p>
+
+<p>AnyEvent&#39;s logging is quite versatile - the <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a> manpage has all the details.</p>
+
+</dd>
+<dt id="Watcher-wrapping-tracing-the-shell">Watcher wrapping, tracing, the shell</dt>
+<dd>
+
+<p>For even more debugging, you can enable watcher wrapping:</p>
+
+<pre><code>  AE_DEBUG_WRAP=2 perl myprog</code></pre>
+
+<p>This will have the effect of wrapping every watcher into a special object that stores a backtrace of when it was created, stores a backtrace when an exception occurs during watcher execution, and stores a lot of other information. If that slows down your program too much, then <code>AE_DEBUG_WRAP=1</code> avoids the costly backtraces.</p>
+
+<p>Here is an example of what of information is stored:</p>
+
+<pre><code>   59148536 DC::DB:472(Server::run)&gt;io&gt;DC::DB::Server::fh_read
+   type:    io watcher
+   args:    poll r fh GLOB(0x35283f0)
+   created: 2011-09-01 23:13:46.597336 +0200 (1314911626.59734)
+   file:    ./blib/lib/Deliantra/Client/private/DC/DB.pm
+   line:    472
+   subname: DC::DB::Server::run
+   context: 
+   tracing: enabled
+   cb:      CODE(0x2d1fb98) (DC::DB::Server::fh_read)
+   invoked: 0 times
+   created
+   (eval 25) line 6        AnyEvent::Debug::Wrap::__ANON__(&#39;AnyEvent&#39;,&#39;fh&#39;,GLOB(0x35283f0),&#39;poll&#39;,&#39;r&#39;,&#39;cb&#39;,CODE(0x2d1fb98)=DC::DB::Server::fh_read)
+   DC::DB line 472         AE::io(GLOB(0x35283f0),&#39;0&#39;,CODE(0x2d1fb98)=DC::DB::Server::fh_read)
+   bin/deliantra line 2776 DC::DB::Server::run()
+   bin/deliantra line 2941 main::main()</code></pre>
+
+<p>There are many ways to get at this data - see the <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Debug.html">AnyEvent::Debug</a> and <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Log.html">AnyEvent::Log</a> manpages for more details.</p>
+
+<p>The most interesting and interactive way is to create a debug shell, for example by setting <code>AE_DEBUG_SHELL</code>:</p>
+
+<pre><code>  AE_DEBUG_WRAP=2 AE_DEBUG_SHELL=$HOME/myshell ./myprog
+
+  # while myprog is running:
+  socat readline $HOME/myshell</code></pre>
+
+<p>Note that anybody who can access <i>$HOME/myshell</i> can make your program do anything he or she wants, so if you are not the only user on your machine, better put it into a secure location (<i>$HOME</i> might not be secure enough).</p>
+
+<p>If you don&#39;t have <code>socat</code> (a shame!) and care even less about security, you can also use TCP and <code>telnet</code>:</p>
+
+<pre><code>  AE_DEBUG_WRAP=2 AE_DEBUG_SHELL=127.0.0.1:1234 ./myprog
+
+  telnet 127.0.0.1 1234</code></pre>
+
+<p>The debug shell can enable and disable tracing of watcher invocations, can display the trace output, give you a list of watchers and lets you investigate watchers in detail.</p>
+
+</dd>
+</dl>
+
+<p>This concludes our little tutorial.</p>
+
+<h1 id="Where-to-go-from-here">Where to go from here?</h1>
+
+<p>This introduction should have explained the key concepts of <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> - event watchers and condition variables, <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a> - basic networking utilities, and <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> - a nice wrapper around sockets.</p>
+
+<p>You could either start coding stuff right away, look at those manual pages for the gory details, or roam CPAN for other AnyEvent modules (such as <a>AnyEvent::IRC</a> or <a>AnyEvent::HTTP</a>) to see more code examples (or simply to use them).</p>
+
+<p>If you need a protocol that doesn&#39;t have an implementation using AnyEvent, remember that you can mix AnyEvent with one other event framework, such as <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">POE</a>, so you can always use AnyEvent for your own tasks plus modules of one other event framework to fill any gaps.</p>
+
+<p>And last not least, you could also look at <a>Coro</a>, especially <a>Coro::AnyEvent</a>, to see how you can turn event-based programming from callback style back to the usual imperative style (also called &quot;inversion of control&quot; - AnyEvent calls <i>you</i>, but Coro lets <i>you</i> call AnyEvent).</p>
+
+<h1 id="Authors">Authors</h1>
+
+<p>Robin Redeker <code>&lt;elmex at ta-sa.org&gt;</code>, Marc Lehmann &lt;schmorp@schmorp.de&gt;.</p>
+
+
+</body>
+
+</html>
+
+

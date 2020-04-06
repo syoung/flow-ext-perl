@@ -1,0 +1,1229 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#WRITE-QUEUE">WRITE QUEUE</a></li>
+      <li><a href="#READ-QUEUE">READ QUEUE</a></li>
+    </ul>
+  </li>
+  <li><a href="#NONFREQUENTLY-ASKED-QUESTIONS">NONFREQUENTLY ASKED QUESTIONS</a></li>
+  <li><a href="#SUBCLASSING-AnyEvent::Handle">SUBCLASSING AnyEvent::Handle</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Handle - non-blocking I/O on streaming handles via AnyEvent</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent;
+   use AnyEvent::Handle;
+
+   my $cv = AnyEvent-&gt;condvar;
+
+   my $hdl; $hdl = new AnyEvent::Handle
+      fh =&gt; \*STDIN,
+      on_error =&gt; sub {
+         my ($hdl, $fatal, $msg) = @_;
+         AE::log error =&gt; $msg;
+         $hdl-&gt;destroy;
+         $cv-&gt;send;
+      };
+
+   # send some request line
+   $hdl-&gt;push_write (&quot;getinfo\015\012&quot;);
+
+   # read the response line
+   $hdl-&gt;push_read (line =&gt; sub {
+      my ($hdl, $line) = @_;
+      say &quot;got line &lt;$line&gt;&quot;;
+      $cv-&gt;send;
+   });
+
+   $cv-&gt;recv;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a helper module to make it easier to do event-based I/O on stream-based filehandles (sockets, pipes, and other stream things). Specifically, it doesn&#39;t work as expected on files, packet-based sockets or similar things.</p>
+
+<p>The <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Intro.html">AnyEvent::Intro</a> tutorial contains some well-documented AnyEvent::Handle examples.</p>
+
+<p>In the following, where the documentation refers to &quot;bytes&quot;, it means characters. As sysread and syswrite are used for all I/O, their treatment of characters applies to this module as well.</p>
+
+<p>At the very minimum, you should specify <code>fh</code> or <code>connect</code>, and the <code>on_error</code> callback.</p>
+
+<p>All callbacks will be invoked with the handle object as their first argument.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<dl>
+
+<dt id="handle-new-AnyEvent::Handle-fh-filehandle-key-value">$handle = <b>new</b> AnyEvent::Handle fh =&gt; $filehandle, key =&gt; value...</dt>
+<dd>
+
+<p>The constructor supports these arguments (all as <code>key =&gt; value</code> pairs).</p>
+
+<dl>
+
+<dt id="fh-filehandle-fh-or-connect-MANDATORY">fh =&gt; $filehandle [<code>fh</code> or <code>connect</code> MANDATORY]</dt>
+<dd>
+
+<p>The filehandle this <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> object will operate on. NOTE: The filehandle will be set to non-blocking mode (using <code>AnyEvent::fh_unblock</code>) by the constructor and needs to stay in that mode.</p>
+
+</dd>
+<dt id="connect-host-service-fh-or-connect-MANDATORY">connect =&gt; [$host, $service] [<code>fh</code> or <code>connect</code> MANDATORY]</dt>
+<dd>
+
+<p>Try to connect to the specified host and service (port), using <code>AnyEvent::Socket::tcp_connect</code>. The <code>$host</code> additionally becomes the default <code>peername</code>.</p>
+
+<p>You have to specify either this parameter, or <code>fh</code>, above.</p>
+
+<p>It is possible to push requests on the read and write queues, and modify properties of the stream, even while AnyEvent::Handle is connecting.</p>
+
+<p>When this parameter is specified, then the <code>on_prepare</code>, <code>on_connect_error</code> and <code>on_connect</code> callbacks will be called under the appropriate circumstances:</p>
+
+<dl>
+
+<dt id="on_prepare-cb--handle">on_prepare =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+<p>This (rarely used) callback is called before a new connection is attempted, but after the file handle has been created (you can access that file handle via <code>$handle-&gt;{fh}</code>). It could be used to prepare the file handle with parameters required for the actual connect (as opposed to settings that can be changed when the connection is already established).</p>
+
+<p>The return value of this callback should be the connect timeout value in seconds (or <code>0</code>, or <code>undef</code>, or the empty list, to indicate that the default timeout is to be used).</p>
+
+</dd>
+<dt id="on_connect-cb--handle-host-port-retry">on_connect =&gt; $cb-&gt;($handle, $host, $port, $retry-&gt;())</dt>
+<dd>
+
+<p>This callback is called when a connection has been successfully established.</p>
+
+<p>The peer&#39;s numeric host and port (the socket peername) are passed as parameters, together with a retry callback. At the time it is called the read and write queues, EOF status, TLS status and similar properties of the handle will have been reset.</p>
+
+<p>If, for some reason, the handle is not acceptable, calling <code>$retry</code> will continue with the next connection target (in case of multi-homed hosts or SRV records there can be multiple connection endpoints). The <code>$retry</code> callback can be invoked after the connect callback returns, i.e. one can start a handshake and then decide to retry with the next host if the handshake fails.</p>
+
+<p>In most cases, you should ignore the <code>$retry</code> parameter.</p>
+
+</dd>
+<dt id="on_connect_error-cb--handle-message">on_connect_error =&gt; $cb-&gt;($handle, $message)</dt>
+<dd>
+
+<p>This callback is called when the connection could not be established. <code>$!</code> will contain the relevant error code, and <code>$message</code> a message describing it (usually the same as <code>&quot;$!&quot;</code>).</p>
+
+<p>If this callback isn&#39;t specified, then <code>on_error</code> will be called with a fatal error instead.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="on_error-cb--handle-fatal-message">on_error =&gt; $cb-&gt;($handle, $fatal, $message)</dt>
+<dd>
+
+<p>This is the error callback, which is called when, well, some error occured, such as not being able to resolve the hostname, failure to connect, or a read error.</p>
+
+<p>Some errors are fatal (which is indicated by <code>$fatal</code> being true). On fatal errors the handle object will be destroyed (by a call to <code>-&gt; destroy</code>) after invoking the error callback (which means you are free to examine the handle object). Examples of fatal errors are an EOF condition with active (but unsatisfiable) read watchers (<code>EPIPE</code>) or I/O errors. In cases where the other side can close the connection at will, it is often easiest to not report <code>EPIPE</code> errors in this callback.</p>
+
+<p>AnyEvent::Handle tries to find an appropriate error code for you to check against, but in some cases (TLS errors), this does not work well.</p>
+
+<p>If you report the error to the user, it is recommended to always output the <code>$message</code> argument in human-readable error messages (you don&#39;t need to report <code>&quot;$!&quot;</code> if you report <code>$message</code>).</p>
+
+<p>If you want to react programmatically to the error, then looking at <code>$!</code> and comparing it against some of the documented <code>Errno</code> values is usually better than looking at the <code>$message</code>.</p>
+
+<p>Non-fatal errors can be retried by returning, but it is recommended to simply ignore this parameter and instead abondon the handle object when this callback is invoked. Examples of non-fatal errors are timeouts <code>ETIMEDOUT</code>) or badly-formatted data (<code>EBADMSG</code>).</p>
+
+<p>On entry to the callback, the value of <code>$!</code> contains the operating system error code (or <code>ENOSPC</code>, <code>EPIPE</code>, <code>ETIMEDOUT</code>, <code>EBADMSG</code> or <code>EPROTO</code>).</p>
+
+<p>While not mandatory, it is <i>highly</i> recommended to set this callback, as you will not be notified of errors otherwise. The default just calls <code>croak</code>.</p>
+
+</dd>
+<dt id="on_read-cb--handle">on_read =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+<p>This sets the default read callback, which is called when data arrives and no read request is in the queue (unlike read queue callbacks, this callback will only be called when at least one octet of data is in the read buffer).</p>
+
+<p>To access (and remove data from) the read buffer, use the <code>-&gt;rbuf</code> method or access the <code>$handle-&gt;{rbuf}</code> member directly. Note that you must not enlarge or modify the read buffer, you can only remove data at the beginning from it.</p>
+
+<p>You can also call <code>-&gt;push_read (...)</code> or any other function that modifies the read queue. Or do both. Or ...</p>
+
+<p>When an EOF condition is detected, AnyEvent::Handle will first try to feed all the remaining data to the queued callbacks and <code>on_read</code> before calling the <code>on_eof</code> callback. If no progress can be made, then a fatal error will be raised (with <code>$!</code> set to <code>EPIPE</code>).</p>
+
+<p>Note that, unlike requests in the read queue, an <code>on_read</code> callback doesn&#39;t mean you <i>require</i> some data: if there is an EOF and there are outstanding read requests then an error will be flagged. With an <code>on_read</code> callback, the <code>on_eof</code> callback will be invoked.</p>
+
+</dd>
+<dt id="on_eof-cb--handle">on_eof =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+<p>Set the callback to be called when an end-of-file condition is detected, i.e. in the case of a socket, when the other side has closed the connection cleanly, and there are no outstanding read requests in the queue (if there are read requests, then an EOF counts as an unexpected connection close and will be flagged as an error).</p>
+
+<p>For sockets, this just means that the other side has stopped sending data, you can still try to write data, and, in fact, one can return from the EOF callback and continue writing data, as only the read part has been shut down.</p>
+
+<p>If an EOF condition has been detected but no <code>on_eof</code> callback has been set, then a fatal error will be raised with <code>$!</code> set to &lt;0&gt;.</p>
+
+</dd>
+<dt id="on_drain-cb--handle">on_drain =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+<p>This sets the callback that is called once when the write buffer becomes empty (and immediately when the handle object is created).</p>
+
+<p>To append to the write buffer, use the <code>-&gt;push_write</code> method.</p>
+
+<p>This callback is useful when you don&#39;t want to put all of your write data into the queue at once, for example, when you want to write the contents of some file to the socket you might not want to read the whole file into memory and push it into the queue, but instead only read more data from the file when the write queue becomes empty.</p>
+
+</dd>
+<dt id="timeout-fractional_seconds">timeout =&gt; $fractional_seconds</dt>
+<dd>
+
+</dd>
+<dt id="rtimeout-fractional_seconds">rtimeout =&gt; $fractional_seconds</dt>
+<dd>
+
+</dd>
+<dt id="wtimeout-fractional_seconds">wtimeout =&gt; $fractional_seconds</dt>
+<dd>
+
+<p>If non-zero, then these enables an &quot;inactivity&quot; timeout: whenever this many seconds pass without a successful read or write on the underlying file handle (or a call to <code>timeout_reset</code>), the <code>on_timeout</code> callback will be invoked (and if that one is missing, a non-fatal <code>ETIMEDOUT</code> error will be raised).</p>
+
+<p>There are three variants of the timeouts that work independently of each other, for both read and write (triggered when nothing was read <i>OR</i> written), just read (triggered when nothing was read), and just write: <code>timeout</code>, <code>rtimeout</code> and <code>wtimeout</code>, with corresponding callbacks <code>on_timeout</code>, <code>on_rtimeout</code> and <code>on_wtimeout</code>, and reset functions <code>timeout_reset</code>, <code>rtimeout_reset</code>, and <code>wtimeout_reset</code>.</p>
+
+<p>Note that timeout processing is active even when you do not have any outstanding read or write requests: If you plan to keep the connection idle then you should disable the timeout temporarily or ignore the timeout in the corresponding <code>on_timeout</code> callback, in which case AnyEvent::Handle will simply restart the timeout.</p>
+
+<p>Zero (the default) disables the corresponding timeout.</p>
+
+</dd>
+<dt id="on_timeout-cb--handle">on_timeout =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+</dd>
+<dt id="on_rtimeout-cb--handle">on_rtimeout =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+</dd>
+<dt id="on_wtimeout-cb--handle">on_wtimeout =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+<p>Called whenever the inactivity timeout passes. If you return from this callback, then the timeout will be reset as if some activity had happened, so this condition is not fatal in any way.</p>
+
+</dd>
+<dt id="rbuf_max-bytes">rbuf_max =&gt; &lt;bytes&gt;</dt>
+<dd>
+
+<p>If defined, then a fatal error will be raised (with <code>$!</code> set to <code>ENOSPC</code>) when the read buffer ever (strictly) exceeds this size. This is useful to avoid some forms of denial-of-service attacks.</p>
+
+<p>For example, a server accepting connections from untrusted sources should be configured to accept only so-and-so much data that it cannot act on (for example, when expecting a line, an attacker could send an unlimited amount of data without a callback ever being called as long as the line isn&#39;t finished).</p>
+
+</dd>
+<dt id="wbuf_max-bytes">wbuf_max =&gt; &lt;bytes&gt;</dt>
+<dd>
+
+<p>If defined, then a fatal error will be raised (with <code>$!</code> set to <code>ENOSPC</code>) when the write buffer ever (strictly) exceeds this size. This is useful to avoid some forms of denial-of-service attacks.</p>
+
+<p>Although the units of this parameter is bytes, this is the <i>raw</i> number of bytes not yet accepted by the kernel. This can make a difference when you e.g. use TLS, as TLS typically makes your write data larger (but it can also make it smaller due to compression).</p>
+
+<p>As an example of when this limit is useful, take a chat server that sends chat messages to a client. If the client does not read those in a timely manner then the send buffer in the server would grow unbounded.</p>
+
+</dd>
+<dt id="autocork-boolean">autocork =&gt; &lt;boolean&gt;</dt>
+<dd>
+
+<p>When disabled (the default), <code>push_write</code> will try to immediately write the data to the handle if possible. This avoids having to register a write watcher and wait for the next event loop iteration, but can be inefficient if you write multiple small chunks (on the wire, this disadvantage is usually avoided by your kernel&#39;s nagle algorithm, see <code>no_delay</code>, but this option can save costly syscalls).</p>
+
+<p>When enabled, writes will always be queued till the next event loop iteration. This is efficient when you do many small writes per iteration, but less efficient when you do a single write only per iteration (or when the write buffer often is full). It also increases write latency.</p>
+
+</dd>
+<dt id="no_delay-boolean">no_delay =&gt; &lt;boolean&gt;</dt>
+<dd>
+
+<p>When doing small writes on sockets, your operating system kernel might wait a bit for more data before actually sending it out. This is called the Nagle algorithm, and usually it is beneficial.</p>
+
+<p>In some situations you want as low a delay as possible, which can be accomplishd by setting this option to a true value.</p>
+
+<p>The default is your operating system&#39;s default behaviour (most likely enabled). This option explicitly enables or disables it, if possible.</p>
+
+</dd>
+<dt id="keepalive-boolean">keepalive =&gt; &lt;boolean&gt;</dt>
+<dd>
+
+<p>Enables (default disable) the SO_KEEPALIVE option on the stream socket: normally, TCP connections have no time-out once established, so TCP connections, once established, can stay alive forever even when the other side has long gone. TCP keepalives are a cheap way to take down long-lived TCP connections when the other side becomes unreachable. While the default is OS-dependent, TCP keepalives usually kick in after around two hours, and, if the other side doesn&#39;t reply, take down the TCP connection some 10 to 15 minutes later.</p>
+
+<p>It is harmless to specify this option for file handles that do not support keepalives, and enabling it on connections that are potentially long-lived is usually a good idea.</p>
+
+</dd>
+<dt id="oobinline-boolean">oobinline =&gt; &lt;boolean&gt;</dt>
+<dd>
+
+<p>BSD majorly fucked up the implementation of TCP urgent data. The result is that almost no OS implements TCP according to the specs, and every OS implements it slightly differently.</p>
+
+<p>If you want to handle TCP urgent data, then setting this flag (the default is enabled) gives you the most portable way of getting urgent data, by putting it into the stream.</p>
+
+<p>Since BSD emulation of OOB data on top of TCP&#39;s urgent data can have security implications, AnyEvent::Handle sets this flag automatically unless explicitly specified. Note that setting this flag after establishing a connection <i>may</i> be a bit too late (data loss could already have occured on BSD systems), but at least it will protect you from most attacks.</p>
+
+</dd>
+<dt id="read_size-bytes">read_size =&gt; &lt;bytes&gt;</dt>
+<dd>
+
+<p>The initial read block size, the number of bytes this module will try to read during each loop iteration. Each handle object will consume at least this amount of memory for the read buffer as well, so when handling many connections watch out for memory requirements). See also <code>max_read_size</code>. Default: <code>2048</code>.</p>
+
+</dd>
+<dt id="max_read_size-bytes">max_read_size =&gt; &lt;bytes&gt;</dt>
+<dd>
+
+<p>The maximum read buffer size used by the dynamic adjustment algorithm: Each time AnyEvent::Handle can read <code>read_size</code> bytes in one go it will double <code>read_size</code> up to the maximum given by this option. Default: <code>131072</code> or <code>read_size</code>, whichever is higher.</p>
+
+</dd>
+<dt id="low_water_mark-bytes">low_water_mark =&gt; &lt;bytes&gt;</dt>
+<dd>
+
+<p>Sets the number of bytes (default: <code>0</code>) that make up an &quot;empty&quot; write buffer: If the buffer reaches this size or gets even samller it is considered empty.</p>
+
+<p>Sometimes it can be beneficial (for performance reasons) to add data to the write buffer before it is fully drained, but this is a rare case, as the operating system kernel usually buffers data as well, so the default is good in almost all cases.</p>
+
+</dd>
+<dt id="linger-seconds">linger =&gt; &lt;seconds&gt;</dt>
+<dd>
+
+<p>If this is non-zero (default: <code>3600</code>), the destructor of the AnyEvent::Handle object will check whether there is still outstanding write data and will install a watcher that will write this data to the socket. No errors will be reported (this mostly matches how the operating system treats outstanding data at socket close time).</p>
+
+<p>This will not work for partial TLS data that could not be encoded yet. This data will be lost. Calling the <code>stoptls</code> method in time might help.</p>
+
+</dd>
+<dt id="peername-string">peername =&gt; $string</dt>
+<dd>
+
+<p>A string used to identify the remote site - usually the DNS hostname (<i>not</i> IDN!) used to create the connection, rarely the IP address.</p>
+
+<p>Apart from being useful in error messages, this string is also used in TLS peername verification (see <code>verify_peername</code> in <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a>). This verification will be skipped when <code>peername</code> is not specified or is <code>undef</code>.</p>
+
+</dd>
+<dt id="tls-accept-connect-Net::SSLeay::SSL-object">tls =&gt; &quot;accept&quot; | &quot;connect&quot; | Net::SSLeay::SSL object</dt>
+<dd>
+
+<p>When this parameter is given, it enables TLS (SSL) mode, that means AnyEvent will start a TLS handshake as soon as the connection has been established and will transparently encrypt/decrypt data afterwards.</p>
+
+<p>All TLS protocol errors will be signalled as <code>EPROTO</code>, with an appropriate error message.</p>
+
+<p>TLS mode requires Net::SSLeay to be installed (it will be loaded automatically when you try to create a TLS handle): this module doesn&#39;t have a dependency on that module, so if your module requires it, you have to add the dependency yourself. If Net::SSLeay cannot be loaded or is too old, you get an <code>EPROTO</code> error.</p>
+
+<p>Unlike TCP, TLS has a server and client side: for the TLS server side, use <code>accept</code>, and for the TLS client side of a connection, use <code>connect</code> mode.</p>
+
+<p>You can also provide your own TLS connection object, but you have to make sure that you call either <code>Net::SSLeay::set_connect_state</code> or <code>Net::SSLeay::set_accept_state</code> on it before you pass it to AnyEvent::Handle. Also, this module will take ownership of this connection object.</p>
+
+<p>At some future point, AnyEvent::Handle might switch to another TLS implementation, then the option to use your own session object will go away.</p>
+
+<p><b>IMPORTANT:</b> since Net::SSLeay &quot;objects&quot; are really only integers, passing in the wrong integer will lead to certain crash. This most often happens when one uses a stylish <code>tls =&gt; 1</code> and is surprised about the segmentation fault.</p>
+
+<p>Use the <code>-&gt;starttls</code> method if you need to start TLS negotiation later.</p>
+
+</dd>
+<dt id="tls_ctx-anyevent_tls">tls_ctx =&gt; $anyevent_tls</dt>
+<dd>
+
+<p>Use the given <code>AnyEvent::TLS</code> object to create the new TLS connection (unless a connection object was specified directly). If this parameter is missing (or <code>undef</code>), then AnyEvent::Handle will use <code>AnyEvent::Handle::TLS_CTX</code>.</p>
+
+<p>Instead of an object, you can also specify a hash reference with <code>key =&gt; value</code> pairs. Those will be passed to <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a> to create a new TLS context object.</p>
+
+</dd>
+<dt id="on_starttls-cb--handle-success-error_message">on_starttls =&gt; $cb-&gt;($handle, $success[, $error_message])</dt>
+<dd>
+
+<p>This callback will be invoked when the TLS/SSL handshake has finished. If <code>$success</code> is true, then the TLS handshake succeeded, otherwise it failed (<code>on_stoptls</code> will not be called in this case).</p>
+
+<p>The session in <code>$handle-&gt;{tls}</code> can still be examined in this callback, even when the handshake was not successful.</p>
+
+<p>TLS handshake failures will not cause <code>on_error</code> to be invoked when this callback is in effect, instead, the error message will be passed to <code>on_starttls</code>.</p>
+
+<p>Without this callback, handshake failures lead to <code>on_error</code> being called as usual.</p>
+
+<p>Note that you cannot just call <code>starttls</code> again in this callback. If you need to do that, start an zero-second timer instead whose callback can then call <code>-&gt;starttls</code> again.</p>
+
+</dd>
+<dt id="on_stoptls-cb--handle">on_stoptls =&gt; $cb-&gt;($handle)</dt>
+<dd>
+
+<p>When a SSLv3/TLS shutdown/close notify/EOF is detected and this callback is set, then it will be invoked after freeing the TLS session. If it is not, then a TLS shutdown condition will be treated like a normal EOF condition on the handle.</p>
+
+<p>The session in <code>$handle-&gt;{tls}</code> can still be examined in this callback.</p>
+
+<p>This callback will only be called on TLS shutdowns, not when the underlying handle signals EOF.</p>
+
+</dd>
+<dt id="json-JSON-JSON::PP-or-JSON::XS-object">json =&gt; <a href="../../../lib/perl5/5.26.3/JSON.html">JSON</a>, <a href="../../../lib/perl5/5.26.3/JSON/PP.html">JSON::PP</a> or <a>JSON::XS</a> object</dt>
+<dd>
+
+<p>This is the json coder object used by the <code>json</code> read and write types.</p>
+
+<p>If you don&#39;t supply it, then AnyEvent::Handle will create and use a suitable one (on demand), which will write and expect UTF-8 encoded JSON texts (either using <a>JSON::XS</a> or <a href="../../../lib/perl5/5.26.3/JSON.html">JSON</a>). The written texts are guaranteed not to contain any newline character.</p>
+
+<p>For security reasons, this encoder will likely <i>not</i> handle numbers and strings, only arrays and objects/hashes. The reason is that originally JSON was self-delimited, but Dougles Crockford thought it was a splendid idea to redefine JSON incompatibly, so this is no longer true.</p>
+
+<p>For protocols that used back-to-back JSON texts, this might lead to run-ins, where two or more JSON texts will be interpreted as one JSON text.</p>
+
+<p>For this reason, if the default encoder uses <a>JSON::XS</a>, it will default to not allowing anything but arrays and objects/hashes, at least for the forseeable future (it will change at some point). This might or might not be true for the <a href="../../../lib/perl5/5.26.3/JSON.html">JSON</a> module, so this might cause a security issue.</p>
+
+<p>If you depend on either behaviour, you should create your own json object and pass it in explicitly.</p>
+
+</dd>
+<dt id="cbor-CBOR::XS-object">cbor =&gt; <a>CBOR::XS</a> object</dt>
+<dd>
+
+<p>This is the cbor coder object used by the <code>cbor</code> read and write types.</p>
+
+<p>If you don&#39;t supply it, then AnyEvent::Handle will create and use a suitable one (on demand), which will write CBOR without using extensions, if possible.</p>
+
+<p>Note that you are responsible to depend on the <a>CBOR::XS</a> module if you want to use this functionality, as AnyEvent does not have a dependency on it itself.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="fh-handle-fh">$fh = $handle-&gt;fh</dt>
+<dd>
+
+<p>This method returns the file handle used to create the <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> object.</p>
+
+</dd>
+<dt id="handle-on_error-cb">$handle-&gt;on_error ($cb)</dt>
+<dd>
+
+<p>Replace the current <code>on_error</code> callback (see the <code>on_error</code> constructor argument).</p>
+
+</dd>
+<dt id="handle-on_eof-cb">$handle-&gt;on_eof ($cb)</dt>
+<dd>
+
+<p>Replace the current <code>on_eof</code> callback (see the <code>on_eof</code> constructor argument).</p>
+
+</dd>
+<dt id="handle-on_timeout-cb">$handle-&gt;on_timeout ($cb)</dt>
+<dd>
+
+</dd>
+<dt id="handle-on_rtimeout-cb">$handle-&gt;on_rtimeout ($cb)</dt>
+<dd>
+
+</dd>
+<dt id="handle-on_wtimeout-cb">$handle-&gt;on_wtimeout ($cb)</dt>
+<dd>
+
+<p>Replace the current <code>on_timeout</code>, <code>on_rtimeout</code> or <code>on_wtimeout</code> callback, or disables the callback (but not the timeout) if <code>$cb</code> = <code>undef</code>. See the <code>timeout</code> constructor argument and method.</p>
+
+</dd>
+<dt id="handle-autocork-boolean">$handle-&gt;autocork ($boolean)</dt>
+<dd>
+
+<p>Enables or disables the current autocork behaviour (see <code>autocork</code> constructor argument). Changes will only take effect on the next write.</p>
+
+</dd>
+<dt id="handle-no_delay-boolean">$handle-&gt;no_delay ($boolean)</dt>
+<dd>
+
+<p>Enables or disables the <code>no_delay</code> setting (see constructor argument of the same name for details).</p>
+
+</dd>
+<dt id="handle-keepalive-boolean">$handle-&gt;keepalive ($boolean)</dt>
+<dd>
+
+<p>Enables or disables the <code>keepalive</code> setting (see constructor argument of the same name for details).</p>
+
+</dd>
+<dt id="handle-oobinline-boolean">$handle-&gt;oobinline ($boolean)</dt>
+<dd>
+
+<p>Enables or disables the <code>oobinline</code> setting (see constructor argument of the same name for details).</p>
+
+</dd>
+<dt id="handle-on_starttls-cb">$handle-&gt;on_starttls ($cb)</dt>
+<dd>
+
+<p>Replace the current <code>on_starttls</code> callback (see the <code>on_starttls</code> constructor argument).</p>
+
+</dd>
+<dt id="handle-on_stoptls-cb">$handle-&gt;on_stoptls ($cb)</dt>
+<dd>
+
+<p>Replace the current <code>on_stoptls</code> callback (see the <code>on_stoptls</code> constructor argument).</p>
+
+</dd>
+<dt id="handle-rbuf_max-max_octets">$handle-&gt;rbuf_max ($max_octets)</dt>
+<dd>
+
+<p>Configures the <code>rbuf_max</code> setting (<code>undef</code> disables it).</p>
+
+</dd>
+<dt id="handle-wbuf_max-max_octets">$handle-&gt;wbuf_max ($max_octets)</dt>
+<dd>
+
+<p>Configures the <code>wbuf_max</code> setting (<code>undef</code> disables it).</p>
+
+</dd>
+<dt id="handle-timeout-seconds">$handle-&gt;timeout ($seconds)</dt>
+<dd>
+
+</dd>
+<dt id="handle-rtimeout-seconds">$handle-&gt;rtimeout ($seconds)</dt>
+<dd>
+
+</dd>
+<dt id="handle-wtimeout-seconds">$handle-&gt;wtimeout ($seconds)</dt>
+<dd>
+
+<p>Configures (or disables) the inactivity timeout.</p>
+
+<p>The timeout will be checked instantly, so this method might destroy the handle before it returns.</p>
+
+</dd>
+<dt id="handle-timeout_reset">$handle-&gt;timeout_reset</dt>
+<dd>
+
+</dd>
+<dt id="handle-rtimeout_reset">$handle-&gt;rtimeout_reset</dt>
+<dd>
+
+</dd>
+<dt id="handle-wtimeout_reset">$handle-&gt;wtimeout_reset</dt>
+<dd>
+
+<p>Reset the activity timeout, as if data was received or sent.</p>
+
+<p>These methods are cheap to call.</p>
+
+</dd>
+</dl>
+
+<h2 id="WRITE-QUEUE">WRITE QUEUE</h2>
+
+<p>AnyEvent::Handle manages two queues per handle, one for writing and one for reading.</p>
+
+<p>The write queue is very simple: you can add data to its end, and AnyEvent::Handle will automatically try to get rid of it for you.</p>
+
+<p>When data could be written and the write buffer is shorter then the low water mark, the <code>on_drain</code> callback will be invoked once.</p>
+
+<dl>
+
+<dt id="handle-on_drain-cb">$handle-&gt;on_drain ($cb)</dt>
+<dd>
+
+<p>Sets the <code>on_drain</code> callback or clears it (see the description of <code>on_drain</code> in the constructor).</p>
+
+<p>This method may invoke callbacks (and therefore the handle might be destroyed after it returns).</p>
+
+</dd>
+<dt id="handle-push_write-data">$handle-&gt;push_write ($data)</dt>
+<dd>
+
+<p>Queues the given scalar to be written. You can push as much data as you want (only limited by the available memory and <code>wbuf_max</code>), as <code>AnyEvent::Handle</code> buffers it independently of the kernel.</p>
+
+<p>This method may invoke callbacks (and therefore the handle might be destroyed after it returns).</p>
+
+</dd>
+<dt id="handle-push_write-type-args">$handle-&gt;push_write (type =&gt; @args)</dt>
+<dd>
+
+<p>Instead of formatting your data yourself, you can also let this module do the job by specifying a type and type-specific arguments. You can also specify the (fully qualified) name of a package, in which case AnyEvent tries to load the package and then expects to find the <code>anyevent_write_type</code> function inside (see &quot;custom write types&quot;, below).</p>
+
+<p>Predefined types are (if you have ideas for additional types, feel free to drop by and tell us):</p>
+
+<dl>
+
+<dt id="netstring-string">netstring =&gt; $string</dt>
+<dd>
+
+<p>Formats the given value as netstring (http://cr.yp.to/proto/netstrings.txt, this is not a recommendation to use them).</p>
+
+</dd>
+<dt id="packstring-format-data">packstring =&gt; $format, $data</dt>
+<dd>
+
+<p>An octet string prefixed with an encoded length. The encoding <code>$format</code> uses the same format as a Perl <code>pack</code> format, but must specify a single integer only (only one of <code>cCsSlLqQiInNvVjJw</code> is allowed, plus an optional <code>!</code>, <code>&lt;</code> or <code>&gt;</code> modifier).</p>
+
+</dd>
+<dt id="json-array_or_hashref">json =&gt; $array_or_hashref</dt>
+<dd>
+
+<p>Encodes the given hash or array reference into a JSON object. Unless you provide your own JSON object, this means it will be encoded to JSON text in UTF-8.</p>
+
+<p>The default encoder might or might not handle every type of JSON value - it might be limited to arrays and objects for security reasons. See the <code>json</code> constructor attribute for more details.</p>
+
+<p>JSON objects (and arrays) are self-delimiting, so if you only use arrays and hashes, you can write JSON at one end of a handle and read them at the other end without using any additional framing.</p>
+
+<p>The JSON text generated by the default encoder is guaranteed not to contain any newlines: While this module doesn&#39;t need delimiters after or between JSON texts to be able to read them, many other languages depend on them.</p>
+
+<p>A simple RPC protocol that interoperates easily with other languages is to send JSON arrays (or objects, although arrays are usually the better choice as they mimic how function argument passing works) and a newline after each JSON text:</p>
+
+<pre><code>   $handle-&gt;push_write (json =&gt; [&quot;method&quot;, &quot;arg1&quot;, &quot;arg2&quot;]); # whatever
+   $handle-&gt;push_write (&quot;\012&quot;);
+ </code></pre>
+
+<p>An AnyEvent::Handle receiver would simply use the <code>json</code> read type and rely on the fact that the newline will be skipped as leading whitespace:</p>
+
+<pre><code>   $handle-&gt;push_read (json =&gt; sub { my $array = $_[1]; ... });</code></pre>
+
+<p>Other languages could read single lines terminated by a newline and pass this line into their JSON decoder of choice.</p>
+
+</dd>
+<dt id="cbor-perl_scalar">cbor =&gt; $perl_scalar</dt>
+<dd>
+
+<p>Encodes the given scalar into a CBOR value. Unless you provide your own <a>CBOR::XS</a> object, this means it will be encoded to a CBOR string not using any extensions, if possible.</p>
+
+<p>CBOR values are self-delimiting, so you can write CBOR at one end of a handle and read them at the other end without using any additional framing.</p>
+
+<p>A simple nd very very fast RPC protocol that interoperates with other languages is to send CBOR and receive CBOR values (arrays are recommended):</p>
+
+<pre><code>   $handle-&gt;push_write (cbor =&gt; [&quot;method&quot;, &quot;arg1&quot;, &quot;arg2&quot;]); # whatever
+ </code></pre>
+
+<p>An AnyEvent::Handle receiver would simply use the <code>cbor</code> read type:</p>
+
+<pre><code>   $handle-&gt;push_read (cbor =&gt; sub { my $array = $_[1]; ... });</code></pre>
+
+</dd>
+<dt id="storable-reference">storable =&gt; $reference</dt>
+<dd>
+
+<p>Freezes the given reference using <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Storable.html">Storable</a> and writes it to the handle. Uses the <code>nfreeze</code> format.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="handle-push_shutdown">$handle-&gt;push_shutdown</dt>
+<dd>
+
+<p>Sometimes you know you want to close the socket after writing your data before it was actually written. One way to do that is to replace your <code>on_drain</code> handler by a callback that shuts down the socket (and set <code>low_water_mark</code> to <code>0</code>). This method is a shorthand for just that, and replaces the <code>on_drain</code> callback with:</p>
+
+<pre><code>   sub { shutdown $_[0]{fh}, 1 }</code></pre>
+
+<p>This simply shuts down the write side and signals an EOF condition to the the peer.</p>
+
+<p>You can rely on the normal read queue and <code>on_eof</code> handling afterwards. This is the cleanest way to close a connection.</p>
+
+<p>This method may invoke callbacks (and therefore the handle might be destroyed after it returns).</p>
+
+</dd>
+<dt id="custom-write-types---Package::anyevent_write_type-handle-args">custom write types - Package::anyevent_write_type $handle, @args</dt>
+<dd>
+
+<p>Instead of one of the predefined types, you can also specify the name of a package. AnyEvent will try to load the package and then expects to find a function named <code>anyevent_write_type</code> inside. If it isn&#39;t found, it progressively tries to load the parent package until it either finds the function (good) or runs out of packages (bad).</p>
+
+<p>Whenever the given <code>type</code> is used, <code>push_write</code> will the function with the handle object and the remaining arguments.</p>
+
+<p>The function is supposed to return a single octet string that will be appended to the write buffer, so you can mentally treat this function as a &quot;arguments to on-the-wire-format&quot; converter.</p>
+
+<p>Example: implement a custom write type <code>join</code> that joins the remaining arguments using the first one.</p>
+
+<pre><code>   $handle-&gt;push_write (My::Type =&gt; &quot; &quot;, 1,2,3);
+
+   # uses the following package, which can be defined in the &quot;My::Type&quot; or in
+   # the &quot;My&quot; modules to be auto-loaded, or just about anywhere when the
+   # My::Type::anyevent_write_type is defined before invoking it.
+
+   package My::Type;
+
+   sub anyevent_write_type {
+      my ($handle, $delim, @args) = @_;
+
+      join $delim, @args
+   }</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="READ-QUEUE">READ QUEUE</h2>
+
+<p>AnyEvent::Handle manages two queues per handle, one for writing and one for reading.</p>
+
+<p>The read queue is more complex than the write queue. It can be used in two ways, the &quot;simple&quot; way, using only <code>on_read</code> and the &quot;complex&quot; way, using a queue.</p>
+
+<p>In the simple case, you just install an <code>on_read</code> callback and whenever new data arrives, it will be called. You can then remove some data (if enough is there) from the read buffer (<code>$handle-&gt;rbuf</code>). Or you can leave the data there if you want to accumulate more (e.g. when only a partial message has been received so far), or change the read queue with e.g. <code>push_read</code>.</p>
+
+<p>In the more complex case, you want to queue multiple callbacks. In this case, AnyEvent::Handle will call the first queued callback each time new data arrives (also the first time it is queued) and remove it when it has done its job (see <code>push_read</code>, below).</p>
+
+<p>This way you can, for example, push three line-reads, followed by reading a chunk of data, and AnyEvent::Handle will execute them in order.</p>
+
+<p>Example 1: EPP protocol parser. EPP sends 4 byte length info, followed by the specified number of bytes which give an XML datagram.</p>
+
+<pre><code>   # in the default state, expect some header bytes
+   $handle-&gt;on_read (sub {
+      # some data is here, now queue the length-header-read (4 octets)
+      shift-&gt;unshift_read (chunk =&gt; 4, sub {
+         # header arrived, decode
+         my $len = unpack &quot;N&quot;, $_[1];
+
+         # now read the payload
+         shift-&gt;unshift_read (chunk =&gt; $len, sub {
+            my $xml = $_[1];
+            # handle xml
+         });
+      });
+   });</code></pre>
+
+<p>Example 2: Implement a client for a protocol that replies either with &quot;OK&quot; and another line or &quot;ERROR&quot; for the first request that is sent, and 64 bytes for the second request. Due to the availability of a queue, we can just pipeline sending both requests and manipulate the queue as necessary in the callbacks.</p>
+
+<p>When the first callback is called and sees an &quot;OK&quot; response, it will <code>unshift</code> another line-read. This line-read will be queued <i>before</i> the 64-byte chunk callback.</p>
+
+<pre><code>   # request one, returns either &quot;OK + extra line&quot; or &quot;ERROR&quot;
+   $handle-&gt;push_write (&quot;request 1\015\012&quot;);
+
+   # we expect &quot;ERROR&quot; or &quot;OK&quot; as response, so push a line read
+   $handle-&gt;push_read (line =&gt; sub {
+      # if we got an &quot;OK&quot;, we have to _prepend_ another line,
+      # so it will be read before the second request reads its 64 bytes
+      # which are already in the queue when this callback is called
+      # we don&#39;t do this in case we got an error
+      if ($_[1] eq &quot;OK&quot;) {
+         $_[0]-&gt;unshift_read (line =&gt; sub {
+            my $response = $_[1];
+            ...
+         });
+      }
+   });
+
+   # request two, simply returns 64 octets
+   $handle-&gt;push_write (&quot;request 2\015\012&quot;);
+
+   # simply read 64 bytes, always
+   $handle-&gt;push_read (chunk =&gt; 64, sub {
+      my $response = $_[1];
+      ...
+   });</code></pre>
+
+<dl>
+
+<dt id="handle-on_read-cb">$handle-&gt;on_read ($cb)</dt>
+<dd>
+
+<p>This replaces the currently set <code>on_read</code> callback, or clears it (when the new callback is <code>undef</code>). See the description of <code>on_read</code> in the constructor.</p>
+
+<p>This method may invoke callbacks (and therefore the handle might be destroyed after it returns).</p>
+
+</dd>
+<dt id="handle-rbuf">$handle-&gt;rbuf</dt>
+<dd>
+
+<p>Returns the read buffer (as a modifiable lvalue). You can also access the read buffer directly as the <code>-&gt;{rbuf}</code> member, if you want (this is much faster, and no less clean).</p>
+
+<p>The only operation allowed on the read buffer (apart from looking at it) is removing data from its beginning. Otherwise modifying or appending to it is not allowed and will lead to hard-to-track-down bugs.</p>
+
+<p>NOTE: The read buffer should only be used or modified in the <code>on_read</code> callback or when <code>push_read</code> or <code>unshift_read</code> are used with a single callback (i.e. untyped). Typed <code>push_read</code> and <code>unshift_read</code> methods will manage the read buffer on their own.</p>
+
+</dd>
+<dt id="handle-push_read-cb">$handle-&gt;push_read ($cb)</dt>
+<dd>
+
+</dd>
+<dt id="handle-unshift_read-cb">$handle-&gt;unshift_read ($cb)</dt>
+<dd>
+
+<p>Append the given callback to the end of the queue (<code>push_read</code>) or prepend it (<code>unshift_read</code>).</p>
+
+<p>The callback is called each time some additional read data arrives.</p>
+
+<p>It must check whether enough data is in the read buffer already.</p>
+
+<p>If not enough data is available, it must return the empty list or a false value, in which case it will be called repeatedly until enough data is available (or an error condition is detected).</p>
+
+<p>If enough data was available, then the callback must remove all data it is interested in (which can be none at all) and return a true value. After returning true, it will be removed from the queue.</p>
+
+<p>These methods may invoke callbacks (and therefore the handle might be destroyed after it returns).</p>
+
+</dd>
+<dt id="handle-push_read-type-args-cb">$handle-&gt;push_read (type =&gt; @args, $cb)</dt>
+<dd>
+
+</dd>
+<dt id="handle-unshift_read-type-args-cb">$handle-&gt;unshift_read (type =&gt; @args, $cb)</dt>
+<dd>
+
+<p>Instead of providing a callback that parses the data itself you can chose between a number of predefined parsing formats, for chunks of data, lines etc. You can also specify the (fully qualified) name of a package, in which case AnyEvent tries to load the package and then expects to find the <code>anyevent_read_type</code> function inside (see &quot;custom read types&quot;, below).</p>
+
+<p>Predefined types are (if you have ideas for additional types, feel free to drop by and tell us):</p>
+
+<dl>
+
+<dt id="chunk-octets-cb--handle-data">chunk =&gt; $octets, $cb-&gt;($handle, $data)</dt>
+<dd>
+
+<p>Invoke the callback only once <code>$octets</code> bytes have been read. Pass the data read to the callback. The callback will never be called with less data.</p>
+
+<p>Example: read 2 bytes.</p>
+
+<pre><code>   $handle-&gt;push_read (chunk =&gt; 2, sub {
+      say &quot;yay &quot; . unpack &quot;H*&quot;, $_[1];
+   });</code></pre>
+
+</dd>
+<dt id="line-eol-cb--handle-line-eol">line =&gt; [$eol, ]$cb-&gt;($handle, $line, $eol)</dt>
+<dd>
+
+<p>The callback will be called only once a full line (including the end of line marker, <code>$eol</code>) has been read. This line (excluding the end of line marker) will be passed to the callback as second argument (<code>$line</code>), and the end of line marker as the third argument (<code>$eol</code>).</p>
+
+<p>The end of line marker, <code>$eol</code>, can be either a string, in which case it will be interpreted as a fixed record end marker, or it can be a regex object (e.g. created by <code>qr</code>), in which case it is interpreted as a regular expression.</p>
+
+<p>The end of line marker argument <code>$eol</code> is optional, if it is missing (NOT undef), then <code>qr|\015?\012|</code> is used (which is good for most internet protocols).</p>
+
+<p>Partial lines at the end of the stream will never be returned, as they are not marked by the end of line marker.</p>
+
+</dd>
+<dt id="regex-accept-reject-skip-cb--handle-data">regex =&gt; $accept[, $reject[, $skip], $cb-&gt;($handle, $data)</dt>
+<dd>
+
+<p>Makes a regex match against the regex object <code>$accept</code> and returns everything up to and including the match. All the usual regex variables ($1, %+ etc.) from the regex match are available in the callback.</p>
+
+<p>Example: read a single line terminated by &#39;\n&#39;.</p>
+
+<pre><code>   $handle-&gt;push_read (regex =&gt; qr&lt;\n&gt;, sub { ... });</code></pre>
+
+<p>If <code>$reject</code> is given and not undef, then it determines when the data is to be rejected: it is matched against the data when the <code>$accept</code> regex does not match and generates an <code>EBADMSG</code> error when it matches. This is useful to quickly reject wrong data (to avoid waiting for a timeout or a receive buffer overflow).</p>
+
+<p>Example: expect a single decimal number followed by whitespace, reject anything else (not the use of an anchor).</p>
+
+<pre><code>   $handle-&gt;push_read (regex =&gt; qr&lt;^[0-9]+\s&gt;, qr&lt;[^0-9]&gt;, sub { ... });</code></pre>
+
+<p>If <code>$skip</code> is given and not <code>undef</code>, then it will be matched against the receive buffer when neither <code>$accept</code> nor <code>$reject</code> match, and everything preceding and including the match will be accepted unconditionally. This is useful to skip large amounts of data that you know cannot be matched, so that the <code>$accept</code> or <code>$reject</code> regex do not have to start matching from the beginning. This is purely an optimisation and is usually worth it only when you expect more than a few kilobytes.</p>
+
+<p>Example: expect a http header, which ends at <code>\015\012\015\012</code>. Since we expect the header to be very large (it isn&#39;t in practice, but...), we use a skip regex to skip initial portions. The skip regex is tricky in that it only accepts something not ending in either \015 or \012, as these are required for the accept regex.</p>
+
+<pre><code>   $handle-&gt;push_read (regex =&gt;
+      qr&lt;\015\012\015\012&gt;,
+      undef, # no reject
+      qr&lt;^.*[^\015\012]&gt;,
+      sub { ... });</code></pre>
+
+</dd>
+<dt id="netstring-cb--handle-string">netstring =&gt; $cb-&gt;($handle, $string)</dt>
+<dd>
+
+<p>A netstring (http://cr.yp.to/proto/netstrings.txt, this is not an endorsement).</p>
+
+<p>Throws an error with <code>$!</code> set to EBADMSG on format violations.</p>
+
+</dd>
+<dt id="packstring-format-cb--handle-string">packstring =&gt; $format, $cb-&gt;($handle, $string)</dt>
+<dd>
+
+<p>An octet string prefixed with an encoded length. The encoding <code>$format</code> uses the same format as a Perl <code>pack</code> format, but must specify a single integer only (only one of <code>cCsSlLqQiInNvVjJw</code> is allowed, plus an optional <code>!</code>, <code>&lt;</code> or <code>&gt;</code> modifier).</p>
+
+<p>For example, DNS over TCP uses a prefix of <code>n</code> (2 octet network order), EPP uses a prefix of <code>N</code> (4 octtes).</p>
+
+<p>Example: read a block of data prefixed by its length in BER-encoded format (very efficient).</p>
+
+<pre><code>   $handle-&gt;push_read (packstring =&gt; &quot;w&quot;, sub {
+      my ($handle, $data) = @_;
+   });</code></pre>
+
+</dd>
+<dt id="json-cb--handle-hash_or_arrayref">json =&gt; $cb-&gt;($handle, $hash_or_arrayref)</dt>
+<dd>
+
+<p>Reads a JSON object or array, decodes it and passes it to the callback. When a parse error occurs, an <code>EBADMSG</code> error will be raised.</p>
+
+<p>If a <code>json</code> object was passed to the constructor, then that will be used for the final decode, otherwise it will create a <a>JSON::XS</a> or <a href="../../../lib/perl5/5.26.3/JSON/PP.html">JSON::PP</a> coder object expecting UTF-8.</p>
+
+<p>This read type uses the incremental parser available with JSON version 2.09 (and JSON::XS version 2.2) and above.</p>
+
+<p>Since JSON texts are fully self-delimiting, the <code>json</code> read and write types are an ideal simple RPC protocol: just exchange JSON datagrams. See the <code>json</code> write type description, above, for an actual example.</p>
+
+</dd>
+<dt id="cbor-cb--handle-scalar">cbor =&gt; $cb-&gt;($handle, $scalar)</dt>
+<dd>
+
+<p>Reads a CBOR value, decodes it and passes it to the callback. When a parse error occurs, an <code>EBADMSG</code> error will be raised.</p>
+
+<p>If a <a>CBOR::XS</a> object was passed to the constructor, then that will be used for the final decode, otherwise it will create a CBOR coder without enabling any options.</p>
+
+<p>You have to provide a dependency to <a>CBOR::XS</a> on your own: this module will load the <a>CBOR::XS</a> module, but AnyEvent does not depend on it itself.</p>
+
+<p>Since CBOR values are fully self-delimiting, the <code>cbor</code> read and write types are an ideal simple RPC protocol: just exchange CBOR datagrams. See the <code>cbor</code> write type description, above, for an actual example.</p>
+
+</dd>
+<dt id="storable-cb--handle-ref">storable =&gt; $cb-&gt;($handle, $ref)</dt>
+<dd>
+
+<p>Deserialises a <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Storable.html">Storable</a> frozen representation as written by the <code>storable</code> write type (BER-encoded length prefix followed by nfreeze&#39;d data).</p>
+
+<p>Raises <code>EBADMSG</code> error if the data could not be decoded.</p>
+
+</dd>
+<dt id="tls_detect-cb--handle-detect-major-minor">tls_detect =&gt; $cb-&gt;($handle, $detect, $major, $minor)</dt>
+<dd>
+
+<p>Checks the input stream for a valid SSL or TLS handshake TLSPaintext record without consuming anything. Only SSL version 3 or higher is handled, up to the fictituous protocol 4.x (but both SSL3+ and SSL2-compatible framing is supported).</p>
+
+<p>If it detects that the input data is likely TLS, it calls the callback with a true value for <code>$detect</code> and the (on-wire) TLS version as second and third argument (<code>$major</code> is <code>3</code>, and <code>$minor</code> is 0..4 for SSL 3.0, TLS 1.0, 1.1, 1.2 and 1.3, respectively). If it detects the input to be definitely not TLS, it calls the callback with a false value for <code>$detect</code>.</p>
+
+<p>The callback could use this information to decide whether or not to start TLS negotiation.</p>
+
+<p>In all cases the data read so far is passed to the following read handlers.</p>
+
+<p>Usually you want to use the <code>tls_autostart</code> read type instead.</p>
+
+<p>If you want to design a protocol that works in the presence of TLS dtection, make sure that any non-TLS data doesn&#39;t start with the octet 22 (ASCII SYN, 16 hex) or 128-255 (i.e. highest bit set). The checks this read type does are a bit more strict, but might losen in the future to accomodate protocol changes.</p>
+
+<p>This read type does not rely on <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a> (and thus, not on <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a>).</p>
+
+</dd>
+<dt id="tls_autostart-tls_ctx-tls">tls_autostart =&gt; [$tls_ctx, ]$tls</dt>
+<dd>
+
+<p>Tries to detect a valid SSL or TLS handshake. If one is detected, it tries to start tls by calling <code>starttls</code> with the given arguments.</p>
+
+<p>In practise, <code>$tls</code> must be <code>accept</code>, or a Net::SSLeay context that has been configured to accept, as servers do not normally send a handshake on their own and ths cannot be detected in this way.</p>
+
+<p>See <code>tls_detect</code> above for more details.</p>
+
+<p>Example: give the client a chance to start TLS before accepting a text line.</p>
+
+<pre><code>   $hdl-&gt;push_read (tls_autostart =&gt; &quot;accept&quot;);
+   $hdl-&gt;push_read (line =&gt; sub {
+      print &quot;received &quot;, ($_[0]{tls} ? &quot;encrypted&quot; : &quot;cleartext&quot;), &quot; &lt;$_[1]&gt;\n&quot;;
+   });</code></pre>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="custom-read-types---Package::anyevent_read_type-handle-cb-args">custom read types - Package::anyevent_read_type $handle, $cb, @args</dt>
+<dd>
+
+<p>Instead of one of the predefined types, you can also specify the name of a package. AnyEvent will try to load the package and then expects to find a function named <code>anyevent_read_type</code> inside. If it isn&#39;t found, it progressively tries to load the parent package until it either finds the function (good) or runs out of packages (bad).</p>
+
+<p>Whenever this type is used, <code>push_read</code> will invoke the function with the handle object, the original callback and the remaining arguments.</p>
+
+<p>The function is supposed to return a callback (usually a closure) that works as a plain read callback (see <code>-&gt;push_read ($cb)</code>), so you can mentally treat the function as a &quot;configurable read type to read callback&quot; converter.</p>
+
+<p>It should invoke the original callback when it is done reading (remember to pass <code>$handle</code> as first argument as all other callbacks do that, although there is no strict requirement on this).</p>
+
+<p>For examples, see the source of this module (<i>perldoc -m AnyEvent::Handle</i>, search for <code>register_read_type</code>)).</p>
+
+</dd>
+<dt id="handle-stop_read">$handle-&gt;stop_read</dt>
+<dd>
+
+</dd>
+<dt id="handle-start_read">$handle-&gt;start_read</dt>
+<dd>
+
+<p>In rare cases you actually do not want to read anything from the socket. In this case you can call <code>stop_read</code>. Neither <code>on_read</code> nor any queued callbacks will be executed then. To start reading again, call <code>start_read</code>.</p>
+
+<p>Note that AnyEvent::Handle will automatically <code>start_read</code> for you when you change the <code>on_read</code> callback or push/unshift a read callback, and it will automatically <code>stop_read</code> for you when neither <code>on_read</code> is set nor there are any read requests in the queue.</p>
+
+<p>In older versions of this module (&lt;= 5.3), these methods had no effect, as TLS does not support half-duplex connections. In current versions they work as expected, as this behaviour is required to avoid certain resource attacks, where the program would be forced to read (and buffer) arbitrary amounts of data before being able to send some data. The drawback is that some readings of the the SSL/TLS specifications basically require this attack to be working, as SSL/TLS implementations might stall sending data during a rehandshake.</p>
+
+<p>As a guideline, during the initial handshake, you should not stop reading, and as a client, it might cause problems, depending on your application.</p>
+
+</dd>
+<dt id="handle-starttls-tls-tls_ctx">$handle-&gt;starttls ($tls[, $tls_ctx])</dt>
+<dd>
+
+<p>Instead of starting TLS negotiation immediately when the AnyEvent::Handle object is created, you can also do that at a later time by calling <code>starttls</code>. See the <code>tls</code> constructor argument for general info.</p>
+
+<p>Starting TLS is currently an asynchronous operation - when you push some write data and then call <code>-&gt;starttls</code> then TLS negotiation will start immediately, after which the queued write data is then sent. This might change in future versions, so best make sure you have no outstanding write data when calling this method.</p>
+
+<p>The first argument is the same as the <code>tls</code> constructor argument (either <code>&quot;connect&quot;</code>, <code>&quot;accept&quot;</code> or an existing Net::SSLeay object).</p>
+
+<p>The second argument is the optional <code>AnyEvent::TLS</code> object that is used when AnyEvent::Handle has to create its own TLS connection object, or a hash reference with <code>key =&gt; value</code> pairs that will be used to construct a new context.</p>
+
+<p>The TLS connection object will end up in <code>$handle-&gt;{tls}</code>, the TLS context in <code>$handle-&gt;{tls_ctx}</code> after this call and can be used or changed to your liking. Note that the handshake might have already started when this function returns.</p>
+
+<p>Due to bugs in OpenSSL, it might or might not be possible to do multiple handshakes on the same stream. It is best to not attempt to use the stream after stopping TLS.</p>
+
+<p>This method may invoke callbacks (and therefore the handle might be destroyed after it returns).</p>
+
+</dd>
+<dt id="handle-stoptls">$handle-&gt;stoptls</dt>
+<dd>
+
+<p>Shuts down the SSL connection - this makes a proper EOF handshake by sending a close notify to the other side, but since OpenSSL doesn&#39;t support non-blocking shut downs, it is not guaranteed that you can re-use the stream afterwards.</p>
+
+<p>This method may invoke callbacks (and therefore the handle might be destroyed after it returns).</p>
+
+</dd>
+<dt id="handle-resettls">$handle-&gt;resettls</dt>
+<dd>
+
+<p>This rarely-used method simply resets and TLS state on the handle, usually causing data loss.</p>
+
+<p>One case where it may be useful is when you want to skip over the data in the stream but you are not interested in interpreting it, so data loss is no concern.</p>
+
+</dd>
+<dt id="handle-destroy">$handle-&gt;destroy</dt>
+<dd>
+
+<p>Shuts down the handle object as much as possible - this call ensures that no further callbacks will be invoked and as many resources as possible will be freed. Any method you will call on the handle object after destroying it in this way will be silently ignored (and it will return the empty list).</p>
+
+<p>Normally, you can just &quot;forget&quot; any references to an AnyEvent::Handle object and it will simply shut down. This works in fatal error and EOF callbacks, as well as code outside. It does <i>NOT</i> work in a read or write callback, so when you want to destroy the AnyEvent::Handle object from within such an callback. You <i>MUST</i> call <code>-&gt;destroy</code> explicitly in that case.</p>
+
+<p>Destroying the handle object in this way has the advantage that callbacks will be removed as well, so if those are the only reference holders (as is common), then one doesn&#39;t need to do anything special to break any reference cycles.</p>
+
+<p>The handle might still linger in the background and write out remaining data, as specified by the <code>linger</code> option, however.</p>
+
+</dd>
+<dt id="handle-destroyed">$handle-&gt;destroyed</dt>
+<dd>
+
+<p>Returns false as long as the handle hasn&#39;t been destroyed by a call to <code>-&gt;destroy</code>, true otherwise.</p>
+
+<p>Can be useful to decide whether the handle is still valid after some callback possibly destroyed the handle. For example, <code>-&gt;push_write</code>, <code>-&gt;starttls</code> and other methods can call user callbacks, which in turn can destroy the handle, so work can be avoided by checking sometimes:</p>
+
+<pre><code>   $hdl-&gt;starttls (&quot;accept&quot;);
+   return if $hdl-&gt;destroyed;
+   $hdl-&gt;push_write (...</code></pre>
+
+<p>Note that the call to <code>push_write</code> will silently be ignored if the handle has been destroyed, so often you can just ignore the possibility of the handle being destroyed.</p>
+
+</dd>
+<dt id="AnyEvent::Handle::TLS_CTX">AnyEvent::Handle::TLS_CTX</dt>
+<dd>
+
+<p>This function creates and returns the AnyEvent::TLS object used by default for TLS mode.</p>
+
+<p>The context is created by calling <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a> without any arguments.</p>
+
+</dd>
+</dl>
+
+<h1 id="NONFREQUENTLY-ASKED-QUESTIONS">NONFREQUENTLY ASKED QUESTIONS</h1>
+
+<dl>
+
+<dt id="I-undef-the-AnyEvent::Handle-reference-inside-my-callback-and-still-get-further-invocations">I <code>undef</code> the AnyEvent::Handle reference inside my callback and still get further invocations!</dt>
+<dd>
+
+<p>That&#39;s because AnyEvent::Handle keeps a reference to itself when handling read or write callbacks.</p>
+
+<p>It is only safe to &quot;forget&quot; the reference inside EOF or error callbacks, from within all other callbacks, you need to explicitly call the <code>-&gt;destroy</code> method.</p>
+
+</dd>
+<dt id="Why-is-my-on_eof-callback-never-called">Why is my <code>on_eof</code> callback never called?</dt>
+<dd>
+
+<p>Probably because your <code>on_error</code> callback is being called instead: When you have outstanding requests in your read queue, then an EOF is considered an error as you clearly expected some data.</p>
+
+<p>To avoid this, make sure you have an empty read queue whenever your handle is supposed to be &quot;idle&quot; (i.e. connection closes are O.K.). You can set an <code>on_read</code> handler that simply pushes the first read requests in the queue.</p>
+
+<p>See also the next question, which explains this in a bit more detail.</p>
+
+</dd>
+<dt id="How-can-I-serve-requests-in-a-loop">How can I serve requests in a loop?</dt>
+<dd>
+
+<p>Most protocols consist of some setup phase (authentication for example) followed by a request handling phase, where the server waits for requests and handles them, in a loop.</p>
+
+<p>There are two important variants: The first (traditional, better) variant handles requests until the server gets some QUIT command, causing it to close the connection first (highly desirable for a busy TCP server). A client dropping the connection is an error, which means this variant can detect an unexpected detection close.</p>
+
+<p>To handle this case, always make sure you have a non-empty read queue, by pushing the &quot;read request start&quot; handler on it:</p>
+
+<pre><code>   # we assume a request starts with a single line
+   my @start_request; @start_request = (line =&gt; sub {
+      my ($hdl, $line) = @_;
+
+      ... handle request
+
+      # push next request read, possibly from a nested callback
+      $hdl-&gt;push_read (@start_request);
+   });
+
+   # auth done, now go into request handling loop
+   # now push the first @start_request
+   $hdl-&gt;push_read (@start_request);</code></pre>
+
+<p>By always having an outstanding <code>push_read</code>, the handle always expects some data and raises the <code>EPIPE</code> error when the connction is dropped unexpectedly.</p>
+
+<p>The second variant is a protocol where the client can drop the connection at any time. For TCP, this means that the server machine may run out of sockets easier, and in general, it means you cannot distinguish a protocl failure/client crash from a normal connection close. Nevertheless, these kinds of protocols are common (and sometimes even the best solution to the problem).</p>
+
+<p>Having an outstanding read request at all times is possible if you ignore <code>EPIPE</code> errors, but this doesn&#39;t help with when the client drops the connection during a request, which would still be an error.</p>
+
+<p>A better solution is to push the initial request read in an <code>on_read</code> callback. This avoids an error, as when the server doesn&#39;t expect data (i.e. is idly waiting for the next request, an EOF will not raise an error, but simply result in an <code>on_eof</code> callback. It is also a bit slower and simpler:</p>
+
+<pre><code>   # auth done, now go into request handling loop
+   $hdl-&gt;on_read (sub {
+      my ($hdl) = @_;
+
+      # called each time we receive data but the read queue is empty
+      # simply start read the request
+
+      $hdl-&gt;push_read (line =&gt; sub {
+         my ($hdl, $line) = @_;
+
+         ... handle request
+
+         # do nothing special when the request has been handled, just
+         # let the request queue go empty.
+      });
+   });</code></pre>
+
+</dd>
+<dt id="I-get-different-callback-invocations-in-TLS-mode-Why-cant-I-pause-reading">I get different callback invocations in TLS mode/Why can&#39;t I pause reading?</dt>
+<dd>
+
+<p>Unlike, say, TCP, TLS connections do not consist of two independent communication channels, one for each direction. Or put differently, the read and write directions are not independent of each other: you cannot write data unless you are also prepared to read, and vice versa.</p>
+
+<p>This means that, in TLS mode, you might get <code>on_error</code> or <code>on_eof</code> callback invocations when you are not expecting any read data - the reason is that AnyEvent::Handle always reads in TLS mode.</p>
+
+<p>During the connection, you have to make sure that you always have a non-empty read-queue, or an <code>on_read</code> watcher. At the end of the connection (or when you no longer want to use it) you can call the <code>destroy</code> method.</p>
+
+</dd>
+<dt id="How-do-I-read-data-until-the-other-side-closes-the-connection">How do I read data until the other side closes the connection?</dt>
+<dd>
+
+<p>If you just want to read your data into a perl scalar, the easiest way to achieve this is by setting an <code>on_read</code> callback that does nothing, clearing the <code>on_eof</code> callback and in the <code>on_error</code> callback, the data will be in <code>$_[0]{rbuf}</code>:</p>
+
+<pre><code>   $handle-&gt;on_read (sub { });
+   $handle-&gt;on_eof (undef);
+   $handle-&gt;on_error (sub {
+      my $data = delete $_[0]{rbuf};
+   });</code></pre>
+
+<p>Note that this example removes the <code>rbuf</code> member from the handle object, which is not normally allowed by the API. It is expressly permitted in this case only, as the handle object needs to be destroyed afterwards.</p>
+
+<p>The reason to use <code>on_error</code> is that TCP connections, due to latencies and packets loss, might get closed quite violently with an error, when in fact all data has been received.</p>
+
+<p>It is usually better to use acknowledgements when transferring data, to make sure the other side hasn&#39;t just died and you got the data intact. This is also one reason why so many internet protocols have an explicit QUIT command.</p>
+
+</dd>
+<dt id="I-dont-want-to-destroy-the-handle-too-early---how-do-I-wait-until-all-data-has-been-written">I don&#39;t want to destroy the handle too early - how do I wait until all data has been written?</dt>
+<dd>
+
+<p>After writing your last bits of data, set the <code>on_drain</code> callback and destroy the handle in there - with the default setting of <code>low_water_mark</code> this will be called precisely when all data has been written to the socket:</p>
+
+<pre><code>   $handle-&gt;push_write (...);
+   $handle-&gt;on_drain (sub {
+      AE::log debug =&gt; &quot;All data submitted to the kernel.&quot;;
+      undef $handle;
+   });</code></pre>
+
+<p>If you just want to queue some data and then signal EOF to the other side, consider using <code>-&gt;push_shutdown</code> instead.</p>
+
+</dd>
+<dt id="I-want-to-contact-a-TLS-SSL-server-I-dont-care-about-security">I want to contact a TLS/SSL server, I don&#39;t care about security.</dt>
+<dd>
+
+<p>If your TLS server is a pure TLS server (e.g. HTTPS) that only speaks TLS, connect to it and then create the AnyEvent::Handle with the <code>tls</code> parameter:</p>
+
+<pre><code>   tcp_connect $host, $port, sub {
+      my ($fh) = @_;
+
+      my $handle = new AnyEvent::Handle
+         fh  =&gt; $fh,
+         tls =&gt; &quot;connect&quot;,
+         on_error =&gt; sub { ... };
+
+      $handle-&gt;push_write (...);
+   };</code></pre>
+
+</dd>
+<dt id="I-want-to-contact-a-TLS-SSL-server-I-do-care-about-security">I want to contact a TLS/SSL server, I do care about security.</dt>
+<dd>
+
+<p>Then you should additionally enable certificate verification, including peername verification, if the protocol you use supports it (see <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a>, <code>verify_peername</code>).</p>
+
+<p>E.g. for HTTPS:</p>
+
+<pre><code>   tcp_connect $host, $port, sub {
+      my ($fh) = @_;
+
+       my $handle = new AnyEvent::Handle
+          fh       =&gt; $fh,
+          peername =&gt; $host,
+          tls      =&gt; &quot;connect&quot;,
+          tls_ctx  =&gt; { verify =&gt; 1, verify_peername =&gt; &quot;https&quot; },
+          ...</code></pre>
+
+<p>Note that you must specify the hostname you connected to (or whatever &quot;peername&quot; the protocol needs) as the <code>peername</code> argument, otherwise no peername verification will be done.</p>
+
+<p>The above will use the system-dependent default set of trusted CA certificates. If you want to check against a specific CA, add the <code>ca_file</code> (or <code>ca_cert</code>) arguments to <code>tls_ctx</code>:</p>
+
+<pre><code>       tls_ctx  =&gt; {
+          verify          =&gt; 1,
+          verify_peername =&gt; &quot;https&quot;,
+          ca_file         =&gt; &quot;my-ca-cert.pem&quot;,
+       },</code></pre>
+
+</dd>
+<dt id="I-want-to-create-a-TLS-SSL-server-how-do-I-do-that">I want to create a TLS/SSL server, how do I do that?</dt>
+<dd>
+
+<p>Well, you first need to get a server certificate and key. You have three options: a) ask a CA (buy one, use cacert.org etc.) b) create a self-signed certificate (cheap. check the search engine of your choice, there are many tutorials on the net) or c) make your own CA (tinyca2 is a nice program for that purpose).</p>
+
+<p>Then create a file with your private key (in PEM format, see <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/TLS.html">AnyEvent::TLS</a>), followed by the certificate (also in PEM format). The file should then look like this:</p>
+
+<pre><code>   -----BEGIN RSA PRIVATE KEY-----
+   ...header data
+   ... lots of base64&#39;y-stuff
+   -----END RSA PRIVATE KEY-----
+
+   -----BEGIN CERTIFICATE-----
+   ... lots of base64&#39;y-stuff
+   -----END CERTIFICATE-----</code></pre>
+
+<p>The important bits are the &quot;PRIVATE KEY&quot; and &quot;CERTIFICATE&quot; parts. Then specify this file as <code>cert_file</code>:</p>
+
+<pre><code>   tcp_server undef, $port, sub {
+      my ($fh) = @_;
+
+      my $handle = new AnyEvent::Handle
+         fh       =&gt; $fh,
+         tls      =&gt; &quot;accept&quot;,
+         tls_ctx  =&gt; { cert_file =&gt; &quot;my-server-keycert.pem&quot; },
+         ...</code></pre>
+
+<p>When you have intermediate CA certificates that your clients might not know about, just append them to the <code>cert_file</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="SUBCLASSING-AnyEvent::Handle">SUBCLASSING AnyEvent::Handle</h1>
+
+<p>In many cases, you might want to subclass AnyEvent::Handle.</p>
+
+<p>To make this easier, a given version of AnyEvent::Handle uses these conventions:</p>
+
+<ul>
+
+<li><p>all constructor arguments become object members.</p>
+
+<p>At least initially, when you pass a <code>tls</code>-argument to the constructor it will end up in <code>$handle-&gt;{tls}</code>. Those members might be changed or mutated later on (for example <code>tls</code> will hold the TLS connection object).</p>
+
+</li>
+<li><p>other object member names are prefixed with an <code>_</code>.</p>
+
+<p>All object members not explicitly documented (internal use) are prefixed with an underscore character, so the remaining non-<code>_</code>-namespace is free for use for subclasses.</p>
+
+</li>
+<li><p>all members not documented here and not prefixed with an underscore are free to use in subclasses.</p>
+
+<p>Of course, new versions of AnyEvent::Handle may introduce more &quot;public&quot; member variables, but that&#39;s just life. At least it is documented.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Robin Redeker <code>&lt;elmex at ta-sa.org&gt;</code>, Marc Lehmann &lt;schmorp@schmorp.de&gt;.</p>
+
+
+</body>
+
+</html>
+
+

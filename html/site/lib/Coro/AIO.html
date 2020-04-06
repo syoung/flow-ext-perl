@@ -1,0 +1,152 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::AIO - truly asynchronous file and directory I/O</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use Coro::AIO;
+
+   # can now use any of the aio requests your IO::AIO module supports.
+
+   # read 1MB of /etc/passwd, without blocking other coroutines
+   my $fh = aio_open &quot;/etc/passwd&quot;, O_RDONLY, 0
+      or die &quot;/etc/passwd: $!&quot;;
+   aio_read $fh, 0, 1_000_000, my $buf, 0
+      or die &quot;aio_read: $!&quot;;
+   aio_close $fh;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is an <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> user, you need to make sure that you use and run a supported event loop.</p>
+
+<p>This module implements a thin wrapper around <a>IO::AIO</a>. All of the functions that expect a callback are being wrapped by this module.</p>
+
+<p>The API is exactly the same as that of the corresponding IO::AIO routines, except that you have to specify <i>all</i> arguments, even the ones optional in IO::AIO, <i>except</i> the callback argument. Instead of calling a callback, the routines return the values normally passed to the callback. Everything else, including <code>$!</code> and perls stat cache, are set as expected after these functions return.</p>
+
+<p>You can mix calls to <code>IO::AIO</code> functions with calls to this module. You <i>must not</i>, however, call these routines from within IO::AIO callbacks, as this causes a deadlock. Start a coro inside the callback instead.</p>
+
+<p>This module also loads <a>AnyEvent::AIO</a> to integrate into the event loop in use, so please refer to its (and <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a>&#39;s) documentation on how it selects an appropriate event module.</p>
+
+<p>All other functions exported by default by IO::AIO (e.g. <code>aioreq_pri</code>) will be exported by default by Coro::AIO, too.</p>
+
+<p>Functions that can be optionally imported from IO::AIO can be imported from Coro::AIO or can be called directly, e.g. <code>Coro::AIO::nreqs</code>.</p>
+
+<p>You cannot specify priorities with <code>aioreq_pri</code> if your coroutine has a non-zero priority, as this module overwrites the request priority with the current coroutine priority in that case.</p>
+
+<p>For your convenience, here are the changed function signatures for most of the requests, for documentation of these functions please have a look at <a>IO::AIO</a>. Note that requests added by newer versions of <a>IO::AIO</a> will be automatically wrapped as well.</p>
+
+<dl>
+
+<dt id="results-aio_wait-req">@results = aio_wait $req</dt>
+<dd>
+
+<p>This is not originally an IO::AIO request: what it does is to wait for <code>$req</code> to finish and return the results. This is most useful with <code>aio_group</code> requests.</p>
+
+<p>Is currently implemented by replacing the <code>$req</code> callback (and is very much like a wrapper around <code>$req-&gt;cb ()</code>).</p>
+
+</dd>
+<dt id="fh-aio_open-pathname-flags-mode">$fh = aio_open $pathname, $flags, $mode</dt>
+<dd>
+
+</dd>
+<dt id="status-aio_close-fh">$status = aio_close $fh</dt>
+<dd>
+
+</dd>
+<dt id="retval-aio_read-fh-offset-length-data-dataoffset">$retval = aio_read $fh,$offset,$length, $data,$dataoffset</dt>
+<dd>
+
+</dd>
+<dt id="retval-aio_write-fh-offset-length-data-dataoffset">$retval = aio_write $fh,$offset,$length, $data,$dataoffset</dt>
+<dd>
+
+</dd>
+<dt id="retval-aio_sendfile-out_fh-in_fh-in_offset-length">$retval = aio_sendfile $out_fh, $in_fh, $in_offset, $length</dt>
+<dd>
+
+</dd>
+<dt id="retval-aio_readahead-fh-offset-length">$retval = aio_readahead $fh,$offset,$length</dt>
+<dd>
+
+</dd>
+<dt id="status-aio_stat-fh_or_path">$status = aio_stat $fh_or_path</dt>
+<dd>
+
+</dd>
+<dt id="status-aio_lstat-fh">$status = aio_lstat $fh</dt>
+<dd>
+
+</dd>
+<dt id="status-aio_unlink-pathname">$status = aio_unlink $pathname</dt>
+<dd>
+
+</dd>
+<dt id="status-aio_rmdir-pathname">$status = aio_rmdir $pathname</dt>
+<dd>
+
+</dd>
+<dt id="entries-aio_readdir-pathname">$entries = aio_readdir $pathname</dt>
+<dd>
+
+</dd>
+<dt id="dirs-nondirs-aio_scandir-path-maxreq">($dirs, $nondirs) = aio_scandir $path, $maxreq</dt>
+<dd>
+
+</dd>
+<dt id="status-aio_fsync-fh">$status = aio_fsync $fh</dt>
+<dd>
+
+</dd>
+<dt id="status-aio_fdatasync-fh">$status = aio_fdatasync $fh</dt>
+<dd>
+
+</dd>
+<dt id="aio_xxx">... = aio_xxx ...</dt>
+<dd>
+
+<p>Any additional aio requests follow the same scheme: same parameters except you must not specify a callback but instead get the callback arguments as return values.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Socket.html">Coro::Socket</a> and <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Handle.html">Coro::Handle</a> for non-blocking socket operation.</p>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

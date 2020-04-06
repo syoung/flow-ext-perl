@@ -1,0 +1,523 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE-EXAMPLES">USAGE EXAMPLES</a></li>
+  <li><a href="#PUBLIC-METHODS-AND-FUNCTIONS">PUBLIC METHODS AND FUNCTIONS</a></li>
+  <li><a href="#SSL-TLS-QUICK-FACTS">SSL/TLS QUICK FACTS</a></li>
+  <li><a href="#SECURITY-CONSIDERATIONS">SECURITY CONSIDERATIONS</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::TLS - SSLv2/SSLv3/TLSv1 contexts for use in AnyEvent::Handle</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   # via AnyEvent::Handle
+
+   use AnyEvent;
+   use AnyEvent::Handle;
+   use AnyEvent::Socket;
+
+   # simple https-client
+   my $handle = new AnyEvent::Handle
+      connect  =&gt; [$host, $port],
+      tls      =&gt; &quot;connect&quot;,
+      tls_ctx  =&gt; { verify =&gt; 1, verify_peername =&gt; &quot;https&quot; },
+      ...
+
+   # simple ssl-server
+   tcp_server undef, $port, sub {
+      my ($fh) = @_;
+
+      my $handle = new AnyEvent::Handle
+         fh       =&gt; $fh,
+         tls      =&gt; &quot;accept&quot;,
+         tls_ctx  =&gt; { cert_file =&gt; &quot;my-server-keycert.pem&quot; },
+         ...
+
+   # directly
+
+   my $tls = new AnyEvent::TLS
+      verify =&gt; 1,
+      verify_peername =&gt; &quot;ldaps&quot;,
+      ca_file =&gt; &quot;/etc/cacertificates.pem&quot;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is a helper module that implements TLS/SSL (Transport Layer Security/Secure Sockets Layer) contexts. A TLS context is a common set of configuration values for use in establishing TLS connections.</p>
+
+<p>For some quick facts about SSL/TLS, see the section of the same name near the end of the document.</p>
+
+<p>A single TLS context can be used for any number of TLS connections that wish to use the same certificates, policies etc.</p>
+
+<p>Note that this module is inherently tied to <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a>, as this library is used to implement it. Since that perl module is rather ugly, and OpenSSL has a rather ugly license, AnyEvent might switch TLS providers at some future point, at which this API will change dramatically, at least in the Net::SSLeay-specific parts (most constructor arguments should still work, though).</p>
+
+<p>Although this module does not require a specific version of Net::SSLeay, many features will gradually stop working, or bugs will be introduced with old versions (verification might succeed when it shouldn&#39;t - this is a real security issue). Version 1.35 is recommended, 1.33 should work, 1.32 might, and older versions are yours to keep.</p>
+
+<h1 id="USAGE-EXAMPLES">USAGE EXAMPLES</h1>
+
+<p>See the <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> manpage, NONFREQUENTLY ASKED QUESTIONS, for some actual usage examples.</p>
+
+<h1 id="PUBLIC-METHODS-AND-FUNCTIONS">PUBLIC METHODS AND FUNCTIONS</h1>
+
+<dl>
+
+<dt id="tls-new-AnyEvent::TLS-key-value">$tls = new AnyEvent::TLS key =&gt; value...</dt>
+<dd>
+
+<p>The constructor supports these arguments (all as key =&gt; value pairs).</p>
+
+<dl>
+
+<dt id="method-SSLv2-SSLv3-TLSv1-TLSv1_1-TLSv1_2-any">method =&gt; &quot;SSLv2&quot; | &quot;SSLv3&quot; | &quot;TLSv1&quot; | &quot;TLSv1_1&quot; | &quot;TLSv1_2&quot; | &quot;any&quot;</dt>
+<dd>
+
+<p>The protocol parser to use. <code>SSLv2</code>, <code>SSLv3</code>, <code>TLSv1</code>, <code>TLSv1_1</code> and <code>TLSv1_2</code> will use a parser for those protocols only (so will <i>not</i> accept or create connections with/to other protocol versions), while <code>any</code> (the default) uses a parser capable of all three protocols.</p>
+
+<p>The default is to use <code>&quot;any&quot;</code> but disable SSLv2. This has the effect of sending a SSLv2 hello, indicating the support for SSLv3 and TLSv1, but not actually negotiating an (insecure) SSLv2 connection.</p>
+
+<p>Specifying a specific version is almost always wrong to use for a server speaking to a wide variety of clients (e.g. web browsers), and often wrong for a client. If you only want to allow a specific protocol version, use the <code>sslv2</code>, <code>sslv3</code>, <code>tlsv1</code>, <code>tlsv1_1</code> or <code>tlsv1_2</code> arguments instead.</p>
+
+<p>For new services it is usually a good idea to enforce a <code>TLSv1</code> method from the beginning.</p>
+
+<p><code>TLSv1_1</code> and <code>TLSv1_2</code> require <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> &gt;= 1.55 and OpenSSL &gt;= 1.0.1. Check the <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> and OpenSSL documentations for more details.</p>
+
+</dd>
+<dt id="sslv2-enabled">sslv2 =&gt; $enabled</dt>
+<dd>
+
+<p>Enable or disable SSLv2 (normally <i>disabled</i>).</p>
+
+</dd>
+<dt id="sslv3-enabled">sslv3 =&gt; $enabled</dt>
+<dd>
+
+<p>Enable or disable SSLv3 (normally <i>enabled</i>).</p>
+
+</dd>
+<dt id="tlsv1-enabled">tlsv1 =&gt; $enabled</dt>
+<dd>
+
+<p>Enable or disable TLSv1 (normally <i>enabled</i>).</p>
+
+</dd>
+<dt id="tlsv1_1-enabled">tlsv1_1 =&gt; $enabled</dt>
+<dd>
+
+<p>Enable or disable TLSv1_1 (normally <i>enabled</i>).</p>
+
+<p>This requires <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> &gt;= 1.55 and OpenSSL &gt;= 1.0.1. Check the <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> and OpenSSL documentations for more details.</p>
+
+</dd>
+<dt id="tlsv1_2-enabled">tlsv1_2 =&gt; $enabled</dt>
+<dd>
+
+<p>Enable or disable TLSv1_2 (normally <i>enabled</i>).</p>
+
+<p>This requires <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> &gt;= 1.55 and OpenSSL &gt;= 1.0.1. Check the <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> and OpenSSL documentations for more details.</p>
+
+</dd>
+<dt id="verify-enable">verify =&gt; $enable</dt>
+<dd>
+
+<p>Enable or disable peer certificate checking (default is <i>disabled</i>, which is <i>not recommended</i>).</p>
+
+<p>This is the &quot;master switch&quot; for all verify-related parameters and functions.</p>
+
+<p>If it is disabled, then no peer certificate verification will be done - the connection will be encrypted, but the peer certificate won&#39;t be verified against any known CAs, or whether it is still valid or not. No peername verification or custom verification will be done either.</p>
+
+<p>If enabled, then the peer certificate (required in client mode, optional in server mode, see <code>verify_require_client_cert</code>) will be checked against its CA certificate chain - that means there must be a signing chain from the peer certificate to any of the CA certificates you trust locally, as specified by the <code>ca_file</code> and/or <code>ca_path</code> and/or <code>ca_cert</code> parameters (or the system default CA repository, if all of those parameters are missing - see also the <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a> manpage for the description of PERL_ANYEVENT_CA_FILE).</p>
+
+<p>Other basic checks, such as checking the validity period, will also be done, as well as optional peername/hostname/common name verification <code>verify_peername</code>.</p>
+
+<p>An optional <code>verify_cb</code> callback can also be set, which will be invoked with the verification results, and which can override the decision.</p>
+
+</dd>
+<dt id="verify_require_client_cert-enable">verify_require_client_cert =&gt; $enable</dt>
+<dd>
+
+<p>Enable or disable mandatory client certificates (default is <i>disabled</i>). When this mode is enabled, then a client certificate will be required in server mode (a server certificate is mandatory, so in client mode, this switch has no effect).</p>
+
+</dd>
+<dt id="verify_peername-scheme-callback--tls-cert-peername">verify_peername =&gt; $scheme | $callback-&gt;($tls, $cert, $peername)</dt>
+<dd>
+
+<p>TLS only protects the data that is sent - it cannot automatically verify that you are really talking to the right peer. The reason is that certificates contain a &quot;common name&quot; (and a set of possible alternative &quot;names&quot;) that need to be checked against the peername (usually, but not always, the DNS name of the server) in a protocol-dependent way.</p>
+
+<p>This can be implemented by specifying a callback that has to verify that the actual <code>$peername</code> matches the given certificate in <code>$cert</code>.</p>
+
+<p>Since this can be rather hard to implement, AnyEvent::TLS offers a variety of predefined &quot;schemes&quot; (lifted from <a href="../../../lib/perl5/5.26.3/IO/Socket/SSL.html">IO::Socket::SSL</a>) that are named like the protocols that use them:</p>
+
+<dl>
+
+<dt id="ldap-rfc4513-pop3-imap-acap-rfc2995-nntp-rfc4642">ldap (rfc4513), pop3,imap,acap (rfc2995), nntp (rfc4642)</dt>
+<dd>
+
+<p>Simple wildcards in subjectAltNames are possible, e.g. *.example.org matches www.example.org but not lala.www.example.org. If nothing from subjectAltNames matches, it checks against the common name, but there are no wildcards allowed.</p>
+
+</dd>
+<dt id="http-rfc2818">http (rfc2818)</dt>
+<dd>
+
+<p>Extended wildcards in subjectAltNames are possible, e.g. *.example.org or even www*.example.org. Wildcards in the common name are not allowed. The common name will be only checked if no host names are given in subjectAltNames.</p>
+
+</dd>
+<dt id="smtp-rfc3207">smtp (rfc3207)</dt>
+<dd>
+
+<p>This RFC isn&#39;t very useful in determining how to do verification so it just assumes that subjectAltNames are possible, but no wildcards are possible anywhere.</p>
+
+</dd>
+<dt id="wildcards_in_alt-wildcards_in_cn-check_cn">[$wildcards_in_alt, $wildcards_in_cn, $check_cn]</dt>
+<dd>
+
+<p>You can also specify a scheme yourself by using an array reference with three integers.</p>
+
+<p><code>$wildcards_in_alt</code> and <code>$wildcards_in_cn</code> specify whether and where wildcards (<code>*</code>) are allowed in subjectAltNames and the common name, respectively. <code>0</code> means no wildcards are allowed, <code>1</code> means they are allowed only as the first component (<code>*.example.org</code>), and <code>2</code> means they can be used anywhere (<code>www*.example.org</code>), except that very dangerous matches will not be allowed (<code>*.org</code> or <code>*</code>).</p>
+
+<p><code>$check_cn</code> specifies if and how the common name field is checked: <code>0</code> means it will be completely ignored, <code>1</code> means it will only be used if no host names have been found in the subjectAltNames, and <code>2</code> means the common name will always be checked against the peername.</p>
+
+</dd>
+</dl>
+
+<p>You can specify either the name of the parent protocol (recommended, e.g. <code>http</code>, <code>ldap</code>), the protocol name as usually used in URIs (e.g. <code>https</code>, <code>ldaps</code>) or the RFC (not recommended, e.g. <code>rfc2995</code>, <code>rfc3920</code>).</p>
+
+<p>This verification will only be done when verification is enabled (<code>verify =&gt; 1</code>).</p>
+
+</dd>
+<dt id="verify_cb-callback--tls-ref-cn-depth-preverify_ok-x509_store_ctx-cert">verify_cb =&gt; $callback-&gt;($tls, $ref, $cn, $depth, $preverify_ok, $x509_store_ctx, $cert)</dt>
+<dd>
+
+<p>Provide a custom peer verification callback used by TLS sessions, which is called with the result of any other verification (<code>verify</code>, <code>verify_peername</code>).</p>
+
+<p>This callback will only be called when verification is enabled (<code>verify =&gt; 1</code>).</p>
+
+<p><code>$tls</code> is the <code>AnyEvent::TLS</code> object associated with the session, while <code>$ref</code> is whatever the user associated with the session (usually an <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> object when used by AnyEvent::Handle).</p>
+
+<p><code>$depth</code> is the current verification depth - <code>$depth = 0</code> means the certificate to verify is the peer certificate, higher levels are its CA certificate and so on. In most cases, you can just return <code>$preverify_ok</code> if the <code>$depth</code> is non-zero:</p>
+
+<pre><code>   verify_cb =&gt; sub {
+      my ($tls, $ref, $cn, $depth, $preverify_ok, $x509_store_ctx, $cert) = @_;
+
+      return $preverify_ok
+         if $depth;
+
+      # more verification
+   },</code></pre>
+
+<p><code>$preverify_ok</code> is true iff the basic verification of the certificates was successful (a valid CA chain must exist, the certificate has passed basic validity checks, peername verification succeeded).</p>
+
+<p><code>$x509_store_ctx</code> is the Net::SSLeay::X509_CTX&gt; object.</p>
+
+<p><code>$cert</code> is the <code>Net::SSLeay::X509</code> object representing the peer certificate, or zero if there was an error. You can call <code>AnyEvent::TLS::certname $cert</code> to get a nice user-readable string to identify the certificate.</p>
+
+<p>The callback must return either <code>0</code> to indicate failure, or <code>1</code> to indicate success.</p>
+
+</dd>
+<dt id="verify_client_once-enable">verify_client_once =&gt; $enable</dt>
+<dd>
+
+<p>Enable or disable skipping the client certificate verification on renegotiations (default is <i>disabled</i>, the certificate will always be checked). Only makes sense in server mode.</p>
+
+</dd>
+<dt id="ca_file-path">ca_file =&gt; $path</dt>
+<dd>
+
+<p>If this parameter is specified and non-empty, it will be the path to a file with (server) CA certificates in PEM format that will be loaded. Each certificate will look like:</p>
+
+<pre><code>   -----BEGIN CERTIFICATE-----
+   ... (CA certificate in base64 encoding) ...
+   -----END CERTIFICATE-----</code></pre>
+
+<p>You have to enable verify mode (<code>verify =&gt; 1</code>) for this parameter to have any effect.</p>
+
+</dd>
+<dt id="ca_path-path">ca_path =&gt; $path</dt>
+<dd>
+
+<p>If this parameter is specified and non-empty, it will be the path to a directory with hashed CA certificate files in PEM format. When the ca certificate is being verified, the certificate will be hashed and looked up in that directory (see <a href="http://www.openssl.org/docs/ssl/SSL_CTX_load_verify_locations.html">http://www.openssl.org/docs/ssl/SSL_CTX_load_verify_locations.html</a> for details)</p>
+
+<p>The certificates specified via <code>ca_file</code> take precedence over the ones found in <code>ca_path</code>.</p>
+
+<p>You have to enable verify mode (<code>verify =&gt; 1</code>) for this parameter to have any effect.</p>
+
+</dd>
+<dt id="ca_cert-string">ca_cert =&gt; $string</dt>
+<dd>
+
+<p>In addition or instead of using <code>ca_file</code> and/or <code>ca_path</code>, you can also use <code>ca_cert</code> to directly specify the CA certificates (there can be multiple) in PEM format, in a string.</p>
+
+</dd>
+<dt id="check_crl-enable">check_crl =&gt; $enable</dt>
+<dd>
+
+<p>Enable or disable certificate revocation list checking. If enabled, then peer certificates will be checked against a list of revoked certificates issued by the CA. The revocation lists will be expected in the <code>ca_path</code> directory.</p>
+
+<p>certificate verification will fail if this is enabled but no revocation list was found.</p>
+
+<p>This requires OpenSSL &gt;= 0.9.7b. Check the OpenSSL documentation for more details.</p>
+
+</dd>
+<dt id="key_file-path">key_file =&gt; $path</dt>
+<dd>
+
+<p>Path to the local private key file in PEM format (might be a combined certificate/private key file).</p>
+
+<p>The local certificate is used to authenticate against the peer - servers mandatorily need a certificate and key, clients can use a certificate and key optionally to authenticate, e.g. for log-in purposes.</p>
+
+<p>The key in the file should look similar this:</p>
+
+<pre><code>   -----BEGIN RSA PRIVATE KEY-----
+   ...header data
+   ... (key data in base64 encoding) ...
+   -----END RSA PRIVATE KEY-----</code></pre>
+
+</dd>
+<dt id="key-string">key =&gt; $string</dt>
+<dd>
+
+<p>The private key string in PEM format (see <code>key_file</code>, only one of <code>key_file</code> or <code>key</code> can be specified).</p>
+
+<p>The idea behind being able to specify a string is to avoid blocking in I/O. Unfortunately, Net::SSLeay fails to implement any interface to the needed OpenSSL functionality, this is currently implemented by writing to a temporary file.</p>
+
+</dd>
+<dt id="cert_file-path">cert_file =&gt; $path</dt>
+<dd>
+
+<p>The path to the local certificate file in PEM format (might be a combined certificate/private key file, including chained certificates).</p>
+
+<p>The local certificate (and key) are used to authenticate against the peer - servers mandatorily need a certificate and key, clients can use certificate and key optionally to authenticate, e.g. for log-in purposes.</p>
+
+<p>The certificate in the file should look like this:</p>
+
+<pre><code>   -----BEGIN CERTIFICATE-----
+   ... (certificate in base64 encoding) ...
+   -----END CERTIFICATE-----</code></pre>
+
+<p>If the certificate file or string contain both the certificate and private key, then there is no need to specify a separate <code>key_file</code> or <code>key</code>.</p>
+
+<p>Additional signing certifiates to send to the peer (in SSLv3 and newer) can be specified by appending them to the certificate proper: the order must be from issuer certificate over any intermediate CA certificates to the root CA.</p>
+
+<p>So the recommended ordering for a combined key/cert/chain file, specified via <code>cert_file</code> or <code>cert</code> looks like this:</p>
+
+<pre><code>  certificate private key
+  client/server certificate
+  ca 1, signing client/server certficate
+  ca 2, signing ca 1
+  ...</code></pre>
+
+</dd>
+<dt id="cert-string">cert =&gt; $string</dt>
+<dd>
+
+<p>The local certificate in PEM format (might be a combined certificate/private key file). See <code>cert_file</code>.</p>
+
+<p>The idea behind being able to specify a string is to avoid blocking in I/O. Unfortunately, Net::SSLeay fails to implement any interface to the needed OpenSSL functionality, this is currently implemented by writing to a temporary file.</p>
+
+</dd>
+<dt id="cert_password-string-callback--tls">cert_password =&gt; $string | $callback-&gt;($tls)</dt>
+<dd>
+
+<p>The certificate password - if the certificate is password-protected, then you can specify its password here.</p>
+
+<p>Instead of providing a password directly (which is not so recommended), you can also provide a password-query callback. The callback will be called whenever a password is required to decode a local certificate, and is supposed to return the password.</p>
+
+</dd>
+<dt id="dh_file-path">dh_file =&gt; $path</dt>
+<dd>
+
+<p>Path to a file containing Diffie-Hellman parameters in PEM format, for use in servers. See also <code>dh</code> on how to specify them directly, or use a pre-generated set.</p>
+
+<p>Diffie-Hellman key exchange generates temporary encryption keys that are not transferred over the connection, which means that even if the certificate key(s) are made public at a later time and a full dump of the connection exists, the key still cannot be deduced.</p>
+
+<p>These ciphers are only available with SSLv3 and later (which is the default with AnyEvent::TLS), and are only used in server/accept mode. Anonymous DH protocols are usually disabled by default, and usually not even compiled into the underlying library, as they provide no direct protection against man-in-the-middle attacks. The same is true for the common practise of self-signed certificates that you have to accept first, of course.</p>
+
+</dd>
+<dt id="dh-string">dh =&gt; $string</dt>
+<dd>
+
+<p>Specify the Diffie-Hellman parameters in PEM format directly as a string (see <code>dh_file</code>), the default is <code>ffdhe3072</code> unless <code>dh_file</code> was specified.</p>
+
+<p>AnyEvent::TLS supports supports a number of precomputed DH parameters, since computing them is expensive. They are:</p>
+
+<pre><code>   # from RFC 7919 - recommended
+   ffdhe2048, ffdhe3072, ffdhe4096, ffdhe6144, ffdhe8192
+
+   # from &quot;Assigned Number for SKIP Protocols&quot;
+   skip512, skip1024, skip2048, skip4096
+
+   # from schmorp
+   schmorp1024, schmorp1539, schmorp2048, schmorp4096, schmorp8192</code></pre>
+
+<p>It is said that 2048 bit DH parameters are safe till 2030, and DH parameters shorter than 900 bits are totally insecure.</p>
+
+<p>To disable DH protocols completely, specify <code>undef</code> as <code>dh</code> parameter.</p>
+
+</dd>
+<dt id="dh_single_use-enable">dh_single_use =&gt; $enable</dt>
+<dd>
+
+<p>Enables or disables &quot;use only once&quot; mode when using Diffie-Hellman key exchange. When enabled (default), each time a new key is exchanged a new Diffie-Hellman key is generated, which improves security as each key is only used once. When disabled, the key will be created as soon as the AnyEvent::TLS object is created and will be reused.</p>
+
+<p>All the DH parameters supplied with AnyEvent::TLS should be safe with <code>dh_single_use</code> switched off, but YMMV.</p>
+
+</dd>
+<dt id="cipher_list-string">cipher_list =&gt; $string</dt>
+<dd>
+
+<p>The list of ciphers to use, as a string (example: <code>AES:ALL:!aNULL:!eNULL:+RC4:@STRENGTH</code>). The format of this string and its default value is documented at <a href="http://www.openssl.org/docs/apps/ciphers.html#CIPHER_STRINGS">http://www.openssl.org/docs/apps/ciphers.html#CIPHER_STRINGS</a>.</p>
+
+</dd>
+<dt id="session_ticket-enable">session_ticket =&gt; $enable</dt>
+<dd>
+
+<p>Enables or disables RC5077 support (Session Resumption without Server-Side State). The default is disabled for clients, as many (buggy) TLS/SSL servers choke on it, but enabled for servers.</p>
+
+<p>When enabled and supported by the server, a session ticket will be provided to the client, which allows fast resuming of connections.</p>
+
+</dd>
+<dt id="prepare-coderef--tls">prepare =&gt; $coderef-&gt;($tls)</dt>
+<dd>
+
+<p>If this argument is present, then it will be called with the new AnyEvent::TLS object after any other initialisation has bee done, in case you wish to fine-tune something...</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="tls-new_from_ssleay-AnyEvent::TLS-ctx">$tls = new_from_ssleay AnyEvent::TLS $ctx</dt>
+<dd>
+
+<p>This constructor takes an existing <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> SSL_CTX object (which is just an integer) and converts it into an <code>AnyEvent::TLS</code> object. This only works because AnyEvent::TLS is currently implemented using Net::SSLeay. As this is such a horrible perl module and OpenSSL has such an annoying license, this might change in the future, in which case this method might vanish.</p>
+
+</dd>
+<dt id="ctx-tls-ctx">$ctx = $tls-&gt;ctx</dt>
+<dd>
+
+<p>Returns the actual <a>Net::SSLeay::CTX</a> object (just an integer).</p>
+
+</dd>
+<dt id="AnyEvent::TLS::init">AnyEvent::TLS::init</dt>
+<dd>
+
+<p>AnyEvent::TLS does on-demand initialisation, and normally there is no need to call an initialise function.</p>
+
+<p>As initialisation might take some time (to read e.g. <code>/dev/urandom</code>), this could be annoying in some highly interactive programs. In that case, you can call <code>AnyEvent::TLS::init</code> to make sure there will be no costly initialisation later. It is harmless to call <code>AnyEvent::TLS::init</code> multiple times.</p>
+
+</dd>
+<dt id="certname-AnyEvent::TLS::certname-x509">$certname = AnyEvent::TLS::certname $x509</dt>
+<dd>
+
+<p>Utility function that returns a user-readable string identifying the X509 certificate object.</p>
+
+</dd>
+</dl>
+
+<h1 id="SSL-TLS-QUICK-FACTS">SSL/TLS QUICK FACTS</h1>
+
+<p>Here are some quick facts about TLS/SSL that might help you:</p>
+
+<ul>
+
+<li><p>A certificate is the public key part, a key is the private key part.</p>
+
+<p>While not strictly true, certificates are the things you can hand around publicly as a kind of identity, while keys should really be kept private, as proving that you have the private key is usually interpreted as being the entity behind the certificate.</p>
+
+</li>
+<li><p>A certificate is signed by a CA (Certificate Authority).</p>
+
+<p>By signing, the CA basically claims that the certificate it signs really belongs to the identity named in it, verified according to the CA policies. For e.g. HTTPS, the CA usually makes some checks that the hostname mentioned in the certificate really belongs to the company/person that requested the signing and owns the domain.</p>
+
+</li>
+<li><p>CAs can be certified by other CAs.</p>
+
+<p>Or by themselves - a certificate that is signed by a CA that is itself is called a self-signed certificate, a trust chain of length zero. When you find a certificate signed by another CA, which is in turn signed by another CA you trust, you have a trust chain of depth two.</p>
+
+</li>
+<li><p>&quot;Trusting&quot; a CA means trusting all certificates it has signed.</p>
+
+<p>If you &quot;trust&quot; a CA certificate, then all certificates signed by it are automatically considered trusted as well.</p>
+
+</li>
+<li><p>A successfully verified certificate means that you can be reasonably sure that whoever you are talking with really is who he claims he is.</p>
+
+<p>By verifying certificates against a number of CAs that you trust (meaning it is signed directly or indirectly by such a CA), you can find out that the other side really is whoever he claims, according to the CA policies, and your belief in the integrity of the CA.</p>
+
+</li>
+<li><p>Verifying the certificate signature is not everything.</p>
+
+<p>Even when the certificate is correct, it might belong to somebody else: if www.attacker.com can make your computer believe that it is really called www.mybank.com (by making your DNS server believe this for example), then it could send you the certificate for www.attacker.com that your software trusts because it is signed by a CA you trust, and intercept all your traffic that you think goes to www.mybank.com. This works because your software sees that the certificate is correctly signed (for www.attacker.com) and you think you are talking to your bank.</p>
+
+<p>To thwart this attack vector, peername verification should be used, which basically checks that the certificate (for www.attacker.com) really belongs to the host you are trying to talk to (www.mybank.com), which in this example is not the case, as www.attacker.com (from the certificate) doesn&#39;t match www.mybank.com (the hostname used to create the connection).</p>
+
+<p>So peername verification is almost as important as checking the CA signing. Unfortunately, every protocol implements this differently, if at all...</p>
+
+</li>
+<li><p>Switching off verification is sometimes reasonable.</p>
+
+<p>You can switch off verification. You still get an encrypted connection that is protected against eavesdropping and injection - you just lose protection against man in the middle attacks, i.e. somebody else with enough abilities to intercept all traffic can masquerade herself as the other side.</p>
+
+<p>For many applications, switching off verification is entirely reasonable. Downloading random stuff from websites using HTTPS for no reason is such an application. Talking to your bank and entering TANs is not such an application.</p>
+
+</li>
+<li><p>A SSL/TLS server always needs a certificate/key pair to operate, for clients this is optional.</p>
+
+<p>Apart from (usually disabled) anonymous cipher suites, a server always needs a certificate/key pair to operate.</p>
+
+<p>Clients almost never use certificates, but if they do, they can be used to authenticate the client, just as server certificates can be used to authenticate the server.</p>
+
+</li>
+<li><p>SSL version 2 is very insecure.</p>
+
+<p>SSL version 2 is old and not only has it some security issues, SSLv2-only implementations are usually buggy, too, due to their age.</p>
+
+</li>
+<li><p>Sometimes, even losing your &quot;private&quot; key might not expose all your data.</p>
+
+<p>With Diffie-Hellman ephemeral key exchange, you can lose the DH parameters (the &quot;keys&quot;), but all your connections are still protected. Diffie-Hellman needs special set-up (done by default by AnyEvent::TLS).</p>
+
+</li>
+</ul>
+
+<h1 id="SECURITY-CONSIDERATIONS">SECURITY CONSIDERATIONS</h1>
+
+<p>When you use any of the options that pass in keys or certificates as strings (e.g. <code>ca_cert</code>), then, due to serious shortcomings in <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a>, this module creates a temporary file to store the string - see <a href="../../../lib/perl5/5.26.3/File/Temp.html">File::Temp</a> and possibly its <code>safe_level</code> setting for more details on what to watch out for.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Due to the abysmal code quality of Net::SSLeay, this module will leak small amounts of memory per TLS connection (currently at least one perl scalar).</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Marc Lehmann &lt;schmorp@schmorp.de&gt;.</p>
+
+<p>Some of the API, documentation and implementation (verify_hostname), and a lot of ideas/workarounds/knowledge have been taken from the <a href="../../../lib/perl5/5.26.3/IO/Socket/SSL.html">IO::Socket::SSL</a> module. Care has been taken to keep the API similar to that and other modules, to the extent possible while providing a sensible API for AnyEvent.</p>
+
+
+</body>
+
+</html>
+
+

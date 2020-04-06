@@ -1,0 +1,436 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SECURITY-CONSIDERATIONS">SECURITY CONSIDERATIONS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Socket - useful IPv4 and IPv6 stuff. also unix domain sockets. and stuff.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent::Socket;
+   
+   tcp_connect &quot;gameserver.deliantra.net&quot;, 13327, sub {
+      my ($fh) = @_
+         or die &quot;gameserver.deliantra.net connect failed: $!&quot;;
+   
+      # enjoy your filehandle
+   };
+   
+   # a simple tcp server
+   tcp_server undef, 8888, sub {
+      my ($fh, $host, $port) = @_;
+   
+      syswrite $fh, &quot;The internet is full, $host:$port. Go away!\015\012&quot;;
+   };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements various utility functions for handling internet protocol addresses and sockets, in an as transparent and simple way as possible.</p>
+
+<p>All functions documented without <code>AnyEvent::Socket::</code> prefix are exported by default.</p>
+
+<dl>
+
+<dt id="ipn-parse_ipv4-dotted_quad">$ipn = parse_ipv4 $dotted_quad</dt>
+<dd>
+
+<p>Tries to parse the given dotted quad IPv4 address and return it in octet form (or undef when it isn&#39;t in a parsable format). Supports all forms specified by POSIX (e.g. <code>10.0.0.1</code>, <code>10.1</code>, <code>10.0x020304</code>, <code>0x12345678</code> or <code>0377.0377.0377.0377</code>).</p>
+
+</dd>
+<dt id="ipn-parse_ipv6-textual_ipv6_address">$ipn = parse_ipv6 $textual_ipv6_address</dt>
+<dd>
+
+<p>Tries to parse the given IPv6 address and return it in octet form (or undef when it isn&#39;t in a parsable format).</p>
+
+<p>Should support all forms specified by RFC 2373 (and additionally all IPv4 forms supported by parse_ipv4). Note that scope-id&#39;s are not supported (and will not parse).</p>
+
+<p>This function works similarly to <code>inet_pton AF_INET6, ...</code>.</p>
+
+<p>Example:</p>
+
+<pre><code>   print unpack &quot;H*&quot;, parse_ipv6 &quot;2002:5345::10.0.0.1&quot;;
+   # =&gt; 2002534500000000000000000a000001
+
+   print unpack &quot;H*&quot;, parse_ipv6 &quot;192.89.98.1&quot;;
+   # =&gt; 00000000000000000000ffffc0596201</code></pre>
+
+</dd>
+<dt id="token-parse_unix-hostname">$token = parse_unix $hostname</dt>
+<dd>
+
+<p>This function exists mainly for symmetry to the other <code>parse_protocol</code> functions - it takes a hostname and, if it is <code>unix/</code>, it returns a special address token, otherwise <code>undef</code>.</p>
+
+<p>The only use for this function is probably to detect whether a hostname matches whatever AnyEvent uses for unix domain sockets.</p>
+
+</dd>
+<dt id="ipn-parse_address-ip">$ipn = parse_address $ip</dt>
+<dd>
+
+<p>Combines <code>parse_ipv4</code>, <code>parse_ipv6</code> and <code>parse_unix</code> in one function. The address here refers to the host address (not socket address) in network form (binary).</p>
+
+<p>If the <code>$text</code> is <code>unix/</code>, then this function returns a special token recognised by the other functions in this module to mean &quot;UNIX domain socket&quot;.</p>
+
+<p>If the <code>$text</code> to parse is a plain IPv4 or mapped IPv4 in IPv6 address (:ffff::&lt;ipv4&gt;), then it will be treated as an IPv4 address and four octets will be returned. If you don&#39;t want that, you have to call <code>parse_ipv4</code> and/or <code>parse_ipv6</code> manually (the latter always returning a 16 octet IPv6 address for mapped IPv4 addresses).</p>
+
+<p>Example:</p>
+
+<pre><code>   print unpack &quot;H*&quot;, parse_address &quot;10.1.2.3&quot;;
+   # =&gt; 0a010203</code></pre>
+
+</dd>
+<dt id="ipn-AnyEvent::Socket::aton-ip">$ipn = AnyEvent::Socket::aton $ip</dt>
+<dd>
+
+<p>Same as <code>parse_address</code>, but not exported (think <code>Socket::inet_aton</code> but <i>without</i> name resolution).</p>
+
+</dd>
+<dt id="name-aliases-proto-getprotobyname-name">($name, $aliases, $proto) = getprotobyname $name</dt>
+<dd>
+
+<p>Works like the builtin function of the same name, except it tries hard to work even on broken platforms (well, that&#39;s windows), where getprotobyname is traditionally very unreliable.</p>
+
+<p>Example: get the protocol number for TCP (usually 6)</p>
+
+<pre><code>   my $proto = getprotobyname &quot;tcp&quot;;</code></pre>
+
+</dd>
+<dt id="host-service-parse_hostport-string-default_service">($host, $service) = parse_hostport $string[, $default_service]</dt>
+<dd>
+
+<p>Splitting a string of the form <code>hostname:port</code> is a common problem. Unfortunately, just splitting on the colon makes it hard to specify IPv6 addresses and doesn&#39;t support the less common but well standardised <code>[ip literal]</code> syntax.</p>
+
+<p>This function tries to do this job in a better way, it supports (at least) the following formats, where <code>port</code> can be a numerical port number of a service name, or a <code>name=port</code> string, and the <code> port</code> and <code>:port</code> parts are optional. Also, everywhere where an IP address is supported a hostname or unix domain socket address is also supported (see <code>parse_unix</code>), and strings starting with <code>/</code> will also be interpreted as unix domain sockets.</p>
+
+<pre><code>   hostname:port    e.g. &quot;www.linux.org&quot;, &quot;www.x.de:443&quot;, &quot;www.x.de:https=443&quot;,
+   ipv4:port        e.g. &quot;198.182.196.56&quot;, &quot;127.1:22&quot;
+   ipv6             e.g. &quot;::1&quot;, &quot;affe::1&quot;
+   [ipv4or6]:port   e.g. &quot;[::1]&quot;, &quot;[10.0.1]:80&quot;
+   [ipv4or6] port   e.g. &quot;[127.0.0.1]&quot;, &quot;[www.x.org] 17&quot;
+   ipv4or6 port     e.g. &quot;::1 443&quot;, &quot;10.0.0.1 smtp&quot;
+   unix/:path       e.g. &quot;unix/:/path/to/socket&quot;
+   /path            e.g. &quot;/path/to/socket&quot;</code></pre>
+
+<p>It also supports defaulting the service name in a simple way by using <code>$default_service</code> if no service was detected. If neither a service was detected nor a default was specified, then this function returns the empty list. The same happens when a parse error was detected, such as a hostname with a colon in it (the function is rather forgiving, though).</p>
+
+<p>Example:</p>
+
+<pre><code>  print join &quot;,&quot;, parse_hostport &quot;localhost:443&quot;;
+  # =&gt; &quot;localhost,443&quot;
+
+  print join &quot;,&quot;, parse_hostport &quot;localhost&quot;, &quot;https&quot;;
+  # =&gt; &quot;localhost,https&quot;
+
+  print join &quot;,&quot;, parse_hostport &quot;[::1]&quot;;
+  # =&gt; &quot;,&quot; (empty list)
+
+  print join &quot;,&quot;, parse_hostport &quot;/tmp/debug.sock&quot;;
+  # =&gt; &quot;unix/&quot;, &quot;/tmp/debug.sock&quot;</code></pre>
+
+</dd>
+<dt id="string-format_hostport-host-port">$string = format_hostport $host, $port</dt>
+<dd>
+
+<p>Takes a host (in textual form) and a port and formats in unambigiously in a way that <code>parse_hostport</code> can parse it again. <code>$port</code> can be <code>undef</code>.</p>
+
+</dd>
+<dt id="sa_family-address_family-ipn">$sa_family = address_family $ipn</dt>
+<dd>
+
+<p>Returns the address family/protocol-family (AF_xxx/PF_xxx, in one value :) of the given host address in network format.</p>
+
+</dd>
+<dt id="text-format_ipv4-ipn">$text = format_ipv4 $ipn</dt>
+<dd>
+
+<p>Expects a four octet string representing a binary IPv4 address and returns its textual format. Rarely used, see <code>format_address</code> for a nicer interface.</p>
+
+</dd>
+<dt id="text-format_ipv6-ipn">$text = format_ipv6 $ipn</dt>
+<dd>
+
+<p>Expects a sixteen octet string representing a binary IPv6 address and returns its textual format. Rarely used, see <code>format_address</code> for a nicer interface.</p>
+
+</dd>
+<dt id="text-format_address-ipn">$text = format_address $ipn</dt>
+<dd>
+
+<p>Covnvert a host address in network format (e.g. 4 octets for IPv4 or 16 octets for IPv6) and convert it into textual form.</p>
+
+<p>Returns <code>unix/</code> for UNIX domain sockets.</p>
+
+<p>This function works similarly to <code>inet_ntop AF_INET || AF_INET6, ...</code>, except it automatically detects the address type.</p>
+
+<p>Returns <code>undef</code> if it cannot detect the type.</p>
+
+<p>If the <code>$ipn</code> is a mapped IPv4 in IPv6 address (:ffff::&lt;ipv4&gt;), then just the contained IPv4 address will be returned. If you do not want that, you have to call <code>format_ipv6</code> manually.</p>
+
+<p>Example:</p>
+
+<pre><code>   print format_address &quot;\x01\x02\x03\x05&quot;;
+   =&gt; 1.2.3.5</code></pre>
+
+</dd>
+<dt id="text-AnyEvent::Socket::ntoa-ipn">$text = AnyEvent::Socket::ntoa $ipn</dt>
+<dd>
+
+<p>Same as format_address, but not exported (think <code>inet_ntoa</code>).</p>
+
+</dd>
+<dt id="inet_aton-name_or_address-cb--addresses">inet_aton $name_or_address, $cb-&gt;(@addresses)</dt>
+<dd>
+
+<p>Works similarly to its Socket counterpart, except that it uses a callback. Use the length to distinguish between ipv4 and ipv6 (4 octets for IPv4, 16 for IPv6), or use <code>format_address</code> to convert it to a more readable format.</p>
+
+<p>Note that <code>resolve_sockaddr</code>, while initially a more complex interface, resolves host addresses, IDNs, service names and SRV records and gives you an ordered list of socket addresses to try and should be preferred over <code>inet_aton</code>.</p>
+
+<p>Example.</p>
+
+<pre><code>   inet_aton &quot;www.google.com&quot;, my $cv = AE::cv;
+   say unpack &quot;H*&quot;, $_
+      for $cv-&gt;recv;
+   # =&gt; d155e363
+   # =&gt; d155e367 etc.
+
+   inet_aton &quot;ipv6.google.com&quot;, my $cv = AE::cv;
+   say unpack &quot;H*&quot;, $_
+      for $cv-&gt;recv;
+   # =&gt; 20014860a00300000000000000000068</code></pre>
+
+</dd>
+<dt id="sa-AnyEvent::Socket::pack_sockaddr-service-host">$sa = AnyEvent::Socket::pack_sockaddr $service, $host</dt>
+<dd>
+
+<p>Pack the given port/host combination into a binary sockaddr structure. Handles both IPv4 and IPv6 host addresses, as well as UNIX domain sockets (<code>$host</code> == <code>unix/</code> and <code>$service</code> == absolute pathname).</p>
+
+<p>Example:</p>
+
+<pre><code>   my $bind = AnyEvent::Socket::pack_sockaddr 43, v195.234.53.120;
+   bind $socket, $bind
+      or die &quot;bind: $!&quot;;</code></pre>
+
+</dd>
+<dt id="service-host-AnyEvent::Socket::unpack_sockaddr-sa">($service, $host) = AnyEvent::Socket::unpack_sockaddr $sa</dt>
+<dd>
+
+<p>Unpack the given binary sockaddr structure (as used by bind, getpeername etc.) into a <code>$service, $host</code> combination.</p>
+
+<p>For IPv4 and IPv6, <code>$service</code> is the port number and <code>$host</code> the host address in network format (binary).</p>
+
+<p>For UNIX domain sockets, <code>$service</code> is the absolute pathname and <code>$host</code> is a special token that is understood by the other functions in this module (<code>format_address</code> converts it to <code>unix/</code>).</p>
+
+</dd>
+<dt id="AnyEvent::Socket::resolve_sockaddr-node-service-proto-family-type-cb--family-type-proto-sockaddr">AnyEvent::Socket::resolve_sockaddr $node, $service, $proto, $family, $type, $cb-&gt;([$family, $type, $proto, $sockaddr], ...)</dt>
+<dd>
+
+<p>Tries to resolve the given nodename and service name into protocol families and sockaddr structures usable to connect to this node and service in a protocol-independent way. It works remotely similar to the getaddrinfo posix function.</p>
+
+<p>For internet addresses, <code>$node</code> is either an IPv4 or IPv6 address, an internet hostname (DNS domain name or IDN), and <code>$service</code> is either a service name (port name from <i>/etc/services</i>) or a numerical port number. If both <code>$node</code> and <code>$service</code> are names, then SRV records will be consulted to find the real service, otherwise they will be used as-is. If you know that the service name is not in your services database, then you can specify the service in the format <code>name=port</code> (e.g. <code>http=80</code>).</p>
+
+<p>If a host cannot be found via DNS, then it will be looked up in <i>/etc/hosts</i> (or the file specified via <code>$ENV{PERL_ANYEVENT_HOSTS}</code>). If they are found, the addresses there will be used. The effect is as if entries from <i>/etc/hosts</i> would yield <code>A</code> and <code>AAAA</code> records for the host name unless DNS already had records for them.</p>
+
+<p>For UNIX domain sockets, <code>$node</code> must be the string <code>unix/</code> and <code>$service</code> must be the absolute pathname of the socket. In this case, <code>$proto</code> will be ignored.</p>
+
+<p><code>$proto</code> must be a protocol name, currently <code>tcp</code>, <code>udp</code> or <code>sctp</code>. The default is currently <code>tcp</code>, but in the future, this function might try to use other protocols such as <code>sctp</code>, depending on the socket type and any SRV records it might find.</p>
+
+<p><code>$family</code> must be either <code>0</code> (meaning any protocol is OK), <code>4</code> (use only IPv4) or <code>6</code> (use only IPv6). The default is influenced by <code>$ENV{PERL_ANYEVENT_PROTOCOLS}</code>.</p>
+
+<p><code>$type</code> must be <code>SOCK_STREAM</code>, <code>SOCK_DGRAM</code> or <code>SOCK_SEQPACKET</code> (or <code>undef</code> in which case it gets automatically chosen to be <code>SOCK_STREAM</code> unless <code>$proto</code> is <code>udp</code>).</p>
+
+<p>The callback will receive zero or more array references that contain <code>$family, $type, $proto</code> for use in <code>socket</code> and a binary <code>$sockaddr</code> for use in <code>connect</code> (or <code>bind</code>).</p>
+
+<p>The application should try these in the order given.</p>
+
+<p>Example:</p>
+
+<pre><code>   resolve_sockaddr &quot;google.com&quot;, &quot;http&quot;, 0, undef, undef, sub { ... };</code></pre>
+
+</dd>
+<dt id="guard-tcp_connect-host-service-connect_cb-prepare_cb">$guard = tcp_connect $host, $service, $connect_cb[, $prepare_cb]</dt>
+<dd>
+
+<p>This is a convenience function that creates a TCP socket and makes a 100% non-blocking connect to the given <code>$host</code> (which can be a DNS/IDN hostname or a textual IP address, or the string <code>unix/</code> for UNIX domain sockets) and <code>$service</code> (which can be a numeric port number or a service name, or a <code>servicename=portnumber</code> string, or the pathname to a UNIX domain socket).</p>
+
+<p>If both <code>$host</code> and <code>$port</code> are names, then this function will use SRV records to locate the real target(s).</p>
+
+<p>In either case, it will create a list of target hosts (e.g. for multihomed hosts or hosts with both IPv4 and IPv6 addresses) and try to connect to each in turn.</p>
+
+<p>After the connection is established, then the <code>$connect_cb</code> will be invoked with the socket file handle (in non-blocking mode) as first, and the peer host (as a textual IP address) and peer port as second and third arguments, respectively. The fourth argument is a code reference that you can call if, for some reason, you don&#39;t like this connection, which will cause <code>tcp_connect</code> to try the next one (or call your callback without any arguments if there are no more connections). In most cases, you can simply ignore this argument.</p>
+
+<pre><code>   $cb-&gt;($filehandle, $host, $port, $retry)</code></pre>
+
+<p>If the connect is unsuccessful, then the <code>$connect_cb</code> will be invoked without any arguments and <code>$!</code> will be set appropriately (with <code>ENXIO</code> indicating a DNS resolution failure).</p>
+
+<p>The callback will <i>never</i> be invoked before <code>tcp_connect</code> returns, even if <code>tcp_connect</code> was able to connect immediately (e.g. on unix domain sockets).</p>
+
+<p>The file handle is perfect for being plugged into <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a>, but can be used as a normal perl file handle as well.</p>
+
+<p>Unless called in void context, <code>tcp_connect</code> returns a guard object that will automatically cancel the connection attempt when it gets destroyed - in which case the callback will not be invoked. Destroying it does not do anything to the socket after the connect was successful - you cannot &quot;uncall&quot; a callback that has been invoked already.</p>
+
+<p>Sometimes you need to &quot;prepare&quot; the socket before connecting, for example, to <code>bind</code> it to some port, or you want a specific connect timeout that is lower than your kernel&#39;s default timeout. In this case you can specify a second callback, <code>$prepare_cb</code>. It will be called with the file handle in not-yet-connected state as only argument and must return the connection timeout value (or <code>0</code>, <code>undef</code> or the empty list to indicate the default timeout is to be used).</p>
+
+<p>Note to the poor Microsoft Windows users: Windows (of course) doesn&#39;t correctly signal connection errors, so unless your event library works around this, failed connections will simply hang. The only event libraries that handle this condition correctly are <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a> and <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">Glib</a>. Additionally, AnyEvent works around this bug with <a href="../../../lib/perl5/5.26.3/Test2/Tools/Event.html">Event</a> and in its pure-perl backend. All other libraries cannot correctly handle this condition. To lessen the impact of this windows bug, a default timeout of 30 seconds will be imposed on windows. Cygwin is not affected.</p>
+
+<p>Simple Example: connect to localhost on port 22.</p>
+
+<pre><code>   tcp_connect localhost =&gt; 22, sub {
+      my $fh = shift
+         or die &quot;unable to connect: $!&quot;;
+      # do something
+   };</code></pre>
+
+<p>Complex Example: connect to www.google.com on port 80 and make a simple GET request without much error handling. Also limit the connection timeout to 15 seconds.</p>
+
+<pre><code>   tcp_connect &quot;www.google.com&quot;, &quot;http&quot;,
+      sub {
+         my ($fh) = @_
+            or die &quot;unable to connect: $!&quot;;
+
+         my $handle; # avoid direct assignment so on_eof has it in scope.
+         $handle = new AnyEvent::Handle
+            fh     =&gt; $fh,
+            on_error =&gt; sub {
+               AE::log error =&gt; $_[2];
+               $_[0]-&gt;destroy;
+            },
+            on_eof =&gt; sub {
+               $handle-&gt;destroy; # destroy handle
+               AE::log info =&gt; &quot;Done.&quot;;
+            };
+
+         $handle-&gt;push_write (&quot;GET / HTTP/1.0\015\012\015\012&quot;);
+
+         $handle-&gt;push_read (line =&gt; &quot;\015\012\015\012&quot;, sub {
+            my ($handle, $line) = @_;
+
+            # print response header
+            print &quot;HEADER\n$line\n\nBODY\n&quot;;
+
+            $handle-&gt;on_read (sub {
+               # print response body
+               print $_[0]-&gt;rbuf;
+               $_[0]-&gt;rbuf = &quot;&quot;;
+            });
+         });
+      }, sub {
+         my ($fh) = @_;
+         # could call $fh-&gt;bind etc. here
+
+         15
+      };</code></pre>
+
+<p>Example: connect to a UNIX domain socket.</p>
+
+<pre><code>   tcp_connect &quot;unix/&quot;, &quot;/tmp/.X11-unix/X0&quot;, sub {
+      ...
+   }</code></pre>
+
+</dd>
+<dt id="guard-tcp_server-host-service-accept_cb-prepare_cb">$guard = tcp_server $host, $service, $accept_cb[, $prepare_cb]</dt>
+<dd>
+
+<p>Create and bind a stream socket to the given host address and port, set the SO_REUSEADDR flag (if applicable) and call <code>listen</code>. Unlike the name implies, this function can also bind on UNIX domain sockets.</p>
+
+<p>For internet sockets, <code>$host</code> must be an IPv4 or IPv6 address (or <code>undef</code>, in which case it binds either to <code>0</code> or to <code>::</code>, depending on whether IPv4 or IPv6 is the preferred protocol, and maybe to both in future versions, as applicable).</p>
+
+<p>To bind to the IPv4 wildcard address, use <code>0</code>, to bind to the IPv6 wildcard address, use <code>::</code>.</p>
+
+<p>The port is specified by <code>$service</code>, which must be either a service name or a numeric port number (or <code>0</code> or <code>undef</code>, in which case an ephemeral port will be used).</p>
+
+<p>For UNIX domain sockets, <code>$host</code> must be <code>unix/</code> and <code>$service</code> must be the absolute pathname of the socket. This function will try to <code>unlink</code> the socket before it tries to bind to it, and will try to unlink it after it stops using it. See SECURITY CONSIDERATIONS, below.</p>
+
+<p>For each new connection that could be <code>accept</code>ed, call the <code>$accept_cb-&gt;($fh, $host, $port)</code> with the file handle (in non-blocking mode) as first, and the peer host and port as second and third arguments (see <code>tcp_connect</code> for details).</p>
+
+<p>Croaks on any errors it can detect before the listen.</p>
+
+<p>In non-void context, this function returns a guard object whose lifetime it tied to the TCP server: If the object gets destroyed, the server will be stopped and the listening socket will be cleaned up/unlinked (already accepted connections will not be affected).</p>
+
+<p>When called in void-context, AnyEvent will keep the listening socket alive internally. In this case, there is no guarantee that the listening socket will be cleaned up or unlinked.</p>
+
+<p>In all cases, when the function returns to the caller, the socket is bound and in listening state.</p>
+
+<p>If you need more control over the listening socket, you can provide a <code>$prepare_cb-&gt;($fh, $host, $port)</code>, which is called just before the <code>listen ()</code> call, with the listen file handle as first argument, and IP address and port number of the local socket endpoint as second and third arguments.</p>
+
+<p>It should return the length of the listen queue (or <code>0</code> for the default).</p>
+
+<p>Note to IPv6 users: RFC-compliant behaviour for IPv6 sockets listening on <code>::</code> is to bind to both IPv6 and IPv4 addresses by default on dual-stack hosts. Unfortunately, only GNU/Linux seems to implement this properly, so if you want both IPv4 and IPv6 listening sockets you should create the IPv6 socket first and then attempt to bind on the IPv4 socket, but ignore any <code>EADDRINUSE</code> errors.</p>
+
+<p>Example: bind on some TCP port on the local machine and tell each client to go away.</p>
+
+<pre><code>   tcp_server undef, undef, sub {
+      my ($fh, $host, $port) = @_;
+
+      syswrite $fh, &quot;The internet is full, $host:$port. Go away!\015\012&quot;;
+   }, sub {
+      my ($fh, $thishost, $thisport) = @_;
+      AE::log info =&gt; &quot;Bound to $thishost, port $thisport.&quot;;
+   };</code></pre>
+
+<p>Example: bind a server on a unix domain socket.</p>
+
+<pre><code>   tcp_server &quot;unix/&quot;, &quot;/tmp/mydir/mysocket&quot;, sub {
+      my ($fh) = @_;
+   };</code></pre>
+
+</dd>
+<dt id="guard-AnyEvent::Socket::tcp_bind-host-service-done_cb-prepare_cb">$guard = AnyEvent::Socket::tcp_bind $host, $service, $done_cb[, $prepare_cb]</dt>
+<dd>
+
+<p>Same as <code>tcp_server</code>, except it doesn&#39;t call <code>accept</code> in a loop for you but simply passes the listen socket to the <code>$done_cb</code>. This is useful when you want to have a convenient set up for your listen socket, but want to do the <code>accept</code>&#39;ing yourself, for example, in another process.</p>
+
+<p>In case of an error, <code>tcp_bind</code> either croaks, or passes <code>undef</code> to the <code>$done_cb</code>.</p>
+
+<p>In non-void context, a guard will be returned. It will clean up/unlink the listening socket when destroyed. In void context, no automatic clean up might be performed.</p>
+
+</dd>
+<dt id="tcp_nodelay-fh-enable">tcp_nodelay $fh, $enable</dt>
+<dd>
+
+<p>Enables (or disables) the <code>TCP_NODELAY</code> socket option (also known as Nagle&#39;s algorithm). Returns false on error, true otherwise.</p>
+
+</dd>
+<dt id="tcp_congestion-fh-algorithm">tcp_congestion $fh, $algorithm</dt>
+<dd>
+
+<p>Sets the tcp congestion avoidance algorithm (via the <code>TCP_CONGESTION</code> socket option). The default is OS-specific, but is usually <code>reno</code>. Typical other available choices include <code>cubic</code>, <code>lp</code>, <code>bic</code>, <code>highspeed</code>, <code>htcp</code>, <code>hybla</code>, <code>illinois</code>, <code>scalable</code>, <code>vegas</code>, <code>veno</code>, <code>westwood</code> and <code>yeah</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="SECURITY-CONSIDERATIONS">SECURITY CONSIDERATIONS</h1>
+
+<p>This module is quite powerful, with with power comes the ability to abuse as well: If you accept &quot;hostnames&quot; and ports from untrusted sources, then note that this can be abused to delete files (host=<code>unix/</code>). This is not really a problem with this module, however, as blindly accepting any address and protocol and trying to bind a server or connect to it is harmful in general.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

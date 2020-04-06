@@ -1,0 +1,622 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#PREREQUISITES">PREREQUISITES</a></li>
+  <li><a href="#BINARY-INSTALLATION">BINARY INSTALLATION</a>
+    <ul>
+      <li><a href="#Windows">Windows</a>
+        <ul>
+          <li><a href="#Strawberry-Perl">Strawberry Perl</a></li>
+          <li><a href="#ActiveState-Perl">ActiveState Perl</a></li>
+        </ul>
+      </li>
+      <li><a href="#Red-Hat-Enterprise-Linux-RHEL-CentOS-and-Fedora">Red Hat Enterprise Linux (RHEL), CentOS and Fedora</a></li>
+      <li><a href="#Debian-and-Ubuntu">Debian and Ubuntu</a></li>
+      <li><a href="#SLES-and-openSUSE">SLES and openSUSE</a></li>
+      <li><a href="#Other-systems">Other systems</a></li>
+    </ul>
+  </li>
+  <li><a href="#SOURCE-INSTALLATION">SOURCE INSTALLATION</a>
+    <ul>
+      <li><a href="#Environment-Variables">Environment Variables</a></li>
+      <li><a href="#CPAN-installation">CPAN installation</a></li>
+      <li><a href="#Manual-installation">Manual installation</a></li>
+      <li><a href="#Configuration">Configuration</a></li>
+      <li><a href="#Compiler-flags">Compiler flags</a></li>
+      <li><a href="#Linker-flags">Linker flags</a></li>
+    </ul>
+  </li>
+  <li><a href="#ENCRYPTED-CONNECTIONS-via-SSL">ENCRYPTED CONNECTIONS via SSL</a></li>
+  <li><a href="#MARIADB-NATIVE-CLIENT-INSTALLATION">MARIADB NATIVE CLIENT INSTALLATION</a></li>
+  <li><a href="#SPECIAL-SYSTEMS">SPECIAL SYSTEMS</a>
+    <ul>
+      <li><a href="#macOS">macOS</a></li>
+      <li><a href="#Cygwin">Cygwin</a>
+        <ul>
+          <li><a href="#Build-MySQL-clients-under-Cygwin">Build MySQL clients under Cygwin:</a></li>
+          <li><a href="#compile-DBD::mysql">compile DBD::mysql</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#KNOWN-PROBLEMS">KNOWN PROBLEMS</a>
+    <ul>
+      <li><a href="#no-gzip-on-your-system">no gzip on your system</a></li>
+      <li><a href="#different-compiler-for-mysql-and-perl">different compiler for mysql and perl</a></li>
+    </ul>
+  </li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>DBD::mysql::INSTALL - How to install and configure DBD::mysql</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  perl Makefile.PL [options]
+  make
+  make test
+  make install</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This document describes the installation and configuration of DBD::mysql, the Perl DBI driver for the MySQL database. Before reading on, make sure that you have the prerequisites available: Perl, MySQL and DBI. For details see the separate section <a href="#PREREQUISITES">&quot;PREREQUISITES&quot;</a>.</p>
+
+<p>Depending on your version of Perl, it might be possible to use a binary distribution of DBD::mysql. If possible, this is recommended. Otherwise you need to install from the sources. If so, you will definitely need a C compiler. Installation from binaries and sources are both described in separate sections. <a href="#BINARY-INSTALLATION">&quot;BINARY INSTALLATION&quot;</a>. <a href="#SOURCE-INSTALLATION">&quot;SOURCE INSTALLATION&quot;</a>.</p>
+
+<p>Finally, if you encounter any problems, do not forget to read the section on known problems <a href="#KNOWN-PROBLEMS">&quot;KNOWN PROBLEMS&quot;</a>. If that doesn&#39;t help, you should check the section on <a href="#SUPPORT">&quot;SUPPORT&quot;</a>.</p>
+
+<h1 id="PREREQUISITES">PREREQUISITES</h1>
+
+<dl>
+
+<dt id="Perl">Perl</dt>
+<dd>
+
+<p>Preferably a version of Perl, that comes preconfigured with your system. For example, all Linux and FreeBSD distributions come with Perl. For Windows, use <a href="https://www.activestate.com/activeperl">ActivePerl</a> or <a href="http://www.strawberryperl.com">Strawberry Perl</a>.</p>
+
+</dd>
+<dt id="MySQL">MySQL</dt>
+<dd>
+
+<p>You need not install the actual MySQL database server, the client files and the development files are sufficient. For example, Fedora Linux distribution comes with RPM files (using YUM) <b>mysql</b> and <b>mysql-server</b> (use &quot;yum search&quot; to find exact package names). These are sufficient, if the MySQL server is located on a foreign machine. You may also create client files by compiling from the MySQL source distribution and using</p>
+
+<pre><code>  configure --without-server</code></pre>
+
+<p>If you are using Windows and need to compile from sources (which is only the case if you are not using ActivePerl or Strawberry Perl), then you must ensure that the header and library files are installed. This may require choosing a &quot;Custom installation&quot; and selecting the appropriate option when running the MySQL setup program.</p>
+
+</dd>
+<dt id="DBI">DBI</dt>
+<dd>
+
+<p>DBD::mysql is a DBI driver, hence you need DBI. It is available from the same source where you got the DBD::mysql distribution from.</p>
+
+</dd>
+<dt id="C-compiler">C compiler</dt>
+<dd>
+
+<p>A C compiler is only required if you install from source. In most cases there are binary distributions of DBD::mysql available. However, if you need a C compiler, make sure, that it is the same C compiler that was used for compiling Perl and MySQL! Otherwise you will almost definitely encounter problems because of differences in the underlying C runtime libraries.</p>
+
+<p>In the worst case, this might mean to compile Perl and MySQL yourself. But believe me, experience shows that a lot of problems are fixed this way.</p>
+
+</dd>
+<dt id="Gzip-libraries">Gzip libraries</dt>
+<dd>
+
+<p>Late versions of MySQL come with support for compression. Thus it <b>may</b> be required that you have install an RPM package like libz-devel, libgz-devel or something similar.</p>
+
+</dd>
+</dl>
+
+<h1 id="BINARY-INSTALLATION">BINARY INSTALLATION</h1>
+
+<p>Binary installation is possible in the most cases, depending on your system.</p>
+
+<h2 id="Windows">Windows</h2>
+
+<h3 id="Strawberry-Perl">Strawberry Perl</h3>
+
+<p>Strawberry Perl comes bundled with DBD::mysql and the needed client libraries.</p>
+
+<h3 id="ActiveState-Perl">ActiveState Perl</h3>
+
+<p>ActivePerl offers a PPM archive of DBD::mysql. All you need to do is typing in a cmd.exe window:</p>
+
+<pre><code>  ppm install DBD-mysql</code></pre>
+
+<p>This will fetch the module via HTTP and install them. If you need to use a WWW proxy server, the environment variable HTTP_proxy must be set:</p>
+
+<pre><code>  set HTTP_proxy=http://myproxy.example.com:8080/
+  ppm install DBD-mysql</code></pre>
+
+<p>Of course you need to replace the host name <code>myproxy.example.com</code> and the port number <code>8080</code> with your local values.</p>
+
+<p>If the above procedure doesn&#39;t work, please upgrade to the latest version of ActivePerl. ActiveState has a policy where it only provides access free-of-charge for the PPM mirrors of the last few stable Perl releases. If you have an older perl, you&#39;d either need to upgrade your perl or contact ActiveState about a subscription.</p>
+
+<h2 id="Red-Hat-Enterprise-Linux-RHEL-CentOS-and-Fedora">Red Hat Enterprise Linux (RHEL), CentOS and Fedora</h2>
+
+<p>Red Hat Enterprise Linux, its community derivatives such as CentOS, and Fedora come with MySQL and DBD::mysql.</p>
+
+<p>Use the following command to install DBD::mysql:</p>
+
+<pre><code>    yum install &quot;perl(DBD::mysql)&quot;</code></pre>
+
+<h2 id="Debian-and-Ubuntu">Debian and Ubuntu</h2>
+
+<p>On Debian, Ubuntu and derivatives you can install DBD::mysql from the repositories with the following command:</p>
+
+<pre><code>    sudo apt-get install libdbd-mysql-perl</code></pre>
+
+<h2 id="SLES-and-openSUSE">SLES and openSUSE</h2>
+
+<p>On SUSE Linux Enterprise and the community version openSUSE, you can install DBD::mysql from the repositories with the following command:</p>
+
+<pre><code>    zypper install perl-DBD-mysql</code></pre>
+
+<h2 id="Other-systems">Other systems</h2>
+
+<p>In the case of other Linux or FreeBSD distributions it is very likely that all you need comes with your distribution. I just cannot give you names, as I am not using these systems.</p>
+
+<p>Please let me know if you find the files in your favorite Linux or FreeBSD distribution so that I can extend the above list.</p>
+
+<h1 id="SOURCE-INSTALLATION">SOURCE INSTALLATION</h1>
+
+<p>So you need to install from sources. If you are lucky, the Perl module <code>CPAN</code> will do all for you, thanks to the excellent work of Andreas K&ouml;nig. Otherwise you will need to do a manual installation. All of these installation types have their own section: <a href="#CPAN-installation">&quot;CPAN installation&quot;</a>, <a href="#Manual-installation">&quot;Manual installation&quot;</a> and <a href="#Configuration">&quot;Configuration&quot;</a>.</p>
+
+<p>The DBD::mysql Makefile.PL needs to know where to find your MySQL installation. This may be achieved using command line switches (see <a href="#Configuration">&quot;Configuration&quot;</a>) or automatically using the mysql_config binary which comes with most MySQL distributions. If your MySQL distribution contains mysql_config the easiest method is to ensure this binary is on your path.</p>
+
+<p>Typically, this is the case if you&#39;ve installed the mysql library from your systems&#39; package manager.</p>
+
+<p>e.g.</p>
+
+<pre><code>  PATH=$PATH:/usr/local/mysql/bin
+  export PATH</code></pre>
+
+<p>As stated, to compile DBD::mysql you&#39;ll need a C compiler. This should be the same compiler as the one used to build perl AND the mysql client libraries. If you&#39;re on linux, this is most typically the case and you need not worry. If you&#39;re on UNIX systems, you might want to pay attention.</p>
+
+<p>Also you&#39;ll need to get the MySQL client and development headers on your system. The easiest is to get these from your package manager.</p>
+
+<p>To run the tests that ship with the module, you&#39;ll need access to a running MySQL server. This can be running on localhost, but it can also be on a remote machine.</p>
+
+<p>On Fedora the process is as follows. Please note that Fedora actually ships with MariaDB but not with MySQL. This is not a problem, it will work just as well. In this example we install and start a local server for running the tests against.</p>
+
+<pre><code>    yum -y install make gcc mariadb-devel mariadb-libs mariadb-server
+    yum -y install &quot;perl(Test::Deep)&quot; &quot;perl(Test::More)&quot;
+    systemctl start mariadb.service</code></pre>
+
+<h2 id="Environment-Variables">Environment Variables</h2>
+
+<p>For ease of use, you can set environment variables for DBD::mysql installation. You can set any or all of the options, and export them by putting them in your .bashrc or the like:</p>
+
+<pre><code>    export DBD_MYSQL_CFLAGS=-I/usr/local/mysql/include/mysql
+    export DBD_MYSQL_LIBS=&quot;-L/usr/local/mysql/lib/mysql -lmysqlclient&quot;
+    export DBD_MYSQL_EMBEDDED=
+    export DBD_MYSQL_CONFIG=mysql_config
+    export DBD_MYSQL_NOCATCHSTDERR=0
+    export DBD_MYSQL_NOFOUNDROWS=0
+    export DBD_MYSQL_NOSSL=
+    export DBD_MYSQL_TESTDB=test
+    export DBD_MYSQL_TESTHOST=localhost
+    export DBD_MYSQL_TESTPASSWORD=s3kr1+
+    export DBD_MYSQL_TESTPORT=3306
+    export DBD_MYSQL_TESTUSER=me</code></pre>
+
+<p>The most useful may be the host, database, port, socket, user, and password.</p>
+
+<p>Installation will first look to your mysql_config, and then your environment variables, and then it will guess with intelligent defaults.</p>
+
+<h2 id="CPAN-installation">CPAN installation</h2>
+
+<p>Installation of DBD::mysql can be incredibly easy:</p>
+
+<pre><code>  cpan DBD::mysql</code></pre>
+
+<p>Please note that this will only work if the prerequisites are fulfilled, which means you have a C-compiler installed, and you have the development headers and mysql client libraries available on your system.</p>
+
+<p>If you are using the CPAN module for the first time, just answer the questions by accepting the defaults which are fine in most cases.</p>
+
+<p>If you cannot get the CPAN module working, you might try manual installation. If installation with CPAN fails because the your local settings have been guessed wrong, you need to ensure MySQL&#39;s mysql_config is on your path (see <a href="#SOURCE-INSTALLATION">&quot;SOURCE INSTALLATION&quot;</a>) or alternatively create a script called <code>mysql_config</code>. This is described in more details later. <a href="#Configuration">&quot;Configuration&quot;</a>.</p>
+
+<h2 id="Manual-installation">Manual installation</h2>
+
+<p>For a manual installation you need to fetch the DBD::mysql source distribution. The latest version is always available from</p>
+
+<pre><code>  https://metacpan.org/module/DBD::mysql</code></pre>
+
+<p>The name is typically something like</p>
+
+<pre><code>  DBD-mysql-4.025.tar.gz</code></pre>
+
+<p>The archive needs to be extracted. On Windows you may use a tool like 7-zip, on *nix you type</p>
+
+<pre><code>  tar xf DBD-mysql-4.025.tar.gz</code></pre>
+
+<p>This will create a subdirectory DBD-mysql-4.025. Enter this subdirectory and type</p>
+
+<pre><code>  perl Makefile.PL
+  make
+  make test</code></pre>
+
+<p>(On Windows you may need to replace &quot;make&quot; with &quot;dmake&quot; or &quot;nmake&quot;.) If the tests seem to look fine, you may continue with</p>
+
+<pre><code>  make install</code></pre>
+
+<p>If the compilation (make) or tests fail, you might need to configure some settings.</p>
+
+<p>For example you might choose a different database, the C compiler or the linker might need some flags. <a href="#Configuration">&quot;Configuration&quot;</a>. <a href="#Compiler-flags">&quot;Compiler flags&quot;</a>. <a href="#Linker-flags">&quot;Linker flags&quot;</a>.</p>
+
+<p>For Cygwin there is a special section below. <a href="#Cygwin">&quot;Cygwin&quot;</a>.</p>
+
+<h2 id="Configuration">Configuration</h2>
+
+<p>The install script &quot;Makefile.PL&quot; can be configured via a lot of switches. All switches can be used on the command line. For example, the test database:</p>
+
+<pre><code>  perl Makefile.PL --testdb=&lt;db&gt;</code></pre>
+
+<p>If you do not like configuring these switches on the command line, you may alternatively create a script called <code>mysql_config</code>. This is described later on.</p>
+
+<p>Available switches are:</p>
+
+<dl>
+
+<dt id="testdb">testdb</dt>
+<dd>
+
+<p>Name of the test database, defaults to <b>test</b>.</p>
+
+</dd>
+<dt id="testuser">testuser</dt>
+<dd>
+
+<p>Name of the test user, defaults to empty. If the name is empty, then the currently logged in users name will be used.</p>
+
+</dd>
+<dt id="testpassword">testpassword</dt>
+<dd>
+
+<p>Password of the test user, defaults to empty.</p>
+
+</dd>
+<dt id="testhost">testhost</dt>
+<dd>
+
+<p>Host name or IP number of the test database; defaults to localhost.</p>
+
+</dd>
+<dt id="testport">testport</dt>
+<dd>
+
+<p>Port number of the test database</p>
+
+</dd>
+<dt id="ps-protcol-1-or-0">ps-protcol=1 or 0</dt>
+<dd>
+
+<p>Whether to run the test suite using server prepared statements or driver emulated prepared statements. ps-protocol=1 means use server prepare, ps-protocol=0 means driver emulated.</p>
+
+</dd>
+<dt id="cflags">cflags</dt>
+<dd>
+
+<p>This is a list of flags that you want to give to the C compiler. The most important flag is the location of the MySQL header files. For example, on Red Hat Linux the header files are in /usr/include/mysql and you might try</p>
+
+<pre><code>  -I/usr/include/mysql</code></pre>
+
+<p>On Windows the header files may be in C:\mysql\include and you might try</p>
+
+<pre><code>  -IC:\mysql\include</code></pre>
+
+<p>The default flags are determined by running</p>
+
+<pre><code>  mysql_config --cflags</code></pre>
+
+<p>More details on the C compiler flags can be found in the following section. <a href="#Compiler-flags">&quot;Compiler flags&quot;</a>.</p>
+
+</dd>
+<dt id="libs">libs</dt>
+<dd>
+
+<p>This is a list of flags that you want to give to the linker or loader. The most important flags are the locations and names of additional libraries. For example, on Red Hat Linux your MySQL client libraries are in /usr/lib/mysql and you might try</p>
+
+<pre><code>  -L/usr/lib/mysql -lmysqlclient -lz</code></pre>
+
+<p>On Windows the libraries may be in C:\mysql\lib and</p>
+
+<pre><code>  -LC:\mysql\lib -lmysqlclient</code></pre>
+
+<p>might be a good choice. The default flags are determined by running</p>
+
+<pre><code>  mysql_config --libs</code></pre>
+
+<p>More details on the linker flags can be found in a separate section. <a href="#Linker-flags">&quot;Linker flags&quot;</a>.</p>
+
+</dd>
+</dl>
+
+<p>If a switch is not present on the command line, then the script <code>mysql_config</code> will be executed. This script comes as part of the MySQL distribution. For example, to determine the C compiler flags, we are executing</p>
+
+<pre><code>  mysql_config --cflags
+  mysql_config --libs</code></pre>
+
+<p>If you want to configure your own settings for database name, database user and so on, then you have to create a script with the same name, that replies</p>
+
+<h2 id="Compiler-flags">Compiler flags</h2>
+
+<p>Note: the following info about compiler and linker flags, you shouldn&#39;t have to use these options because Makefile.PL is pretty good at utilizing mysql_config to get the flags that you need for a successful compile.</p>
+
+<p>It is typically not so difficult to determine the appropriate flags for the C compiler. The linker flags, which you find in the next section, are another story.</p>
+
+<p>The determination of the C compiler flags is usually left to a configuration script called <i>mysql_config</i>, which can be invoked with</p>
+
+<pre><code>  mysql_config --cflags</code></pre>
+
+<p>When doing so, it will emit a line with suggested C compiler flags, for example like this:</p>
+
+<pre><code>  -L/usr/include/mysql</code></pre>
+
+<p>The C compiler must find some header files. Header files have the extension <code>.h</code>. MySQL header files are, for example, <i>mysql.h</i> and <i>mysql_version.h</i>. In most cases the header files are not installed by default. For example, on Windows it is an installation option of the MySQL setup program (Custom installation), whether the header files are installed or not. On Red Hat Linux, you need to install an RPM archive <i>mysql-devel</i> or <i>MySQL-devel</i>.</p>
+
+<p>If you know the location of the header files, then you will need to add an option</p>
+
+<pre><code>  -L&lt;header directory&gt;</code></pre>
+
+<p>to the C compiler flags, for example <code>-L/usr/include/mysql</code>.</p>
+
+<h2 id="Linker-flags">Linker flags</h2>
+
+<p>Appropriate linker flags are the most common source of problems while installing DBD::mysql. I will only give a rough overview, you&#39;ll find more details in the troubleshooting section. <a href="#KNOWN-PROBLEMS">&quot;KNOWN PROBLEMS&quot;</a></p>
+
+<p>The determination of the C compiler flags is usually left to a configuration script called <i>mysql_config</i>, which can be invoked with</p>
+
+<pre><code>  mysql_config --libs</code></pre>
+
+<p>When doing so, it will emit a line with suggested C compiler flags, for example like this:</p>
+
+<pre><code>   -L&#39;/usr/lib/mysql&#39; -lmysqlclient -lnsl -lm -lz -lcrypt</code></pre>
+
+<p>The following items typically need to be configured for the linker:</p>
+
+<dl>
+
+<dt id="The-mysqlclient-library">The mysqlclient library</dt>
+<dd>
+
+<p>The MySQL client library comes as part of the MySQL distribution. Depending on your system it may be a file called</p>
+
+<pre><code>  F&lt;libmysqlclient.a&gt;   statically linked library, Unix
+  F&lt;libmysqlclient.so&gt;  dynamically linked library, Unix
+  F&lt;mysqlclient.lib&gt;    statically linked library, Windows
+  F&lt;mysqlclient.dll&gt;    dynamically linked library, Windows</code></pre>
+
+<p>or something similar.</p>
+
+<p>As in the case of the header files, the client library is typically not installed by default. On Windows you will need to select them while running the MySQL setup program (Custom installation). On Red Hat Linux an RPM archive <i>mysql-devel</i> or <i>MySQL-devel</i> must be installed.</p>
+
+<p>The linker needs to know the location and name of the mysqlclient library. This can be done by adding the flags</p>
+
+<pre><code>  -L&lt;lib directory&gt; -lmysqlclient</code></pre>
+
+<p>or by adding the complete path name. Examples:</p>
+
+<pre><code>  -L/usr/lib/mysql -lmysqlclient
+  -LC:\mysql\lib -lmysqlclient</code></pre>
+
+<p>If you would like to use the static libraries (and there are excellent reasons to do so), you need to create a separate directory, copy the static libraries to that place and use the -L switch above to point to your new directory. For example:</p>
+
+<pre><code>  mkdir /tmp/mysql-static
+  cp /usr/lib/mysql/*.a /tmp/mysql-static
+  perl Makefile.PL --libs=&quot;-L/tmp/mysql-static -lmysqlclient&quot;
+  make
+  make test
+  make install
+  rm -rf /tmp/mysql-static</code></pre>
+
+</dd>
+<dt id="The-gzip-library">The gzip library</dt>
+<dd>
+
+<p>The MySQL client can use compression when talking to the MySQL server, a nice feature when sending or receiving large texts over a slow network.</p>
+
+<p>On Unix you typically find the appropriate file name by running</p>
+
+<pre><code>  ldconfig -p | grep libz
+  ldconfig -p | grep libgz</code></pre>
+
+<p>Once you know the name (libz.a or libgz.a is best), just add it to the list of linker flags. If this seems to be causing problem you may also try to link without gzip libraries.</p>
+
+</dd>
+</dl>
+
+<h1 id="ENCRYPTED-CONNECTIONS-via-SSL">ENCRYPTED CONNECTIONS via SSL</h1>
+
+<p>Connecting to your servers over an encrypted connection (SSL) is only possible if you enabled this setting at build time. Since version 4.034, this is the default.</p>
+
+<p>Attempting to connect to a server that requires an encrypted connection without first having <a href="../../../../../../root/.cpanm/work/1586168182.28091/DBD-mysql-4.050/blib/lib/DBD/mysql.html">DBD::mysql</a> compiled with the <code>--ssl</code> option will result in an error that makes things appear as if your password is incorrect.</p>
+
+<p>If you want to compile <a href="../../../../../../root/.cpanm/work/1586168182.28091/DBD-mysql-4.050/blib/lib/DBD/mysql.html">DBD::mysql</a> without SSL support, which you might probably only want if you for some reason can&#39;t install libssl headers, you can do this by passing the <code>--nossl</code> option to Makefile.PL or by setting the DBD_MYSQL_NOSSL environment variable to &#39;1&#39;.</p>
+
+<h1 id="MARIADB-NATIVE-CLIENT-INSTALLATION">MARIADB NATIVE CLIENT INSTALLATION</h1>
+
+<p>The MariaDB native client is another option for connecting to a MySQL&middot; database licensed LGPL 2.1. To build DBD::mysql against this client, you will first need to build the client. Generally, this is done with the following:</p>
+
+<pre><code>  cd path/to/src/mariadb-native-client
+  cmake -G &quot;Unix Makefiles&#39;
+  make
+  sudo make install</code></pre>
+
+<p>Once the client is built and installed, you can build DBD::mysql against it:</p>
+
+<pre><code>  perl Makefile.PL --testuser=xxx --testpassword=xxx --testsocket=/path/to//mysqld.sock --mysql_config=/usr/local/bin/mariadb_config&middot;
+  make
+  make test
+  make install</code></pre>
+
+<h1 id="SPECIAL-SYSTEMS">SPECIAL SYSTEMS</h1>
+
+<p>Below you find information on particular systems:</p>
+
+<h2 id="macOS">macOS</h2>
+
+<p>For installing DBD::mysql you need to have the libssl header files and the mysql client libs. The easiest way to install these is using Homebrew (<a href="https://brew.sh/">https://brew.sh/</a>).</p>
+
+<p>Once you have Homebrew set up, you can simply install the dependencies using</p>
+
+<pre><code>    brew install openssl mysql-connector-c</code></pre>
+
+<p>Then you can install DBD::mysql using your cpan client.</p>
+
+<h2 id="Cygwin">Cygwin</h2>
+
+<p>If you are a user of Cygwin you already know, it contains a nicely running perl 5.6.1, installation of additional modules usually works like a charm via the standard procedure of</p>
+
+<pre><code>    perl makefile.PL
+    make
+    make test
+    make install</code></pre>
+
+<p>The Windows binary distribution of MySQL runs smoothly under Cygwin. You can start/stop the server and use all Windows clients without problem. But to install DBD::mysql you have to take a little special action.</p>
+
+<p>Don&#39;t attempt to build DBD::mysql against either the MySQL Windows or Linux/Unix BINARY distributions: neither will work!</p>
+
+<p>You MUST compile the MySQL clients yourself under Cygwin, to get a &#39;libmysqlclient.a&#39; compiled under Cygwin. Really! You&#39;ll only need that library and the header files, you don&#39;t need any other client parts. Continue to use the Windows binaries. And don&#39;t attempt (currently) to build the MySQL Server part, it is unnecessary, as MySQL AB does an excellent job to deliver optimized binaries for the mainstream operating systems, and it is told, that the server compiled under Cygwin is unstable.</p>
+
+<p>Install a MySQL server for testing against. You can install the regular Windows MySQL server package on your Windows machine, or you can also test against a MySQL server on a remote host.</p>
+
+<h3 id="Build-MySQL-clients-under-Cygwin">Build MySQL clients under Cygwin:</h3>
+
+<p>download the MySQL LINUX source from <a href="https://www.mysql.com/downloads">https://www.mysql.com/downloads</a>, unpack mysql-&lt;version&gt;.tar.gz into some tmp location and from this directory run configure:</p>
+
+<pre><code>  ./configure --prefix=/usr/local/mysql --without-server</code></pre>
+
+<p>This prepares the Makefile with the installed Cygwin features. It takes some time, but should finish without error. The &#39;prefix&#39;, as given, installs the whole Cygwin/MySQL thingy into a location not normally in your PATH, so that you continue to use already installed Windows binaries. The --without-server parameter tells configure to only build the clients.</p>
+
+<pre><code>  make</code></pre>
+
+<p>This builds all MySQL client parts ... be patient. It should finish finally without any error.</p>
+
+<pre><code>  make install</code></pre>
+
+<p>This installs the compiled client files under /usr/local/mysql/. Remember, you don&#39;t need anything except the library under /usr/local/mysql/lib and the headers under /usr/local/mysql/include!</p>
+
+<p>Essentially you are now done with this part. If you want, you may try your compiled binaries shortly; for that, do:</p>
+
+<pre><code>  cd /usr/local/mysql/bin
+  ./mysql -h 127.0.0.1</code></pre>
+
+<p>The host (-h) parameter 127.0.0.1 targets the local host, but forces the mysql client to use a TCP/IP connection. The default would be a pipe/socket connection (even if you say &#39;-h localhost&#39;) and this doesn&#39;t work between Cygwin and Windows (as far as I know).</p>
+
+<p>If you have your MySQL server running on some other box, then please substitute &#39;127.0.0.1&#39; with the name or IP-number of that box.</p>
+
+<p>Please note, in my environment the &#39;mysql&#39; client did not accept a simple RETURN, I had to use CTRL-RETURN to send commands ... strange, but I didn&#39;t attempt to fix that, as we are only interested in the built lib and headers.</p>
+
+<p>At the &#39;mysql&gt;&#39; prompt do a quick check:</p>
+
+<pre><code>  mysql&gt; use mysql
+  mysql&gt; show tables;
+  mysql&gt; select * from db;
+  mysql&gt; exit</code></pre>
+
+<p>You are now ready to build DBD::mysql!</p>
+
+<h3 id="compile-DBD::mysql">compile DBD::mysql</h3>
+
+<p>download and extract DBD-mysql-&lt;version&gt;.tar.gz from CPAN</p>
+
+<p>cd into unpacked dir DBD-mysql-&lt;version&gt; you probably did that already, if you are reading this!</p>
+
+<pre><code>  cp /usr/local/mysql/bin/mysql_config .</code></pre>
+
+<p>This copies the executable script mentioned in the DBD::mysql docs from your just built Cywin/MySQL client directory; it knows about your Cygwin installation, especially about the right libraries to link with.</p>
+
+<pre><code>  perl Makefile.PL --testhost=127.0.0.1</code></pre>
+
+<p>The --testhost=127.0.0.1 parameter again forces a TCP/IP connection to the MySQL server on the local host instead of a pipe/socket connection for the &#39;make test&#39; phase.</p>
+
+<pre><code>  make</code></pre>
+
+<p>This should run without error</p>
+
+<pre><code>  make test
+  make install</code></pre>
+
+<p>This installs DBD::mysql into the Perl hierarchy.</p>
+
+<h1 id="KNOWN-PROBLEMS">KNOWN PROBLEMS</h1>
+
+<h2 id="no-gzip-on-your-system">no gzip on your system</h2>
+
+<p>Some Linux distributions don&#39;t come with a gzip library by default. Running &quot;make&quot; terminates with an error message like</p>
+
+<pre><code>  LD_RUN_PATH=&quot;/usr/lib/mysql:/lib:/usr/lib&quot; gcc
+    -o blib/arch/auto/DBD/mysql/mysql.so  -shared
+    -L/usr/local/lib dbdimp.o mysql.o -L/usr/lib/mysql
+    -lmysqlclient -lm -L/usr/lib/gcc-lib/i386-redhat-linux/2.96
+    -lgcc -lz
+  /usr/bin/ld: cannot find -lz
+  collect2: ld returned 1 exit status
+  make: *** [blib/arch/auto/DBD/mysql/mysql.so] Error 1</code></pre>
+
+<p>If this is the case for you, install an RPM archive like libz-devel, libgz-devel, zlib-devel or gzlib-devel or something similar.</p>
+
+<h2 id="different-compiler-for-mysql-and-perl">different compiler for mysql and perl</h2>
+
+<p>If Perl was compiled with gcc or egcs, but MySQL was compiled with another compiler or on another system, an error message like this is very likely when running &quot;Make test&quot;:</p>
+
+<pre><code>  t/00base............install_driver(mysql) failed: Can&#39;t load
+  &#39;../blib/arch/auto/DBD/mysql/mysql.so&#39; for module DBD::mysql:
+  ../blib/arch/auto/DBD/mysql/mysql.so: undefined symbol: _umoddi3
+  at /usr/local/perl-5.005/lib/5.005/i586-linux-thread/DynaLoader.pm
+  line 168.</code></pre>
+
+<p>This means, that your linker doesn&#39;t include libgcc.a. You have the following options:</p>
+
+<p>The solution is telling the linker to use libgcc. Run</p>
+
+<pre><code>  gcc --print-libgcc-file</code></pre>
+
+<p>to determine the exact location of libgcc.a or for older versions of gcc</p>
+
+<pre><code>  gcc -v</code></pre>
+
+<p>to determine the directory. If you know the directory, add a</p>
+
+<pre><code>  -L&lt;directory&gt; -lgcc</code></pre>
+
+<p>to the list of C compiler flags. <a href="#Configuration">&quot;Configuration&quot;</a>. <a href="#Linker-flags">&quot;Linker flags&quot;</a>.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>Finally, if everything else fails, you are not alone. First of all, for an immediate answer, you should look into the archives of the dbi-users mailing list, which is available at <a href="http://groups.google.com/group/perl.dbi.users?hl=en&amp;lr=">http://groups.google.com/group/perl.dbi.users?hl=en&amp;lr=</a></p>
+
+<p>To subscribe to this list, send and email to</p>
+
+<pre><code>    dbi-users-subscribe@perl.org</code></pre>
+
+<p>If you don&#39;t find an appropriate posting and reply in the mailing list, please post a question. Typically a reply will be seen within one or two days.</p>
+
+
+</body>
+
+</html>
+
+

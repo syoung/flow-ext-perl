@@ -1,0 +1,157 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#preserve_context-original-after-replace-sub-after">preserve_context { original } [after|replace] =&gt; sub { after }</a></li>
+    </ul>
+  </li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENCE">COPYRIGHT AND LICENCE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Context::Preserve - Run code after a subroutine call, preserving the context the subroutine would have seen if it were the last statement in the caller</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.03</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>Have you ever written this?</p>
+
+<pre><code>    my ($result, @result);
+
+    # run a sub in the correct context
+    if(!defined wantarray){
+        some::code();
+    }
+    elsif(wantarray){
+        @result = some::code();
+    }
+    else {
+        $result = some::code();
+    }
+  
+    # do something after some::code
+    $_ += 42 for (@result, $result);
+  
+    # finally return the correct value
+    if(!defined wantarray){
+        return;
+    }
+    elsif(wantarray){
+        return @result;
+    }
+    else {
+        return $result;
+    }</code></pre>
+
+<p>Now you can just write this instead:</p>
+
+<pre><code>  use Context::Preserve;
+
+  return preserve_context { some::code() }
+             after =&gt; sub { $_ += 42 for @_ };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Sometimes you need to call a function, get the results, act on the results, then return the result of the function. This is painful because of contexts; the original function can behave different if it&#39;s called in void, scalar, or list context. You can ignore the various cases and just pick one, but that&#39;s fragile. To do things right, you need to see which case you&#39;re being called in, and then call the function in that context. This results in 3 code paths, which is a pain to type in (and maintain).</p>
+
+<p>This module automates the process. You provide a coderef that is the &quot;original function&quot;, and another coderef to run after the original runs. You can modify the return value (aliased to @_) here, and do whatever else you need to do. <code>wantarray</code> is correct inside both coderefs; in &quot;after&quot;, though, the return value is ignored and the value <code>wantarray</code> returns is related to the context that the original function was called in.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p><code>preserve_context</code></p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="preserve_context-original-after-replace-sub-after">preserve_context { original } [after|replace] =&gt; sub { after }</h2>
+
+<p>Invokes <code>original</code> in the same context as <code>preserve_context</code> was called in, save the results, runs <code>after</code> in the same context, then returns the result of <code>original</code> (or <code>after</code> if <code>replace</code> is used).</p>
+
+<p>If the second argument is <code>after</code>, then you can modify <code>@_</code> to affect the return value. <code>after</code>&#39;s return value is ignored.</p>
+
+<p>If the second argument is <code>replace</code>, then modifying <code>@_</code> doesn&#39;t do anything. The return value of <code>after</code> is returned from <code>preserve_context</code> instead.</p>
+
+<p>Run <code>preserve_context</code> like this:</p>
+
+<pre><code>  sub whatever {
+      ...
+      return preserve_context { orginal_function() }
+                 after =&gt; sub { modify @_          };
+  }
+
+  or
+
+  sub whatever {
+      ...
+      return preserve_context   { orginal_function() }
+                 replace =&gt; sub { return @new_return };
+  }</code></pre>
+
+<p>Note that there&#39;s no comma between the first block and the <code>after =&gt;</code> part. This is how perl parses functions with the <code>(&amp;@)</code> prototype. The alternative is to say:</p>
+
+<pre><code>      preserve_context(sub { original }, after =&gt; sub { after }); </code></pre>
+
+<p>You can pick the one you like, but I think the first version is much prettier.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>Bugs may be submitted through <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Context-Preserve">the RT bug tracker</a> (or <a href="mailto:bug-Context-Preserve@rt.cpan.org">bug-Context-Preserve@rt.cpan.org</a>).</p>
+
+<p>I am also usually active on irc, as &#39;ether&#39; at <code>irc.perl.org</code>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Jonathan Rockway &lt;jrockway@cpan.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Karen Etheridge &lt;ether@cpan.org&gt;</p>
+
+</li>
+<li><p>Jonathan Rockway &lt;jon@jrock.us&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENCE">COPYRIGHT AND LICENCE</h1>
+
+<p>This software is copyright (c) 2008 by Infinity Interactive.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

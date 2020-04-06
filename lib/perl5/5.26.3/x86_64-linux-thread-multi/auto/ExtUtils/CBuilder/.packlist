@@ -1,0 +1,16 @@
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Base.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/Unix.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/VMS.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/Windows.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/Windows/BCC.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/Windows/GCC.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/Windows/MSVC.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/aix.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/android.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/cygwin.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/darwin.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/dec_osf.pm
+/flow/perl/lib/perl5/5.26.3/ExtUtils/CBuilder/Platform/os2.pm
+/flow/perl/man/man3/ExtUtils::CBuilder.3
+/flow/perl/man/man3/ExtUtils::CBuilder::Platform::Windows.3

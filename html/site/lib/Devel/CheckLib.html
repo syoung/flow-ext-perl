@@ -1,0 +1,274 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#USING-IT-IN-Makefile.PL-or-Build.PL">USING IT IN Makefile.PL or Build.PL</a></li>
+  <li><a href="#HOW-IT-WORKS">HOW IT WORKS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#assert_lib">assert_lib</a></li>
+      <li><a href="#check_lib_or_exit">check_lib_or_exit</a></li>
+      <li><a href="#check_lib">check_lib</a></li>
+    </ul>
+  </li>
+  <li><a href="#PLATFORMS-SUPPORTED">PLATFORMS SUPPORTED</a></li>
+  <li><a href="#WARNINGS-BUGS-and-FEEDBACK">WARNINGS, BUGS and FEEDBACK</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT-and-LICENCE">COPYRIGHT and LICENCE</a></li>
+  <li><a href="#CONSPIRACY">CONSPIRACY</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Devel::CheckLib - check that a library is available</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Devel::CheckLib is a perl module that checks whether a particular C library and its headers are available.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Devel::CheckLib;
+
+    check_lib_or_exit( lib =&gt; &#39;jpeg&#39;, header =&gt; &#39;jpeglib.h&#39; );
+    check_lib_or_exit( lib =&gt; [ &#39;iconv&#39;, &#39;jpeg&#39; ] );
+  
+    # or prompt for path to library and then do this:
+    check_lib_or_exit( lib =&gt; &#39;jpeg&#39;, libpath =&gt; $additional_path );</code></pre>
+
+<h1 id="USING-IT-IN-Makefile.PL-or-Build.PL">USING IT IN Makefile.PL or Build.PL</h1>
+
+<p>If you want to use this from Makefile.PL or Build.PL, do not simply copy the module into your distribution as this may cause problems when PAUSE and search.cpan.org index the distro. Instead, use the use-devel-checklib script.</p>
+
+<h1 id="HOW-IT-WORKS">HOW IT WORKS</h1>
+
+<p>You pass named parameters to a function, describing to it how to build and link to the libraries.</p>
+
+<p>It works by trying to compile some code - which defaults to this:</p>
+
+<pre><code>    int main(int argc, char *argv[]) { return 0; }</code></pre>
+
+<p>and linking it to the specified libraries. If something pops out the end which looks executable, it gets executed, and if main() returns 0 we know that it worked. That tiny program is built once for each library that you specify, and (without linking) once for each header file.</p>
+
+<p>If you want to check for the presence of particular functions in a library, or even that those functions return particular results, then you can pass your own function body for main() thus:</p>
+
+<pre><code>    check_lib_or_exit(
+        function =&gt; &#39;foo();if(libversion() &gt; 5) return 0; else return 1;&#39;
+        incpath  =&gt; ...
+        libpath  =&gt; ...
+        lib      =&gt; ...
+        header   =&gt; ...
+    );</code></pre>
+
+<p>In that case, it will fail to build if either foo() or libversion() don&#39;t exist, and main() will return the wrong value if libversion()&#39;s return value isn&#39;t what you want.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>All of these take the same named parameters and are exported by default. To avoid exporting them, <code>use Devel::CheckLib ()</code>.</p>
+
+<h2 id="assert_lib">assert_lib</h2>
+
+<p>This takes several named parameters, all of which are optional, and dies with an error message if any of the libraries listed can not be found. <b>Note</b>: dying in a Makefile.PL or Build.PL may provoke a &#39;FAIL&#39; report from CPAN Testers&#39; automated smoke testers. Use <code>check_lib_or_exit</code> instead.</p>
+
+<p>The named parameters are:</p>
+
+<dl>
+
+<dt id="lib">lib</dt>
+<dd>
+
+<p>Must be either a string with the name of a single library or a reference to an array of strings of library names. Depending on the compiler found, library names will be fed to the compiler either as <code>-l</code> arguments or as <code>.lib</code> file names. (E.g. <code>-ljpeg</code> or <code>jpeg.lib</code>)</p>
+
+</dd>
+<dt id="libpath">libpath</dt>
+<dd>
+
+<p>a string or an array of strings representing additional paths to search for libraries.</p>
+
+</dd>
+<dt id="LIBS">LIBS</dt>
+<dd>
+
+<p>a <code>ExtUtils::MakeMaker</code>-style space-separated list of libraries (each preceded by &#39;-l&#39;) and directories (preceded by &#39;-L&#39;).</p>
+
+<p>This can also be supplied on the command-line.</p>
+
+</dd>
+<dt id="debug">debug</dt>
+<dd>
+
+<p>If true - emit information during processing that can be used for debugging.</p>
+
+</dd>
+</dl>
+
+<p>And libraries are no use without header files, so ...</p>
+
+<dl>
+
+<dt id="header">header</dt>
+<dd>
+
+<p>Must be either a string with the name of a single header file or a reference to an array of strings of header file names.</p>
+
+</dd>
+<dt id="incpath">incpath</dt>
+<dd>
+
+<p>a string or an array of strings representing additional paths to search for headers.</p>
+
+</dd>
+<dt id="INC">INC</dt>
+<dd>
+
+<p>a <code>ExtUtils::MakeMaker</code>-style space-separated list of incpaths, each preceded by &#39;-I&#39;.</p>
+
+<p>This can also be supplied on the command-line.</p>
+
+</dd>
+<dt id="ccflags">ccflags</dt>
+<dd>
+
+<p>Extra flags to pass to the compiler.</p>
+
+</dd>
+<dt id="ldflags">ldflags</dt>
+<dd>
+
+<p>Extra flags to pass to the linker.</p>
+
+</dd>
+<dt id="analyze_binary">analyze_binary</dt>
+<dd>
+
+<p>a callback function that will be invoked in order to perform custom analysis of the generated binary. The callback arguments are the library name and the path to the binary just compiled.</p>
+
+<p>It is possible to use this callback, for instance, to inspect the binary for further dependencies.</p>
+
+</dd>
+<dt id="not_execute">not_execute</dt>
+<dd>
+
+<p>Do not try to execute generated binary. Only check that compilation has not failed.</p>
+
+</dd>
+</dl>
+
+<h2 id="check_lib_or_exit">check_lib_or_exit</h2>
+
+<p>This behaves exactly the same as <code>assert_lib()</code> except that instead of dieing, it warns (with exactly the same error message) and exits. This is intended for use in Makefile.PL / Build.PL when you might want to prompt the user for various paths and things before checking that what they&#39;ve told you is sane.</p>
+
+<p>If any library or header is missing, it exits with an exit value of 0 to avoid causing a CPAN Testers &#39;FAIL&#39; report. CPAN Testers should ignore this result -- which is what you want if an external library dependency is not available.</p>
+
+<h2 id="check_lib">check_lib</h2>
+
+<p>This behaves exactly the same as <code>assert_lib()</code> except that it is silent, returning false instead of dieing, or true otherwise.</p>
+
+<h1 id="PLATFORMS-SUPPORTED">PLATFORMS SUPPORTED</h1>
+
+<p>You must have a C compiler installed. We check for <code>$Config{cc}</code>, both literally as it is in Config.pm and also in the $PATH.</p>
+
+<p>It has been tested with varying degrees of rigorousness on:</p>
+
+<dl>
+
+<dt id="gcc-on-Linux-BSD-Mac-OS-X-Solaris-Cygwin">gcc (on Linux, *BSD, Mac OS X, Solaris, Cygwin)</dt>
+<dd>
+
+</dd>
+<dt id="Suns-compiler-tools-on-Solaris">Sun&#39;s compiler tools on Solaris</dt>
+<dd>
+
+</dd>
+<dt id="IBMs-tools-on-AIX">IBM&#39;s tools on AIX</dt>
+<dd>
+
+</dd>
+<dt id="SGIs-tools-on-Irix-6.5">SGI&#39;s tools on Irix 6.5</dt>
+<dd>
+
+</dd>
+<dt id="Microsofts-tools-on-Windows">Microsoft&#39;s tools on Windows</dt>
+<dd>
+
+</dd>
+<dt id="MinGW-on-Windows-with-Strawberry-Perl">MinGW on Windows (with Strawberry Perl)</dt>
+<dd>
+
+</dd>
+<dt id="Borlands-tools-on-Windows">Borland&#39;s tools on Windows</dt>
+<dd>
+
+</dd>
+<dt id="QNX">QNX</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="WARNINGS-BUGS-and-FEEDBACK">WARNINGS, BUGS and FEEDBACK</h1>
+
+<p>This is a very early release intended primarily for feedback from people who have discussed it. The interface may change and it has not been adequately tested.</p>
+
+<p>Feedback is most welcome, including constructive criticism. Bug reports should be made using <a href="http://rt.cpan.org/">http://rt.cpan.org/</a> or by email.</p>
+
+<p>When submitting a bug report, please include the output from running:</p>
+
+<pre><code>    perl -V
+    perl -MDevel::CheckLib -e0</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a>Devel::CheckOS</a></p>
+
+<p><a>Probe::Perl</a></p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>David Cantrell &lt;david@cantrell.org.uk&gt;</p>
+
+<p>David Golden &lt;dagolden@cpan.org&gt;</p>
+
+<p>Yasuhiro Matsumoto &lt;mattn@cpan.org&gt;</p>
+
+<p>Thanks to the cpan-testers-discuss mailing list for prompting us to write it in the first place;</p>
+
+<p>to Chris Williams for help with Borland support;</p>
+
+<p>to Tony Cook for help with Microsoft compiler command-line options</p>
+
+<h1 id="COPYRIGHT-and-LICENCE">COPYRIGHT and LICENCE</h1>
+
+<p>Copyright 2007 David Cantrell. Portions copyright 2007 David Golden.</p>
+
+<p>This module is free-as-in-speech software, and may be used, distributed, and modified under the same conditions as perl itself.</p>
+
+<h1 id="CONSPIRACY">CONSPIRACY</h1>
+
+<p>This module is also free-as-in-mason software.</p>
+
+
+</body>
+
+</html>
+
+

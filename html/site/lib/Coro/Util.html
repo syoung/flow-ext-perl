@@ -1,0 +1,109 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Util - various utility functions.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::Util;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements various utility functions, mostly replacing perl functions by non-blocking counterparts.</p>
+
+<p>Many of these functions exist for the sole purpose of emulating existing interfaces, no matter how bad or limited they are (e.g. no IPv6 support).</p>
+
+<p>This module is an AnyEvent user. Refer to the <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> documentation to see how to integrate it into your own programs.</p>
+
+<dl>
+
+<dt id="ipn-Coro::Util::inet_aton-hostname-ip">$ipn = Coro::Util::inet_aton $hostname || $ip</dt>
+<dd>
+
+<p>Works almost exactly like its <code>Socket::inet_aton</code> counterpart, except that it does not block other coroutines.</p>
+
+<p>Does not handle multihomed hosts or IPv6 - consider using <code>AnyEvent::Socket::resolve_sockaddr</code> with the <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro.html">Coro</a> rouse functions instead.</p>
+
+</dd>
+<dt id="gethostbyname-gethostbyaddr">gethostbyname, gethostbyaddr</dt>
+<dd>
+
+<p>Work similarly to their Perl counterparts, but do not block. Uses <code>AnyEvent::Util::inet_aton</code> internally.</p>
+
+<p>Does not handle multihomed hosts or IPv6 - consider using <code>AnyEvent::Socket::resolve_sockaddr</code> or <code>AnyEvent::DNS::reverse_lookup</code> with the <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro.html">Coro</a> rouse functions instead.</p>
+
+</dd>
+<dt id="result-Coro::Util::fork_eval-...-args">@result = Coro::Util::fork_eval { ... }, @args</dt>
+<dd>
+
+<p>Executes the given code block or code reference with the given arguments in a separate process, returning the results. The return values must be serialisable with Coro::Storable. It may, of course, block.</p>
+
+<p>Note that using event handling in the sub is not usually a good idea as you will inherit a mixed set of watchers from the parent.</p>
+
+<p>Exceptions will be correctly forwarded to the caller.</p>
+
+<p>This function is useful for pushing cpu-intensive computations into a different process, for example to take advantage of multiple CPU&#39;s. Its also useful if you want to simply run some blocking functions (such as <code>system()</code>) and do not care about the overhead enough to code your own pid watcher etc.</p>
+
+<p>This function might keep a pool of processes in some future version, as fork can be rather slow in large processes.</p>
+
+<p>You should also look at <code>AnyEvent::Util::fork_eval</code>, which is newer and more compatible to totally broken Perl implementations such as the one from ActiveState.</p>
+
+<p>Example: execute some external program (convert image to rgba raw form) and add a long computation (extract the alpha channel) in a separate process, making sure that never more then $NUMCPUS processes are being run.</p>
+
+<pre><code>   my $cpulock = new Coro::Semaphore $NUMCPUS;
+
+   sub do_it {
+      my ($path) = @_;
+
+      my $guard = $cpulock-&gt;guard;
+
+      Coro::Util::fork_eval {
+         open my $fh, &quot;convert -depth 8 \Q$path\E rgba:&quot;
+            or die &quot;$path: $!&quot;;
+
+         local $/;
+         # make my eyes hurt
+         pack &quot;C*&quot;, unpack &quot;(xxxC)*&quot;, &lt;$fh&gt;
+      }
+   }
+
+   my $alphachannel = do_it &quot;/tmp/img.png&quot;;</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

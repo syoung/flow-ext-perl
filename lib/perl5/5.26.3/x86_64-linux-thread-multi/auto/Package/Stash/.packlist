@@ -1,0 +1,7 @@
+/flow/perl/bin/package-stash-conflicts
+/flow/perl/lib/perl5/5.26.3/Package/Stash.pm
+/flow/perl/lib/perl5/5.26.3/Package/Stash/Conflicts.pm
+/flow/perl/lib/perl5/5.26.3/Package/Stash/PP.pm
+/flow/perl/man/man1/package-stash-conflicts.1
+/flow/perl/man/man3/Package::Stash.3
+/flow/perl/man/man3/Package::Stash::PP.3

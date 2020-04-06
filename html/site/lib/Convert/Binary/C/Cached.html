@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#LIMITATIONS">LIMITATIONS</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Convert::Binary::C::Cached - Caching for Convert::Binary::C</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Convert::Binary::C::Cached;
+  use Data::Dumper;
+  
+  #------------------------
+  # Create a cached object
+  #------------------------
+  $c = Convert::Binary::C::Cached-&gt;new(
+         Cache   =&gt; &#39;/tmp/cache.c&#39;,
+         Include =&gt; [
+           &#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include&#39;,
+           &#39;/usr/lib/gcc/i686-pc-linux-gnu/4.5.2/include-fixed&#39;,
+           &#39;/usr/include&#39;,
+         ],
+       );
+  
+  #----------------------------------------------------
+  # Parse &#39;time.h&#39; and dump the definition of timespec
+  #----------------------------------------------------
+  $c-&gt;parse_file(&#39;time.h&#39;);
+  
+  print Dumper($c-&gt;struct(&#39;timespec&#39;));</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Convert::Binary::C::Cached simply adds caching capability to Convert::Binary::C. You can use it in just the same way that you would use Convert::Binary::C. The interface is exactly the same.</p>
+
+<p>To use the caching capability, you must pass the <code>Cache</code> option to the constructor. If you don&#39;t pass it, you will receive an ordinary Convert::Binary::C object. The argument to the <code>Cache</code> option is the file that is used for caching this object.</p>
+
+<p>The caching algorithm automatically detects when the cache file cannot be used and the original code has to be parsed. In that case, the cache file is updated. An update of the cache file can be triggered by one or more of the following factors:</p>
+
+<ul>
+
+<li><p>The cache file doesn&#39;t exist, which is obvious.</p>
+
+</li>
+<li><p>The cache file is corrupt, i.e. cannot be parsed.</p>
+
+</li>
+<li><p>The object&#39;s configuration has changed.</p>
+
+</li>
+<li><p>The embedded code for a <a href="../../../../../../../root/.cpanm/work/1586168065.25505/Convert-Binary-C-0.78/blib/lib/Convert/Binary/C.html#parse"><code>parse</code></a> method call has changed.</p>
+
+</li>
+<li><p>At least one of the files that the object depends on does not exist or has a different size or a different modification or change timestamp.</p>
+
+</li>
+</ul>
+
+<h1 id="LIMITATIONS">LIMITATIONS</h1>
+
+<p>You cannot call <a href="../../../../../../../root/.cpanm/work/1586168065.25505/Convert-Binary-C-0.78/blib/lib/Convert/Binary/C.html#parse"><code>parse</code></a> or <a href="../../../../../../../root/.cpanm/work/1586168065.25505/Convert-Binary-C-0.78/blib/lib/Convert/Binary/C.html#parse_file"><code>parse_file</code></a> more that once when using a Convert::Binary::C::Cached object. This isn&#39;t a big problem, as you usually don&#39;t call them multiple times.</p>
+
+<p>If a dependency file changes, but the change affects neither the size nor the timestamps of that file, the caching algorithm cannot detect that an update is required.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 2002-2015 Marcus Holland-Moritz. All rights reserved. This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>See <a href="../../../../../../../root/.cpanm/work/1586168065.25505/Convert-Binary-C-0.78/blib/lib/Convert/Binary/C.html">Convert::Binary::C</a>.</p>
+
+
+</body>
+
+</html>
+
+

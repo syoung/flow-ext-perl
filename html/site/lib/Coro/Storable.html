@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Storable - offer a more fine-grained Storable interface</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::Storable;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements a few functions from the Storable module in a way so that it cede&#39;s more often. Some applications (such as the Deliantra game server) sometimes need to load large Storable objects without blocking the server for a long time.</p>
+
+<p>This is being implemented by using a perlio layer that feeds only small amounts of data (4096 bytes per call) into Storable, and <code>Coro::cede</code>&#39;ing regularly (at most 100 times per second by default, though).</p>
+
+<p>As Storable is not reentrant, this module also wraps most functions of the Storable module so that only one freeze or thaw is done at any one moment (and recursive invocations are not currently supported).</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<dl>
+
+<dt id="ref-thaw-pst">$ref = thaw $pst</dt>
+<dd>
+
+<p>Retrieve an object from the given $pst, which must have been created with <code>Coro::Storable::freeze</code> or <code>Storable::store_fd</code>/<code>Storable::store</code> (sorry, but Storable uses incompatible formats for disk/mem objects).</p>
+
+<p>This function will cede regularly.</p>
+
+</dd>
+<dt id="pst-freeze-ref">$pst = freeze $ref</dt>
+<dd>
+
+<p>Freeze the given scalar into a Storable object. It uses the same format as <code>Storable::store_fd</code>.</p>
+
+<p>This functino will cede regularly.</p>
+
+</dd>
+<dt id="pst-nfreeze-ref">$pst = nfreeze $ref</dt>
+<dd>
+
+<p>Same as <code>freeze</code> but is compatible to <code>Storable::nstore_fd</code> (note the <code>n</code>).</p>
+
+</dd>
+<dt id="pst-blocking_freeze-ref">$pst = blocking_freeze $ref</dt>
+<dd>
+
+<p>Same as <code>freeze</code> but is guaranteed to block. This is useful e.g. in <code>Coro::Util::fork_eval</code> when you want to serialise a data structure for use with the <code>thaw</code> function for this module. You cannot use <code>Storable::freeze</code> for this as Storable uses incompatible formats for memory and file images, and this module uses file images.</p>
+
+</dd>
+<dt id="pst-blocking_nfreeze-ref">$pst = blocking_nfreeze $ref</dt>
+<dd>
+
+<p>Same as <code>blocking_freeze</code> but uses <code>nfreeze</code> internally.</p>
+
+</dd>
+<dt id="guard-guard">$guard = guard</dt>
+<dd>
+
+<p>Acquire the Storable lock, for when you want to call Storable yourself.</p>
+
+<p>Note that this module already wraps all Storable functions, so there is rarely the need to do this yourself.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

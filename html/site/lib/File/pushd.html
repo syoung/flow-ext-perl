@@ -1,0 +1,197 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#pushd">pushd</a></li>
+      <li><a href="#tempd">tempd</a></li>
+      <li><a href="#preserve">preserve</a></li>
+    </ul>
+  </li>
+  <li><a href="#DIAGNOSTICS">DIAGNOSTICS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a>
+    <ul>
+      <li><a href="#Bugs-Feature-Requests">Bugs / Feature Requests</a></li>
+      <li><a href="#Source-Code">Source Code</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>File::pushd - change directory temporarily for a limited scope</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 1.016</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use File::pushd;
+
+ chdir $ENV{HOME};
+
+ # change directory again for a limited scope
+ {
+     my $dir = pushd( &#39;/tmp&#39; );
+     # working directory changed to /tmp
+ }
+ # working directory has reverted to $ENV{HOME}
+
+ # tempd() is equivalent to pushd( File::Temp::tempdir )
+ {
+     my $dir = tempd();
+ }
+
+ # object stringifies naturally as an absolute path
+ {
+    my $dir = pushd( &#39;/tmp&#39; );
+    my $filename = File::Spec-&gt;catfile( $dir, &quot;somefile.txt&quot; );
+    # gives /tmp/somefile.txt
+ }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>File::pushd does a temporary <code>chdir</code> that is easily and automatically reverted, similar to <code>pushd</code> in some Unix command shells. It works by creating an object that caches the original working directory. When the object is destroyed, the destructor calls <code>chdir</code> to revert to the original working directory. By storing the object in a lexical variable with a limited scope, this happens automatically at the end of the scope.</p>
+
+<p>This is very handy when working with temporary directories for tasks like testing; a function is provided to streamline getting a temporary directory from <a href="../../../lib/perl5/5.26.3/File/Temp.html">File::Temp</a>.</p>
+
+<p>For convenience, the object stringifies as the canonical form of the absolute pathname of the directory entered.</p>
+
+<p><b>Warning</b>: if you create multiple <code>pushd</code> objects in the same lexical scope, their destruction order is not guaranteed and you might not wind up in the directory you expect.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<pre><code> use File::pushd;</code></pre>
+
+<p>Using File::pushd automatically imports the <code>pushd</code> and <code>tempd</code> functions.</p>
+
+<h2 id="pushd">pushd</h2>
+
+<pre><code> {
+     my $dir = pushd( $target_directory );
+ }</code></pre>
+
+<p>Caches the current working directory, calls <code>chdir</code> to change to the target directory, and returns a File::pushd object. When the object is destroyed, the working directory reverts to the original directory.</p>
+
+<p>The provided target directory can be a relative or absolute path. If called with no arguments, it uses the current directory as its target and returns to the current directory when the object is destroyed.</p>
+
+<p>If the target directory does not exist or if the directory change fails for some reason, <code>pushd</code> will die with an error message.</p>
+
+<p>Can be given a hashref as an optional second argument. The only supported option is <code>untaint_pattern</code>, which is used to untaint file paths involved. It defaults to {qr{^(<a>&quot;&quot; in -+@\w.</a>+)$}}, which is reasonably restrictive (e.g. it does not even allow spaces in the path). Change this to suit your circumstances and security needs if running under taint mode. *Note*: you must include the parentheses in the pattern to capture the untainted portion of the path.</p>
+
+<h2 id="tempd">tempd</h2>
+
+<pre><code> {
+     my $dir = tempd();
+ }</code></pre>
+
+<p>This function is like <code>pushd</code> but automatically creates and calls <code>chdir</code> to a temporary directory created by <a href="../../../lib/perl5/5.26.3/File/Temp.html">File::Temp</a>. Unlike normal <a href="../../../lib/perl5/5.26.3/File/Temp.html">File::Temp</a> cleanup which happens at the end of the program, this temporary directory is removed when the object is destroyed. (But also see <code>preserve</code>.) A warning will be issued if the directory cannot be removed.</p>
+
+<p>As with <code>pushd</code>, <code>tempd</code> will die if <code>chdir</code> fails.</p>
+
+<p>It may be given a single options hash that will be passed internally to <code>pushd</code>.</p>
+
+<h2 id="preserve">preserve</h2>
+
+<pre><code> {
+     my $dir = tempd();
+     $dir-&gt;preserve;      # mark to preserve at end of scope
+     $dir-&gt;preserve(0);   # mark to delete at end of scope
+ }</code></pre>
+
+<p>Controls whether a temporary directory will be cleaned up when the object is destroyed. With no arguments, <code>preserve</code> sets the directory to be preserved. With an argument, the directory will be preserved if the argument is true, or marked for cleanup if the argument is false. Only <code>tempd</code> objects may be marked for cleanup. (Target directories to <code>pushd</code> are always preserved.) <code>preserve</code> returns true if the directory will be preserved, and false otherwise.</p>
+
+<h1 id="DIAGNOSTICS">DIAGNOSTICS</h1>
+
+<p><code>pushd</code> and <code>tempd</code> warn with message <code>&quot;Useless use of File::pushd::<i>%s</i> in void context&quot;</code> if called in void context and the warnings category <code>void</code> is enabled.</p>
+
+<pre><code>  {
+    use warnings &#39;void&#39;;
+
+    pushd();
+  }</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a>File::chdir</a></p>
+
+</li>
+</ul>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<h2 id="Bugs-Feature-Requests">Bugs / Feature Requests</h2>
+
+<p>Please report any bugs or feature requests through the issue tracker at <a href="https://github.com/dagolden/File-pushd/issues">https://github.com/dagolden/File-pushd/issues</a>. You will be notified automatically of any progress on your issue.</p>
+
+<h2 id="Source-Code">Source Code</h2>
+
+<p>This is open source software. The code repository is available for public review and contribution under the terms of the license.</p>
+
+<p><a href="https://github.com/dagolden/File-pushd">https://github.com/dagolden/File-pushd</a></p>
+
+<pre><code>  git clone https://github.com/dagolden/File-pushd.git</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>David Golden &lt;dagolden@cpan.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Diab Jerius &lt;djerius@cfa.harvard.edu&gt;</p>
+
+</li>
+<li><p>Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+</li>
+<li><p>Olivier Mengu&eacute; &lt;dolmen@cpan.org&gt;</p>
+
+</li>
+<li><p>Shoichi Kaji &lt;skaji@cpan.org&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is Copyright (c) 2018 by David A Golden.</p>
+
+<p>This is free software, licensed under:</p>
+
+<pre><code>  The Apache License, Version 2.0, January 2004</code></pre>
+
+
+</body>
+
+</html>
+
+

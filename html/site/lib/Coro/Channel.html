@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Channel - message queues</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro;
+
+ $q1 = new Coro::Channel &lt;maxsize&gt;;
+
+ $q1-&gt;put (&quot;xxx&quot;);
+ print $q1-&gt;get;
+
+ die unless $q1-&gt;size;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>A Coro::Channel is the equivalent of a unix pipe (and similar to amiga message ports): you can put things into it on one end and read things out of it from the other end. If the capacity of the Channel is maxed out writers will block. Both ends of a Channel can be read/written from by as many coroutines as you want concurrently.</p>
+
+<p>You don&#39;t have to load <code>Coro::Channel</code> manually, it will be loaded automatically when you <code>use Coro</code> and call the <code>new</code> constructor.</p>
+
+<dl>
+
+<dt id="q-new-Coro:Channel-maxsize">$q = new Coro:Channel $maxsize</dt>
+<dd>
+
+<p>Create a new channel with the given maximum size (practically unlimited if <code>maxsize</code> is omitted or zero). Giving a size of one gives you a traditional channel, i.e. a queue that can store only a single element (which means there will be no buffering, and <code>put</code> will wait until there is a corresponding <code>get</code> call). To buffer one element you have to specify <code>2</code>, and so on.</p>
+
+</dd>
+<dt id="q-put-scalar">$q-&gt;put ($scalar)</dt>
+<dd>
+
+<p>Put the given scalar into the queue.</p>
+
+</dd>
+<dt id="q-get">$q-&gt;get</dt>
+<dd>
+
+<p>Return the next element from the queue, waiting if necessary.</p>
+
+</dd>
+<dt id="q-shutdown">$q-&gt;shutdown</dt>
+<dd>
+
+<p>Shuts down the Channel by pushing a virtual end marker onto it: This changes the behaviour of the Channel when it becomes or is empty to return <code>undef</code>, almost as if infinitely many <code>undef</code> elements had been put into the queue.</p>
+
+<p>Specifically, this function wakes up any pending <code>get</code> calls and lets them return <code>undef</code>, the same on future <code>get</code> calls. <code>size</code> will return the real number of stored elements, though.</p>
+
+<p>Another way to describe the behaviour is that <code>get</code> calls will not block when the queue becomes empty but immediately return <code>undef</code>. This means that calls to <code>put</code> will work normally and the data will be returned on subsequent <code>get</code> calls.</p>
+
+<p>This method is useful to signal the end of data to any consumers, quite similar to an end of stream on e.g. a tcp socket: You have one or more producers that <code>put</code> data into the Channel and one or more consumers who <code>get</code> them. When all producers have finished producing data, a call to <code>shutdown</code> signals this fact to any consumers.</p>
+
+<p>A common implementation uses one or more threads that <code>get</code> from a channel until it returns <code>undef</code>. To clean everything up, first <code>shutdown</code> the channel, then <code>join</code> the threads.</p>
+
+</dd>
+<dt id="q-size">$q-&gt;size</dt>
+<dd>
+
+<p>Return the number of elements waiting to be consumed. Please note that:</p>
+
+<pre><code>  if ($q-&gt;size) {
+     my $data = $q-&gt;get;
+     ...
+  }</code></pre>
+
+<p>is <i>not</i> a race condition but instead works just fine. Note that the number of elements that wait can be larger than <code>$maxsize</code>, as it includes any coroutines waiting to put data into the channel (but not any shutdown condition).</p>
+
+<p>This means that the number returned is <i>precisely</i> the number of calls to <code>get</code> that will succeed instantly and return some data. Calling <code>shutdown</code> has no effect on this number.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

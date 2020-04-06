@@ -1,0 +1,126 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#WARNING">WARNING</a></li>
+  <li><a href="#HOW-TO">HOW TO</a>
+    <ul>
+      <li><a href="#Makefile.PL">Makefile.PL</a></li>
+      <li><a href="#XS">XS</a></li>
+      <li><a href="#API">API</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::MakeMaker - MakeMaker glue for the XS-level Coro API</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>This allows you to control coroutines from C/XS.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>For optimal performance, hook into Coro at the C-level. You&#39;ll need to make changes to your <code>Makefile.PL</code> and add code to your <code>xs</code> / <code>c</code> file(s).</p>
+
+<h1 id="WARNING">WARNING</h1>
+
+<p>When you hook in at the C-level you can get a <i>huge</i> performance gain, but you also reduce the chances that your code will work unmodified with newer versions of <code>perl</code> or <code>Coro</code>. This may or may not be a problem. Just be aware, and set your expectations accordingly.</p>
+
+<h1 id="HOW-TO">HOW TO</h1>
+
+<h2 id="Makefile.PL">Makefile.PL</h2>
+
+<pre><code>  use Coro::MakeMaker qw(coro_args);
+
+  # ... set up %args ...
+
+  WriteMakefile (coro_args (%args));</code></pre>
+
+<h2 id="XS">XS</h2>
+
+<pre><code>  #include &quot;CoroAPI.h&quot;
+
+  BOOT:
+    I_CORO_API (&quot;YourModule&quot;);</code></pre>
+
+<h2 id="API">API</h2>
+
+<p>This is just a small overview - read the Coro/CoroAPI.h header file in the distribution, and check the examples in <i>EV/</i> and <i>Event/*</i>, or as a more real-world example, the Deliantra game server (which uses Coro::MakeMaker).</p>
+
+<p>You can also drop me a mail if you run into any trouble.</p>
+
+<pre><code> #define CORO_TRANSFER(prev,next) /* transfer from prev to next */
+ #define CORO_SCHEDULE            /* like Coro::schedule */
+ #define CORO_CEDE                /* like Coro::cede */
+ #define CORO_CEDE_NOTSELF        /* like Coro::cede_notself */
+ #define CORO_READY(coro)         /* like $coro-&gt;ready */
+ #define CORO_IS_READY(coro)      /* like $coro-&gt;is_ready */
+ #define CORO_NREADY              /* # of procs in ready queue */
+ #define CORO_CURRENT             /* returns $Coro::current */
+ #define CORO_THROW               /* exception pending? */
+ #define CORO_READYHOOK           /* hook for event libs, see Coro::EV */
+
+ /* C-level coroutine struct, opaque, not used much */
+ struct coro;
+
+ /* used for schedule-like-function prepares */
+ struct coro_transfer_args
+ {
+   struct coro *prev, *next;
+ };
+
+ /* this is the per-perl-coro slf frame info */
+ struct CoroSLF
+ {
+   void (*prepare) (pTHX_ struct coro_transfer_args *ta); /* 0 means not yet initialised */
+   int (*check) (pTHX_ struct CoroSLF *frame);
+   void *data; /* for use by prepare/check/destroy */
+   void (*destroy) (pTHX_ struct CoroSLF *frame);
+ };
+
+ /* needs to fill in the *frame */
+ typedef void (*coro_slf_cb) (pTHX_ struct CoroSLF *frame, CV *cv, SV **arg, int items);
+
+ #define CORO_SV_STATE(coro)      /* returns the internal struct coro * */
+ #define CORO_EXECUTE_SLF(cv,init,ax) /* execute a schedule-like function */
+ #define CORO_EXECUTE_SLF_XS(init) /* SLF in XS, see e.g. Coro::EV */
+
+ /* called on enter/leave */
+ typedef void (*coro_enterleave_hook) (pTHX_ void *arg);
+
+ #define CORO_ENTERLEAVE_HOOK(coro,enter,enter_arg,leave,leave_arg)   /* install an XS-level enter/leave hook */
+ #define CORO_ENTERLEAVE_UNHOOK(coro,enter,leave)                     /* remove an XS-level enter/leave hook */
+ #define CORO_ENTERLEAVE_SCOPE_HOOK(enter,enter_arg,leave,leave_arg)  /* install an XS-level enter/leave hook for the corrent scope */</code></pre>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

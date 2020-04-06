@@ -1,0 +1,8 @@
+/flow/perl/lib/perl5/5.26.3/B/Hooks/EndOfScope.pm
+/flow/perl/lib/perl5/5.26.3/B/Hooks/EndOfScope/PP.pm
+/flow/perl/lib/perl5/5.26.3/B/Hooks/EndOfScope/PP/FieldHash.pm
+/flow/perl/lib/perl5/5.26.3/B/Hooks/EndOfScope/PP/HintHash.pm
+/flow/perl/lib/perl5/5.26.3/B/Hooks/EndOfScope/XS.pm
+/flow/perl/man/man3/B::Hooks::EndOfScope.3
+/flow/perl/man/man3/B::Hooks::EndOfScope::PP.3
+/flow/perl/man/man3/B::Hooks::EndOfScope::XS.3

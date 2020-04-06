@@ -1,0 +1,288 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#RUN-AN-EVENT-LOOP---OR-NOT">RUN AN EVENT LOOP - OR NOT?</a></li>
+      <li><a href="#INVERSION-OF-CONTROL">INVERSION OF CONTROL</a></li>
+      <li><a href="#EVENT-MODULES-OTHER-THAN-ANYEVENT">EVENT MODULES OTHER THAN ANYEVENT</a></li>
+    </ul>
+  </li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a></li>
+  <li><a href="#IMPLEMENTATION-DETAILS">IMPLEMENTATION DETAILS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::AnyEvent - integrate threads into AnyEvent</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro;
+ use AnyEvent;
+ # using both Coro and AnyEvent will automatically load Coro::AnyEvent
+
+ # or load it manually for its utility functions:
+ use Coro::AnyEvent;
+
+ Coro::AnyEvent::sleep 5;     # block current thread for 5s
+ Coro::AnyEvent::poll;        # poll for new events once
+ Coro::AnyEvent::idle;        # block until process no longer busy
+ Coro::AnyEvent::idle_upto 5; # same, but only up to 5 seconds
+
+ Coro::AnyEvent::readable $fh, 60
+    or die &quot;fh didn&#39;t become readable within 60 seconds\n&quot;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>When one naively starts to use threads in Perl, one will quickly run into the problem that threads which block on a syscall (sleeping, reading from a socket etc.) will block all threads.</p>
+
+<p>If one then uses an event loop, the problem is that the event loop has no knowledge of threads and will not run them before it polls for new events, again blocking the whole process.</p>
+
+<p>This module integrates threads into any event loop supported by AnyEvent, combining event-based programming with coroutine-based programming in a natural way.</p>
+
+<p>As of Coro 5.21 and newer, this module gets loaded automatically when AnyEvent initialises itself and Coro is used in the same process, thus there is no need to load it manually if you just want your threads to coexist with AnyEvent.</p>
+
+<p>If you want to use any functions from this module, you of course still need to <code>use Coro::AnyEvent</code>, just as with other perl modules.</p>
+
+<p>Also, this module autodetects the event loop used (by relying on <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a>) and will either automatically defer to the high-performance <a>Coro::EV</a> or <a>Coro::Event</a> modules, or will use a generic integration method that should work with any event loop supported by <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a>.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<h2 id="RUN-AN-EVENT-LOOP---OR-NOT">RUN AN EVENT LOOP - OR NOT?</h2>
+
+<p>For performance reasons, it is recommended that the main program or something else run the event loop of the event model you use, i.e.</p>
+
+<pre><code>   use Gtk2; # &lt;- the event model
+   use AnyEvent;
+   use Coro:
+
+   # initialise stuff
+   async { ... };
+
+   # now run mainloop of Gtk2
+   main Gtk2;</code></pre>
+
+<p>You can move the event loop into a thread as well, although this tends to get confusing:</p>
+
+<pre><code>   use Gtk2;
+   use AnyEvent;
+   use Coro:
+
+   async { main Gtk2 };
+
+   # do other things...
+   while () {
+      use Coro::AnyEvent;
+      Coro::AnyEvent::sleep 1;
+      print &quot;ping...\n&quot;;
+   }</code></pre>
+
+<p>You can also do nothing, in which case Coro::AnyEvent will invoke the event loop as needed, which is less efficient, but sometimes very convenient.</p>
+
+<p>What you <i>MUST NOT EVER DO</i> is to block inside an event loop callback. The reason is that most event loops are not reentrant and this can cause a deadlock at best and corrupt memory at worst.</p>
+
+<p>Coro will try to catch you when you block in the event loop (&quot;FATAL: $Coro::IDLE blocked itself&quot;), but this is just best effort and only works when you do not run your own event loop.</p>
+
+<p>To avoid this problem, start a new thread (e.g. with <code>Coro::async_pool</code>) or use <code>Coro::unblock_sub</code> to run blocking tasks.</p>
+
+<h2 id="INVERSION-OF-CONTROL">INVERSION OF CONTROL</h2>
+
+<p>If you need to wait for a single event, the rouse functions will come in handy (see the Coro manpage for details):</p>
+
+<pre><code>   # wait for single SIGINT
+   {
+      my $int_w = AnyEvent-&gt;signal (signal =&gt; &quot;INT&quot;, cb =&gt; Coro::rouse_cb);
+      Coro::rouse_wait;
+   }</code></pre>
+
+<h2 id="EVENT-MODULES-OTHER-THAN-ANYEVENT">EVENT MODULES OTHER THAN ANYEVENT</h2>
+
+<p>Keep in mind that, as shipped, Coro and Coro::AnyEvent only work with AnyEvent, and only when AnyEvent is actually used (i.e. initialised), so this will not work:</p>
+
+<pre><code>   # does not work: EV without AnyEvent is not recognised
+   use EV;
+   use Coro;
+
+   EV::loop;</code></pre>
+
+<p>And neither does this, unless you actually <i>use</i> AnyEvent for something:</p>
+
+<pre><code>   # does not work: AnyEvent must be initialised (e.g. by creating watchers)
+   use EV;
+   use AnyEvent;
+   use Coro;
+
+   EV::loop;</code></pre>
+
+<p>This does work, however, because you create a watcher (condvars work, too), thus forcing AnyEvent to initialise itself:</p>
+
+<pre><code>   # does work: AnyEvent is actually used
+   use EV;
+   use AnyEvent;
+   use Coro;
+
+   my $timer = AE::timer 1, 1, sub { };
+
+   EV::loop;</code></pre>
+
+<p>And if you want to use AnyEvent just to bridge between Coro and your event model of choice, you can simply force it to initialise itself, like this:</p>
+
+<pre><code>   # does work: AnyEvent is initialised manually
+   use POE;
+   use AnyEvent;
+   use Coro;
+
+   AnyEvent::detect; # force AnyEvent to integrate Coro into POE
+   POE::Kernel-&gt;run;</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>Coro::AnyEvent also offers a few functions that might be useful.</p>
+
+<dl>
+
+<dt id="Coro::AnyEvent::poll">Coro::AnyEvent::poll</dt>
+<dd>
+
+<p>This call will block the current thread until the event loop has polled for potential new events and instructs the event loop to poll for new events once, without blocking.</p>
+
+<p>Note that this call will not actually execute the poll, nor will it wait until there are some events, just block until the event loop has polled for new events, so other threads will have a chance to run.</p>
+
+<p>This is useful when you have a thread that does some computations, but you still want to poll for new events from time to time. Simply call <code>poll</code> from time to time:</p>
+
+<pre><code>   my $long_calc = async {
+      for (1..10000) {
+         Coro::AnyEvent::poll;
+         # do some stuff, make sure it takes at least 0.001s or so
+      }
+   }</code></pre>
+
+<p>Although you should also consider <code>idle</code> or <code>idle_upto</code> in such cases.</p>
+
+</dd>
+<dt id="Coro::AnyEvent::sleep-seconds">Coro::AnyEvent::sleep $seconds</dt>
+<dd>
+
+<p>This blocks the current thread for at least the given number of seconds.</p>
+
+</dd>
+<dt id="Coro::AnyEvent::idle">Coro::AnyEvent::idle</dt>
+<dd>
+
+<p>This call is similar to <code>poll</code> in that it will also poll for events. Unlike <code>poll</code>, it will only resume the thread once there are no events to handle anymore, i.e. when the process is otherwise idle.</p>
+
+<p>This is good for background threads that shouldn&#39;t use CPU time when foreground jobs are ready to run.</p>
+
+</dd>
+<dt id="Coro::AnyEvent::idle_upto-seconds">Coro::AnyEvent::idle_upto $seconds</dt>
+<dd>
+
+<p>Like <code>idle</code>, but with a maximum waiting time.</p>
+
+<p>If your process is busy handling events, calling <code>idle</code> can mean that your thread will never be resumed. To avoid this, you can use <code>idle_upto</code> and specify a timeout, after which your thread will be resumed even if the process is completely busy.</p>
+
+</dd>
+<dt id="Coro::AnyEvent::readable-fh_or_fileno-timeout">Coro::AnyEvent::readable $fh_or_fileno[, $timeout]</dt>
+<dd>
+
+</dd>
+<dt id="Coro::AnyEvent::writable-fh_or_fileno-timeout">Coro::AnyEvent::writable $fh_or_fileno[, $timeout]</dt>
+<dd>
+
+<p>Blocks the current thread until the given file handle (or file descriptor) becomes readable (or writable), or the given timeout has elapsed, whichever happens first. No timeout counts as infinite timeout.</p>
+
+<p>Returns true when the file handle became ready, false when a timeout occurred.</p>
+
+<p>Note that these functions are quite inefficient as compared to using a single watcher (they recreate watchers on every invocation) or compared to using Coro::Handle.</p>
+
+<p>Note also that they only work for sources that have reasonable non-blocking behaviour (e.g. not files).</p>
+
+<p>Example: wait until STDIN becomes readable, then quit the program.</p>
+
+<pre><code>   use Coro::AnyEvent;
+   print &quot;press enter to quit...\n&quot;;
+   Coro::AnyEvent::readable *STDIN;
+   exit 0;</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="IMPLEMENTATION-DETAILS">IMPLEMENTATION DETAILS</h1>
+
+<p>Unfortunately, few event loops (basically only <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent/Impl/EV.html">EV</a> and <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent/Impl/Event.html">Event</a>) support the kind of integration required for smooth operations well, and consequently, AnyEvent cannot completely offer the functionality required by this module, so we need to improvise.</p>
+
+<p>Here is what this module does when it has to work with other event loops:</p>
+
+<ul>
+
+<li><p>run ready threads before blocking the process</p>
+
+<p>Each time a thread is put into the ready queue (and there are no other threads in the ready queue), a timer with an <code>after</code> value of <code>0</code> is registered with AnyEvent.</p>
+
+<p>This creates something similar to an <i>idle</i> watcher, i.e. a watcher that keeps the event loop from blocking but still polls for new events. (Unfortunately, some badly designed event loops (e.g. Event::Lib) don&#39;t support a timeout of <code>0</code> and will always block for a bit).</p>
+
+<p>The callback for that timer will <code>cede</code> to other threads of the same or higher priority for as long as such threads exists. This has the effect of running all threads that have work to do until all threads block to wait for external events.</p>
+
+<p>If no threads of equal or higher priority are ready, it will cede to any thread, but only once. This has the effect of running lower-priority threads as well, but it will not keep higher priority threads from receiving new events.</p>
+
+<p>The priority used is simply the priority of the thread that runs the event loop, usually the main program, which usually has a priority of <code>0</code>. Note that Coro::AnyEvent does <i>not</i> run an event loop for you, so unless the main program runs one, there will simply be no event loop to <code>cede</code> to (event handling will still work, somewhat inefficiently, but any thread will have a higher priority than event handling in that case).</p>
+
+</li>
+<li><p>provide a suitable idle callback.</p>
+
+<p>In addition to hooking into <code>ready</code>, this module will also provide a <code>$Coro::idle</code> handler that runs the event loop. It is best not to take advantage of this too often, as this is rather inefficient, but it should work perfectly fine.</p>
+
+</li>
+<li><p>provide overrides for AnyEvent&#39;s condvars</p>
+
+<p>This module installs overrides for AnyEvent&#39;s condvars. That is, when the module is loaded it will provide its own condition variables. This makes them coroutine-safe, i.e. you can safely block on them from within a coroutine.</p>
+
+</li>
+<li><p>lead to data corruption or worse</p>
+
+<p>As <code>unblock_sub</code> cannot be used by this module (as it is the module that implements it, basically), you must not call into the event loop recursively from any coroutine. This is not usually a difficult restriction to live with, just use condvars, <code>unblock_sub</code> or other means of inter-coroutine-communications.</p>
+
+<p>If you use a module that supports AnyEvent (or uses the same event loop as AnyEvent, making it implicitly compatible), and it offers callbacks of any kind, then you must not block in them, either (or use e.g. <code>unblock_sub</code>), see the description of <code>unblock_sub</code> in the <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro.html">Coro</a> module.</p>
+
+<p>This also means that you should load the module as early as possible, as only condvars created after this module has been loaded will work correctly.</p>
+
+</li>
+</ul>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a>, to see which event loops are supported, <a>Coro::EV</a> and <a>Coro::Event</a> for more efficient and more correct solutions (they will be used automatically if applicable).</p>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

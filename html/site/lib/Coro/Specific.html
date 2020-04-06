@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Specific - manage coroutine-specific variables.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::Specific;
+
+ my $ref = new Coro::Specific;
+
+ $$ref = 5;
+ print $$ref;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module can be used to create variables (or better: references to them) that are specific to the currently executing coroutine. This module does not automatically load the Coro module (so the overhead will be small when no coroutines are used).</p>
+
+<p>A much faster method is to store extra keys into <code>%$Coro::current</code> - all you have to do is to make sure that the key is unique (e.g. by prefixing it with your module name). You can even store data there before loading the <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro.html">Coro</a> module - when Coro is loaded, the keys stored in <code>%$Coro::current</code> are automatically attached to the coro thread executing the main program.</p>
+
+<p>You don&#39;t have to load <code>Coro::Specific</code> manually, it will be loaded automatically when you <code>use Coro</code> and call the <code>new</code> constructor.</p>
+
+<dl>
+
+<dt id="new">new</dt>
+<dd>
+
+<p>Create a new coroutine-specific scalar and return a reference to it. The scalar is guaranteed to be &quot;undef&quot;. Once such a scalar has been allocated you cannot deallocate it (yet), so allocate only when you must.</p>
+
+</dd>
+</dl>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>The actual coroutine specific values do not automatically get destroyed when the Coro::Specific object gets destroyed.</p>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

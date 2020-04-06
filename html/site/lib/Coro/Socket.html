@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#IPV6-WARNING">IPV6 WARNING</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Socket - non-blocking socket-I/O</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::Socket;
+
+ # listen on an ipv4 socket
+ my $socket = new Coro::Socket PeerHost =&gt; &quot;localhost&quot;,
+                               PeerPort =&gt; &#39;finger&#39;;
+
+ # listen on any other type of socket
+ my $socket = Coro::Socket-&gt;new_from_fh
+                 (IO::Socket::UNIX-&gt;new
+                     Local  =&gt; &quot;/tmp/socket&quot;,
+                     Type   =&gt; SOCK_STREAM,
+                 );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is an <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> user, you need to make sure that you use and run a supported event loop.</p>
+
+<p>This module implements socket-handles in a coroutine-compatible way, that is, other coroutines can run while reads or writes block on the handle. See <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Handle.html">Coro::Handle</a>, especially the note about prefering method calls.</p>
+
+<h1 id="IPV6-WARNING">IPV6 WARNING</h1>
+
+<p>This module was written to imitate the <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/IO/Socket/INET.html">IO::Socket::INET</a> API, and derive from it. Since IO::Socket::INET does not support IPv6, this module does neither.</p>
+
+<p>Therefore it is not recommended to use Coro::Socket in new code. Instead, use <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent/Socket.html">AnyEvent::Socket</a> and <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Handle.html">Coro::Handle</a>, e.g.:</p>
+
+<pre><code>   use Coro;
+   use Coro::Handle;
+   use AnyEvent::Socket;
+
+   # use tcp_connect from AnyEvent::Socket
+   # and call Coro::Handle::unblock on it.
+
+   tcp_connect &quot;www.google.com&quot;, 80, Coro::rouse_cb;
+   my $fh = unblock +(Coro::rouse_wait)[0];
+
+   # now we have a perfectly thread-safe socket handle in $fh
+   print $fh &quot;GET / HTTP/1.0\015\012\015\012&quot;;
+   local $/;
+   print &lt;$fh&gt;;</code></pre>
+
+<p>Using <code>AnyEvent::Socket::tcp_connect</code> gives you transparent IPv6, multi-homing, SRV-record etc. support.</p>
+
+<p>For listening sockets, use <code>AnyEvent::Socket::tcp_server</code>.</p>
+
+<dl>
+
+<dt id="fh-new-Coro::Socket-param-value">$fh = new Coro::Socket param =&gt; value, ...</dt>
+<dd>
+
+<p>Create a new non-blocking tcp handle and connect to the given host and port. The parameter names and values are mostly the same as for IO::Socket::INET (as ugly as I think they are).</p>
+
+<p>The parameters officially supported currently are: <code>ReuseAddr</code>, <code>LocalPort</code>, <code>LocalHost</code>, <code>PeerPort</code>, <code>PeerHost</code>, <code>Listen</code>, <code>Timeout</code>, <code>SO_RCVBUF</code>, <code>SO_SNDBUF</code>.</p>
+
+<pre><code>   $fh = new Coro::Socket PeerHost =&gt; &quot;localhost&quot;, PeerPort =&gt; &#39;finger&#39;;</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

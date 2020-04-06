@@ -1,0 +1,109 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#ATTRIBUTES">ATTRIBUTES</a>
+    <ul>
+      <li><a href="#type_constraint">type_constraint</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#check-value">check ($value)</a></li>
+      <li><a href="#validate-value-coerced_ref">validate ($value, $coerced_ref?)</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>MooseX::Meta::TypeConstraint::ForceCoercion - Force coercion when validating type constraints</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.01</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use MooseX::Types:::Moose qw/Str Any/;
+    use Moose::Util::TypeConstraints;
+    use MooseX::Meta::TypeConstraint::ForceCoercion;
+
+    # get any type constraint
+    my $tc = Str;
+
+    # declare one or more coercions for it
+    coerce $tc,
+        from Any,
+        via { ... };
+
+    # wrap the $tc to force coercion
+    my $coercing_tc = MooseX::Meta::TypeConstraint::ForceCoercion-&gt;new(
+        type_constraint =&gt; $tc,
+    );
+
+    # check a value against new type constraint. this will run the type
+    # coercions for the wrapped type, even if the value already passes
+    # validation before coercion. it will fail if the value couldn&#39;t be
+    # coerced
+    $coercing_tc-&gt;check(&#39;Affe&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This class allows to wrap any <code>Moose::Meta::TypeConstraint</code> in a way that will force coercion of the value when checking or validating a value against it.</p>
+
+<h1 id="ATTRIBUTES">ATTRIBUTES</h1>
+
+<h2 id="type_constraint">type_constraint</h2>
+
+<p>The type constraint to wrap. All methods except for <code>validate</code> and <code>check</code> are delegated to the value of this attribute.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="check-value">check ($value)</h2>
+
+<p>Same as <code>Moose::Meta::TypeConstraint::check</code>, except it will always try to coerce <code>$value</code> before checking it against the actual type constraint. If coercing fails the check will fail, too.</p>
+
+<h2 id="validate-value-coerced_ref">validate ($value, $coerced_ref?)</h2>
+
+<p>Same as <code>Moose::Meta::TypeConstraint::validate</code>, except it will always try to coerce <code>$value</code> before validating it against the actual type constraint. If coercing fails the validation will fail, too.</p>
+
+<p>If coercion was successful and a <code>$coerced_ref</code> references was passed, the coerced value will be stored in that.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code>  Florian Ragwitz &lt;rafl@debian.org&gt;</code></pre>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2009 by Florian Ragwitz.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as perl itself.</p>
+
+
+</body>
+
+</html>
+
+

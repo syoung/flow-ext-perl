@@ -1,0 +1,837 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#reap">reap</a></li>
+      <li><a href="#localize">localize</a></li>
+      <li><a href="#localize_elem">localize_elem</a></li>
+      <li><a href="#localize_delete">localize_delete</a></li>
+      <li><a href="#unwind">unwind</a></li>
+      <li><a href="#yield">yield</a></li>
+      <li><a href="#leave">leave</a></li>
+      <li><a href="#want_at">want_at</a></li>
+      <li><a href="#context_info">context_info</a></li>
+      <li><a href="#uplevel">uplevel</a></li>
+      <li><a href="#uid">uid</a></li>
+      <li><a href="#validate_uid">validate_uid</a></li>
+    </ul>
+  </li>
+  <li><a href="#CONSTANTS">CONSTANTS</a>
+    <ul>
+      <li><a href="#SU_THREADSAFE">SU_THREADSAFE</a></li>
+    </ul>
+  </li>
+  <li><a href="#WORDS">WORDS</a>
+    <ul>
+      <li><a href="#Constants">Constants</a>
+        <ul>
+          <li><a href="#TOP">TOP</a></li>
+          <li><a href="#HERE">HERE</a></li>
+        </ul>
+      </li>
+      <li><a href="#Getting-a-context-from-a-context">Getting a context from a context</a>
+        <ul>
+          <li><a href="#UP">UP</a></li>
+          <li><a href="#SUB">SUB</a></li>
+          <li><a href="#EVAL">EVAL</a></li>
+        </ul>
+      </li>
+      <li><a href="#Getting-a-context-from-a-level">Getting a context from a level</a>
+        <ul>
+          <li><a href="#SCOPE">SCOPE</a></li>
+          <li><a href="#CALLER">CALLER</a></li>
+        </ul>
+      </li>
+      <li><a href="#Examples">Examples</a></li>
+    </ul>
+  </li>
+  <li><a href="#DIAGNOSTICS">DIAGNOSTICS</a>
+    <ul>
+      <li><a href="#Cannot-target-a-scope-outside-of-the-current-stack">Cannot target a scope outside of the current stack</a></li>
+      <li><a href="#No-targetable-s-scope-in-the-current-stack">No targetable %s scope in the current stack</a></li>
+    </ul>
+  </li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#CAVEATS">CAVEATS</a></li>
+  <li><a href="#DEPENDENCIES">DEPENDENCIES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+  <li><a href="#COPYRIGHT-LICENSE">COPYRIGHT &amp; LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Scope::Upper - Act on upper scopes.</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>Version 0.32</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p><a href="#reap">&quot;reap&quot;</a>, <a href="#localize">&quot;localize&quot;</a>, <a href="#localize_elem">&quot;localize_elem&quot;</a>, <a href="#localize_delete">&quot;localize_delete&quot;</a> and <a href="#WORDS">&quot;WORDS&quot;</a> :</p>
+
+<pre><code>    package Scope;
+
+    use Scope::Upper qw&lt;
+     reap localize localize_elem localize_delete
+     :words
+    &gt;;
+
+    sub new {
+     my ($class, $name) = @_;
+
+     localize &#39;$tag&#39; =&gt; bless({ name =&gt; $name }, $class) =&gt; UP;
+
+     reap { print Scope-&gt;tag-&gt;name, &quot;: end\n&quot; } UP;
+    }
+
+    # Get the tag stored in the caller namespace
+    sub tag {
+     my $l   = 0;
+     my $pkg = __PACKAGE__;
+     $pkg    = caller $l++ while $pkg eq __PACKAGE__;
+
+     no strict &#39;refs&#39;;
+     ${$pkg . &#39;::tag&#39;};
+    }
+
+    sub name { shift-&gt;{name} }
+
+    # Locally capture warnings and reprint them with the name prefixed
+    sub catch {
+     localize_elem &#39;%SIG&#39;, &#39;__WARN__&#39; =&gt; sub {
+      print Scope-&gt;tag-&gt;name, &#39;: &#39;, @_;
+     } =&gt; UP;
+    }
+
+    # Locally clear @INC
+    sub private {
+     for (reverse 0 .. $#INC) {
+      # First UP is the for loop, second is the sub boundary
+      localize_delete &#39;@INC&#39;, $_ =&gt; UP UP;
+     }
+    }
+
+    ...
+
+    package UserLand;
+
+    {
+     Scope-&gt;new(&quot;top&quot;);    # initializes $UserLand::tag
+
+     {
+      Scope-&gt;catch;
+      my $one = 1 + undef; # prints &quot;top: Use of uninitialized value...&quot;
+
+      {
+       Scope-&gt;private;
+       eval { require Cwd };
+       print $@;           # prints &quot;Can&#39;t locate Cwd.pm in @INC
+      }                    #         (@INC contains:) at...&quot;
+
+      require Cwd;         # loads Cwd.pm
+     }
+
+    }                      # prints &quot;top: done&quot;</code></pre>
+
+<p><a href="#unwind">&quot;unwind&quot;</a> and <a href="#want_at">&quot;want_at&quot;</a> :</p>
+
+<pre><code>    package Try;
+
+    use Scope::Upper qw&lt;unwind want_at :words&gt;;
+
+    sub try (&amp;) {
+     my @result = shift-&gt;();
+     my $cx = SUB UP; # Point to the sub above this one
+     unwind +(want_at($cx) ? @result : scalar @result) =&gt; $cx;
+    }
+
+    ...
+
+    sub zap {
+     try {
+      my @things = qw&lt;a b c&gt;;
+      return @things; # returns to try() and then outside zap()
+      # not reached
+     };
+     # not reached
+    }
+
+    my @stuff = zap(); # @stuff contains qw&lt;a b c&gt;
+    my $stuff = zap(); # $stuff contains 3</code></pre>
+
+<p><a href="#uplevel">&quot;uplevel&quot;</a> :</p>
+
+<pre><code>    package Uplevel;
+
+    use Scope::Upper qw&lt;uplevel CALLER&gt;;
+
+    sub target {
+     faker(@_);
+    }
+
+    sub faker {
+     uplevel {
+      my $sub = (caller 0)[3];
+      print &quot;$_[0] from $sub()&quot;;
+     } @_ =&gt; CALLER(1);
+    }
+
+    target(&#39;hello&#39;); # &quot;hello from Uplevel::target()&quot;</code></pre>
+
+<p><a href="#uid">&quot;uid&quot;</a> and <a href="#validate_uid">&quot;validate_uid&quot;</a> :</p>
+
+<pre><code>    use Scope::Upper qw&lt;uid validate_uid&gt;;
+
+    my $uid;
+
+    {
+     $uid = uid();
+     {
+      if ($uid eq uid(UP)) { # yes
+       ...
+      }
+      if (validate_uid($uid)) { # yes
+       ...
+      }
+     }
+    }
+
+    if (validate_uid($uid)) { # no
+     ...
+    }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module lets you defer actions <i>at run-time</i> that will take place when the control flow returns into an upper scope. Currently, you can:</p>
+
+<ul>
+
+<li><p>hook an upper scope end with <a href="#reap">&quot;reap&quot;</a> ;</p>
+
+</li>
+<li><p>localize variables, array/hash values or deletions of elements in higher contexts with respectively <a href="#localize">&quot;localize&quot;</a>, <a href="#localize_elem">&quot;localize_elem&quot;</a> and <a href="#localize_delete">&quot;localize_delete&quot;</a> ;</p>
+
+</li>
+<li><p>return values immediately to an upper level with <a href="#unwind">&quot;unwind&quot;</a>, <a href="#yield">&quot;yield&quot;</a> and <a href="#leave">&quot;leave&quot;</a> ;</p>
+
+</li>
+<li><p>gather information about an upper context with <a href="#want_at">&quot;want_at&quot;</a> and <a href="#context_info">&quot;context_info&quot;</a> ;</p>
+
+</li>
+<li><p>execute a subroutine in the setting of an upper subroutine stack frame with <a href="#uplevel">&quot;uplevel&quot;</a> ;</p>
+
+</li>
+<li><p>uniquely identify contexts with <a href="#uid">&quot;uid&quot;</a> and <a href="#validate_uid">&quot;validate_uid&quot;</a>.</p>
+
+</li>
+</ul>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>In all those functions, <code>$context</code> refers to the target scope.</p>
+
+<p>You have to use one or a combination of <a href="#WORDS">&quot;WORDS&quot;</a> to build the <code>$context</code> passed to these functions. This is needed in order to ensure that the module still works when your program is ran in the debugger. The only thing you can assume is that it is an <i>absolute</i> indicator of the frame, which means that you can safely store it at some point and use it when needed, and it will still denote the original scope.</p>
+
+<h2 id="reap"><code>reap</code></h2>
+
+<pre><code>    reap { ... };
+    reap { ... } $context;
+    &amp;reap($callback, $context);</code></pre>
+
+<p>Adds a destructor that calls <code>$callback</code> (in void context) when the upper scope represented by <code>$context</code> ends.</p>
+
+<h2 id="localize"><code>localize</code></h2>
+
+<pre><code>    localize $what, $value;
+    localize $what, $value, $context;</code></pre>
+
+<p>Introduces a <code>local</code> delayed to the time of first return into the upper scope denoted by <code>$context</code>. <code>$what</code> can be :</p>
+
+<ul>
+
+<li><p>A glob, in which case <code>$value</code> can either be a glob or a reference. <a href="#localize">&quot;localize&quot;</a> follows then the same syntax as <code>local *x = $value</code>. For example, if <code>$value</code> is a scalar reference, then the <code>SCALAR</code> slot of the glob will be set to <code>$$value</code> - just like <code>local *x = \1</code> sets <code>$x</code> to <code>1</code>.</p>
+
+</li>
+<li><p>A string beginning with a sigil, representing the symbol to localize and to assign to. If the sigil is <code>&#39;$&#39;</code>, <a href="#localize">&quot;localize&quot;</a> follows the same syntax as <code>local $x = $value</code>, i.e. <code>$value</code> isn&#39;t dereferenced. For example,</p>
+
+<pre><code>    localize &#39;$x&#39;, \&#39;foo&#39; =&gt; HERE;</code></pre>
+
+<p>will set <code>$x</code> to a reference to the string <code>&#39;foo&#39;</code>. Other sigils (<code>&#39;@&#39;</code>, <code>&#39;%&#39;</code>, <code>&#39;&amp;&#39;</code> and <code>&#39;*&#39;</code>) require <code>$value</code> to be a reference of the corresponding type.</p>
+
+<p>When the symbol is given by a string, it is resolved when the actual localization takes place and not when <a href="#localize">&quot;localize&quot;</a> is called. Thus, if the symbol name is not qualified, it will refer to the variable in the package where the localization actually takes place and not in the one where the <a href="#localize">&quot;localize&quot;</a> call was compiled. For example,</p>
+
+<pre><code>    {
+     package Scope;
+     sub new { localize &#39;$tag&#39;, $_[0] =&gt; UP }
+    }
+
+    {
+     package Tool;
+     {
+      Scope-&gt;new;
+      ...
+     }
+    }</code></pre>
+
+<p>will localize <code>$Tool::tag</code> and not <code>$Scope::tag</code>. If you want the other behaviour, you just have to specify <code>$what</code> as a glob or a qualified name.</p>
+
+<p>Note that if <code>$what</code> is a string denoting a variable that wasn&#39;t declared beforehand, the relevant slot will be vivified as needed and won&#39;t be deleted from the glob when the localization ends. This situation never arises with <code>local</code> because it only compiles when the localized variable is already declared. Although I believe it shouldn&#39;t be a problem as glob slots definedness is pretty much an implementation detail, this behaviour may change in the future if proved harmful.</p>
+
+</li>
+</ul>
+
+<h2 id="localize_elem"><code>localize_elem</code></h2>
+
+<pre><code>    localize_elem $what, $key, $value;
+    localize_elem $what, $key, $value, $context;</code></pre>
+
+<p>Introduces a <code>local $what[$key] = $value</code> or <code>local $what{$key} = $value</code> delayed to the time of first return into the upper scope denoted by <code>$context</code>. Unlike <a href="#localize">&quot;localize&quot;</a>, <code>$what</code> must be a string and the type of localization is inferred from its sigil. The two only valid types are array and hash ; for anything besides those, <a href="#localize_elem">&quot;localize_elem&quot;</a> will throw an exception. <code>$key</code> is either an array index or a hash key, depending of which kind of variable you localize.</p>
+
+<p>If <code>$what</code> is a string pointing to an undeclared variable, the variable will be vivified as soon as the localization occurs and emptied when it ends, although it will still exist in its glob.</p>
+
+<h2 id="localize_delete"><code>localize_delete</code></h2>
+
+<pre><code>    localize_delete $what, $key;
+    localize_delete $what, $key, $context;</code></pre>
+
+<p>Introduces the deletion of a variable or an array/hash element delayed to the time of first return into the upper scope denoted by <code>$context</code>. <code>$what</code> can be:</p>
+
+<ul>
+
+<li><p>A glob, in which case <code>$key</code> is ignored and the call is equivalent to <code>local *x</code>.</p>
+
+</li>
+<li><p>A string beginning with <code>&#39;@&#39;</code> or <code>&#39;%&#39;</code>, for which the call is equivalent to respectively <code>local $a[$key]; delete $a[$key]</code> and <code>local $h{$key}; delete $h{$key}</code>.</p>
+
+</li>
+<li><p>A string beginning with <code>&#39;&amp;&#39;</code>, which more or less does <code>undef &amp;func</code> in the upper scope. It&#39;s actually more powerful, as <code>&amp;func</code> won&#39;t even <code>exists</code> anymore. <code>$key</code> is ignored.</p>
+
+</li>
+</ul>
+
+<h2 id="unwind"><code>unwind</code></h2>
+
+<pre><code>    unwind;
+    unwind @values, $context;</code></pre>
+
+<p>Returns <code>@values</code> <i>from</i> the subroutine, eval or format context pointed by or just above <code>$context</code>, and immediately restarts the program flow at this point - thus effectively returning <code>@values</code> to an upper scope. If <code>@values</code> is empty, then the <code>$context</code> parameter is optional and defaults to the current context (making the call equivalent to a bare <code>return;</code>) ; otherwise it is mandatory.</p>
+
+<p>The upper context isn&#39;t coerced onto <code>@values</code>, which is hence always evaluated in list context. This means that</p>
+
+<pre><code>    my $num = sub {
+     my @a = (&#39;a&#39; .. &#39;z&#39;);
+     unwind @a =&gt; HERE;
+     # not reached
+    }-&gt;();</code></pre>
+
+<p>will set <code>$num</code> to <code>&#39;z&#39;</code>. You can use <a href="#want_at">&quot;want_at&quot;</a> to handle these cases.</p>
+
+<h2 id="yield"><code>yield</code></h2>
+
+<pre><code>    yield;
+    yield @values, $context;</code></pre>
+
+<p>Returns <code>@values</code> <i>from</i> the context pointed by or just above <code>$context</code>, and immediately restarts the program flow at this point. If <code>@values</code> is empty, then the <code>$context</code> parameter is optional and defaults to the current context ; otherwise it is mandatory.</p>
+
+<p><a href="#yield">&quot;yield&quot;</a> differs from <a href="#unwind">&quot;unwind&quot;</a> in that it can target <i>any</i> upper scope (besides a <code>s///e</code> substitution context) and not necessarily a sub, an eval or a format. Hence you can use it to return values from a <code>do</code> or a <code>map</code> block :</p>
+
+<pre><code>    my $now = do {
+     local $@;
+     eval { require Time::HiRes } or yield time() =&gt; HERE;
+     Time::HiRes::time();
+    };
+
+    my @uniq = map {
+     yield if $seen{$_}++; # returns the empty list from the block
+     ...
+    } @things;</code></pre>
+
+<p>Like for <a href="#unwind">&quot;unwind&quot;</a>, the upper context isn&#39;t coerced onto <code>@values</code>. You can use the fifth value returned by <a href="#context_info">&quot;context_info&quot;</a> to handle context coercion.</p>
+
+<h2 id="leave"><code>leave</code></h2>
+
+<pre><code>    leave;
+    leave @values;</code></pre>
+
+<p>Immediately returns <code>@values</code> from the current block, whatever it may be (besides a <code>s///e</code> substitution context). <code>leave</code> is actually a synonym for <code>yield HERE</code>, while <code>leave @values</code> is a synonym for <code>yield @values, HERE</code>.</p>
+
+<p>Like for <a href="#yield">&quot;yield&quot;</a>, you can use the fifth value returned by <a href="#context_info">&quot;context_info&quot;</a> to handle context coercion.</p>
+
+<h2 id="want_at"><code>want_at</code></h2>
+
+<pre><code>    my $want = want_at;
+    my $want = want_at $context;</code></pre>
+
+<p>Like <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#wantarray">&quot;wantarray&quot; in perlfunc</a>, but for the subroutine, eval or format context located at or just above <code>$context</code>.</p>
+
+<p>It can be used to revise the example showed in <a href="#unwind">&quot;unwind&quot;</a> :</p>
+
+<pre><code>    my $num = sub {
+     my @a = (&#39;a&#39; .. &#39;z&#39;);
+     unwind +(want_at(HERE) ? @a : scalar @a) =&gt; HERE;
+     # not reached
+    }-&gt;();</code></pre>
+
+<p>will rightfully set <code>$num</code> to <code>26</code>.</p>
+
+<h2 id="context_info"><code>context_info</code></h2>
+
+<pre><code>    my ($package, $filename, $line, $subroutine, $hasargs,
+        $wantarray, $evaltext, $is_require, $hints, $bitmask,
+        $hinthash) = context_info $context;</code></pre>
+
+<p>Gives information about the context denoted by <code>$context</code>, akin to what <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#caller">&quot;caller&quot; in perlfunc</a> provides but not limited only to subroutine, eval and format contexts. When <code>$context</code> is omitted, it defaults to the current context.</p>
+
+<p>The returned values are, in order :</p>
+
+<ul>
+
+<li><p><i>(index 0)</i> : the namespace in use when the context was created ;</p>
+
+</li>
+<li><p><i>(index 1)</i> : the name of the file at the point where the context was created ;</p>
+
+</li>
+<li><p><i>(index 2)</i> : the line number at the point where the context was created ;</p>
+
+</li>
+<li><p><i>(index 3)</i> : the name of the subroutine called for this context, or <code>undef</code> if this is not a subroutine context ;</p>
+
+</li>
+<li><p><i>(index 4)</i> : a boolean indicating whether a new instance of <code>@_</code> was set up for this context, or <code>undef</code> if this is not a subroutine context ;</p>
+
+</li>
+<li><p><i>(index 5)</i> : the context (in the sense of <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#wantarray">&quot;wantarray&quot; in perlfunc</a>) in which the context (in our sense) is executed ;</p>
+
+</li>
+<li><p><i>(index 6)</i> : the contents of the string being compiled for this context, or <code>undef</code> if this is not an eval context ;</p>
+
+</li>
+<li><p><i>(index 7)</i> : a boolean indicating whether this eval context was created by <code>require</code>, or <code>undef</code> if this is not an eval context ;</p>
+
+</li>
+<li><p><i>(index 8)</i> : the value of the lexical hints in use when the context was created ;</p>
+
+</li>
+<li><p><i>(index 9)</i> : a bit string representing the warnings in use when the context was created ;</p>
+
+</li>
+<li><p><i>(index 10)</i> : a reference to the lexical hints hash in use when the context was created (only on perl 5.10 or greater).</p>
+
+</li>
+</ul>
+
+<h2 id="uplevel"><code>uplevel</code></h2>
+
+<pre><code>    my @ret = uplevel { ...; return @ret };
+    my @ret = uplevel { my @args = @_; ...; return @ret } @args, $context;
+    my @ret = &amp;uplevel($callback, @args, $context);</code></pre>
+
+<p>Executes the code reference <code>$callback</code> with arguments <code>@args</code> as if it were located at the subroutine stack frame pointed by <code>$context</code>, effectively fooling <code>caller</code> and <code>die</code> into believing that the call actually happened higher in the stack. The code is executed in the context of the <code>uplevel</code> call, and what it returns is returned as-is by <code>uplevel</code>.</p>
+
+<pre><code>    sub target {
+     faker(@_);
+    }
+
+    sub faker {
+     uplevel {
+      map { 1 / $_ } @_;
+     } @_ =&gt; CALLER(1);
+    }
+
+    my @inverses = target(1, 2, 4); # @inverses contains (0, 0.5, 0.25)
+    my $count    = target(1, 2, 4); # $count is 3</code></pre>
+
+<p>Note that if <code>@args</code> is empty, then the <code>$context</code> parameter is optional and defaults to the current context ; otherwise it is mandatory.</p>
+
+<p><a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a> also implements a pure-Perl version of <code>uplevel</code>. Both are identical, with the following caveats :</p>
+
+<ul>
+
+<li><p>The <a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a> implementation of <code>uplevel</code> may execute a code reference in the context of <b>any</b> upper stack frame. The <a href="../../../../../root/.cpanm/work/1586168485.3970/Scope-Upper-0.32/blib/lib/Scope/Upper.html">Scope::Upper</a> version can only uplevel to a <b>subroutine</b> stack frame, and will croak if you try to target an <code>eval</code> or a format.</p>
+
+</li>
+<li><p>Exceptions thrown from the code called by this version of <code>uplevel</code> will not be caught by <code>eval</code> blocks between the target frame and the uplevel call, while they will for <a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a>&#39;s version. This means that :</p>
+
+<pre><code>    eval {
+     sub {
+      local $@;
+      eval {
+       sub {
+        uplevel { die &#39;wut&#39; } CALLER(2); # for Scope::Upper
+        # uplevel(3, sub { die &#39;wut&#39; })  # for Sub::Uplevel
+       }-&gt;();
+      };
+      print &quot;inner block: $@&quot;;
+      $@ and exit;
+     }-&gt;();
+    };
+    print &quot;outer block: $@&quot;;</code></pre>
+
+<p>will print &quot;inner block: wut...&quot; with <a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a> and &quot;outer block: wut...&quot; with <a href="../../../../../root/.cpanm/work/1586168485.3970/Scope-Upper-0.32/blib/lib/Scope/Upper.html">Scope::Upper</a>.</p>
+
+</li>
+<li><p><a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a> globally overrides the Perl keyword <code>caller</code>, while <a href="../../../../../root/.cpanm/work/1586168485.3970/Scope-Upper-0.32/blib/lib/Scope/Upper.html">Scope::Upper</a> does not.</p>
+
+</li>
+</ul>
+
+<p>A simple wrapper lets you mimic the interface of <a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html#uplevel">&quot;uplevel&quot; in Sub::Uplevel</a> :</p>
+
+<pre><code>    use Scope::Upper;
+
+    sub uplevel {
+     my $frame = shift;
+     my $code  = shift;
+     my $cxt   = Scope::Upper::CALLER($frame);
+     &amp;Scope::Upper::uplevel($code =&gt; @_ =&gt; $cxt);
+    }</code></pre>
+
+<p>Albeit the three exceptions listed above, it passes all the tests of <a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a>.</p>
+
+<h2 id="uid"><code>uid</code></h2>
+
+<pre><code>    my $uid = uid;
+    my $uid = uid $context;</code></pre>
+
+<p>Returns an unique identifier (UID) for the context (or dynamic scope) pointed by <code>$context</code>, or for the current context if <code>$context</code> is omitted. This UID will only be valid for the life time of the context it represents, and another UID will be generated next time the same scope is executed.</p>
+
+<pre><code>    my $uid;
+
+    {
+     $uid = uid;
+     if ($uid eq uid()) { # yes, this is the same context
+      ...
+     }
+     {
+      if ($uid eq uid()) { # no, we are one scope below
+       ...
+      }
+      if ($uid eq uid(UP)) { # yes, UP points to the same scope as $uid
+       ...
+      }
+     }
+    }
+
+    # $uid is now invalid
+
+    {
+     if ($uid eq uid()) { # no, this is another block
+      ...
+     }
+    }</code></pre>
+
+<p>For example, each loop iteration gets its own UID :</p>
+
+<pre><code>    my %uids;
+
+    for (1 .. 5) {
+     my $uid = uid;
+     $uids{$uid} = $_;
+    }
+
+    # %uids has 5 entries</code></pre>
+
+<p>The UIDs are not guaranteed to be numbers, so you must use the <code>eq</code> operator to compare them.</p>
+
+<p>To check whether a given UID is valid, you can use the <a href="#validate_uid">&quot;validate_uid&quot;</a> function.</p>
+
+<h2 id="validate_uid"><code>validate_uid</code></h2>
+
+<pre><code>    my $is_valid = validate_uid $uid;</code></pre>
+
+<p>Returns true if and only if <code>$uid</code> is the UID of a currently valid context (that is, it designates a scope that is higher than the current one in the call stack).</p>
+
+<pre><code>    my $uid;
+
+    {
+     $uid = uid();
+     if (validate_uid($uid)) { # yes
+      ...
+     }
+     {
+      if (validate_uid($uid)) { # yes
+       ...
+      }
+     }
+    }
+
+    if (validate_uid($uid)) { # no
+     ...
+    }</code></pre>
+
+<h1 id="CONSTANTS">CONSTANTS</h1>
+
+<h2 id="SU_THREADSAFE"><code>SU_THREADSAFE</code></h2>
+
+<p>True iff the module could have been built when thread-safety features.</p>
+
+<h1 id="WORDS">WORDS</h1>
+
+<h2 id="Constants">Constants</h2>
+
+<h3 id="TOP"><code>TOP</code></h3>
+
+<pre><code>    my $top_context = TOP;</code></pre>
+
+<p>Returns the context that currently represents the highest scope.</p>
+
+<h3 id="HERE"><code>HERE</code></h3>
+
+<pre><code>    my $current_context = HERE;</code></pre>
+
+<p>The context of the current scope.</p>
+
+<h2 id="Getting-a-context-from-a-context">Getting a context from a context</h2>
+
+<p>For any of those functions, <code>$from</code> is expected to be a context. When omitted, it defaults to the current context.</p>
+
+<h3 id="UP"><code>UP</code></h3>
+
+<pre><code>    my $upper_context = UP;
+    my $upper_context = UP $from;</code></pre>
+
+<p>The context of the scope just above <code>$from</code>. If <code>$from</code> points to the top-level scope in the current stack, then a warning is emitted and <code>$from</code> is returned (see <a href="#DIAGNOSTICS">&quot;DIAGNOSTICS&quot;</a> for details).</p>
+
+<h3 id="SUB"><code>SUB</code></h3>
+
+<pre><code>    my $sub_context = SUB;
+    my $sub_context = SUB $from;</code></pre>
+
+<p>The context of the closest subroutine above <code>$from</code>. If <code>$from</code> already designates a subroutine context, then it is returned as-is ; hence <code>SUB SUB == SUB</code>. If no subroutine context is present in the call stack, then a warning is emitted and the current context is returned (see <a href="#DIAGNOSTICS">&quot;DIAGNOSTICS&quot;</a> for details).</p>
+
+<h3 id="EVAL"><code>EVAL</code></h3>
+
+<pre><code>    my $eval_context = EVAL;
+    my $eval_context = EVAL $from;</code></pre>
+
+<p>The context of the closest eval above <code>$from</code>. If <code>$from</code> already designates an eval context, then it is returned as-is ; hence <code>EVAL EVAL == EVAL</code>. If no eval context is present in the call stack, then a warning is emitted and the current context is returned (see <a href="#DIAGNOSTICS">&quot;DIAGNOSTICS&quot;</a> for details).</p>
+
+<h2 id="Getting-a-context-from-a-level">Getting a context from a level</h2>
+
+<p>Here, <code>$level</code> should denote a number of scopes above the current one. When omitted, it defaults to <code>0</code> and those functions return the same context as <a href="#HERE">&quot;HERE&quot;</a>.</p>
+
+<h3 id="SCOPE"><code>SCOPE</code></h3>
+
+<pre><code>    my $context = SCOPE;
+    my $context = SCOPE $level;</code></pre>
+
+<p>The <code>$level</code>-th upper context, regardless of its type. If <code>$level</code> points above the top-level scope in the current stack, then a warning is emitted and the top-level context is returned (see <a href="#DIAGNOSTICS">&quot;DIAGNOSTICS&quot;</a> for details).</p>
+
+<h3 id="CALLER"><code>CALLER</code></h3>
+
+<pre><code>    my $context = CALLER;
+    my $context = CALLER $level;</code></pre>
+
+<p>The context of the <code>$level</code>-th upper subroutine/eval/format. It kind of corresponds to the context represented by <code>caller $level</code>, but while e.g. <code>caller 0</code> refers to the caller context, <code>CALLER 0</code> will refer to the top scope in the current context. If <code>$level</code> points above the top-level scope in the current stack, then a warning is emitted and the top-level context is returned (see <a href="#DIAGNOSTICS">&quot;DIAGNOSTICS&quot;</a> for details).</p>
+
+<h2 id="Examples">Examples</h2>
+
+<p>Where <a href="#reap">&quot;reap&quot;</a> fires depending on the <code>$cxt</code> :</p>
+
+<pre><code>    sub {
+     eval {
+      sub {
+       {
+        reap \&amp;cleanup =&gt; $cxt;
+        ...
+       }     # $cxt = SCOPE(0) = HERE
+       ...
+      }-&gt;(); # $cxt = SCOPE(1) = UP = SUB = CALLER(0)
+      ...
+     };      # $cxt = SCOPE(2) = UP UP =  UP SUB = EVAL = CALLER(1)
+     ...
+    }-&gt;();   # $cxt = SCOPE(3) = SUB UP SUB = SUB EVAL = CALLER(2)
+    ...</code></pre>
+
+<p>Where <a href="#localize">&quot;localize&quot;</a>, <a href="#localize_elem">&quot;localize_elem&quot;</a> and <a href="#localize_delete">&quot;localize_delete&quot;</a> act depending on the <code>$cxt</code> :</p>
+
+<pre><code>    sub {
+     eval {
+      sub {
+       {
+        localize &#39;$x&#39; =&gt; 1 =&gt; $cxt;
+        # $cxt = SCOPE(0) = HERE
+        ...
+       }
+       # $cxt = SCOPE(1) = UP = SUB = CALLER(0)
+       ...
+      }-&gt;();
+      # $cxt = SCOPE(2) = UP UP = UP SUB = EVAL = CALLER(1)
+      ...
+     };
+     # $cxt = SCOPE(3) = SUB UP SUB = SUB EVAL = CALLER(2)
+     ...
+    }-&gt;();
+    # $cxt = SCOPE(4), UP SUB UP SUB = UP SUB EVAL = UP CALLER(2) = TOP
+    ...</code></pre>
+
+<p>Where <a href="#unwind">&quot;unwind&quot;</a>, <a href="#yield">&quot;yield&quot;</a>, <a href="#want_at">&quot;want_at&quot;</a>, <a href="#context_info">&quot;context_info&quot;</a> and <a href="#uplevel">&quot;uplevel&quot;</a> point to depending on the <code>$cxt</code>:</p>
+
+<pre><code>    sub {
+     eval {
+      sub {
+       {
+        unwind @things =&gt; $cxt;   # or yield @things =&gt; $cxt
+                                  # or uplevel { ... } $cxt
+        ...
+       }
+       ...
+      }-&gt;(); # $cxt = SCOPE(0) = SCOPE(1) = HERE = UP = SUB = CALLER(0)
+      ...
+     };      # $cxt = SCOPE(2) = UP UP = UP SUB = EVAL = CALLER(1) (*)
+     ...
+    }-&gt;();   # $cxt = SCOPE(3) = SUB UP SUB = SUB EVAL = CALLER(2)
+    ...
+
+    # (*) Note that uplevel() will croak if you pass that scope frame,
+    #     because it cannot target eval scopes.</code></pre>
+
+<h1 id="DIAGNOSTICS">DIAGNOSTICS</h1>
+
+<h2 id="Cannot-target-a-scope-outside-of-the-current-stack"><code>Cannot target a scope outside of the current stack</code></h2>
+
+<p>This warning is emitted when <a href="#UP">&quot;UP&quot;</a>, <a href="#SCOPE">&quot;SCOPE&quot;</a> or <a href="#CALLER">&quot;CALLER&quot;</a> end up pointing to a context that is above the top-level context of the current stack. It indicates that you tried to go higher than the main scope, or to point across a <code>DESTROY</code> method, a signal handler, an overloaded or tied method call, a <code>require</code> statement or a <code>sort</code> callback. In this case, the resulting context is the highest reachable one.</p>
+
+<h2 id="No-targetable-s-scope-in-the-current-stack"><code>No targetable %s scope in the current stack</code></h2>
+
+<p>This warning is emitted when you ask for an <a href="#EVAL">&quot;EVAL&quot;</a> or <a href="#SUB">&quot;SUB&quot;</a> context and no such scope can be found in the call stack. The resulting context is the current one.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>The functions <a href="#reap">&quot;reap&quot;</a>, <a href="#localize">&quot;localize&quot;</a>, <a href="#localize_elem">&quot;localize_elem&quot;</a>, <a href="#localize_delete">&quot;localize_delete&quot;</a>, <a href="#unwind">&quot;unwind&quot;</a>, <a href="#yield">&quot;yield&quot;</a>, <a href="#leave">&quot;leave&quot;</a>, <a href="#want_at">&quot;want_at&quot;</a>, <a href="#context_info">&quot;context_info&quot;</a> and <a href="#uplevel">&quot;uplevel&quot;</a> are only exported on request, either individually or by the tags <code>&#39;:funcs&#39;</code> and <code>&#39;:all&#39;</code>.</p>
+
+<p>The constant <a href="#SU_THREADSAFE">&quot;SU_THREADSAFE&quot;</a> is also only exported on request, individually or by the tags <code>&#39;:consts&#39;</code> and <code>&#39;:all&#39;</code>.</p>
+
+<p>Same goes for the words <a href="#TOP">&quot;TOP&quot;</a>, <a href="#HERE">&quot;HERE&quot;</a>, <a href="#UP">&quot;UP&quot;</a>, <a href="#SUB">&quot;SUB&quot;</a>, <a href="#EVAL">&quot;EVAL&quot;</a>, <a href="#SCOPE">&quot;SCOPE&quot;</a> and <a href="#CALLER">&quot;CALLER&quot;</a> that are only exported on request, individually or by the tags <code>&#39;:words&#39;</code> and <code>&#39;:all&#39;</code>.</p>
+
+<h1 id="CAVEATS">CAVEATS</h1>
+
+<p>It is not possible to act upon a scope that belongs to another perl &#39;stack&#39;, i.e. to target a scope across a <code>DESTROY</code> method, a signal handler, an overloaded or tied method call, a <code>require</code> statement or a <code>sort</code> callback.</p>
+
+<p>Be careful that local variables are restored in the reverse order in which they were localized. Consider those examples:</p>
+
+<pre><code>    local $x = 0;
+    {
+     reap sub { print $x } =&gt; HERE;
+     local $x = 1;
+     ...
+    }
+    # prints &#39;0&#39;
+    ...
+    {
+     local $x = 1;
+     reap sub { $x = 2 } =&gt; HERE;
+     ...
+    }
+    # $x is 0</code></pre>
+
+<p>The first case is &quot;solved&quot; by moving the <code>local</code> before the <code>reap</code>, and the second by using <a href="#localize">&quot;localize&quot;</a> instead of <a href="#reap">&quot;reap&quot;</a>.</p>
+
+<p>The effects of <a href="#reap">&quot;reap&quot;</a>, <a href="#localize">&quot;localize&quot;</a> and <a href="#localize_elem">&quot;localize_elem&quot;</a> can&#39;t cross <code>BEGIN</code> blocks, hence calling those functions in <code>import</code> is deemed to be useless. This is an hopeless case because <code>BEGIN</code> blocks are executed once while localizing constructs should do their job at each run. However, it&#39;s possible to hook the end of the current scope compilation with <a href="../../../lib/perl5/5.26.3/B/Hooks/EndOfScope.html">B::Hooks::EndOfScope</a>.</p>
+
+<p>Some rare oddities may still happen when running inside the debugger. It may help to use a perl higher than 5.8.9 or 5.10.0, as they contain some context-related fixes.</p>
+
+<p>Calling <code>goto</code> to replace an <a href="#uplevel">&quot;uplevel&quot;</a>&#39;d code frame does not work :</p>
+
+<ul>
+
+<li><p>for a <code>perl</code> older than the 5.8 series ;</p>
+
+</li>
+<li><p>for a <code>DEBUGGING</code> <code>perl</code> run with debugging flags set (as in <code>perl -D ...</code>) ;</p>
+
+</li>
+<li><p>when the runloop callback is replaced by another module.</p>
+
+</li>
+</ul>
+
+<p>In those three cases, <a href="#uplevel">&quot;uplevel&quot;</a> will look for a <code>goto &amp;sub</code> statement in its callback and, if there is one, throw an exception before executing the code.</p>
+
+<p>Moreover, in order to handle <code>goto</code> statements properly, <a href="#uplevel">&quot;uplevel&quot;</a> currently has to suffer a run-time overhead proportional to the size of the callback in every case (with a small ratio), and proportional to the size of <b>all</b> the code executed as the result of the <a href="#uplevel">&quot;uplevel&quot;</a> call (including subroutine calls inside the callback) when a <code>goto</code> statement is found in the <a href="#uplevel">&quot;uplevel&quot;</a> callback. Despite this shortcoming, this XS version of <a href="#uplevel">&quot;uplevel&quot;</a> should still run way faster than the pure-Perl version from <a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a>.</p>
+
+<p>Starting from <code>perl</code> 5.19.4, it is unfortunately no longer possible to reliably throw exceptions from <a href="#uplevel">&quot;uplevel&quot;</a>&#39;d code while the debugger is in use. This may be solved in a future version depending on how the core evolves.</p>
+
+<h1 id="DEPENDENCIES">DEPENDENCIES</h1>
+
+<p><a href="../../../lib/perl5/5.26.3/pod/perl.html">perl</a> 5.6.1.</p>
+
+<p>A C compiler. This module may happen to build with a C++ compiler as well, but don&#39;t rely on it, as no guarantee is made in this regard.</p>
+
+<p><a href="../../../lib/perl5/5.26.3/XSLoader.html">XSLoader</a> (core since perl 5.6.0).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#local">&quot;local&quot; in perlfunc</a>, <a href="../../../lib/perl5/5.26.3/pod/perlsub.html#Temporary-Values-via-local">&quot;Temporary Values via local()&quot; in perlsub</a>.</p>
+
+<p><a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Encode/Alias.html">Alias</a>, <a>Hook::Scope</a>, <a href="../../../lib/perl5/5.26.3/Scope/Guard.html">Scope::Guard</a>, <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Guard.html">Guard</a>.</p>
+
+<p><a href="../../../lib/perl5/5.26.3/Sub/Uplevel.html">Sub::Uplevel</a>.</p>
+
+<p><a>Continuation::Escape</a> is a thin wrapper around <a href="../../../../../root/.cpanm/work/1586168485.3970/Scope-Upper-0.32/blib/lib/Scope/Upper.html">Scope::Upper</a> that gives you a continuation passing style interface to <a href="#unwind">&quot;unwind&quot;</a>. It&#39;s easier to use, but it requires you to have control over the scope where you want to return.</p>
+
+<p><a>Scope::Escape</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Vincent Pit <code>&lt;vpit at cpan.org&gt;</code>.</p>
+
+<p>You can contact me by mail or on <code>irc.perl.org</code> (vincent).</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Please report any bugs or feature requests to <code>bug-scope-upper at rt.cpan.org</code>, or through the web interface at <a href="http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Scope-Upper">http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Scope-Upper</a>. I will be notified, and then you&#39;ll automatically be notified of progress on your bug as I make changes.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>You can find documentation for this module with the perldoc command.</p>
+
+<pre><code>    perldoc Scope::Upper</code></pre>
+
+<h1 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h1>
+
+<p>Inspired by Ricardo Signes.</p>
+
+<p>The reimplementation of a large part of this module for perl 5.24 was provided by David Mitchell. His work was sponsored by the Perl 5 Core Maintenance Grant from The Perl Foundation.</p>
+
+<p>Thanks to Shawn M. Moore for motivation.</p>
+
+<h1 id="COPYRIGHT-LICENSE">COPYRIGHT &amp; LICENSE</h1>
+
+<p>Copyright 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019 Vincent Pit, all rights reserved.</p>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,273 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#RATIONALE">RATIONALE</a></li>
+  <li><a href="#FEATURES">FEATURES</a></li>
+  <li><a href="#ADVANCED-CONFIGURATION">ADVANCED CONFIGURATION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#COPYRIGHT-LICENSE">COPYRIGHT &amp; LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Method::Signatures::Simple - Basic method declarations with signatures, without source filters</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 1.07</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    # -- a basic class -- #
+    package User;
+    use Method::Signatures::Simple;
+
+    method new ($class: $name, $email) {
+        my $user = {
+            id    =&gt; new_id(42),
+            name  =&gt; $name,
+            email =&gt; $email,
+        };
+        bless $user, $class;
+    }
+
+    func new_id ($seed) {
+        state $id = $seed;
+        $id++;
+    }
+
+    method name  { $self-&gt;{name};  }
+    method email { $self-&gt;{email}; }
+    1;
+
+
+    # -- other features -- #
+    # attributes
+    method foo : lvalue { $self-&gt;{foo} }
+
+    # change invocant name
+    use Method::Signatures::Simple invocant =&gt; &#39;$this&#39;;
+    method foo ($bar) { $this-&gt;bar($bar) }
+    method bar ($class: $bar) { $class-&gt;baz($bar) }
+
+    # use a different function keyword
+    use Method::Signatures::Simple function_keyword =&gt; &#39;fun&#39;;
+    fun triple ($num) { 3 * $num }
+
+    # use a different method keyword
+    use Method::Signatures::Simple method_keyword =&gt; &#39;action&#39;;
+    action foo { $self-&gt;bar }</code></pre>
+
+<h1 id="RATIONALE">RATIONALE</h1>
+
+<p>This module provides basic <code>method</code> and <code>func</code> keywords with simple signatures. It&#39;s intentionally simple, and is supposed to be a stepping stone for its bigger brothers <a>MooseX::Method::Signatures</a> and <a href="../../../../lib/perl5/site_perl/5.26.3/Method/Signatures.html">Method::Signatures</a>. It only has a small benefit over regular subs, so if you want more features, look at those modules. But if you&#39;re looking for a small amount of syntactic sugar, this might just be enough.</p>
+
+<h1 id="FEATURES">FEATURES</h1>
+
+<ul>
+
+<li><p>invocant</p>
+
+<p>The <code>method</code> keyword automatically injects the annoying <code>my $self = shift;</code> for you. You can rename the invocant with the first argument, followed by a colon:</p>
+
+<pre><code>    method ($this:) {}
+    method ($this: $that) {}</code></pre>
+
+<p>The <code>func</code> keyword doesn&#39;t inject an invocant, but does do the signature processing below:</p>
+
+<pre><code>    func ($that) {}</code></pre>
+
+</li>
+<li><p>signature</p>
+
+<p>The signature <code>($sig)</code> is transformed into <code>&quot;my ($sig) = \@_;&quot;</code>. That way, we mimic perl&#39;s usual argument handling.</p>
+
+<pre><code>    method foo ($bar, $baz, %opts) {
+    func xyzzy ($plugh, @zorkmid) {
+
+    # becomes
+
+    sub foo {
+        my $self = shift;
+        my ($bar, $baz, %opts) = @_;
+
+    sub xyzzy {
+        my ($plugh, @zorkmid) = @_;</code></pre>
+
+</li>
+</ul>
+
+<h1 id="ADVANCED-CONFIGURATION">ADVANCED CONFIGURATION</h1>
+
+<p>Since this module subclasses <a>Devel::Declare::MethodInstaller::Simple</a>, you can change the keywords and the default invocant with import arguments. These changes affect the current scope.</p>
+
+<ul>
+
+<li><p>change the invocant name</p>
+
+<pre><code>    use Method::Signatures::Simple invocant =&gt; &#39;$this&#39;;
+    method x { $this-&gt;{x} }
+    method y { $this-&gt;{y} }
+
+    # and this of course still works:
+    method z ($self:) { $self-&gt;{z} }</code></pre>
+
+</li>
+<li><p>change the keywords</p>
+
+<p>You can install a different keyword (instead of the default &#39;method&#39; and &#39;func&#39;), by passing names to the <code>use</code> line:</p>
+
+<pre><code>    use Method::Signatures::Simple method_keyword   =&gt; &#39;action&#39;,
+                                   function_keyword =&gt; &#39;thing&#39;;
+
+    action foo ($some, $args) { ... }
+    thing bar ($whatever) { ... }</code></pre>
+
+<p>One benefit of this is that you can use this module together with e.g. <a>MooseX::Declare</a>:</p>
+
+<pre><code>    # untested
+    use MooseX::Declare;
+
+    class Foo {
+        use Method::Signatures::Simple method_keyword =&gt; &#39;routine&#39;;
+        method x (Int $x) { ... }    # from MooseX::Method::Signatures
+        routine y ($y) { ... }       # from this module
+    }</code></pre>
+
+<p>If you specify neither <code>method_keyword</code> nor <code>function_keyword</code>, then we default to injecting <code>method</code> and <code>func</code>. If you only specify one of these options, then we only inject that one keyword into your scope.</p>
+
+<p>Examples:</p>
+
+<pre><code>    # injects &#39;method&#39; and &#39;func&#39;
+    use Method::Signatures::Simple;
+
+    # only injects &#39;action&#39;
+    use Method::Signatures::Simple method_keyword =&gt; &#39;action&#39;;
+
+    # only injects &#39;procedure&#39;
+    use Method::Signatures::Simple function_keyword =&gt; &#39;procedure&#39;;
+
+    # injects &#39;action&#39; and &#39;function&#39;
+    use Method::Signatures::Simple method_keyword   =&gt; &#39;action&#39;,
+                                   function_keyword =&gt; &#39;function&#39;;</code></pre>
+
+</li>
+<li><p>install several keywords</p>
+
+<p>You&#39;re not limited to a single <code>use</code> line, so you can install several keywords with the same semantics as &#39;method&#39; into the current scope:</p>
+
+<pre><code>    use Method::Signatures::Simple; # provides &#39;method&#39; and &#39;func&#39;
+    use Method::Signatures::Simple method_keyword =&gt; &#39;action&#39;;
+
+    method x { ... }
+    func y { ... }
+    action z { ... }</code></pre>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Rhesa Rozendaal, <code>&lt;rhesa at cpan.org&gt;</code></p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Please report any bugs or feature requests to <code>bug-method-signatures-simple at rt.cpan.org</code>, or through the web interface at <a href="http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Method-Signatures-Simple">http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Method-Signatures-Simple</a>. I will be notified, and then you&#39;ll automatically be notified of progress on your bug as I make changes.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>You can find documentation for this module with the perldoc command.</p>
+
+<pre><code>    perldoc Method::Signatures::Simple</code></pre>
+
+<p>You can also look for information at:</p>
+
+<ul>
+
+<li><p>RT: CPAN&#39;s request tracker</p>
+
+<p><a href="http://rt.cpan.org/NoAuth/Bugs.html?Dist=Method-Signatures-Simple">http://rt.cpan.org/NoAuth/Bugs.html?Dist=Method-Signatures-Simple</a></p>
+
+</li>
+<li><p>AnnoCPAN: Annotated CPAN documentation</p>
+
+<p><a href="http://annocpan.org/dist/Method-Signatures-Simple">http://annocpan.org/dist/Method-Signatures-Simple</a></p>
+
+</li>
+<li><p>CPAN Ratings</p>
+
+<p><a href="http://cpanratings.perl.org/d/Method-Signatures-Simple">http://cpanratings.perl.org/d/Method-Signatures-Simple</a></p>
+
+</li>
+<li><p>Search CPAN</p>
+
+<p><a href="http://search.cpan.org/dist/Method-Signatures-Simple">http://search.cpan.org/dist/Method-Signatures-Simple</a></p>
+
+</li>
+</ul>
+
+<h1 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h1>
+
+<ul>
+
+<li><p>MSTROUT</p>
+
+<p>For writing <a href="../../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Devel/Declare.html">Devel::Declare</a> and providing the core concepts.</p>
+
+</li>
+<li><p>MSCHWERN</p>
+
+<p>For writing <a href="../../../../lib/perl5/site_perl/5.26.3/Method/Signatures.html">Method::Signatures</a> and publishing about it. This is what got my attention.</p>
+
+</li>
+<li><p>FLORA</p>
+
+<p>For helping me abstracting the Devel::Declare bits and suggesting improvements.</p>
+
+</li>
+<li><p>CHIPS</p>
+
+<p>For suggesting we add a &#39;func&#39; keyword.</p>
+
+</li>
+</ul>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Devel/Declare.html">Devel::Declare</a>, <a href="../../../../lib/perl5/site_perl/5.26.3/Method/Signatures.html">Method::Signatures</a>, <a>MooseX::Method::Signatures</a>.</p>
+
+<h1 id="COPYRIGHT-LICENSE">COPYRIGHT &amp; LICENSE</h1>
+
+<p>Copyright 2011 Rhesa Rozendaal, all rights reserved.</p>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

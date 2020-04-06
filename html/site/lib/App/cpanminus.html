@@ -1,0 +1,305 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#INSTALLATION">INSTALLATION</a>
+    <ul>
+      <li><a href="#Package-management-system">Package management system</a></li>
+      <li><a href="#Installing-to-system-perl">Installing to system perl</a></li>
+      <li><a href="#Installing-to-local-perl-perlbrew-plenv-etc">Installing to local perl (perlbrew, plenv etc.)</a></li>
+      <li><a href="#Downloading-the-standalone-executable">Downloading the standalone executable</a></li>
+      <li><a href="#Troubleshoot:-HTTPS-warnings">Troubleshoot: HTTPS warnings</a></li>
+    </ul>
+  </li>
+  <li><a href="#DEPENDENCIES">DEPENDENCIES</a></li>
+  <li><a href="#QUESTIONS">QUESTIONS</a>
+    <ul>
+      <li><a href="#How-does-cpanm-get-parse-update-the-CPAN-index">How does cpanm get/parse/update the CPAN index?</a></li>
+      <li><a href="#Where-does-this-install-modules-to-Do-I-need-root-access">Where does this install modules to? Do I need root access?</a></li>
+      <li><a href="#cpanminus-cant-install-the-module-XYZ.-Is-it-a-bug">cpanminus can&#39;t install the module XYZ. Is it a bug?</a></li>
+      <li><a href="#Does-cpanm-support-the-feature-XYZ-of-CPAN-and-CPANPLUS">Does cpanm support the feature XYZ of CPAN and CPANPLUS?</a></li>
+    </ul>
+  </li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+  <li><a href="#CREDITS">CREDITS</a>
+    <ul>
+      <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+      <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+    </ul>
+  </li>
+  <li><a href="#COMMUNITY">COMMUNITY</a></li>
+  <li><a href="#NO-WARRANTY">NO WARRANTY</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::cpanminus - get, unpack, build and install modules from CPAN</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    cpanm Module</code></pre>
+
+<p>Run <code>cpanm -h</code> or <code>perldoc cpanm</code> for more options.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>cpanminus is a script to get, unpack, build and install modules from CPAN and does nothing else.</p>
+
+<p>It&#39;s dependency free (can bootstrap itself), requires zero configuration, and stands alone. When running, it requires only 10MB of RAM.</p>
+
+<h1 id="INSTALLATION">INSTALLATION</h1>
+
+<p>There are several ways to install cpanminus to your system.</p>
+
+<h2 id="Package-management-system">Package management system</h2>
+
+<p>There are Debian packages, RPMs, FreeBSD ports, and packages for other operation systems available. If you want to use the package management system, search for cpanminus and use the appropriate command to install. This makes it easy to install <code>cpanm</code> to your system without thinking about where to install, and later upgrade.</p>
+
+<h2 id="Installing-to-system-perl">Installing to system perl</h2>
+
+<p>You can also use the latest cpanminus to install cpanminus itself:</p>
+
+<pre><code>    curl -L https://cpanmin.us | perl - --sudo App::cpanminus</code></pre>
+
+<p>This will install <code>cpanm</code> to your bin directory like <code>/usr/local/bin</code> and you&#39;ll need the <code>--sudo</code> option to write to the directory, unless you configured <code>INSTALL_BASE</code> with <a>local::lib</a>.</p>
+
+<h2 id="Installing-to-local-perl-perlbrew-plenv-etc">Installing to local perl (perlbrew, plenv etc.)</h2>
+
+<p>If you have perl in your home directory, which is the case if you use tools like <a>perlbrew</a> or plenv, you don&#39;t need the <code>--sudo</code> option, since you&#39;re most likely to have a write permission to the perl&#39;s library path. You can just do:</p>
+
+<pre><code>    curl -L https://cpanmin.us | perl - App::cpanminus</code></pre>
+
+<p>to install the <code>cpanm</code> executable to the perl&#39;s bin path, like <code>~/perl5/perlbrew/bin/cpanm</code>.</p>
+
+<h2 id="Downloading-the-standalone-executable">Downloading the standalone executable</h2>
+
+<p>You can also copy the standalone executable to whatever location you&#39;d like.</p>
+
+<pre><code>    cd ~/bin
+    curl -L https://cpanmin.us/ -o cpanm
+    chmod +x cpanm</code></pre>
+
+<p>This just works, but be sure to grab the new version manually when you upgrade because <code>--self-upgrade</code> might not work with this installation setup.</p>
+
+<h2 id="Troubleshoot:-HTTPS-warnings">Troubleshoot: HTTPS warnings</h2>
+
+<p>When you run <code>curl</code> commands above, you may encounter SSL handshake errors or certification warnings. This is due to your HTTP client (curl) being old, or SSL certificates installed on your system needs to be updated.</p>
+
+<p>You&#39;re recommended to update the software or system if you can. If that is impossible or difficult, use the <code>-k</code> option with curl or an alternative URL, <code>https://git.io/cpanm</code></p>
+
+<h1 id="DEPENDENCIES">DEPENDENCIES</h1>
+
+<p>perl 5.8.1 or later.</p>
+
+<ul>
+
+<li><p>&#39;tar&#39; executable (bsdtar or GNU tar version 1.22 are recommended) or Archive::Tar to unpack files.</p>
+
+</li>
+<li><p>C compiler, if you want to build XS modules.</p>
+
+</li>
+<li><p>make</p>
+
+</li>
+<li><p>Module::Build (core in 5.10)</p>
+
+</li>
+</ul>
+
+<h1 id="QUESTIONS">QUESTIONS</h1>
+
+<h2 id="How-does-cpanm-get-parse-update-the-CPAN-index">How does cpanm get/parse/update the CPAN index?</h2>
+
+<p>It queries the CPAN Meta DB site at <a href="http://cpanmetadb.plackperl.org/">http://cpanmetadb.plackperl.org/</a>. The site is updated at least every hour to reflect the latest changes from fast syncing mirrors. The script then also falls back to query the module at <a href="http://metacpan.org/">http://metacpan.org/</a> using its search API.</p>
+
+<p>Upon calling these API hosts, cpanm (1.6004 or later) will send the local perl versions to the server in User-Agent string by default. You can turn it off with <code>--no-report-perl-version</code> option. Read more about the option with <a href="../../../../../root/.cpanm/work/1586167840.24036/App-cpanminus-1.7044/blib/script/cpanm.html">cpanm</a>, and read more about the privacy policy about this data collection at <a href="http://cpanmetadb.plackperl.org/#privacy">http://cpanmetadb.plackperl.org/#privacy</a></p>
+
+<p>Fetched files are unpacked in <code>~/.cpanm</code> and automatically cleaned up periodically. You can configure the location of this with the <code>PERL_CPANM_HOME</code> environment variable.</p>
+
+<h2 id="Where-does-this-install-modules-to-Do-I-need-root-access">Where does this install modules to? Do I need root access?</h2>
+
+<p>It installs to wherever ExtUtils::MakeMaker and Module::Build are configured to (via <code>PERL_MM_OPT</code> and <code>PERL_MB_OPT</code>).</p>
+
+<p>By default, it installs to the site_perl directory that belongs to your perl. You can see the locations for that by running <code>perl -V</code> and it will be likely something under <code>/opt/local/perl/...</code> if you&#39;re using system perl, or under your home directory if you have built perl yourself using perlbrew or plenv.</p>
+
+<p>If you&#39;ve already configured local::lib on your shell, cpanm respects that settings and modules will be installed to your local perl5 directory.</p>
+
+<p>At a boot time, cpanminus checks whether you have already configured local::lib, or have a permission to install modules to the site_perl directory. If neither, i.e. you&#39;re using system perl and do not run cpanm as a root, it automatically sets up local::lib compatible installation path in a <code>perl5</code> directory under your home directory.</p>
+
+<p>To avoid this, run <code>cpanm</code> either as a root user, with <code>--sudo</code> option, or with <code>--local-lib</code> option.</p>
+
+<h2 id="cpanminus-cant-install-the-module-XYZ.-Is-it-a-bug">cpanminus can&#39;t install the module XYZ. Is it a bug?</h2>
+
+<p>It is more likely a problem with the distribution itself. cpanminus doesn&#39;t support or may have issues with distributions such as follows:</p>
+
+<ul>
+
+<li><p>Tests that require input from STDIN.</p>
+
+</li>
+<li><p>Build.PL or Makefile.PL that prompts for input even when <code>PERL_MM_USE_DEFAULT</code> is enabled.</p>
+
+</li>
+<li><p>Modules that have invalid numeric values as VERSION (such as <code>1.1a</code>)</p>
+
+</li>
+</ul>
+
+<p>These failures can be reported back to the author of the module so that they can fix it accordingly, rather than to cpanminus.</p>
+
+<h2 id="Does-cpanm-support-the-feature-XYZ-of-CPAN-and-CPANPLUS">Does cpanm support the feature XYZ of <a href="../../../lib/perl5/5.26.3/CPAN.html">CPAN</a> and <a>CPANPLUS</a>?</h2>
+
+<p>Most likely not. Here are the things that cpanm doesn&#39;t do by itself.</p>
+
+<p>If you need these features, use <a href="../../../lib/perl5/5.26.3/CPAN.html">CPAN</a>, <a>CPANPLUS</a> or the standalone tools that are mentioned.</p>
+
+<ul>
+
+<li><p>CPAN testers reporting. See <a>App::cpanminus::reporter</a></p>
+
+</li>
+<li><p>Building RPM packages from CPAN modules</p>
+
+</li>
+<li><p>Listing the outdated modules that needs upgrading. See <a>App::cpanoutdated</a></p>
+
+</li>
+<li><p>Showing the changes of the modules you&#39;re about to upgrade. See <a>cpan-listchanges</a></p>
+
+</li>
+<li><p>Patching CPAN modules with distroprefs.</p>
+
+</li>
+</ul>
+
+<p>See <a href="../../../../../root/.cpanm/work/1586167840.24036/App-cpanminus-1.7044/blib/script/cpanm.html">cpanm</a> or <code>cpanm -h</code> to see what cpanminus <i>can</i> do :)</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2010- Tatsuhiko Miyagawa</p>
+
+<p>The standalone executable contains the following modules embedded.</p>
+
+<dl>
+
+<dt id="CPAN::DistnameInfo-Copyright-2003-Graham-Barr"><a>CPAN::DistnameInfo</a> Copyright 2003 Graham Barr</dt>
+<dd>
+
+</dd>
+<dt id="local::lib-Copyright-2007-2009-Matt-S-Trout"><a>local::lib</a> Copyright 2007-2009 Matt S Trout</dt>
+<dd>
+
+</dd>
+<dt id="HTTP::Tiny-Copyright-2011-Christian-Hansen"><a href="../../../lib/perl5/5.26.3/HTTP/Tiny.html">HTTP::Tiny</a> Copyright 2011 Christian Hansen</dt>
+<dd>
+
+</dd>
+<dt id="Module::Metadata-Copyright-2001-2006-Ken-Williams.-2010-Matt-S-Trout"><a href="../../../lib/perl5/5.26.3/Module/Metadata.html">Module::Metadata</a> Copyright 2001-2006 Ken Williams. 2010 Matt S Trout</dt>
+<dd>
+
+</dd>
+<dt id="version-Copyright-2004-2010-John-Peacock"><a href="../../../lib/perl5/5.26.3/version.html">version</a> Copyright 2004-2010 John Peacock</dt>
+<dd>
+
+</dd>
+<dt id="JSON::PP-Copyright-2007-2011-by-Makamaka-Hannyaharamitu"><a href="../../../lib/perl5/5.26.3/JSON/PP.html">JSON::PP</a> Copyright 2007-2011 by Makamaka Hannyaharamitu</dt>
+<dd>
+
+</dd>
+<dt id="CPAN::Meta-CPAN::Meta::Requirements-Copyright-c-2010-by-David-Golden-and-Ricardo-Signes"><a href="../../../lib/perl5/5.26.3/CPAN/Meta.html">CPAN::Meta</a>, <a href="../../../lib/perl5/5.26.3/CPAN/Meta/Requirements.html">CPAN::Meta::Requirements</a> Copyright (c) 2010 by David Golden and Ricardo Signes</dt>
+<dd>
+
+</dd>
+<dt id="CPAN::Meta::YAML-Copyright-2010-Adam-Kennedy"><a href="../../../lib/perl5/5.26.3/CPAN/Meta/YAML.html">CPAN::Meta::YAML</a> Copyright 2010 Adam Kennedy</dt>
+<dd>
+
+</dd>
+<dt id="CPAN::Meta::Check-Copyright-c-2012-by-Leon-Timmermans"><a>CPAN::Meta::Check</a> Copyright (c) 2012 by Leon Timmermans</dt>
+<dd>
+
+</dd>
+<dt id="File::pushd-Copyright-2012-David-Golden"><a>File::pushd</a> Copyright 2012 David Golden</dt>
+<dd>
+
+</dd>
+<dt id="parent-Copyright-c-2007-10-Max-Maischein"><a href="../../../lib/perl5/5.26.3/parent.html">parent</a> Copyright (c) 2007-10 Max Maischein</dt>
+<dd>
+
+</dd>
+<dt id="Parse::PMFile-Copyright-1995---2013-by-Andreas-Koenig-Copyright-2013-by-Kenichi-Ishigaki"><a>Parse::PMFile</a> Copyright 1995 - 2013 by Andreas Koenig, Copyright 2013 by Kenichi Ishigaki</dt>
+<dd>
+
+</dd>
+<dt id="String::ShellQuote-by-Roderick-Schertler"><a>String::ShellQuote</a> by Roderick Schertler</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This software is licensed under the same terms as Perl.</p>
+
+<h1 id="CREDITS">CREDITS</h1>
+
+<h2 id="CONTRIBUTORS">CONTRIBUTORS</h2>
+
+<p>Patches and code improvements were contributed by:</p>
+
+<p>Goro Fuji, Kazuhiro Osawa, Tokuhiro Matsuno, Kenichi Ishigaki, Ian Wells, Pedro Melo, Masayoshi Sekimura, Matt S Trout (mst), squeeky, horus and Ingy dot Net.</p>
+
+<h2 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h2>
+
+<p>Bug reports, suggestions and feedbacks were sent by, or general acknowledgement goes to:</p>
+
+<p>Jesse Vincent, David Golden, Andreas Koenig, Jos Boumans, Chris Williams, Adam Kennedy, Audrey Tang, J. Shirley, Chris Prather, Jesse Luehrs, Marcus Ramberg, Shawn M Moore, chocolateboy, Chirs Nehren, Jonathan Rockway, Leon Brocard, Simon Elliott, Ricardo Signes, AEvar Arnfjord Bjarmason, Eric Wilhelm, Florian Ragwitz and xaicron.</p>
+
+<h1 id="COMMUNITY">COMMUNITY</h1>
+
+<dl>
+
+<dt id="http:-github.com-miyagawa-cpanminus---source-code-repository-issue-tracker"><a href="http://github.com/miyagawa/cpanminus">http://github.com/miyagawa/cpanminus</a> - source code repository, issue tracker</dt>
+<dd>
+
+</dd>
+<dt id="irc:-irc.perl.org-cpanm---discussions-about-cpanm-and-its-related-tools"><a href="irc://irc.perl.org/#cpanm">irc://irc.perl.org/#cpanm</a> - discussions about cpanm and its related tools</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="NO-WARRANTY">NO WARRANTY</h1>
+
+<p>This software is provided &quot;as-is,&quot; without any express or implied warranty. In no event shall the author be held liable for any damages arising from the use of the software.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../lib/perl5/5.26.3/CPAN.html">CPAN</a> <a>CPANPLUS</a> <a>pip</a></p>
+
+
+</body>
+
+</html>
+
+

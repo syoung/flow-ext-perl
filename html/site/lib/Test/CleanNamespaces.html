@@ -1,0 +1,160 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#namespaces_clean">namespaces_clean</a></li>
+      <li><a href="#all_namespaces_clean">all_namespaces_clean</a></li>
+      <li><a href="#find_modules">find_modules</a></li>
+      <li><a href="#builder">builder</a></li>
+    </ul>
+  </li>
+  <li><a href="#KNOWN-ISSUES">KNOWN ISSUES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENCE">COPYRIGHT AND LICENCE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::CleanNamespaces - Check for uncleaned imports</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.24</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use strict;
+    use warnings;
+    use Test::CleanNamespaces;
+
+    all_namespaces_clean;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module lets you check your module&#39;s namespaces for imported functions you might have forgotten to remove with <a href="../../../lib/perl5/5.26.3/namespace/autoclean.html">namespace::autoclean</a> or <a href="../../../lib/perl5/5.26.3/namespace/clean.html">namespace::clean</a> and are therefore available to be called as methods, which usually isn&#39;t want you want.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>All functions are exported by default.</p>
+
+<h2 id="namespaces_clean">namespaces_clean</h2>
+
+<pre><code>    namespaces_clean(&#39;YourModule&#39;, &#39;AnotherModule&#39;);</code></pre>
+
+<p>Tests every specified namespace for uncleaned imports. If the module couldn&#39;t be loaded it will be skipped.</p>
+
+<h2 id="all_namespaces_clean">all_namespaces_clean</h2>
+
+<pre><code>    all_namespaces_clean;</code></pre>
+
+<p>Runs <a href="#namespaces_clean">&quot;namespaces_clean&quot;</a> for all modules in your distribution.</p>
+
+<h2 id="find_modules">find_modules</h2>
+
+<pre><code>    my @modules = Test::CleanNamespaces-&gt;find_modules;</code></pre>
+
+<p>Returns a list of modules in the current distribution. It&#39;ll search in <code>blib/</code>, if it exists. <code>lib/</code> will be searched otherwise.</p>
+
+<h2 id="builder">builder</h2>
+
+<pre><code>    my $builder = Test::CleanNamespaces-&gt;builder;</code></pre>
+
+<p>Returns the <code>Test::Builder</code> used by the test functions.</p>
+
+<h1 id="KNOWN-ISSUES">KNOWN ISSUES</h1>
+
+<p>Uncleaned imports from <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Mouse.html">Mouse</a> classes are incompletely detected, due to its lack of ability to return the correct method list -- it assumes that all subs are meant to be callable as methods unless they originated from (were imported by) one of: <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Mouse.html">Mouse</a>, <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Mouse/Role.html">Mouse::Role</a>, <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Mouse/Util.html">Mouse::Util</a>, <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Mouse/Util/TypeConstraints.html">Mouse::Util::TypeConstraints</a>, <a href="../../../lib/perl5/5.26.3/Carp.html">Carp</a>, <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Scalar/Util.html">Scalar::Util</a>, or <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/List/Util.html">List::Util</a>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../lib/perl5/5.26.3/namespace/clean.html">namespace::clean</a></p>
+
+</li>
+<li><p><a href="../../../lib/perl5/5.26.3/namespace/autoclean.html">namespace::autoclean</a></p>
+
+</li>
+<li><p><a>namespace::sweep</a></p>
+
+</li>
+<li><p><a>Sub::Exporter::ForMethods</a></p>
+
+</li>
+<li><p><a>Test::API</a></p>
+
+</li>
+<li><p><a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Sub/Name.html">Sub::Name</a></p>
+
+</li>
+<li><p><a href="../../../lib/perl5/5.26.3/Sub/Install.html">Sub::Install</a></p>
+
+</li>
+<li><p><a>MooseX::MarkAsMethods</a></p>
+
+</li>
+<li><p><a>Dist::Zilla::Plugin::Test::CleanNamespaces</a></p>
+
+</li>
+</ul>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>Bugs may be submitted through <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Test-CleanNamespaces">the RT bug tracker</a> (or <a href="mailto:bug-Test-CleanNamespaces@rt.cpan.org">bug-Test-CleanNamespaces@rt.cpan.org</a>).</p>
+
+<p>There is also a mailing list available for users of this distribution, at <a href="http://lists.perl.org/list/perl-qa.html">http://lists.perl.org/list/perl-qa.html</a>.</p>
+
+<p>There is also an irc channel available for users of this distribution, at <a href="irc://irc.perl.org/#perl-qa"><code>#perl</code> on <code>irc.perl.org</code></a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Florian Ragwitz &lt;rafl@debian.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Karen Etheridge &lt;ether@cpan.org&gt;</p>
+
+</li>
+<li><p>Graham Knop &lt;haarg@haarg.org&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENCE">COPYRIGHT AND LICENCE</h1>
+
+<p>This software is copyright (c) 2009 by Florian Ragwitz.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

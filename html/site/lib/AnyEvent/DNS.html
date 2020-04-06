@@ -1,0 +1,554 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#CONVENIENCE-FUNCTIONS">CONVENIENCE FUNCTIONS</a></li>
+      <li><a href="#LOW-LEVEL-DNS-EN--DECODING-FUNCTIONS">LOW-LEVEL DNS EN-/DECODING FUNCTIONS</a>
+        <ul>
+          <li><a href="#Extending-DNS-Encoder-and-Decoder">Extending DNS Encoder and Decoder</a></li>
+        </ul>
+      </li>
+      <li><a href="#THE-AnyEvent::DNS-RESOLVER-CLASS">THE AnyEvent::DNS RESOLVER CLASS</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::DNS - fully asynchronous DNS resolution</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent::DNS;
+   
+   my $cv = AnyEvent-&gt;condvar;
+   AnyEvent::DNS::a &quot;www.google.de&quot;, $cv;
+   # ... later
+   my @addrs = $cv-&gt;recv;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module offers both a number of DNS convenience functions as well as a fully asynchronous and high-performance pure-perl stub resolver.</p>
+
+<p>The stub resolver supports DNS over IPv4 and IPv6, UDP and TCP, optional EDNS0 support for up to 4kiB datagrams and automatically falls back to virtual circuit mode for large responses.</p>
+
+<h2 id="CONVENIENCE-FUNCTIONS">CONVENIENCE FUNCTIONS</h2>
+
+<dl>
+
+<dt id="AnyEvent::DNS::a-domain-cb--addrs">AnyEvent::DNS::a $domain, $cb-&gt;(@addrs)</dt>
+<dd>
+
+<p>Tries to resolve the given domain to IPv4 address(es).</p>
+
+</dd>
+<dt id="AnyEvent::DNS::aaaa-domain-cb--addrs">AnyEvent::DNS::aaaa $domain, $cb-&gt;(@addrs)</dt>
+<dd>
+
+<p>Tries to resolve the given domain to IPv6 address(es).</p>
+
+</dd>
+<dt id="AnyEvent::DNS::mx-domain-cb--hostnames">AnyEvent::DNS::mx $domain, $cb-&gt;(@hostnames)</dt>
+<dd>
+
+<p>Tries to resolve the given domain into a sorted (lower preference value first) list of domain names.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::ns-domain-cb--hostnames">AnyEvent::DNS::ns $domain, $cb-&gt;(@hostnames)</dt>
+<dd>
+
+<p>Tries to resolve the given domain name into a list of name servers.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::txt-domain-cb--hostnames">AnyEvent::DNS::txt $domain, $cb-&gt;(@hostnames)</dt>
+<dd>
+
+<p>Tries to resolve the given domain name into a list of text records. Only the first text string per record will be returned. If you want all strings, you need to call the resolver manually:</p>
+
+<pre><code>   resolver-&gt;resolve ($domain =&gt; &quot;txt&quot;, sub {
+      for my $record (@_) {
+         my (undef, undef, undef, @txt) = @$record;
+         # strings now in @txt
+      }
+   });</code></pre>
+
+</dd>
+<dt id="AnyEvent::DNS::srv-service-proto-domain-cb--srv_rr">AnyEvent::DNS::srv $service, $proto, $domain, $cb-&gt;(@srv_rr)</dt>
+<dd>
+
+<p>Tries to resolve the given service, protocol and domain name into a list of service records.</p>
+
+<p>Each <code>$srv_rr</code> is an array reference with the following contents: <code>[$priority, $weight, $transport, $target]</code>.</p>
+
+<p>They will be sorted with lowest priority first, then randomly distributed by weight as per RFC 2782.</p>
+
+<p>Example:</p>
+
+<pre><code>   AnyEvent::DNS::srv &quot;sip&quot;, &quot;udp&quot;, &quot;schmorp.de&quot;, sub { ...
+   # @_ = ( [10, 10, 5060, &quot;sip1.schmorp.de&quot; ] )</code></pre>
+
+</dd>
+<dt id="AnyEvent::DNS::any-domain-cb--rrs">AnyEvent::DNS::any $domain, $cb-&gt;(@rrs)</dt>
+<dd>
+
+<p>Tries to resolve the given domain and passes all resource records found to the callback. Note that this uses a DNS <code>ANY</code> query, which, as of RFC 8482, are officially deprecated.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::ptr-domain-cb--hostnames">AnyEvent::DNS::ptr $domain, $cb-&gt;(@hostnames)</dt>
+<dd>
+
+<p>Tries to make a PTR lookup on the given domain. See <code>reverse_lookup</code> and <code>reverse_verify</code> if you want to resolve an IP address to a hostname instead.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::reverse_lookup-ipv4_or_6-cb--hostnames">AnyEvent::DNS::reverse_lookup $ipv4_or_6, $cb-&gt;(@hostnames)</dt>
+<dd>
+
+<p>Tries to reverse-resolve the given IPv4 or IPv6 address (in textual form) into its hostname(s). Handles V4MAPPED and V4COMPAT IPv6 addresses transparently.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::reverse_verify-ipv4_or_6-cb--hostnames">AnyEvent::DNS::reverse_verify $ipv4_or_6, $cb-&gt;(@hostnames)</dt>
+<dd>
+
+<p>The same as <code>reverse_lookup</code>, but does forward-lookups to verify that the resolved hostnames indeed point to the address, which makes spoofing harder.</p>
+
+<p>If you want to resolve an address into a hostname, this is the preferred method: The DNS records could still change, but at least this function verified that the hostname, at one point in the past, pointed at the IP address you originally resolved.</p>
+
+<p>Example:</p>
+
+<pre><code>   AnyEvent::DNS::reverse_verify &quot;2001:500:2f::f&quot;, sub { print shift };
+   # =&gt; f.root-servers.net</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="LOW-LEVEL-DNS-EN--DECODING-FUNCTIONS">LOW-LEVEL DNS EN-/DECODING FUNCTIONS</h2>
+
+<dl>
+
+<dt id="AnyEvent::DNS::EDNS0">$AnyEvent::DNS::EDNS0</dt>
+<dd>
+
+<p>This variable decides whether dns_pack automatically enables EDNS0 support. By default, this is disabled (<code>0</code>), unless overridden by <code>$ENV{PERL_ANYEVENT_EDNS0}</code>, but when set to <code>1</code>, AnyEvent::DNS will use EDNS0 in all requests.</p>
+
+</dd>
+<dt id="pkt-AnyEvent::DNS::dns_pack-dns">$pkt = AnyEvent::DNS::dns_pack $dns</dt>
+<dd>
+
+<p>Packs a perl data structure into a DNS packet. Reading RFC 1035 is strongly recommended, then everything will be totally clear. Or maybe not.</p>
+
+<p>Resource records are not yet encodable.</p>
+
+<p>Examples:</p>
+
+<pre><code>   # very simple request, using lots of default values:
+   { rd =&gt; 1, qd =&gt; [ [ &quot;host.domain&quot;, &quot;a&quot;] ] }
+  
+   # more complex example, showing how flags etc. are named:
+  
+   {
+      id =&gt; 10000,
+      op =&gt; &quot;query&quot;,
+      rc =&gt; &quot;nxdomain&quot;,
+  
+      # flags
+      qr =&gt; 1,
+      aa =&gt; 0,
+      tc =&gt; 0,
+      rd =&gt; 0,
+      ra =&gt; 0,
+      ad =&gt; 0,
+      cd =&gt; 0,
+  
+      qd =&gt; [@rr], # query section
+      an =&gt; [@rr], # answer section
+      ns =&gt; [@rr], # authority section
+      ar =&gt; [@rr], # additional records section
+   }</code></pre>
+
+</dd>
+<dt id="dns-AnyEvent::DNS::dns_unpack-pkt">$dns = AnyEvent::DNS::dns_unpack $pkt</dt>
+<dd>
+
+<p>Unpacks a DNS packet into a perl data structure.</p>
+
+<p>Examples:</p>
+
+<pre><code>   # an unsuccessful reply
+   {
+     &#39;qd&#39; =&gt; [
+               [ &#39;ruth.plan9.de.mach.uni-karlsruhe.de&#39;, &#39;*&#39;, &#39;in&#39; ]
+             ],
+     &#39;rc&#39; =&gt; &#39;nxdomain&#39;,
+     &#39;ar&#39; =&gt; [],
+     &#39;ns&#39; =&gt; [
+               [
+                 &#39;uni-karlsruhe.de&#39;,
+                 &#39;soa&#39;,
+                 &#39;in&#39;,
+                 600,
+                 &#39;netserv.rz.uni-karlsruhe.de&#39;,
+                 &#39;hostmaster.rz.uni-karlsruhe.de&#39;,
+                 2008052201, 10800, 1800, 2592000, 86400
+               ]
+             ],
+     &#39;tc&#39; =&gt; &#39;&#39;,
+     &#39;ra&#39; =&gt; 1,
+     &#39;qr&#39; =&gt; 1,
+     &#39;id&#39; =&gt; 45915,
+     &#39;aa&#39; =&gt; &#39;&#39;,
+     &#39;an&#39; =&gt; [],
+     &#39;rd&#39; =&gt; 1,
+     &#39;op&#39; =&gt; &#39;query&#39;,
+     &#39;__&#39; =&gt; &#39;&lt;original dns packet&gt;&#39;,
+   }
+   
+   # a successful reply
+   
+   {
+     &#39;qd&#39; =&gt; [ [ &#39;www.google.de&#39;, &#39;a&#39;, &#39;in&#39; ] ],
+     &#39;rc&#39; =&gt; 0,
+     &#39;ar&#39; =&gt; [
+               [ &#39;a.l.google.com&#39;, &#39;a&#39;, &#39;in&#39;, 3600, &#39;209.85.139.9&#39; ],
+               [ &#39;b.l.google.com&#39;, &#39;a&#39;, &#39;in&#39;, 3600, &#39;64.233.179.9&#39; ],
+               [ &#39;c.l.google.com&#39;, &#39;a&#39;, &#39;in&#39;, 3600, &#39;64.233.161.9&#39; ],
+             ],
+     &#39;ns&#39; =&gt; [
+               [ &#39;l.google.com&#39;, &#39;ns&#39;, &#39;in&#39;, 3600, &#39;a.l.google.com&#39; ],
+               [ &#39;l.google.com&#39;, &#39;ns&#39;, &#39;in&#39;, 3600, &#39;b.l.google.com&#39; ],
+             ],
+     &#39;tc&#39; =&gt; &#39;&#39;,
+     &#39;ra&#39; =&gt; 1,
+     &#39;qr&#39; =&gt; 1,
+     &#39;id&#39; =&gt; 64265,
+     &#39;aa&#39; =&gt; &#39;&#39;,
+     &#39;an&#39; =&gt; [
+               [ &#39;www.google.de&#39;, &#39;cname&#39;, &#39;in&#39;, 3600, &#39;www.google.com&#39; ],
+               [ &#39;www.google.com&#39;, &#39;cname&#39;, &#39;in&#39;, 3600, &#39;www.l.google.com&#39; ],
+               [ &#39;www.l.google.com&#39;, &#39;a&#39;, &#39;in&#39;, 3600, &#39;66.249.93.104&#39; ],
+               [ &#39;www.l.google.com&#39;, &#39;a&#39;, &#39;in&#39;, 3600, &#39;66.249.93.147&#39; ],
+             ],
+     &#39;rd&#39; =&gt; 1,
+     &#39;op&#39; =&gt; 0,
+     &#39;__&#39; =&gt; &#39;&lt;original dns packet&gt;&#39;,
+   }</code></pre>
+
+</dd>
+</dl>
+
+<h3 id="Extending-DNS-Encoder-and-Decoder">Extending DNS Encoder and Decoder</h3>
+
+<p>This section describes an <i>experimental</i> method to extend the DNS encoder and decoder with new opcode, rcode, class and type strings, as well as resource record decoders.</p>
+
+<p>Since this is experimental, it can change, as anything can change, but this interface is expe ctedc to be relatively stable and was stable during the whole existance of <code>AnyEvent::DNS</code> so far.</p>
+
+<p>Note that, since changing the decoder or encoder might break existing code, you should either be sure to control for this, or only temporarily change these values, e.g. like so:</p>
+
+<pre><code>   my $decoded = do {
+      local $AnyEvent::DNS::opcode_str{7} = &quot;yxrrset&quot;;
+      AnyEvent::DNS::dns_unpack $mypkt
+   };</code></pre>
+
+<dl>
+
+<dt id="AnyEvent::DNS::opcode_id-AnyEvent::DNS::opcode_str">%AnyEvent::DNS::opcode_id, %AnyEvent::DNS::opcode_str</dt>
+<dd>
+
+<p>Two hashes that map lowercase opcode strings to numerical id&#39;s (For the encoder), or vice versa (for the decoder). Example: add a new opcode string <code>notzone</code>.</p>
+
+<pre><code>   $AnyEvent::DNS::opcode_id{notzone} = 10;
+   $AnyEvent::DNS::opcode_str{10} = &#39;notzone&#39;;</code></pre>
+
+</dd>
+<dt id="AnyEvent::DNS::rcode_id-AnyEvent::DNS::rcode_str">%AnyEvent::DNS::rcode_id, %AnyEvent::DNS::rcode_str</dt>
+<dd>
+
+<p>Same as above, for for rcode values.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::class_id-AnyEvent::DNS::class_str">%AnyEvent::DNS::class_id, %AnyEvent::DNS::class_str</dt>
+<dd>
+
+<p>Same as above, but for resource record class names/values.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::type_id-AnyEvent::DNS::type_str">%AnyEvent::DNS::type_id, %AnyEvent::DNS::type_str</dt>
+<dd>
+
+<p>Same as above, but for resource record type names/values.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::dec_rr">%AnyEvent::DNS::dec_rr</dt>
+<dd>
+
+<p>This hash maps resource record type values to code references. When decoding, they are called with <code>$_</code> set to the undecoded data portion and <code>$ofs</code> being the current byte offset. of the record. You should have a look at the existing implementations to understand how it works in detail, but here are two examples:</p>
+
+<p>Decode an A record. A records are simply four bytes with one byte per address component, so the decoder simply unpacks them and joins them with dots in between:</p>
+
+<pre><code>   $AnyEvent::DNS::dec_rr{1} = sub { join &quot;.&quot;, unpack &quot;C4&quot;, $_ };</code></pre>
+
+<p>Decode a CNAME record, which contains a potentially compressed domain name.</p>
+
+<pre><code>   package AnyEvent::DNS; # for %dec_rr, $ofsd and &amp;_dec_name
+   $dec_rr{5} = sub { local $ofs = $ofs - length; _dec_name };</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="THE-AnyEvent::DNS-RESOLVER-CLASS">THE AnyEvent::DNS RESOLVER CLASS</h2>
+
+<p>This is the class which does the actual protocol work.</p>
+
+<dl>
+
+<dt id="AnyEvent::DNS::resolver">AnyEvent::DNS::resolver</dt>
+<dd>
+
+<p>This function creates and returns a resolver that is ready to use and should mimic the default resolver for your system as good as possible. It is used by AnyEvent itself as well.</p>
+
+<p>It only ever creates one resolver and returns this one on subsequent calls - see <code>$AnyEvent::DNS::RESOLVER</code>, below, for details.</p>
+
+<p>Unless you have special needs, prefer this function over creating your own resolver object.</p>
+
+<p>The resolver is created with the following parameters:</p>
+
+<pre><code>   untaint          enabled
+   max_outstanding  $ENV{PERL_ANYEVENT_MAX_OUTSTANDING_DNS} (default 10)</code></pre>
+
+<p><code>os_config</code> will be used for OS-specific configuration, unless <code>$ENV{PERL_ANYEVENT_RESOLV_CONF}</code> is specified, in which case that file gets parsed.</p>
+
+</dd>
+<dt id="AnyEvent::DNS::RESOLVER">$AnyEvent::DNS::RESOLVER</dt>
+<dd>
+
+<p>This variable stores the default resolver returned by <code>AnyEvent::DNS::resolver</code>, or <code>undef</code> when the default resolver hasn&#39;t been instantiated yet.</p>
+
+<p>One can provide a custom resolver (e.g. one with caching functionality) by storing it in this variable, causing all subsequent resolves done via <code>AnyEvent::DNS::resolver</code> to be done via the custom one.</p>
+
+</dd>
+<dt id="resolver-new-AnyEvent::DNS-key-value">$resolver = new AnyEvent::DNS key =&gt; value...</dt>
+<dd>
+
+<p>Creates and returns a new resolver.</p>
+
+<p>The following options are supported:</p>
+
+<dl>
+
+<dt id="server">server =&gt; [...]</dt>
+<dd>
+
+<p>A list of server addresses (default: <code>v127.0.0.1</code> or <code>::1</code>) in network format (i.e. as returned by <code>AnyEvent::Socket::parse_address</code> - both IPv4 and IPv6 are supported).</p>
+
+</dd>
+<dt id="timeout">timeout =&gt; [...]</dt>
+<dd>
+
+<p>A list of timeouts to use (also determines the number of retries). To make three retries with individual time-outs of 2, 5 and 5 seconds, use <code>[2, 5, 5]</code>, which is also the default.</p>
+
+</dd>
+<dt id="search">search =&gt; [...]</dt>
+<dd>
+
+<p>The default search list of suffixes to append to a domain name (default: none).</p>
+
+</dd>
+<dt id="ndots-integer">ndots =&gt; $integer</dt>
+<dd>
+
+<p>The number of dots (default: <code>1</code>) that a name must have so that the resolver tries to resolve the name without any suffixes first.</p>
+
+</dd>
+<dt id="max_outstanding-integer">max_outstanding =&gt; $integer</dt>
+<dd>
+
+<p>Most name servers do not handle many parallel requests very well. This option limits the number of outstanding requests to <code>$integer</code> (default: <code>10</code>), that means if you request more than this many requests, then the additional requests will be queued until some other requests have been resolved.</p>
+
+</dd>
+<dt id="reuse-seconds">reuse =&gt; $seconds</dt>
+<dd>
+
+<p>The number of seconds (default: <code>300</code>) that a query id cannot be re-used after a timeout. If there was no time-out then query ids can be reused immediately.</p>
+
+</dd>
+<dt id="untaint-boolean">untaint =&gt; $boolean</dt>
+<dd>
+
+<p>When true, then the resolver will automatically untaint results, and might also ignore certain environment variables.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="resolver-parse_resolv_conf-string">$resolver-&gt;parse_resolv_conf ($string)</dt>
+<dd>
+
+<p>Parses the given string as if it were a <i>resolv.conf</i> file. The following directives are supported (but not necessarily implemented).</p>
+
+<p><code>#</code>- and <code>;</code>-style comments, <code>nameserver</code>, <code>domain</code>, <code>search</code>, <code>sortlist</code>, <code>options</code> (<code>timeout</code>, <code>attempts</code>, <code>ndots</code>).</p>
+
+<p>Everything else is silently ignored.</p>
+
+</dd>
+<dt id="resolver-os_config">$resolver-&gt;os_config</dt>
+<dd>
+
+<p>Tries so load and parse <i>/etc/resolv.conf</i> on portable operating systems. Tries various egregious hacks on windows to force the DNS servers and searchlist out of the system.</p>
+
+<p>This method must be called at most once before trying to resolve anything.</p>
+
+</dd>
+<dt id="resolver-timeout-timeout">$resolver-&gt;timeout ($timeout, ...)</dt>
+<dd>
+
+<p>Sets the timeout values. See the <code>timeout</code> constructor argument (and note that this method expects the timeout values themselves, not an array-reference).</p>
+
+</dd>
+<dt id="resolver-max_outstanding-nrequests">$resolver-&gt;max_outstanding ($nrequests)</dt>
+<dd>
+
+<p>Sets the maximum number of outstanding requests to <code>$nrequests</code>. See the <code>max_outstanding</code> constructor argument.</p>
+
+</dd>
+<dt id="resolver-request-req-cb--res">$resolver-&gt;request ($req, $cb-&gt;($res))</dt>
+<dd>
+
+<p>This is the main low-level workhorse for sending DNS requests.</p>
+
+<p>This function sends a single request (a hash-ref formated as specified for <code>dns_pack</code>) to the configured nameservers in turn until it gets a response. It handles timeouts, retries and automatically falls back to virtual circuit mode (TCP) when it receives a truncated reply. It does not handle anything else, such as the domain searchlist or relative names - use <code>-&gt;resolve</code> for that.</p>
+
+<p>Calls the callback with the decoded response packet if a reply was received, or no arguments in case none of the servers answered.</p>
+
+</dd>
+<dt id="resolver-resolve-qname-qtype-options-cb--rr">$resolver-&gt;resolve ($qname, $qtype, %options, $cb-&gt;(@rr))</dt>
+<dd>
+
+<p>Queries the DNS for the given domain name <code>$qname</code> of type <code>$qtype</code>.</p>
+
+<p>A <code>$qtype</code> is either a numerical query type (e.g. <code>1</code> for A records) or a lowercase name (you have to look at the source to see which aliases are supported, but all types from RFC 1035, <code>aaaa</code>, <code>srv</code>, <code>spf</code> and a few more are known to this module). A <code>$qtype</code> of &quot;*&quot; is supported and means &quot;any&quot; record type.</p>
+
+<p>The callback will be invoked with a list of matching result records or none on any error or if the name could not be found.</p>
+
+<p>CNAME chains (although illegal) are followed up to a length of 10.</p>
+
+<p>The callback will be invoked with arraryefs of the form <code>[$name, $type, $class, $ttl, @data</code>], where <code>$name</code> is the domain name, <code>$type</code> a type string or number, <code>$class</code> a class name, <code>$ttl</code> is the remaining time-to-live and <code>@data</code> is resource-record-dependent data, in seconds. For <code>a</code> records, this will be the textual IPv4 addresses, for <code>ns</code> or <code>cname</code> records this will be a domain name, for <code>txt</code> records these are all the strings and so on.</p>
+
+<p>All types mentioned in RFC 1035, <code>aaaa</code>, <code>srv</code>, <code>naptr</code> and <code>spf</code> are decoded. All resource records not known to this module will have the raw <code>rdata</code> field as fifth array element.</p>
+
+<p>Note that this resolver is just a stub resolver: it requires a name server supporting recursive queries, will not do any recursive queries itself and is not secure when used against an untrusted name server.</p>
+
+<p>The following options are supported:</p>
+
+<dl>
+
+<dt id="search-suffix">search =&gt; [$suffix...]</dt>
+<dd>
+
+<p>Use the given search list (which might be empty), by appending each one in turn to the <code>$qname</code>. If this option is missing then the configured <code>ndots</code> and <code>search</code> values define its value (depending on <code>ndots</code>, the empty suffix will be prepended or appended to that <code>search</code> value). If the <code>$qname</code> ends in a dot, then the searchlist will be ignored.</p>
+
+</dd>
+<dt id="accept-type">accept =&gt; [$type...]</dt>
+<dd>
+
+<p>Lists the acceptable result types: only result types in this set will be accepted and returned. The default includes the <code>$qtype</code> and nothing else. If this list includes <code>cname</code>, then CNAME-chains will not be followed (because you asked for the CNAME record).</p>
+
+</dd>
+<dt id="class-class">class =&gt; &quot;class&quot;</dt>
+<dd>
+
+<p>Specify the query class (&quot;in&quot; for internet, &quot;ch&quot; for chaosnet and &quot;hs&quot; for hesiod are the only ones making sense). The default is &quot;in&quot;, of course.</p>
+
+</dd>
+</dl>
+
+<p>Examples:</p>
+
+<pre><code>   # full example, you can paste this into perl:
+   use Data::Dumper;
+   use AnyEvent::DNS;
+   AnyEvent::DNS::resolver-&gt;resolve (
+      &quot;google.com&quot;, &quot;*&quot;, my $cv = AnyEvent-&gt;condvar);
+   warn Dumper [$cv-&gt;recv];
+
+   # shortened result:
+   # [
+   #   [ &#39;google.com&#39;, &#39;soa&#39;, &#39;in&#39;, 3600, &#39;ns1.google.com&#39;, &#39;dns-admin.google.com&#39;,
+   #     2008052701, 7200, 1800, 1209600, 300 ],
+   #   [
+   #     &#39;google.com&#39;, &#39;txt&#39;, &#39;in&#39;, 3600,
+   #     &#39;v=spf1 include:_netblocks.google.com ~all&#39;
+   #   ],
+   #   [ &#39;google.com&#39;, &#39;a&#39;, &#39;in&#39;, 3600, &#39;64.233.187.99&#39; ],
+   #   [ &#39;google.com&#39;, &#39;mx&#39;, &#39;in&#39;, 3600, 10, &#39;smtp2.google.com&#39; ],
+   #   [ &#39;google.com&#39;, &#39;ns&#39;, &#39;in&#39;, 3600, &#39;ns2.google.com&#39; ],
+   # ]
+
+   # resolve a records:
+   $res-&gt;resolve (&quot;ruth.plan9.de&quot;, &quot;a&quot;, sub { warn Dumper [@_] });
+
+   # result:
+   # [
+   #   [ &#39;ruth.schmorp.de&#39;, &#39;a&#39;, &#39;in&#39;, 86400, &#39;129.13.162.95&#39; ]
+   # ]
+
+   # resolve any records, but return only a and aaaa records:
+   $res-&gt;resolve (&quot;test1.laendle&quot;, &quot;*&quot;,
+      accept =&gt; [&quot;a&quot;, &quot;aaaa&quot;],
+      sub {
+         warn Dumper [@_];
+      }
+   );
+
+   # result:
+   # [
+   #   [ &#39;test1.laendle&#39;, &#39;a&#39;, &#39;in&#39;, 86400, &#39;10.0.0.255&#39; ],
+   #   [ &#39;test1.laendle&#39;, &#39;aaaa&#39;, &#39;in&#39;, 60, &#39;3ffe:1900:4545:0002:0240:0000:0000:f7e1&#39; ]
+   # ]</code></pre>
+
+</dd>
+<dt id="resolver-wait_for_slot-cb--resolver">$resolver-&gt;wait_for_slot ($cb-&gt;($resolver))</dt>
+<dd>
+
+<p>Wait until a free request slot is available and call the callback with the resolver object.</p>
+
+<p>A request slot is used each time a request is actually sent to the nameservers: There are never more than <code>max_outstanding</code> of them.</p>
+
+<p>Although you can submit more requests (they will simply be queued until a request slot becomes available), sometimes, usually for rate-limiting purposes, it is useful to instead wait for a slot before generating the request (or simply to know when the request load is low enough so one can submit requests again).</p>
+
+<p>This is what this method does: The callback will be called when submitting a DNS request will not result in that request being queued. The callback may or may not generate any requests in response.</p>
+
+<p>Note that the callback will only be invoked when the request queue is empty, so this does not play well if somebody else keeps the request queue full at all times.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code>   Marc Lehmann &lt;schmorp@schmorp.de&gt;
+   http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

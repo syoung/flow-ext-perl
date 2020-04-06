@@ -1,0 +1,274 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Rationale">Rationale</a></li>
+    </ul>
+  </li>
+  <li><a href="#SUBROUTINES">SUBROUTINES</a>
+    <ul>
+      <li><a href="#fcopy">fcopy()</a></li>
+      <li><a href="#dircopy">dircopy()</a></li>
+      <li><a href="#rcopy">rcopy()</a></li>
+      <li><a href="#File::Copy::Recursive-Subroutines-Not-Supported-in-File::Copy::Recursive::Reduced">File::Copy::Recursive Subroutines Not Supported in File::Copy::Recursive::Reduced</a></li>
+    </ul>
+  </li>
+  <li><a href="#BUGS-AND-SUPPORT">BUGS AND SUPPORT</a></li>
+  <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>File::Copy::Recursive::Reduced - Recursive copying of files and directories within Perl 5 toolchain</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use File::Copy::Recursive::Reduced qw(fcopy dircopy);
+
+    fcopy($orig,$new) or die $!;
+
+    dircopy($orig,$new) or die $!;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This library is intended as a not-quite-drop-in replacement for certain functionality provided by <a href="http://search.cpan.org/dist/File-Copy-Recursive/">CPAN distribution File-Copy-Recursive</a>. The library provides methods similar enough to that distribution&#39;s <code>fcopy()</code>, <code>dircopy()</code> and <code>rcopy()</code> functions to be usable in those CPAN distributions often described as being part of the Perl toolchain.</p>
+
+<h2 id="Rationale">Rationale</h2>
+
+<p><i>File::Copy::Recursive</i> (hereinafter referred to as <b>FCR</b>) is heavily used in other CPAN libraries. Out of over 30,000 other CPAN distributions studied in early 2018, it ranks by one calculation as the 129th highest distribution in terms of its total direct and indirect reverse dependencies. In current parlance, it sits <code>high upstream on the CPAN river.</code> Hence, it ought to work correctly and be installable on all operating systems where Perl is well supported.</p>
+
+<p>However, as of early April 2018, FCR version 0.40 wass failing to pass its tests against either Perl 5.26 or Perl 5 blead on important operating systems including Windows, FreeBSD and NetBSD (<a href="http://fast-matrix.cpantesters.org/?dist=File-Copy-Recursive%200.40">http://fast-matrix.cpantesters.org/?dist=File-Copy-Recursive%200.40</a>). As a consequence, CPAN installers such as <i>cpan</i> and <i>cpanm</i> were failing to install it (unless one resorted to the <code>--force</code> option). This prevented distributions dependent (directly or indirectly) on FCR from being installed as well.</p>
+
+<p>Some patches had been provided to the <a href="https://rt.cpan.org/Dist/Display.html?Name=File-Copy-Recursive">FCR bug tracker</a> for this problem. However, as late as April 18 2018 those patches had not yet been applied. This posed a critical problem for the ability to assess the impact of the soon-to-be-released perl-5.28.0 on CPAN distributions (the so-called &quot;Blead Breaks CPAN&quot; (&quot;BBC&quot;) problem) on platforms other than Linux.</p>
+
+<p><i>File::Copy::Recursive::Reduced</i> (hereinafter referred to as <b>FCR2</b>) is intended to provide a minimal subset of FCR&#39;s functionality -- just enough to get the Perl toolchain working on the platforms where FCR is currently failing. Functions will be added to FCR2 only insofar as investigation shows that they can replace usage of FCR functions in toolchain and other heavily used modules. No attempt will be made to reproduce all the functionality currently provided or claimed to be provided by FCR.</p>
+
+<p>On April 19 2018, FCR&#39;s author, Daniel Muey, released version 0.41 to CPAN. This version included a patch submitted by Tom Hukins which corrected the problem addressed by FCR2. FCR once again built and tested correctly on FreeBSD. That meant that its 6000-plus reverse dependencies can once again be reached by <i>cpan</i> and other installers. That in turn means that we can conduct exhaustive BBC investigations on FreeBSD and other platforms.</p>
+
+<p>With that correction in FCR, the original rationale for FCR2 has been superseded. I will continue to maintain the code and respond to bug reports, but am suspending active development. I now deem FCR2 feature-complete.</p>
+
+<h1 id="SUBROUTINES">SUBROUTINES</h1>
+
+<p>The current version of FCR2 provides three exportable and publicly supported subroutines partially equivalent to the similarly named subroutines exported by FCR.</p>
+
+<h2 id="fcopy"><code>fcopy()</code></h2>
+
+<ul>
+
+<li><p>Purpose</p>
+
+<p>A stripped-down replacement for <code>File::Copy::Recursive::fcopy()</code>.</p>
+
+<p>Copies a file to a new location, recursively creating directories as needed. Does not copy directories. Unlike <code>File::Copy::copy()</code>, <code>fcopy()</code> attempts to preserve the mode of the original file.</p>
+
+</li>
+<li><p>Arguments</p>
+
+<pre><code>    fcopy($orig, $new) or die $!;</code></pre>
+
+<p>List of two required arguments:</p>
+
+<ul>
+
+<li><p>Absolute path to the file being copied; and</p>
+
+</li>
+<li><p>Absolute path to the location to which the file is being copied.</p>
+
+</li>
+</ul>
+
+<p>Four cases should be noted:</p>
+
+<dl>
+
+<dt id="Create-copy-within-same-directory-but-new-basename">1 Create copy within same directory but new basename</dt>
+<dd>
+
+<pre><code>    fcopy(&#39;/path/to/filename&#39;, &#39;/path/to/newfile&#39;);</code></pre>
+
+<p>The second argument must be the absolute path to the new file. (Otherwise the file will be created in the current working directory, which is almost certainly what you do not want.)</p>
+
+</dd>
+<dt id="Create-copy-within-different-already-existing-directory-same-basename">2 Create copy within different, already <b>existing</b> directory, same basename</dt>
+<dd>
+
+<pre><code>    fcopy(&#39;/path/to/filename&#39;, &#39;/path/to/existing/directory&#39;);</code></pre>
+
+<p>The second argument can be merely the path to the existing directory; will create <i>/path/to/existing/directory/filename</i>.</p>
+
+</dd>
+<dt id="Create-copy-within-different-not-yet-existing-directory-same-basename">3 Create copy within different, not yet existing directory, same basename</dt>
+<dd>
+
+<pre><code>    fcopy(&#39;/path/to/filename&#39;, &#39;/path/not/yet/existing/directory/filename&#39;);</code></pre>
+
+<p>The second argument will be interpreted as the complete path to the newly created file. The basename must be included even if it is the same as in the first argument. Will create <i>/path/not/yet/existing/directory/filename</i>.</p>
+
+</dd>
+<dt id="Create-copy-within-different-not-yet-existing-directory-different-basename">4 Create copy within different, not yet existing directory, different basename</dt>
+<dd>
+
+<pre><code>    fcopy(&#39;/path/to/filename&#39;, &#39;/path/not/yet/existing/directory/newfile&#39;);</code></pre>
+
+<p>The second argument will be interpreted as the complete path to the newly created file. Will create <i>/path/not/yet/existing/directory/newfile</i>.</p>
+
+</dd>
+</dl>
+
+</li>
+<li><p>Return Value</p>
+
+<p>Returns <code>1</code> upon success; <code>0</code> upon failure. Returns an undefined value if, for example, function cannot validate arguments.</p>
+
+</li>
+<li><p>Comment</p>
+
+<p>Since <code>fcopy()</code> internally uses <code>File::Copy::copy()</code> to perform the copying, the arguments are subject to the same qualifications as that function&#39;s arguments. Call <i>perldoc File::Copy</i> for discussion of those arguments.</p>
+
+</li>
+</ul>
+
+<h2 id="dircopy"><code>dircopy()</code></h2>
+
+<ul>
+
+<li><p>Purpose</p>
+
+<p>A stripped-down replacement for <code>File::Copy::Recursive::dircopy()</code>.</p>
+
+<p>Given the path to the directory specified by the first argument, the function copies all of the files and directories beneath it to the directory specified by the second argument.</p>
+
+</li>
+<li><p>Arguments</p>
+
+<pre><code>    my $count = dircopy($orig, $new);
+    warn &quot;dircopy() returned undefined value&quot; unless defined $count;</code></pre>
+
+</li>
+<li><p>Return Value</p>
+
+<p>Upon completion, returns the count of directories and files created -- which might be <code>0</code>.</p>
+
+<p>Should the function not complete (but not <code>die</code>), an undefined value will be returned. That generally indicates problems with argument validation. This approach is taken for consistency with <code>File::Copy::Recursive::dircopy()</code>.</p>
+
+<p>In list context the return value is a one-item list holding the same value as returned in scalar context. The three-item list return value of <code>File::Copy::Recursive::dircopy()</code> is not supported.</p>
+
+</li>
+<li><p>Restrictions</p>
+
+<p>None of <code>File::Copy::Recursive::dircopy</code>&#39;s bells and whistles. No guaranteed preservation of file or directory modes. No restriction on maximum depth. No nothing; this is fine-tuned to the needs of Perl toolchain modules and their test suites.</p>
+
+</li>
+</ul>
+
+<h2 id="rcopy"><code>rcopy()</code></h2>
+
+<ul>
+
+<li><p>Purpose</p>
+
+<p>A stripped-down replacement for <code>File::Copy::Recursive::rcopy()</code>. As is the case with that FCR function, <code>rcopy()</code> is more or less a wrapper around <code>fcopy()</code> or <code>dircopy()</code>, depending on the nature of the first argument.</p>
+
+</li>
+<li><p>Arguments</p>
+
+<pre><code>    rcopy($orig, $new) or die $!;</code></pre>
+
+<p>List of two required arguments:</p>
+
+<ul>
+
+<li><p>Absolute path to the entity (file or directory) being copied; and</p>
+
+</li>
+<li><p>Absolute path to the location to which the entity is being copied.</p>
+
+</li>
+</ul>
+
+</li>
+<li><p>Return Value</p>
+
+<p>Returns <code>1</code> upon success; <code>0</code> upon failure. Returns an undefined value if, for example, function cannot validate arguments.</p>
+
+</li>
+<li><p>Comment</p>
+
+<p>Please read the documentation for <code>fcopy()</code> or <code>dircopy()</code>, depending on the nature of the first argument.</p>
+
+</li>
+</ul>
+
+<h2 id="File::Copy::Recursive-Subroutines-Not-Supported-in-File::Copy::Recursive::Reduced">File::Copy::Recursive Subroutines Not Supported in File::Copy::Recursive::Reduced</h2>
+
+<p>As of the current version, FCR2 has no publicly documented, exportable subroutines equivalent to the following FCR exportable subroutines:</p>
+
+<pre><code>    rcopy_glob
+    fmove
+    rmove
+    rmove_glob
+    dirmove
+    pathempty
+    pathrm
+    pathrmdir</code></pre>
+
+<p>Consideration is being given to supporting <code>rcopy()</code>.</p>
+
+<h1 id="BUGS-AND-SUPPORT">BUGS AND SUPPORT</h1>
+
+<p>Please report any bugs by mail to <code>bug-File-Copy-Recursive-Reduced@rt.cpan.org</code> or through the web interface at <a href="http://rt.cpan.org">http://rt.cpan.org</a>.</p>
+
+<h1 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h1>
+
+<p>Notwithstanding the fact that this distribution is being released to address certain problems in File-Copy-Recursive, credit must be given to FCR author <a href="http://www.cpan.org/authors/id/D/DM/DMUEY/">Daniel Muey</a> for ingenious conception and execution. The implementation of the subroutines provided by FCR2 follows that found in FCR to a significant extent.</p>
+
+<p>Thanks also to Tom Hukins for supplying the patch which corrects FCR&#39;s problems and which has been incorporated into FCR2 as well.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code>    James E Keenan
+    CPAN ID: JKEENAN
+    jkeenan@cpan.org
+    http://thenceforward.net/perl</code></pre>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<p>The full text of the license can be found in the LICENSE file included with this module.</p>
+
+<p>Copyright James E Keenan 2018. All rights reserved.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>perl(1). File::Copy::Recursive(3).</p>
+
+
+</body>
+
+</html>
+
+

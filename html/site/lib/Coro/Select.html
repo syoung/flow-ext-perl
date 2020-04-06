@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Select - a (slow but coro-aware) replacement for CORE::select</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::Select;          # replace select globally (be careful, see below)
+ use Core::Select &#39;select&#39;; # only in this module
+ use Coro::Select ();       # use Coro::Select::select</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module tries to create a fully working replacement for perl&#39;s <code>select</code> built-in, using <code>AnyEvent</code> watchers to do the job, so other threads can run in parallel to any select user. As many libraries that only have a blocking API do not use global variables and often use select (or IO::Select), this effectively makes most such libraries &quot;somewhat&quot; non-blocking w.r.t. other threads.</p>
+
+<p>This implementation works fastest when only very few bits are set in the fd set(s).</p>
+
+<p>To be effective globally, this module must be <code>use</code>&#39;d before any other module that uses <code>select</code>, so it should generally be the first module <code>use</code>&#39;d in the main program. Note that overriding <code>select</code> globally might actually cause problems, as some <code>AnyEvent</code> backends use <code>select</code> themselves, and asking AnyEvent to use Coro::Select, which in turn asks AnyEvent will not quite work.</p>
+
+<p>You can also invoke it from the commandline as <code>perl -MCoro::Select</code>.</p>
+
+<p>To override select only for a single module (e.g. <code>Net::DBus::Reactor</code>), use a code fragment like this to load it:</p>
+
+<pre><code>   {
+      package Net::DBus::Reactor;
+      use Coro::Select qw(select);
+      use Net::DBus::Reactor;
+   }</code></pre>
+
+<p>Some modules (notably <a>POE::Loop::Select</a>) directly call <code>CORE::select</code>. For these modules, we need to patch the opcode table by sandwiching it between calls to <code>Coro::Select::patch_pp_sselect</code> and <code>Coro::Select::unpatch_pp_sselect</code>:</p>
+
+<pre><code> BEGIN {
+    use Coro::Select ();
+    Coro::Select::patch_pp_sselect;
+    require evil_poe_module_using_CORE::SELECT;
+    Coro::Select::unpatch_pp_sselect;
+ }</code></pre>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>For performance reasons, Coro::Select&#39;s select function might not properly detect bad file descriptors (but relying on EBADF is inherently non-portable).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/LWP.html">Coro::LWP</a>.</p>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

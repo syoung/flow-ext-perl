@@ -1,0 +1,139 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#TYPES">TYPES</a>
+    <ul>
+      <li><a href="#typedef-OP-hook_op_check_cb-pTHX_-OP-void">typedef OP *(*hook_op_check_cb) (pTHX_ OP *, void *);</a></li>
+      <li><a href="#typedef-UV-hook_op_check_id">typedef UV hook_op_check_id</a></li>
+    </ul>
+  </li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#hook_op_check_id-hook_op_check-opcode-type-hook_op_check_cb-cb-void-user_data">hook_op_check_id hook_op_check (opcode type, hook_op_check_cb cb, void *user_data)</a></li>
+      <li><a href="#void-hook_op_check_remove-opcode-type-hook_op_check_id-id">void *hook_op_check_remove (opcode type, hook_op_check_id id)</a></li>
+    </ul>
+  </li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENCE">COPYRIGHT AND LICENCE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>B::Hooks::OP::Check - Wrap OP check callbacks</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.22</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    # include &quot;hook_op_check.h&quot;
+
+    STATIC OP *my_const_check_op (pTHX_ OP *op, void *user_data) {
+        /* ... */
+        return op;
+    }
+
+    STATIC hook_op_check_id my_hook_id = 0;
+
+    void
+    setup ()
+        CODE:
+            my_hook_id = hook_op_check (OP_CONST, my_const_check_op, NULL);
+
+    void
+    teardown ()
+        CODE:
+            hook_op_check_remove (OP_CONST, my_hook_id);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides a C API for XS modules to hook into the callbacks of <code>PL_check</code>.</p>
+
+<p><a href="../../../../../lib/perl5/site_perl/5.26.3/ExtUtils/Depends.html">ExtUtils::Depends</a> is used to export all functions for other XS modules to use. Include the following in your Makefile.PL:</p>
+
+<pre><code>    my $pkg = ExtUtils::Depends-&gt;new(&#39;Your::XSModule&#39;, &#39;B::Hooks::OP::Check&#39;);
+    WriteMakefile(
+        ... # your normal makefile flags
+        $pkg-&gt;get_makefile_vars,
+    );</code></pre>
+
+<p>Your XS module can now include <code>hook_op_check.h</code>.</p>
+
+<h1 id="TYPES">TYPES</h1>
+
+<h2 id="typedef-OP-hook_op_check_cb-pTHX_-OP-void">typedef OP *(*hook_op_check_cb) (pTHX_ OP *, void *);</h2>
+
+<p>Type that callbacks need to implement.</p>
+
+<h2 id="typedef-UV-hook_op_check_id">typedef UV hook_op_check_id</h2>
+
+<p>Type to identify a callback.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="hook_op_check_id-hook_op_check-opcode-type-hook_op_check_cb-cb-void-user_data">hook_op_check_id hook_op_check (opcode type, hook_op_check_cb cb, void *user_data)</h2>
+
+<p>Register the callback <code>cb</code> to be called after the <code>PL_check</code> function for opcodes of the given <code>type</code>. <code>user_data</code> will be passed to the callback as the last argument. Returns an id that can be used to remove the callback later on.</p>
+
+<h2 id="void-hook_op_check_remove-opcode-type-hook_op_check_id-id">void *hook_op_check_remove (opcode type, hook_op_check_id id)</h2>
+
+<p>Remove the callback identified by <code>id</code>. Returns the user_data that the callback had.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>Bugs may be submitted through <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=B-Hooks-OP-Check">the RT bug tracker</a> (or <a href="mailto:bug-B-Hooks-OP-Check@rt.cpan.org">bug-B-Hooks-OP-Check@rt.cpan.org</a>).</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Florian Ragwitz &lt;rafl@debian.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Karen Etheridge &lt;ether@cpan.org&gt;</p>
+
+</li>
+<li><p>Zefram &lt;zefram@fysh.org&gt;</p>
+
+</li>
+<li><p>Alexandr Ciornii &lt;alexchorny@gmail.com&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENCE">COPYRIGHT AND LICENCE</h1>
+
+<p>This software is copyright (c) 2008 by Florian Ragwitz.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

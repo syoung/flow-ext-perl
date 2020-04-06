@@ -1,0 +1,203 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Debug - various functions that help debugging Coro programs</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::Debug;
+
+ our $server = new_unix_server Coro::Debug &quot;/tmp/socketpath&quot;;
+
+ $ socat readline unix:/tmp/socketpath</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is an <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> user, you need to make sure that you use and run a supported event loop.</p>
+
+<p>This module provides some debugging facilities. Most will, if not handled carefully, severely compromise the security of your program, so use it only for debugging (or take other precautions).</p>
+
+<p>It mainly implements a very primitive debugger that is very easy to integrate in your program:</p>
+
+<pre><code>   our $server = new_unix_server Coro::Debug &quot;/tmp/somepath&quot;;
+   # see new_unix_server, below, for more info</code></pre>
+
+<p>It lets you list running coroutines:</p>
+
+<pre><code>            state (rUnning, Ready, New or neither)
+            |cctx allocated
+            ||  resident set size (octets)
+            ||  |   scheduled this many times
+   &gt; ps     ||  |   |
+        PID SC  RSS USES Description              Where
+   14572344 UC  62k 128k [main::]                 [dm-support.ext:47]
+   14620056 -- 2260   13 [coro manager]           [Coro.pm:358]
+   14620128 -- 2260  166 [unblock_sub scheduler]  [Coro.pm:358]
+   17764008 N-  152    0 [EV idle process]        -
+   13990784 -- 2596  10k timeslot manager         [cf.pm:454]
+   81424176 --  18k 4758 [async pool idle]        [Coro.pm:257]
+   23513336 -- 2624    1 follow handler           [follow.ext:52]
+   40548312 --  15k 5597 player scheduler         [player-scheduler.ext:13]
+   29138032 -- 2548  431 music scheduler          [player-env.ext:77]
+   43449808 -- 2260 3493 worldmap updater         [item-worldmap.ext:115]
+   33352488 --  19k 2845 [async pool idle]        [Coro.pm:257]
+   81530072 --  13k  43k map scheduler            [map-scheduler.ext:65]
+   30751144 --  15k 2204 [async pool idle]        [Coro.pm:257]</code></pre>
+
+<p>Lets you do backtraces on about any coroutine:</p>
+
+<pre><code>   &gt; bt 18334288
+   coroutine is at /opt/cf/ext/player-env.ext line 77
+           eval {...} called at /opt/cf/ext/player-env.ext line 77
+           ext::player_env::__ANON__ called at -e line 0
+           Coro::_run_coro called at -e line 0</code></pre>
+
+<p>Or lets you eval perl code:</p>
+
+<pre><code>   &gt; 5+7
+   12</code></pre>
+
+<p>Or lets you eval perl code within other coroutines:</p>
+
+<pre><code>   &gt; eval 18334288 caller(1); $DB::args[0]-&gt;method
+   1</code></pre>
+
+<p>It can also trace subroutine entry/exits for most coroutines (those not having recursed into a C function), resulting in output similar to:</p>
+
+<pre><code>   &gt; loglevel 5
+   &gt; trace 94652688
+   2007-09-27Z20:30:25.1368 (5) [94652688] enter Socket::sockaddr_in with (8481,\x{7f}\x{00}\x{00}\x{01})
+   2007-09-27Z20:30:25.1369 (5) [94652688] leave Socket::sockaddr_in returning (\x{02}\x{00}...)
+   2007-09-27Z20:30:25.1370 (5) [94652688] enter Net::FCP::Util::touc with (client_get)
+   2007-09-27Z20:30:25.1371 (5) [94652688] leave Net::FCP::Util::touc returning (ClientGet)
+   2007-09-27Z20:30:25.1372 (5) [94652688] enter AnyEvent::Impl::Event::io with (AnyEvent,fh,GLOB(0x9256250),poll,w,cb,CODE(0x8c963a0))
+   2007-09-27Z20:30:25.1373 (5) [94652688] enter Event::Watcher::__ANON__ with (Event,poll,w,fd,GLOB(0x9256250),cb,CODE(0x8c963a0))
+   2007-09-27Z20:30:25.1374 (5) [94652688] enter Event::io::new with (Event::io,poll,w,fd,GLOB(0x9256250),cb,CODE(0x8c963a0))
+   2007-09-27Z20:30:25.1375 (5) [94652688] enter Event::Watcher::init with (Event::io=HASH(0x8bfb120),HASH(0x9b7940))</code></pre>
+
+<p>If your program uses the Coro::Debug::log facility:</p>
+
+<pre><code>   Coro::Debug::log 0, &quot;important message&quot;;
+   Coro::Debug::log 9, &quot;unimportant message&quot;;</code></pre>
+
+<p>Then you can even receive log messages in any debugging session:</p>
+
+<pre><code>   &gt; loglevel 5
+   2007-09-26Z02:22:46 (9) unimportant message</code></pre>
+
+<p>Other commands are available in the shell, use the <code>help</code> command for a list.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>None of the functions are being exported.</p>
+
+<dl>
+
+<dt id="log-level-msg">log $level, $msg</dt>
+<dd>
+
+<p>Log a debug message of the given severity level (0 is highest, higher is less important) to all interested parties.</p>
+
+</dd>
+<dt id="stderr_loglevel-level">stderr_loglevel $level</dt>
+<dd>
+
+<p>Set the loglevel for logging to stderr (defaults to the value of the environment variable PERL_CORO_STDERR_LOGLEVEL, or -1 if missing).</p>
+
+</dd>
+<dt id="session_loglevel-level">session_loglevel $level</dt>
+<dd>
+
+<p>Set the default loglevel for new coro debug sessions (defaults to the value of the environment variable PERL_CORO_DEFAULT_LOGLEVEL, or -1 if missing).</p>
+
+</dd>
+<dt id="trace-coro-loglevel">trace $coro, $loglevel</dt>
+<dd>
+
+<p>Enables tracing the given coroutine at the given loglevel. If loglevel is omitted, use 5. If coro is omitted, trace the current coroutine. Tracing incurs a very high runtime overhead.</p>
+
+<p>It is not uncommon to enable tracing on oneself by simply calling <code>Coro::Debug::trace</code>.</p>
+
+<p>A message will be logged at the given loglevel if it is not possible to enable tracing.</p>
+
+</dd>
+<dt id="untrace-coro">untrace $coro</dt>
+<dd>
+
+<p>Disables tracing on the given coroutine.</p>
+
+</dd>
+<dt id="command-string">command $string</dt>
+<dd>
+
+<p>Execute a debugger command, sending any output to STDOUT. Used by <code>session</code>, below.</p>
+
+</dd>
+<dt id="session-fh">session $fh</dt>
+<dd>
+
+<p>Run an interactive debugger session on the given filehandle. Each line entered is simply passed to <code>command</code> (with a few exceptions).</p>
+
+</dd>
+<dt id="server-new_unix_server-Coro::Debug-path">$server = new_unix_server Coro::Debug $path</dt>
+<dd>
+
+<p>Creates a new unix domain socket that listens for connection requests and runs <code>session</code> on any connection. Normal unix permission checks and umask applies, so you can protect your socket by puttint it into a protected directory.</p>
+
+<p>The <code>socat</code> utility is an excellent way to connect to this socket:</p>
+
+<pre><code>   socat readline /path/to/socket</code></pre>
+
+<p>Socat also offers history support:</p>
+
+<pre><code>   socat readline:history=/tmp/hist.corodebug /path/to/socket</code></pre>
+
+<p>The server accepts connections until it is destroyed, so you must keep the return value around as long as you want the server to stay available.</p>
+
+</dd>
+<dt id="server-new_tcp_server-Coro::Debug-port">$server = new_tcp_server Coro::Debug $port</dt>
+<dd>
+
+<p>Similar to <code>new_unix_server</code>, but binds on a TCP port. <i>Note that this is usually results in a gaping security hole</i>.</p>
+
+<p>Currently, only a TCPv4 socket is created, in the future, a TCPv6 socket might also be created.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

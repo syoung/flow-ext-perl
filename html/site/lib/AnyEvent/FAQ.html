@@ -1,0 +1,144 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#FAQs">FAQs</a>
+    <ul>
+      <li><a href="#My-program-exits-before-doing-anything-whats-going-on">My program exits before doing anything, what&#39;s going on?</a></li>
+      <li><a href="#Why-is-my-tcp_connect-callback-never-called">Why is my tcp_connect callback never called?</a></li>
+      <li><a href="#Why-do-some-backends-use-a-lot-of-CPU-in-AE::cv-recv">Why do some backends use a lot of CPU in AE::cv-&gt;recv?</a></li>
+      <li><a href="#Why-does-this-FAQ-not-deal-with-AnyEvent::Handle-questions">Why does this FAQ not deal with AnyEvent::Handle questions?</a></li>
+      <li><a href="#How-can-I-combine-Win32::GUI-applications-with-AnyEvent">How can I combine Win32::GUI applications with AnyEvent?</a></li>
+      <li><a href="#My-callback-dies-and">My callback dies and...</a></li>
+    </ul>
+  </li>
+  <li><a href="#Author">Author</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::FAQ - frequently asked questions</p>
+
+<h1 id="FAQs">FAQs</h1>
+
+<p>The newest version of this document can be found at <a href="http://pod.tst.eu/http://cvs.schmorp.de/AnyEvent/lib/AnyEvent/FAQ.pod">http://pod.tst.eu/http://cvs.schmorp.de/AnyEvent/lib/AnyEvent/FAQ.pod</a>.</p>
+
+<h2 id="My-program-exits-before-doing-anything-whats-going-on">My program exits before doing anything, what&#39;s going on?</h2>
+
+<p>Programmers new to event-based programming often forget that you can actually do other stuff while &quot;waiting&quot; for an event to occur and therefore forget to actually wait when they do not, in fact, have anything else to do.</p>
+
+<p>Here is an example:</p>
+
+<pre><code>   use AnyEvent;
+
+   my $timer = AnyEvent-&gt;timer (after =&gt; 5, cb =&gt; sub { say &quot;hi&quot; });</code></pre>
+
+<p>The expectation might be for the program to print &quot;hi&quot; after 5 seconds and then probably to exit. However, if you run this, your program will exit almost instantly: Creating the timer does not wait for it, instead the <code>timer</code> method returns immediately and perl executes the rest of the program. But there is nothing left to execute, so perl exits.</p>
+
+<p>To force AnyEvent to wait for something, use a condvar:</p>
+
+<pre><code>   use AnyEvent;
+
+   my $quit_program = AnyEvent-&gt;condvar;
+   my $timer = AnyEvent-&gt;timer (after =&gt; 5, cb =&gt; sub { $quit_program-&gt;send });
+
+   $quit_program-&gt;recv;</code></pre>
+
+<p>Here the program doesn&#39;t immediately exit, because it first waits for the &quot;quit_program&quot; condition.</p>
+
+<p>In most cases, your main program should call the event library &quot;loop&quot; function directly:</p>
+
+<pre><code>   use EV;
+   use AnyEvent;
+
+   ...
+
+   EV::loop;</code></pre>
+
+<h2 id="Why-is-my-tcp_connect-callback-never-called">Why is my <code>tcp_connect</code> callback never called?</h2>
+
+<p>Tricky: <code>tcp_connect</code> (and a few other functions in <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Socket.html">AnyEvent::Socket</a>) is critically sensitive to the caller context.</p>
+
+<p>In void context, it will just do its thing and eventually call the callback. In any other context, however, it will return a special &quot;guard&quot; object - when it is destroyed (e.g. when you don&#39;t store it but throw it away), tcp_connect will no longer try to connect or call any callbacks.</p>
+
+<p>Often this happens when the <code>tcp_connect</code> call is at the end of a function:</p>
+
+<pre><code>   sub do_connect {
+      tcp_connect &quot;www.example.com&quot;, 80, sub {
+         ... lengthy code
+      };
+   }</code></pre>
+
+<p>Then the caller decides whether there is a void context or not. One can avoid these cases by explicitly returning nothing:</p>
+
+<pre><code>   sub do_connect {
+      tcp_connect &quot;www.example.com&quot;, 80, sub {
+         ... lengthy code
+      };
+
+      () # return nothing
+   }</code></pre>
+
+<h2 id="Why-do-some-backends-use-a-lot-of-CPU-in-AE::cv-recv">Why do some backends use a lot of CPU in <code>AE::cv-&gt;recv</code>?</h2>
+
+<p>Many people try out this simple program, or its equivalent:</p>
+
+<pre><code>   use AnyEvent;
+   AnyEvent-&gt;condvar-&gt;recv;</code></pre>
+
+<p>They are then shocked to see that this basically idles with the Perl backend, but uses 100% CPU with the EV backend, which is supposed to be sooo efficient.</p>
+
+<p>The key to understand this is to understand that the above program is actually <i>buggy</i>: Nothing calls <code>-&gt;send</code> on the condvar, ever. Worse, there are no event watchers whatsoever. Basically, it creates a deadlock: there is no way to make progress, this program doesn&#39;t do anything useful, and this will not change in the future: it is already an ex-parrot.</p>
+
+<p>Some backends react to this by freezing, some by idling, and some do a 100% CPU loop.</p>
+
+<p>Since this program is not useful (and behaves as documented with all backends, as AnyEvent makes no CPU time guarantees), this shouldn&#39;t be a big deal: as soon as your program actually implements <i>something</i>, the CPU usage will be normal.</p>
+
+<h2 id="Why-does-this-FAQ-not-deal-with-AnyEvent::Handle-questions">Why does this FAQ not deal with <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> questions?</h2>
+
+<p>Because <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Handle.html">AnyEvent::Handle</a> has a NONFAQ on its own that already deals with common issues.</p>
+
+<h2 id="How-can-I-combine-Win32::GUI-applications-with-AnyEvent">How can I combine <a>Win32::GUI</a> applications with AnyEvent?</h2>
+
+<p>Well, not in the same OS thread, that&#39;s for sure :) What you can do is create another ithread (or fork) and run AnyEvent inside that thread, or better yet, run all your GUI code in a second ithread.</p>
+
+<p>For example, you could load <a>Win32::GUI</a> and <a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Util.html">AnyEvent::Util</a>, then create a portable socketpair for GUI-&gt;AnyEvent communication.</p>
+
+<p>Then fork/create a new ithread, in there, create a Window and send the <code>$WINDOW-&gt;{-Handle}</code> to the AnyEvent ithread so it can <code>PostMessage</code>.</p>
+
+<p>GUI to AnyEvent communication could work by pushing some data into a <a href="../../../lib/perl5/5.26.3/Thread/Queue.html">Thread::Queue</a> and writing a byte into the socket. The AnyEvent watcher on the other side will then look at the queue.</p>
+
+<p>AnyEvent to GUI communications can also use a <a href="../../../lib/perl5/5.26.3/Thread/Queue.html">Thread::Queue</a>, but to wake up the GUI thread, it would instead use <code>Win32::GUI::PostMessage $WINDOW, 1030, 0, &quot;&quot;</code>, and the GUI thread would listen for these messages by using <code>$WINDOW-&gt;Hook (1030 (), sub { ... })</code>.</p>
+
+<h2 id="My-callback-dies-and">My callback dies and...</h2>
+
+<p>It must not - part of the contract betwene AnyEvent and user code is that callbacks do not throw exceptions (and don&#39;t do even more evil things, such as using <code>last</code> outside a loop :). If your callback might die sometimes, you need to use <code>eval</code>.</p>
+
+<p>If you want to track down such a case and you can reproduce it, you can enable wrapping (by calling <code><a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Debug.html">AnyEvent::Debug</a>::wrap</code> or by setting <code>PERL_ANYEVENT_DEBUG_WRAP=1</code> before starting your program). This will wrap every callback into an eval and will report any exception complete with a backtrace and some information about which watcher died, where it was created and so on.</p>
+
+<h1 id="Author">Author</h1>
+
+<p>Marc Lehmann &lt;schmorp@schmorp.de&gt;.</p>
+
+
+</body>
+
+</html>
+
+

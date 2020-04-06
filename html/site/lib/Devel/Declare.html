@@ -1,0 +1,438 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#WARNING">WARNING</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#Creating-a-declarator-with-setup_for">Creating a declarator with setup_for</a></li>
+      <li><a href="#Writing-a-parser-subroutine">Writing a parser subroutine</a></li>
+      <li><a href="#Parser-utilities-in-detail">Parser utilities in detail</a>
+        <ul>
+          <li><a href="#skip_declarator">skip_declarator</a>
+            <ul>
+              <li><a href="#toke_move_past_token">toke_move_past_token</a></li>
+            </ul>
+          </li>
+          <li><a href="#strip_name">strip_name</a>
+            <ul>
+              <li><a href="#toke_scan_word">toke_scan_word</a></li>
+              <li><a href="#get_linestr">get_linestr</a></li>
+              <li><a href="#set_linestr">set_linestr</a></li>
+            </ul>
+          </li>
+          <li><a href="#skipspace">skipspace</a>
+            <ul>
+              <li><a href="#toke_skipspace">toke_skipspace</a></li>
+            </ul>
+          </li>
+          <li><a href="#strip_proto">strip_proto</a>
+            <ul>
+              <li><a href="#toke_scan_str">toke_scan_str</a></li>
+              <li><a href="#get_lex_stuff">get_lex_stuff</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#Munging-the-subroutine">Munging the subroutine</a>
+        <ul>
+          <li><a href="#make_proto_unwrap">make_proto_unwrap</a></li>
+          <li><a href="#inject_if_block">inject_if_block</a></li>
+          <li><a href="#scope_injector_call">scope_injector_call</a></li>
+        </ul>
+      </li>
+      <li><a href="#Shadowing-each-method">Shadowing each method.</a>
+        <ul>
+          <li><a href="#shadow">shadow</a>
+            <ul>
+              <li><a href="#get_curstash_name">get_curstash_name</a></li>
+              <li><a href="#shadow_sub">shadow_sub</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Devel::Declare - Adding keywords to perl, in perl</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Method::Signatures;
+  # or ...
+  use MooseX::Declare;
+  # etc.
+
+  # Use some new and exciting syntax like:
+  method hello (Str :$who, Int :$age where { $_ &gt; 0 }) {
+    $self-&gt;say(&quot;Hello ${who}, I am ${age} years old!&quot;);
+  }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586168246.29985/Devel-Declare-0.006019/blib/lib/Devel/Declare.html">Devel::Declare</a> can install subroutines called declarators which locally take over Perl&#39;s parser, allowing the creation of new syntax.</p>
+
+<p>This document describes how to create a simple declarator.</p>
+
+<h1 id="WARNING">WARNING</h1>
+
+<p><b>Warning:</b> Devel::Declare is a giant bag of crack originally implemented by mst with the goal of upsetting the perl core developers so much by its very existence that they implemented proper keyword handling in the core.</p>
+
+<p>As of perl5 version 14, this goal has been achieved, and modules such as <a>Devel::CallParser</a>, <a>Function::Parameters</a>, and <a>Keyword::Simple</a> provide mechanisms to mangle perl syntax that don&#39;t require hallucinogenic drugs to interpret the error messages they produce.</p>
+
+<p>If you are using something that uses Devel::Declare, please for the love of kittens use something else:</p>
+
+<ul>
+
+<li><p>Instead of <a>TryCatch</a>, use <a href="../../../lib/perl5/5.26.3/Try/Tiny.html">Try::Tiny</a></p>
+
+</li>
+<li><p>Instead of <a>Method::Signatures</a>, use <a href="../../../lib/perl5/5.26.3/pod/perlsub.html#Signatures">real subroutine signatures</a> (requires perl 5.22) or <a>Moops</a></p>
+
+</li>
+</ul>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p>We&#39;ll demonstrate the usage of <code>Devel::Declare</code> with a motivating example: a new <code>method</code> keyword, which acts like the builtin <code>sub</code>, but automatically unpacks <code>$self</code> and the other arguments.</p>
+
+<pre><code>  package My::Methods;
+  use Devel::Declare;</code></pre>
+
+<h2 id="Creating-a-declarator-with-setup_for">Creating a declarator with <code>setup_for</code></h2>
+
+<p>You will typically create</p>
+
+<pre><code>  sub import {
+    my $class = shift;
+    my $caller = caller;
+
+    Devel::Declare-&gt;setup_for(
+        $caller,
+        { method =&gt; { const =&gt; \&amp;parser } }
+    );
+    no strict &#39;refs&#39;;
+    *{$caller.&#39;::method&#39;} = sub (&amp;) {};
+  }</code></pre>
+
+<p>Starting from the end of this import routine, you&#39;ll see that we&#39;re creating a subroutine called <code>method</code> in the caller&#39;s namespace. Yes, that&#39;s just a normal subroutine, and it does nothing at all (yet!) Note the prototype <code>(&amp;)</code> which means that the caller would call it like so:</p>
+
+<pre><code>    method {
+        my ($self, $arg1, $arg2) = @_;
+        ...
+    }</code></pre>
+
+<p>However we want to be able to call it like this</p>
+
+<pre><code>    method foo ($arg1, $arg2) {
+        ...
+    }</code></pre>
+
+<p>That&#39;s why we call <code>setup_for</code> above, to register the declarator &#39;method&#39; with a custom parser, as per the next section. It acts on an optype, usually <code>&#39;const&#39;</code> as above. (Other valid values are <code>&#39;check&#39;</code> and <code>&#39;rv2cv&#39;</code>).</p>
+
+<p>For a simpler way to install new methods, see also <a>Devel::Declare::MethodInstaller::Simple</a></p>
+
+<h2 id="Writing-a-parser-subroutine">Writing a parser subroutine</h2>
+
+<p>This subroutine is called at <i>compilation</i> time, and allows you to read the custom syntaxes that we want (in a syntax that may or may not be valid core Perl 5) and munge it so that the result will be parsed by the <code>perl</code> compiler.</p>
+
+<p>For this example, we&#39;re defining some globals for convenience:</p>
+
+<pre><code>    our ($Declarator, $Offset);</code></pre>
+
+<p>Then we define a parser subroutine to handle our declarator. We&#39;ll look at this in a few chunks.</p>
+
+<pre><code>    sub parser {
+      local ($Declarator, $Offset) = @_;</code></pre>
+
+<p><code>Devel::Declare</code> provides some very low level utility methods to parse character strings. We&#39;ll define some useful higher level routines below for convenience, and we can use these to parse the various elements in our new syntax.</p>
+
+<p>Notice how our parser subroutine is invoked at compile time, when the <code>perl</code> parser is pointed just <i>before</i> the declarator name.</p>
+
+<pre><code>      skip_declarator;          # step past &#39;method&#39;
+      my $name = strip_name;    # strip out the name &#39;foo&#39;, if present
+      my $proto = strip_proto;  # strip out the prototype &#39;($arg1, $arg2)&#39;, if present</code></pre>
+
+<p>Now we can prepare some code to &#39;inject&#39; into the new subroutine. For example we might want the method as above to have <code>my ($self, $arg1, $arg2) = @_</code> injected at the beginning of it. We also do some clever stuff with scopes that we&#39;ll look at shortly.</p>
+
+<pre><code>      my $inject = make_proto_unwrap($proto);
+      if (defined $name) {
+        $inject = scope_injector_call().$inject;
+      }
+      inject_if_block($inject);</code></pre>
+
+<p>We&#39;ve now managed to change <code>method ($arg1, $arg2) { ... }</code> into <code>method { injected_code; ... }</code>. This will compile... but we&#39;ve lost the name of the method!</p>
+
+<p>In a cute (or horrifying, depending on your perspective) trick, we temporarily change the definition of the subroutine <code>method</code> itself, to specialise it with the <code>$name</code> we stripped, so that it assigns the code block to that name.</p>
+
+<p>Even though the <i>next</i> time <code>method</code> is compiled, it will be redefined again, <code>perl</code> caches these definitions in its parse tree, so we&#39;ll always get the right one!</p>
+
+<p>Note that we also handle the case where there was no name, allowing an anonymous method analogous to an anonymous subroutine.</p>
+
+<pre><code>      if (defined $name) {
+        $name = join(&#39;::&#39;, Devel::Declare::get_curstash_name(), $name)
+          unless ($name =~ /::/);
+        shadow(sub (&amp;) { no strict &#39;refs&#39;; *{$name} = shift; });
+      } else {
+        shadow(sub (&amp;) { shift });
+      }
+    }</code></pre>
+
+<h2 id="Parser-utilities-in-detail">Parser utilities in detail</h2>
+
+<p>For simplicity, we&#39;re using global variables like <code>$Offset</code> in these examples. You may prefer to look at <a>Devel::Declare::Context::Simple</a>, which encapsulates the context much more cleanly.</p>
+
+<h3 id="skip_declarator"><code>skip_declarator</code></h3>
+
+<p>This simple parser just moves across a &#39;token&#39;. The common case is to skip the declarator, i.e. to move to the end of the string &#39;method&#39; and before the prototype and code block.</p>
+
+<pre><code>    sub skip_declarator {
+      $Offset += Devel::Declare::toke_move_past_token($Offset);
+    }</code></pre>
+
+<h4 id="toke_move_past_token"><code>toke_move_past_token</code></h4>
+
+<p>This builtin parser simply moves past a &#39;token&#39; (matching <code>/[a-zA-Z_]\w*/</code>) It takes an offset into the source document, and skips past the token. It returns the number of characters skipped.</p>
+
+<h3 id="strip_name"><code>strip_name</code></h3>
+
+<p>This parser skips any whitespace, then scans the next word (again matching a &#39;token&#39;). We can then analyse the current line, and manipulate it (using pure Perl). In this case we take the name of the method out, and return it.</p>
+
+<pre><code>    sub strip_name {
+      skipspace;
+      if (my $len = Devel::Declare::toke_scan_word($Offset, 1)) {
+        my $linestr = Devel::Declare::get_linestr();
+        my $name = substr($linestr, $Offset, $len);
+        substr($linestr, $Offset, $len) = &#39;&#39;;
+        Devel::Declare::set_linestr($linestr);
+        return $name;
+      }
+      return;
+    }</code></pre>
+
+<h4 id="toke_scan_word"><code>toke_scan_word</code></h4>
+
+<p>This builtin parser, given an offset into the source document, matches a &#39;token&#39; as above but does not skip. It returns the length of the token matched, if any.</p>
+
+<h4 id="get_linestr"><code>get_linestr</code></h4>
+
+<p>This builtin returns the full text of the current line of the source document.</p>
+
+<h4 id="set_linestr"><code>set_linestr</code></h4>
+
+<p>This builtin sets the full text of the current line of the source document. Beware that injecting a newline into the middle of the line is likely to fail in surprising ways. Generally, Perl&#39;s parser can rely on the `current line&#39; actually being only a single line. Use other kinds of whitespace instead, in the code that you inject.</p>
+
+<h3 id="skipspace"><code>skipspace</code></h3>
+
+<p>This parser skips whitsepace.</p>
+
+<pre><code>    sub skipspace {
+      $Offset += Devel::Declare::toke_skipspace($Offset);
+    }</code></pre>
+
+<h4 id="toke_skipspace"><code>toke_skipspace</code></h4>
+
+<p>This builtin parser, given an offset into the source document, skips over any whitespace, and returns the number of characters skipped.</p>
+
+<h3 id="strip_proto"><code>strip_proto</code></h3>
+
+<p>This is a more complex parser that checks if it&#39;s found something that starts with <code>&#39;(&#39;</code> and returns everything till the matching <code>&#39;)&#39;</code>.</p>
+
+<pre><code>    sub strip_proto {
+      skipspace;
+
+      my $linestr = Devel::Declare::get_linestr();
+      if (substr($linestr, $Offset, 1) eq &#39;(&#39;) {
+        my $length = Devel::Declare::toke_scan_str($Offset);
+        my $proto = Devel::Declare::get_lex_stuff();
+        Devel::Declare::clear_lex_stuff();
+        $linestr = Devel::Declare::get_linestr();
+        substr($linestr, $Offset, $length) = &#39;&#39;;
+        Devel::Declare::set_linestr($linestr);
+        return $proto;
+      }
+      return;
+    }</code></pre>
+
+<h4 id="toke_scan_str"><code>toke_scan_str</code></h4>
+
+<p>This builtin parser uses Perl&#39;s own parsing routines to match a &quot;stringlike&quot; expression. Handily, this includes bracketed expressions (just think about things like <code>q(this is a quote)</code>).</p>
+
+<p>Also it Does The Right Thing with nested delimiters (like <code>q(this (is (a) quote))</code>).</p>
+
+<p>It returns the effective length of the expression matched. Really, what it returns is the difference in position between where the string started, within the buffer, and where it finished. If the string extended across multiple lines then the contents of the buffer may have been completely replaced by the new lines, so this position difference is not the same thing as the actual length of the expression matched. However, because moving backward in the buffer causes problems, the function arranges for the effective length to always be positive, padding the start of the buffer if necessary.</p>
+
+<p>Use <code>get_lex_stuff</code> to get the actual matched text, the content of the string. Because of the behaviour around multiline strings, you can&#39;t reliably get this from the buffer. In fact, after the function returns, you can&#39;t rely on any content of the buffer preceding the end of the string.</p>
+
+<p>If the string being scanned is not well formed (has no closing delimiter), <code>toke_scan_str</code> returns <code>undef</code>. In this case you cannot rely on the contents of the buffer.</p>
+
+<h4 id="get_lex_stuff"><code>get_lex_stuff</code></h4>
+
+<p>This builtin returns what was matched by <code>toke_scan_str</code>. To avoid segfaults, you should call <code>clear_lex_stuff</code> immediately afterwards.</p>
+
+<h2 id="Munging-the-subroutine">Munging the subroutine</h2>
+
+<p>Let&#39;s look at what we need to do in detail.</p>
+
+<h3 id="make_proto_unwrap"><code>make_proto_unwrap</code></h3>
+
+<p>We may have defined our method in different ways, which will result in a different value for our prototype, as parsed above. For example:</p>
+
+<pre><code>    method foo         {  # undefined
+    method foo ()      {  # &#39;&#39;
+    method foo ($arg1) {  # &#39;$arg1&#39;</code></pre>
+
+<p>We deal with them as follows, and return the appropriate <code>my ($self, ...) = @_;</code> string.</p>
+
+<pre><code>    sub make_proto_unwrap {
+      my ($proto) = @_;
+      my $inject = &#39;my ($self&#39;;
+      if (defined $proto) {
+        $inject .= &quot;, $proto&quot; if length($proto);
+        $inject .= &#39;) = @_; &#39;;
+      } else {
+        $inject .= &#39;) = shift;&#39;;
+      }
+      return $inject;
+    }</code></pre>
+
+<h3 id="inject_if_block"><code>inject_if_block</code></h3>
+
+<p>Now we need to inject it after the opening <code>&#39;{&#39;</code> of the method body. We can do this with the building blocks we defined above like <code>skipspace</code> and <code>get_linestr</code>.</p>
+
+<pre><code>    sub inject_if_block {
+      my $inject = shift;
+      skipspace;
+      my $linestr = Devel::Declare::get_linestr;
+      if (substr($linestr, $Offset, 1) eq &#39;{&#39;) {
+        substr($linestr, $Offset+1, 0) = $inject;
+        Devel::Declare::set_linestr($linestr);
+      }
+    }</code></pre>
+
+<h3 id="scope_injector_call"><code>scope_injector_call</code></h3>
+
+<p>We want to be able to handle both named and anonymous methods. i.e.</p>
+
+<pre><code>    method foo () { ... }
+    my $meth = method () { ... };</code></pre>
+
+<p>These will then get rewritten as</p>
+
+<pre><code>    method { ... }
+    my $meth = method { ... };</code></pre>
+
+<p>where &#39;method&#39; is a subroutine that takes a code block. Spot the problem? The first one doesn&#39;t have a semicolon at the end of it! Unlike &#39;sub&#39; which is a builtin, this is just a normal statement, so we need to terminate it. Luckily, using <code>B::Hooks::EndOfScope</code>, we can do this!</p>
+
+<pre><code>  use B::Hooks::EndOfScope;</code></pre>
+
+<p>We&#39;ll add this to what gets &#39;injected&#39; at the beginning of the method source.</p>
+
+<pre><code>  sub scope_injector_call {
+    return &#39; BEGIN { MethodHandlers::inject_scope }; &#39;;
+  }</code></pre>
+
+<p>So at the beginning of every method, we are passing a callback that will get invoked at the <i>end</i> of the method&#39;s compilation... i.e. exactly then the closing <code>&#39;}&#39;</code> is compiled.</p>
+
+<pre><code>  sub inject_scope {
+    on_scope_end {
+      my $linestr = Devel::Declare::get_linestr;
+      my $offset = Devel::Declare::get_linestr_offset;
+      substr($linestr, $offset, 0) = &#39;;&#39;;
+      Devel::Declare::set_linestr($linestr);
+    };
+  }</code></pre>
+
+<h2 id="Shadowing-each-method">Shadowing each method.</h2>
+
+<h3 id="shadow"><code>shadow</code></h3>
+
+<p>We override the current definition of &#39;method&#39; using <code>shadow</code>.</p>
+
+<pre><code>    sub shadow {
+      my $pack = Devel::Declare::get_curstash_name;
+      Devel::Declare::shadow_sub(&quot;${pack}::${Declarator}&quot;, $_[0]);
+    }</code></pre>
+
+<p>For a named method we invoked like this:</p>
+
+<pre><code>    shadow(sub (&amp;) { no strict &#39;refs&#39;; *{$name} = shift; });</code></pre>
+
+<p>So in the case of a <code>method foo { ... }</code>, this call would redefine <code>method</code> to be a subroutine that exports &#39;sub foo&#39; as the (munged) contents of <code>{...}</code>.</p>
+
+<p>The case of an anonymous method is also cute:</p>
+
+<pre><code>    shadow(sub (&amp;) { shift });</code></pre>
+
+<p>This means that</p>
+
+<pre><code>    my $meth = method () { ... };</code></pre>
+
+<p>is rewritten with <code>method</code> taking the codeblock, and returning it as is to become the value of <code>$meth</code>.</p>
+
+<h4 id="get_curstash_name"><code>get_curstash_name</code></h4>
+
+<p>This returns the package name <i>currently being compiled</i>.</p>
+
+<h4 id="shadow_sub"><code>shadow_sub</code></h4>
+
+<p>Handles the details of redefining the subroutine.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>One of the best ways to learn <code>Devel::Declare</code> is still to look at modules that use it:</p>
+
+<p><a href="http://cpants.perl.org/dist/used_by/Devel-Declare">http://cpants.perl.org/dist/used_by/Devel-Declare</a>.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt S Trout - &lt;mst@shadowcat.co.uk&gt; - original author</p>
+
+<p>Company: http://www.shadowcat.co.uk/ Blog: http://chainsawblues.vox.com/</p>
+
+<p>Florian Ragwitz &lt;rafl@debian.org&gt; - maintainer</p>
+
+<p>osfameron &lt;osfameron@cpan.org&gt; - first draft of documentation</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This library is free software under the same terms as perl itself</p>
+
+<p>Copyright (c) 2007, 2008, 2009 Matt S Trout</p>
+
+<p>Copyright (c) 2008, 2009 Florian Ragwitz</p>
+
+<p>stolen_chunk_of_toke.c based on toke.c from the perl core, which is</p>
+
+<p>Copyright (C) 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, by Larry Wall and others</p>
+
+
+</body>
+
+</html>
+
+

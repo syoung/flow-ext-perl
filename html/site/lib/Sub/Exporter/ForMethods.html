@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORTS">EXPORTS</a>
+    <ul>
+      <li><a href="#method_installer">method_installer</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Sub::Exporter::ForMethods - helper routines for using Sub::Exporter to build methods</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.100052</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>In an exporting library:</p>
+
+<pre><code>  package Method::Builder;
+
+  use Sub::Exporter::ForMethods qw(method_installer);
+
+  use Sub::Exporter -setup =&gt; {
+    exports   =&gt; [ method =&gt; \&#39;_method_generator&#39; ],
+    installer =&gt; method_installer,
+  };
+
+  sub _method_generator {
+    my ($self, $name, $arg, $col) = @_;
+    return sub { ... };
+  };</code></pre>
+
+<p>In an importing library:</p>
+
+<pre><code>  package Vehicle::Autobot;
+  use Method::Builder method =&gt; { -as =&gt; &#39;transform&#39; };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>The synopsis section, above, looks almost indistinguishable from any other use of <a href="../../../../lib/perl5/5.26.3/Sub/Exporter.html">Sub::Exporter</a>, apart from the use of <code>method_installer</code>. It is nearly indistinguishable in behavior, too. The only change is that subroutines exported from Method::Builder into named slots in Vehicle::Autobot will be wrapped in a subroutine called <code>Vehicle::Autobot::transform</code>. This will insert a named frame into stack traces to aid in debugging.</p>
+
+<p>More importantly (for the author, anyway), they will not be removed by <a href="../../../../lib/perl5/5.26.3/namespace/autoclean.html">namespace::autoclean</a>. This makes the following code work:</p>
+
+<pre><code>  package MyLibrary;
+
+  use Math::Trig qw(tan);         # uses Exporter.pm
+  use String::Truncate qw(trunc); # uses Sub::Exporter&#39;s defaults
+
+  use Sub::Exporter::ForMethods qw(method_installer);
+  use Mixin::Linewise { installer =&gt; method_installer }, qw(read_file);
+
+  use namespace::autoclean;
+
+  ...
+
+  1;</code></pre>
+
+<p>After MyLibrary is compiled, <code>namespace::autoclean</code> will remove <code>tan</code> and <code>trunc</code> as foreign contaminants, but will leave <code>read_file</code> in place. It will also remove <code>method_installer</code>, an added win.</p>
+
+<h1 id="EXPORTS">EXPORTS</h1>
+
+<p>Sub::Exporter::ForMethods offers only one routine for export, and it may also be called by its full package name:</p>
+
+<h2 id="method_installer">method_installer</h2>
+
+<pre><code>  my $installer = method_installer(\%arg);</code></pre>
+
+<p>This routine returns an installer suitable for use as the <code>installer</code> argument to Sub::Exporter. It updates the <code>\@to_export</code> argument to wrap all code that will be installed by name in a named subroutine, then passes control to the default Sub::Exporter installer.</p>
+
+<p>The only argument to <code>method_installer</code> is an optional hashref which may contain a single entry for <code>rebless</code>. If the value for <code>rebless</code> is true, when a blessed subroutine is wrapped, the wrapper will be blessed into the same package.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2015 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,1188 @@
+=head2 Mon Apr  6 10:10:43 2020: C<Module> L<App::cpanminus|App::cpanminus>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.7044>
+
+=item *
+
+C<EXE_FILES: bin/cpanm>
+
+=back
+
+=head2 Mon Apr  6 10:13:29 2020: C<Module> L<File::Sort|File::Sort>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:14:04 2020: C<Module> L<DBD::SQLite|DBD::SQLite>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.64>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:14:08 2020: C<Module> L<Spiffy|Spiffy>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.46>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:14:14 2020: C<Module> L<Test::Base|Test::Base>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.89>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:14:16 2020: C<Module> L<Test::YAML|Test::YAML>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.07>
+
+=item *
+
+C<EXE_FILES: bin/test-yaml>
+
+=back
+
+=head2 Mon Apr  6 10:14:23 2020: C<Module> L<YAML|YAML>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.30>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:14:24 2020: C<Module> L<install|install>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:14:54 2020: C<Module> L<Convert::Binary::C|Convert::Binary::C>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.78>
+
+=item *
+
+C<EXE_FILES: bin/ccconfig>
+
+=back
+
+=head2 Mon Apr  6 10:14:55 2020: C<Module> L<Canary::Stability|Canary::Stability>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2013>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:15:03 2020: C<Module> L<AnyEvent|AnyEvent>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 7.17>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:15:06 2020: C<Module> L<common::sense|common::sense>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 3.75>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:15:07 2020: C<Module> L<Guard|Guard>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.023>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:15:12 2020: C<Module> L<Coro|Coro>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 6.55>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:16:22 2020: C<Module> L<DBI|DBI>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.643>
+
+=item *
+
+C<EXE_FILES: dbilogstrip dbiprof dbiproxy>
+
+=back
+
+=head2 Mon Apr  6 10:16:24 2020: C<Module> L<Mock::Config|Mock::Config>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.03>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:16:28 2020: C<Module> L<Devel::CheckLib|Devel::CheckLib>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.14>
+
+=item *
+
+C<EXE_FILES: bin/use-devel-checklib>
+
+=back
+
+=head2 Mon Apr  6 10:16:36 2020: C<Module> L<DBD::mysql|DBD::mysql>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 4.050>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:16:40 2020: C<Module> L<Test::Warnings|Test::Warnings>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.030>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:16:42 2020: C<Module> L<File::Copy::Recursive|File::Copy::Recursive>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.45>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:16:48 2020: C<Module> L<FindBin::Real|FindBin::Real>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.05>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:17:26 2020: C<Module> L<JSON|JSON>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 4.02>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:17:29 2020: C<Module> L<File::Copy::Recursive::Reduced|File::Copy::Recursive::Reduced>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:17:31 2020: C<Module> L<Test::Requires|Test::Requires>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.10>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:17:42 2020: C<Module> L<Devel::PPPort|Devel::PPPort>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 3.58>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:17:45 2020: C<Module> L<Test::Output|Test::Output>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.031>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:17:48 2020: C<Module> L<Test::LeakTrace|Test::LeakTrace>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.16>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:26 2020: C<Module> L<ExtUtils::Depends|ExtUtils::Depends>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.8000>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:28 2020: C<Module> L<B::Hooks::OP::Check|B::Hooks::OP::Check>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.22>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:32 2020: C<Module> L<Devel::Declare|Devel::Declare>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.006019>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:36 2020: C<Module> L<Any::Moose|Any::Moose>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.27>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:48 2020: C<Module> L<Method::Signatures::Simple|Method::Signatures::Simple>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.07>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:52 2020: C<Module> L<File::pushd|File::pushd>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.016>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:55 2020: C<Module> L<Test::Needs|Test::Needs>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.002006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:18:58 2020: C<Module> L<Test::CleanNamespaces|Test::CleanNamespaces>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.24>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:19:00 2020: C<Module> L<CPAN::Meta::Check|CPAN::Meta::Check>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.014>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:20:21 2020: C<Module> L<Moose|Moose>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.2012>
+
+=item *
+
+C<EXE_FILES: bin/moose-outdated>
+
+=back
+
+=head2 Mon Apr  6 10:20:26 2020: C<Module> L<Sub::Exporter::ForMethods|Sub::Exporter::ForMethods>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.100052>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:20:35 2020: C<Module> L<Class::Tiny|Class::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.006>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:20:37 2020: C<Module> L<Devel::PartialDump|Devel::PartialDump>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.20>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:20:45 2020: C<Module> L<Parse::Method::Signatures|Parse::Method::Signatures>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.003019>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:20:49 2020: C<Module> L<MooseX::Meta::TypeConstraint::ForceCoercion|MooseX::Meta::TypeConstraint::ForceCoercion>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:20:51 2020: C<Module> L<Context::Preserve|Context::Preserve>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.03>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:17 2020: C<Module> L<PadWalker|PadWalker>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.3>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:19 2020: C<Module> L<PerlIO::eol|PerlIO::eol>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.17>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:22 2020: C<Module> L<Term::ANSIColor|Term::ANSIColor>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 5.01>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:25 2020: C<Module> L<Term::ReadKey|Term::ReadKey>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.38>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:28 2020: C<Module> L<B::Hooks::OP::PPAddr|B::Hooks::OP::PPAddr>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.06>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:37 2020: C<Module> L<Scope::Upper|Scope::Upper>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.32>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:42 2020: C<Module> L<TryCatch|TryCatch>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.003002>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:46 2020: C<Module> L<YAML::Tiny|YAML::Tiny>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.73>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:49 2020: C<Module> L<Net::RabbitMQ|Net::RabbitMQ>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.2.8>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:52 2020: C<Module> L<Acme::Damn|Acme::Damn>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr  6 10:21:54 2020: C<Module> L<UUID|UUID>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.28>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+

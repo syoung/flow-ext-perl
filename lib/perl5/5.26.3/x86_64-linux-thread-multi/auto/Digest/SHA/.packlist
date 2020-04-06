@@ -1,0 +1,5 @@
+/flow/perl/bin/shasum
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/Digest/SHA.pm
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/auto/Digest/SHA/SHA.so
+/flow/perl/man/man1/shasum.1
+/flow/perl/man/man3/Digest::SHA.3

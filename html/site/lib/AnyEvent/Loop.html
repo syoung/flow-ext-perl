@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Loop - AnyEvent&#39;s Pure-Perl event loop</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent;
+   # use AnyEvent::Loop;
+  
+   # this module gets loaded automatically when no other loop can be found
+
+   # Explicit use:
+   use AnyEvent::Loop;
+   use AnyEvent;
+
+   ...
+
+   AnyEvent::Loop::run; # run the event loop</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides an event loop for AnyEvent in case no other event loop could be found or loaded. You don&#39;t have to do anything to make it work with AnyEvent except by possibly loading it before creating the first AnyEvent watcher.</p>
+
+<p>This module is <i>not</i> some loop abstracion used by AnyEvent, but just another event loop like EV or Glib, just written in pure perl and delivered with AnyEvent, so AnyEvent always works, even in the absence of any other backend.</p>
+
+<p>If you want to use this module instead of autoloading a potentially better event loop you can simply load it (and no other event loops) before creating the first watcher.</p>
+
+<p>As for performance, this module is on par with (and usually faster than) most select/poll-based C event modules such as Event or Glib (it does not even come close to EV, though), with respect to I/O watchers. Timers are handled less optimally, but for many common tasks, it is still on par with event loops written in C.</p>
+
+<p>This event loop has been optimised for the following use cases:</p>
+
+<dl>
+
+<dt id="monotonic-clock-is-available">monotonic clock is available</dt>
+<dd>
+
+<p>This module will use the POSIX monotonic clock option (if it can be detected at runtime) or the POSIX <code>times</code> function (if the resolution is at least 100Hz), in which case it will not suffer adversely from time jumps.</p>
+
+<p>If no monotonic clock is available, this module will not attempt to correct for time jumps in any way.</p>
+
+<p>The clock chosen will be reported if the environment variable <code>$PERL_ANYEVENT_VERBOSE</code> is set to 8 or higher.</p>
+
+</dd>
+<dt id="any-number-of-watchers-on-one-fd">any number of watchers on one fd</dt>
+<dd>
+
+<p>Supporting a large number of watchers per fd is purely a dirty benchmark optimisation not relevant in practise. The more common case of having one watcher per fd/poll combo is special-cased, however, and therefore fast, too.</p>
+
+</dd>
+<dt id="relatively-few-active-fds-per-select-call">relatively few active fds per <code>select</code> call</dt>
+<dd>
+
+<p>This module expects that only a tiny amount of fds is active at any one time. This is relatively typical of larger servers (but not the case where <code>select</code> traditionally is fast), at the expense of the &quot;dense activity case&quot; where most of the fds are active (which suits <code>select</code>).</p>
+
+<p>The optimal implementation of the &quot;dense&quot; case is not much faster, though, so the module should behave very well in most cases, subject to the bad scalability of <code>select</code> in the presence of a large number of inactive file descriptors.</p>
+
+</dd>
+<dt id="lots-of-timer-changes-iteration-or-none-at-all">lots of timer changes/iteration, or none at all</dt>
+<dd>
+
+<p>This module sorts the timer list using perl&#39;s <code>sort</code>, even though a total ordering is not required for timers internally.</p>
+
+<p>This sorting is expensive, but means sorting can be avoided unless the timer list has changed in a way that requires a new sort.</p>
+
+<p>This means that adding lots of timers is very efficient, as well as not changing the timers. Advancing timers (e.g. recreating a timeout watcher on activity) is also relatively efficient, for example, if you have a large number of timeout watchers that time out after 10 seconds, then the timer list will be sorted only once every 10 seconds.</p>
+
+<p>This should not have much of an impact unless you have hundreds or thousands of timers, though, or your timers have very small timeouts.</p>
+
+</dd>
+</dl>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>The only user-visible functions provided by this module loop related - watchers are created via the normal AnyEvent mechanisms.</p>
+
+<dl>
+
+<dt id="AnyEvent::Loop::run">AnyEvent::Loop::run</dt>
+<dd>
+
+<p>Run the event loop, usually the last thing done in the main program when you want to use the pure-perl backend.</p>
+
+</dd>
+<dt id="AnyEvent::Loop::one_event">AnyEvent::Loop::one_event</dt>
+<dd>
+
+<p>Blocks until at least one new event has been received by the operating system, whether or not it was AnyEvent-related.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code>   Marc Lehmann &lt;schmorp@schmorp.de&gt;
+   http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

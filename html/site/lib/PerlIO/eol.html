@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORTS">EXPORTS</a>
+    <ul>
+      <li><a href="#CR">CR</a></li>
+      <li><a href="#CRLF">CRLF</a></li>
+      <li><a href="#LF">LF</a></li>
+      <li><a href="#NATIVE">NATIVE</a></li>
+      <li><a href="#eol_is_mixed">eol_is_mixed</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>PerlIO::eol - PerlIO layer for normalizing line endings</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>This document describes version 0.15 of PerlIO::eol, released December 18, 2006.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    binmode STDIN, &quot;:raw:eol(LF)&quot;;
+    binmode STDOUT, &quot;:raw:eol(CRLF)&quot;;
+    open FH, &quot;+&lt;:raw:eol(LF-Native)&quot;, &quot;file&quot;;
+
+    binmode STDOUT, &quot;:raw:eol(CRLF?)&quot;; # warns on mixed newlines
+    binmode STDOUT, &quot;:raw:eol(CRLF!)&quot;; # dies on mixed newlines
+
+    use PerlIO::eol qw( eol_is_mixed );
+    my $pos = eol_is_mixed( &quot;mixed\nstring\r&quot; );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This layer normalizes any of <code>CR</code>, <code>LF</code>, <code>CRLF</code> and <code>Native</code> into the designated line ending. It works for both input and output handles.</p>
+
+<p>If you specify two different line endings joined by a <code>-</code>, it will use the first one for reading and the second one for writing. For example, the <code>LF-CRLF</code> encoding means that all input should be normalized to <code>LF</code>, and all output should be normalized to <code>CRLF</code>.</p>
+
+<p>By default, data with mixed newlines are normalized silently. Append a <code>!</code> to the line ending will raise a fatal exception when mixed newlines are spotted. Append a <code>?</code> will raise a warning instead.</p>
+
+<p>It is advised to pop any potential <code>:crlf</code> or encoding layers before this layer; this is usually done using a <code>:raw</code> prefix.</p>
+
+<p>This module also optionally exports a <code>eol_is_mixed</code> function; it takes a string and returns the position of the first inconsistent line ending found in that string, or <code>0</code> if the line endings are consistent.</p>
+
+<p>The <code>CR</code>, <code>LF</code>, <code>CRLF</code> and <code>NATIVE</code> constants are also exported at request.</p>
+
+<h1 id="EXPORTS">EXPORTS</h1>
+
+<h2 id="CR">CR</h2>
+
+<p>A carriage return constant.</p>
+
+<h2 id="CRLF">CRLF</h2>
+
+<p>A carriage return/line feed constant.</p>
+
+<h2 id="LF">LF</h2>
+
+<p>A line feed constant.</p>
+
+<h2 id="NATIVE">NATIVE</h2>
+
+<p>The native line ending.</p>
+
+<h2 id="eol_is_mixed">eol_is_mixed</h2>
+
+<p>This module also optionally exports a <code>eol_is_mixed</code> function; it takes a string and returns the position of the first inconsistent line ending found in that string, or <code>0</code> if the line endings are consistent.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Audrey Tang &lt;autrijus@autrijus.org&gt;.</p>
+
+<p>Janitorial help by Gaal Yahas &lt;gaal@forum2.org&gt;.</p>
+
+<p>Inspired by <a>PerlIO::nline</a> by Ben Morrow, &lt;PerlIO-eol@morrow.me.uk&gt;.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2004-2006 by Audrey Tang &lt;audreyt@audreyt.org&gt;.</p>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<p>See <a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a></p>
+
+
+</body>
+
+</html>
+
+

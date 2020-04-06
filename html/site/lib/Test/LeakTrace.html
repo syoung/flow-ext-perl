@@ -1,0 +1,263 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#INTERFACE">INTERFACE</a>
+    <ul>
+      <li><a href="#Exported-functions">Exported functions</a>
+        <ul>
+          <li><a href="#leaked_info-BLOCK">leaked_info { BLOCK }</a></li>
+          <li><a href="#leaked_refs-BLOCK">leaked_refs { BLOCK }</a></li>
+          <li><a href="#leaked_count-BLOCK">leaked_count { BLOCK }</a></li>
+          <li><a href="#leaktrace-BLOCK-mode-callback">leaktrace { BLOCK } ?($mode | \&amp;callback)</a></li>
+          <li><a href="#no_leaks_ok-BLOCK-description">no_leaks_ok { BLOCK } ?$description</a></li>
+          <li><a href="#leaks_cmp_ok-BLOCK-cmp_op-number-description">leaks_cmp_ok { BLOCK } $cmp_op, $number, ?$description</a></li>
+          <li><a href="#count_sv">count_sv()</a></li>
+        </ul>
+      </li>
+      <li><a href="#Script-interface">Script interface</a></li>
+    </ul>
+  </li>
+  <li><a href="#EXAMPLES">EXAMPLES</a>
+    <ul>
+      <li><a href="#Testing-modules">Testing modules</a></li>
+    </ul>
+  </li>
+  <li><a href="#DEPENDENCIES">DEPENDENCIES</a></li>
+  <li><a href="#CAVEATS">CAVEATS</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#LICENSE-AND-COPYRIGHT">LICENSE AND COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::LeakTrace - Traces memory leaks</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>This document describes Test::LeakTrace version 0.15.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Test::LeakTrace;
+
+    # simple report
+    leaktrace{
+        # ...
+    };
+
+    # verbose output
+    leaktrace{
+        # ...
+    } -verbose;
+
+    # with callback
+    leaktrace{
+        # ...
+    } sub {
+        my($ref, $file, $line) = @_;
+        warn &quot;leaked $ref from $file line\n&quot;;
+    };
+
+    my @refs = leaked_refs{
+        # ...
+    };
+    my @info = leaked_info{
+        # ...
+    };
+
+    my $count = leaked_count{
+        # ...
+    };
+
+    # standard test interface
+    use Test::LeakTrace;
+
+    no_leaks_ok{
+        # ...
+    } &#39;no memory leaks&#39;;
+
+    leaks_cmp_ok{
+        # ...
+    } &#39;&lt;&#39;, 10;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><code>Test::LeakTrace</code> provides several functions that trace memory leaks. This module scans arenas, the memory allocation system, so it can detect any leaked SVs in given blocks.</p>
+
+<p><b>Leaked SVs</b> are SVs which are not released after the end of the scope they have been created. These SVs include global variables and internal caches. For example, if you call a method in a tracing block, perl might prepare a cache for the method. Thus, to trace true leaks, <code>no_leaks_ok()</code> and <code>leaks_cmp_ok()</code> executes a block more than once.</p>
+
+<h1 id="INTERFACE">INTERFACE</h1>
+
+<h2 id="Exported-functions">Exported functions</h2>
+
+<h3 id="leaked_info-BLOCK"><code>leaked_info { BLOCK }</code></h3>
+
+<p>Executes <i>BLOCK</i> and returns a list of leaked SVs and places where the SVs come from, i.e. <code>[$ref, $file, $line]</code>.</p>
+
+<h3 id="leaked_refs-BLOCK"><code>leaked_refs { BLOCK }</code></h3>
+
+<p>Executes <i>BLOCK</i> and returns a list of leaked SVs.</p>
+
+<h3 id="leaked_count-BLOCK"><code>leaked_count { BLOCK }</code></h3>
+
+<p>Executes <i>BLOCK</i> and returns the number of leaked SVs.</p>
+
+<h3 id="leaktrace-BLOCK-mode-callback"><code>leaktrace { BLOCK } ?($mode | \&amp;callback)</code></h3>
+
+<p>Executes <i>BLOCK</i> and reports leaked SVs to <code>*STDERR</code>.</p>
+
+<p>Defined <i>$mode</i>s are:</p>
+
+<dl>
+
+<dt id="simple">-simple</dt>
+<dd>
+
+<p>Default. Reports the leaked SV identity (type and address), file name and line number.</p>
+
+</dd>
+<dt id="sv_dump">-sv_dump</dt>
+<dd>
+
+<p>In addition to <b>-simple</b>, dumps the sv content using <code>sv_dump()</code>, which also implements <code>Devel::Peek::Dump()</code>.</p>
+
+</dd>
+<dt id="lines">-lines</dt>
+<dd>
+
+<p>In addition to <b>-simple</b>, prints suspicious source lines.</p>
+
+</dd>
+<dt id="verbose">-verbose</dt>
+<dd>
+
+<p>Both <b>-sv_dump</b> and <b>-lines</b>.</p>
+
+</dd>
+</dl>
+
+<h3 id="no_leaks_ok-BLOCK-description"><code>no_leaks_ok { BLOCK } ?$description</code></h3>
+
+<p>Tests that <i>BLOCK</i> does not leaks SVs. This is a test function using <code>Test::Builder</code>.</p>
+
+<p>Note that <i>BLOCK</i> is called more than once. This is because <i>BLOCK</i> might prepare caches which are not memory leaks.</p>
+
+<h3 id="leaks_cmp_ok-BLOCK-cmp_op-number-description"><code>leaks_cmp_ok { BLOCK } $cmp_op, $number, ?$description</code></h3>
+
+<p>Tests that <i>BLOCK</i> leaks a specific number of SVs. This is a test function using <code>Test::Builder</code>.</p>
+
+<p>Note that <i>BLOCK</i> is called more than once. This is because <i>BLOCK</i> might prepare caches which are not memory leaks.</p>
+
+<h3 id="count_sv"><code>count_sv()</code></h3>
+
+<p>Counts all the SVs in the arena.</p>
+
+<h2 id="Script-interface">Script interface</h2>
+
+<p>Like <code>Devel::LeakTrace</code> <code>Test::LeakTrace::Script</code> is provided for whole scripts.</p>
+
+<p>The arguments of <code>use Test::LeakTrace::Script</code> directive is the same as <code>leaktrace()</code>.</p>
+
+<pre><code>    $ TEST_LEAKTRACE=-sv_dump perl -MTest::LeakTrace::Script script.pl
+    $ perl -MTest::LeakTrace::Script=-verbose script.pl
+
+    #!perl
+    # ...
+
+    use Test::LeakTrace::Script sub{
+        my($ref, $file, $line) = @_;
+        # ...
+    };
+
+    # ...</code></pre>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<h2 id="Testing-modules">Testing modules</h2>
+
+<p>Here is a test script template that checks memory leaks.</p>
+
+<pre><code>    #!perl -w
+    use strict;
+    use constant HAS_LEAKTRACE =&gt; eval{ require Test::LeakTrace };
+    use Test::More HAS_LEAKTRACE ? (tests =&gt; 1) : (skip_all =&gt; &#39;require Test::LeakTrace&#39;);
+    use Test::LeakTrace;
+
+    use Some::Module;
+
+    leaks_cmp_ok{
+        my $o = Some::Module-&gt;new();
+        $o-&gt;something();
+        $o-&gt;something_else();
+    } &#39;&lt;&#39;, 1;</code></pre>
+
+<h1 id="DEPENDENCIES">DEPENDENCIES</h1>
+
+<p>Perl 5.8.1 or later, and a C compiler.</p>
+
+<h1 id="CAVEATS">CAVEATS</h1>
+
+<p><code>Test::LeakTrace</code> does not work with <code>Devel::Cover</code> and modules which install their own <code>runops</code> routines, or the perl executor. So if the test functions of this module detect strange <code>runops</code> routines, they do nothing and report okay.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>No bugs have been reported.</p>
+
+<p>Please report any bugs or feature requests to the author.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a>Devel::LeakTrace</a>.</p>
+
+<p><a>Devel::LeakTrace::Fast</a>.</p>
+
+<p><a>Test::TraceObject</a>.</p>
+
+<p><a>Test::Weak</a>.</p>
+
+<p>For guts:</p>
+
+<p><a href="../../../lib/perl5/5.26.3/pod/perlguts.html">perlguts</a>.</p>
+
+<p><a href="../../../lib/perl5/5.26.3/pod/perlhack.html">perlhack</a>.</p>
+
+<p><i>sv.c</i>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Goro Fuji(gfx) &lt;gfuji(at)cpan.org&gt;.</p>
+
+<h1 id="LICENSE-AND-COPYRIGHT">LICENSE AND COPYRIGHT</h1>
+
+<p>Copyright (c) 2009-2010, Goro Fuji(gfx). All rights reserved.</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

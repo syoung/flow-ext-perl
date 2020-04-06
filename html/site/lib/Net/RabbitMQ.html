@@ -1,0 +1,347 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Methods">Methods</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::RabbitMQ - interact with RabbitMQ over AMQP using librabbitmq</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>        use Net::RabbitMQ;
+        my $mq = Net::RabbitMQ-&gt;new();
+        $mq-&gt;connect(&quot;localhost&quot;, { user =&gt; &quot;guest&quot;, password =&gt; &quot;guest&quot; });
+        $mq-&gt;channel_open(1);
+        $mq-&gt;publish(1, &quot;queuename&quot;, &quot;Hi there!&quot;);
+        $mq-&gt;disconnect();
+        </code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><code>Net::RabbitMQ</code> provides a simple wrapper around the librabbitmq library that allows connecting, declaring exchanges and queues, binding and unbinding queues, publishing, consuming and receiving events.</p>
+
+<p>Error handling in this module is primarily achieve by Perl_croak (die). You should be making good use of eval around these methods to ensure that you appropriately catch the errors.</p>
+
+<h2 id="Methods">Methods</h2>
+
+<p>All methods, unless specifically stated, return nothing on success and die on failure.</p>
+
+<dl>
+
+<dt id="new">new()</dt>
+<dd>
+
+<p>Creates a new Net::RabbitMQ object.</p>
+
+</dd>
+<dt id="connect-hostname-options">connect( $hostname, $options )</dt>
+<dd>
+
+<p><code>$hostname</code> is the host to which a connection will be attempted.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<pre><code>     {
+       user =&gt; $user,           #default &#39;guest&#39;
+       password =&gt; $password,   #default &#39;guest&#39;
+       port =&gt; $port,           #default 5672
+       vhost =&gt; $vhost,         #default &#39;/&#39;
+       channel_max =&gt; $cmax,    #default 0
+       frame_max =&gt; $fmax,      #default 131072
+       heartbeat =&gt; $hearbeat,  #default 0
+       timeout =&gt; $seconds      #default undef (no timeout)
+     }</code></pre>
+
+</dd>
+<dt id="disconnect">disconnect()</dt>
+<dd>
+
+<p>Causes the connection to RabbitMQ to be torn down.</p>
+
+</dd>
+<dt id="channel_open-channel">channel_open($channel)</dt>
+<dd>
+
+<p><code>$channel</code> is a positive integer describing the channel you which to open.</p>
+
+</dd>
+<dt id="channel_close-channel">channel_close($channel)</dt>
+<dd>
+
+<p><code>$channel</code> is a positive integer describing the channel you which to close.</p>
+
+</dd>
+<dt id="get_channel_max">get_channel_max()</dt>
+<dd>
+
+<p>Returns the maximum allowed channel number.</p>
+
+</dd>
+<dt id="exchange_declare-channel-exchange-options">exchange_declare($channel, $exchange, $options)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$exchange</code> is the name of the exchange to be instantiated.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<pre><code>     {
+       exchange_type =&gt; $type,  #default &#39;direct&#39;
+       passive =&gt; $boolean,     #default 0
+       durable =&gt; $boolean,     #default 0
+       auto_delete =&gt; $boolean, #default 1
+     }</code></pre>
+
+</dd>
+<dt id="exchange_delete-channel-exchange-options">exchange_delete($channel, $exchange, $options)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$exchange</code> is the name of the exchange to be deleted.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<pre><code>     {
+       if_unused =&gt; $boolean,   #default 1
+       nowait =&gt; $boolean,      #default 0
+     }</code></pre>
+
+</dd>
+<dt id="queue_declare-channel-queuename-options-arguments">queue_declare($channel, $queuename, $options, $arguments)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$queuename</code> is the name of the queuename to be instantiated. If <code>$queuename</code> is undef or an empty string, then an auto generated queuename will be used.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<pre><code>     {
+       passive =&gt; $boolean,     #default 0
+       durable =&gt; $boolean,     #default 0
+       exclusive =&gt; $boolean,   #default 0
+       auto_delete =&gt; $boolean, #default 1
+     }</code></pre>
+
+<p><code>$arguments</code> is an optional hash which will be passed to the server when the queue is created. This can be used for creating mirrored queues by using the x-ha-policy header.</p>
+
+<p>In scalar context, this method returns the queuename delcared (important for retrieving the autogenerated queuename in the event that one was requested).</p>
+
+<p>In array context, this method returns three items: queuename, the number of message waiting on the queue, and the number of consumers bound to the queue.</p>
+
+</dd>
+<dt id="queue_bind-channel-queuename-exchange-routing_key-arguments">queue_bind($channel, $queuename, $exchange, $routing_key, $arguments)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$queuename</code> is a previously declared queue, <code>$exchange</code> is a previously declared exchange, and <code>$routing_key</code> is the routing key that will bind the specified queue to the specified exchange.</p>
+
+<p><code>$arguments</code> is an optional hash which will be passed to the server. When binding to an exchange of type <code>headers</code>, this can be used to only receive messages with the supplied header values.</p>
+
+</dd>
+<dt id="queue_unbind-channel-queuename-exchange-routing_key-arguments">queue_unbind($channel, $queuename, $exchange, $routing_key, $arguments)</dt>
+<dd>
+
+<p>This is like the <code>queue_bind</code> with respect to arguments. This command unbinds the queue from the exchange. The <code>$routing_key</code> and <code>$arguments</code> must match the values supplied when the binding was created.</p>
+
+</dd>
+<dt id="publish-channel-routing_key-body-options-props">publish($channel, $routing_key, $body, $options, $props)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$routing_key</code> is the name of the routing key for this message.</p>
+
+<p><code>$body</code> is the payload to enqueue.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<pre><code>     {
+       exchange =&gt; $exchange,   #default &#39;amq.direct&#39;
+       mandatory =&gt; $boolean,   #default 0
+       immediate =&gt; $boolean,   #default 0
+     }</code></pre>
+
+<p><code>$props</code> is an optional hash (the AMQP &#39;props&#39;) respecting the following keys: { content_type =&gt; $string, content_encoding =&gt; $string, correlation_id =&gt; $string, reply_to =&gt; $string, expiration =&gt; $string, message_id =&gt; $string, type =&gt; $string, user_id =&gt; $string, app_id =&gt; $string, delivery_mode =&gt; $integer, priority =&gt; $integer, timestamp =&gt; $integer, }</p>
+
+</dd>
+<dt id="consume-channel-queuename-options">consume($channel, $queuename, $options)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$queuename</code> is the name of the queue from which we&#39;d like to consume.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<pre><code>     {
+       consumer_tag =&gt; $tag,    #absent by default
+       no_local =&gt; $boolean,    #default 0
+       no_ack =&gt; $boolean,      #default 1
+       exclusive =&gt; $boolean,   #default 0
+     }</code></pre>
+
+<p>The consumer_tag is returned. This command does <b>not</b> return AMQP frames, it simply notifies RabbitMQ that messages for this queue should be delivered down the specified channel.</p>
+
+</dd>
+<dt id="recv">recv()</dt>
+<dd>
+
+<p>This command receives and reconstructs AMQP frames and returns a hash containing the following information:</p>
+
+<pre><code>     {
+       body =&gt; &#39;Magic Transient Payload&#39;, # the reconstructed body
+       routing_key =&gt; &#39;nr_test_q&#39;,        # route the message took
+       exchange =&gt; &#39;nr_test_x&#39;,           # exchange used
+       delivery_tag =&gt; 1,                 # (used for acks)
+       consumer_tag =&gt; &#39;c_tag&#39;,           # tag from consume()
+       props =&gt; $props,                   # hashref sent in
+     }</code></pre>
+
+<p><code>$props</code> is the hash sent by publish() respecting the following keys: { content_type =&gt; $string, content_encoding =&gt; $string, correlation_id =&gt; $string, reply_to =&gt; $string, expiration =&gt; $string, message_id =&gt; $string, type =&gt; $string, user_id =&gt; $string, app_id =&gt; $string, delivery_mode =&gt; $integer, priority =&gt; $integer, timestamp =&gt; $integer, }</p>
+
+</dd>
+<dt id="get-channel-queuename-options">get($channel, $queuename, $options)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$queuename</code> is the name of the queue from which we&#39;d like to consume.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<p>This command runs an amqp_basic_get which returns undef immediately if no messages are available on the queue and returns a has as follows if a message is available.</p>
+
+<pre><code>     {
+       body =&gt; &#39;Magic Transient Payload&#39;, # the reconstructed body
+       routing_key =&gt; &#39;nr_test_q&#39;,        # route the message took
+       exchange =&gt; &#39;nr_test_x&#39;,           # exchange used
+       content_type =&gt; &#39;foo&#39;,             # (only if specified)
+       delivery_tag =&gt; 1,                 # (used for acks)
+       redelivered =&gt; 0,                  # if message is redelivered
+       message_count =&gt; 0,                # message count
+     }</code></pre>
+
+</dd>
+<dt id="ack-channel-delivery_tag-multiple-0">ack($channel, $delivery_tag, $multiple = 0)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$delivery_tag</code> the delivery tag seen from a returned frame from the <code>recv</code> method.</p>
+
+<p><code>$multiple</code> specifies if multiple are to be acknowledged at once.</p>
+
+</dd>
+<dt id="purge-channel-queuename-no_wait-0">purge($channel, $queuename, $no_wait = 0)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$queuename</code> is the queue to be purged.</p>
+
+<p><code>$no_wait</code> a boolean specifying if the call should not wait for the server to acknowledge the acknowledgement.</p>
+
+</dd>
+<dt id="reject-channel-delivery_tag-requeue-0">reject($channel, $delivery_tag, $requeue = 0)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$delivery_tag</code> the delivery tag seen from a returned frame from the <code>recv</code> method.</p>
+
+<p><code>$requeue</code> specifies if the message should be requeued.</p>
+
+</dd>
+<dt id="tx_select-channel">tx_select($channel)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p>Start a server-side (tx) transaction over $channel.</p>
+
+</dd>
+<dt id="tx_commit-channel">tx_commit($channel)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p>Commit a server-side (tx) transaction over $channel.</p>
+
+</dd>
+<dt id="tx_rollback-channel">tx_rollback($channel)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p>Rollback a server-side (tx) transaction over $channel.</p>
+
+</dd>
+<dt id="basic_qos-channel-options">basic_qos($channel, $options)</dt>
+<dd>
+
+<p><code>$channel</code> is a channel that has been opened with <code>channel_open</code>.</p>
+
+<p><code>$options</code> is an optional hash respecting the following keys:</p>
+
+<pre><code>     {
+       prefetch_count =&gt; $cnt,  #default 0
+       prefetch_size  =&gt; $size, #default 0
+       global         =&gt; $bool, #default 0
+     }</code></pre>
+
+<p>Set quality of service flags on the current $channel.</p>
+
+</dd>
+<dt id="hearbeat">hearbeat()</dt>
+<dd>
+
+<p>Send a hearbeat frame. If you&#39;ve connected with a heartbeat parameter, you must send a heartbeat periodically matching connection parameter or the server may snip the connection.</p>
+
+</dd>
+<dt id="basic_return-subroutine">basic_return($subroutine)</dt>
+<dd>
+
+<p><code>$subroutine</code> is a perl coderef that takes two arguments:</p>
+
+<pre><code>     $channel is the channel on which the message is returned.
+
+     $m the message which is a hash ref containing reply_code,
+     reply_text, exchange, and routing_key.</code></pre>
+
+</dd>
+</dl>
+
+
+</body>
+
+</html>
+
+

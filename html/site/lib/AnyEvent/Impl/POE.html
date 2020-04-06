@@ -1,0 +1,231 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Impl::POE - AnyEvent adaptor for POE</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent;
+   use POE;
+  
+   # this module gets loaded automatically as required</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides transparent support for AnyEvent. You don&#39;t have to do anything to make POE work with AnyEvent except by loading POE before creating the first AnyEvent watcher. There are some cases where POE will issue spurious (and non-suppressible) warnings. These can be avoided by loading AnyEvent::Impl::POE before loading any other modules using POE and AnyEvent, i.e. in your main program.</p>
+
+<p>AnyEvent::Impl::POE will output some spurious message how to work around POE&#39;s spurious messages when it detects these cases.</p>
+
+<p>Unfortunately, POE isn&#39;t generic enough to implement a fully working AnyEvent backend: POE is too badly designed, too badly documented and too badly implemented.</p>
+
+<p>Here are the details, and what it means to you if you want to be interoperable with POE:</p>
+
+<dl>
+
+<dt id="Weird-messages">Weird messages</dt>
+<dd>
+
+<p>If you only use <code>run_one_timeslice</code> (as AnyEvent has to for its condition variables), POE will print an ugly, unsuppressible, message at program exit:</p>
+
+<pre><code>   Sessions were started, but POE::Kernel&#39;s run() method was never...</code></pre>
+
+<p>The message is correct, the question is why POE prints it in the first place in a correct program (this is not a singular case though).</p>
+
+<p>AnyEvent consequently patches the POE kernel so it thinks it already ran. Other workarounds, even the one cited in the POE documentation itself, have serious side effects, such as throwing away events.</p>
+
+<p>The author of POE verified that this is indeed true, and has no plans to change this.</p>
+
+<p>POE has other weird messages, and sometimes weird behaviour, for example, it doesn&#39;t support overloaded code references as callbacks for no apparent reason.</p>
+
+</dd>
+<dt id="One-POE-session-per-Event">One POE session per Event</dt>
+<dd>
+
+<p>AnyEvent has to create one POE::Session per event watcher, which is immensely slow and makes watchers very large. The reason for this is lacking lifetime management (mostly undocumented, too). Without one session/watcher it is not possible to easily keep the kernel from running endlessly.</p>
+
+<p>This is not just a problem with the way AnyEvent has to interact with POE, but is a principal issue with POEs lifetime management (namely that stopping the kernel stops sessions, but AnyEvent has no control over who and when the kernel starts or stops w.r.t. AnyEvent watcher creation/destruction).</p>
+
+<p>From benchmark data it is not clear that session creation is that costly, though - the real inefficiencies with POE seem to come from other sources, such as event handling.</p>
+
+</dd>
+<dt id="One-watcher-per-fd-event-combo">One watcher per fd/event combo</dt>
+<dd>
+
+<p>POE, of course, suffers from the same bug as Tk and some other badly designed event models in that it doesn&#39;t support multiple watchers per fd/poll combo. The workaround is the same as with Tk: AnyEvent::Impl::POE creates a separate file descriptor to hand to POE, which isn&#39;t fast and certainly not nice to your resources.</p>
+
+<p>Of course, without the workaround, POE also prints ugly messages again that say the program *might* be buggy.</p>
+
+<p>While this is not good to performance, at least regarding speed, with a modern Linux kernel, the overhead is actually quite small.</p>
+
+</dd>
+<dt id="Timing-deficiencies">Timing deficiencies</dt>
+<dd>
+
+<p>POE manages to not have a function that returns the current time. This is extremely problematic, as POE can use different time functions, which can differ by more than a second - and user code is left guessing which one is used.</p>
+
+<p>In addition, most timer functions in POE want an absolute timestamp, which is hard to create if all you have is a relative time and no function to return the &quot;current time&quot;.</p>
+
+<p>And of course POE doesn&#39;t handle time jumps at all (not even when using an event loop that happens to do that, such as <a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/EV.html">EV</a>, as it does its own unoptimised timer management).</p>
+
+<p>AnyEvent works around the unavailability of the current time using relative timers exclusively, in the hope that POE gets it right at least internally.</p>
+
+</dd>
+<dt id="Lack-of-defined-event-ordering">Lack of defined event ordering</dt>
+<dd>
+
+<p>POE cannot guarantee the order of callback invocation for timers, and usually gets it wrong. That is, if you have two timers, one timing out after another (all else being equal), the callbacks might be called in reverse order.</p>
+
+<p>How one manages to even implement stuff that way escapes me.</p>
+
+</dd>
+<dt id="Child-watchers">Child watchers</dt>
+<dd>
+
+<p>POE offers child watchers - which is a laudable thing, as few event loops do. Unfortunately, they cannot even implement AnyEvent&#39;s simple child watchers: they are not generic enough (the POE implementation isn&#39;t even generic enough to let properly designed back-end use their native child watcher instead - it insist on doing it itself the broken way).</p>
+
+<p>Unfortunately, POE&#39;s child handling is inherently racy: if the child exits before the handler is created (because e.g. it crashes or simply is quick about it), then current versions of POE (1.352) will <i>never</i> invoke the child watcher, and there is nothing that can be done about it. Older versions of POE only delayed in this case. The reason is that POE first checks if the child has already exited, and <i>then</i> installs the signal handler - aa classical race.</p>
+
+<p>Your only hope is for the fork&#39;ed process to not exit too quickly, in which case everything happens to work.</p>
+
+<p>Of course, whenever POE reaps an unrelated child it will also output a message for it that you cannot suppress (which shouldn&#39;t be too surprising at this point). Very professional.</p>
+
+<p>As a workaround, AnyEvent::Impl::POE will take advantage of undocumented behaviour in POE::Kernel to catch the status of all child processes, but it cannot guarantee delivery.</p>
+
+<p>How one manages to have such a glaring bug in an event loop after ten years of development escapes me.</p>
+
+<p>(There are more annoying bugs, for example, POE runs <code>waitpid</code> unconditionally at finaliser time, so your program will hang until all child processes have exited.)</p>
+
+</dd>
+<dt id="Documentation-quality">Documentation quality</dt>
+<dd>
+
+<p>At the time of this writing, POE was in its tenth year. Still, its documentation is extremely lacking, making it impossible to implement stuff as trivial as AnyEvent watchers without having to resort to undocumented behaviour or features.</p>
+
+<p>For example, the POE::Kernel manpage has nine occurrences of the word TODO with an explanation of whats missing. In general, the POE man pages are littered with comments like &quot;section not yet written&quot;.</p>
+
+<p>Some other gems:</p>
+
+<pre><code>   This allows many object methods to also be package methods.</code></pre>
+
+<p>This is nice, but since it doesn&#39;t document <i>which</i> methods these are, this is utterly useless information.</p>
+
+<pre><code>   Terminal signals will kill sessions if they are not handled by a
+   &quot;sig_handled&quot;() call. The OS signals that usually kill or dump a
+   process are considered terminal in POE, but they never trigger a
+   coredump. These are: HUP, INT, QUIT and TERM.</code></pre>
+
+<p>Although AnyEvent calls <code>sig_handled</code>, removing it has no apparent effects on POE handling SIGINT.</p>
+
+<pre><code>   refcount_increment SESSION_ID, COUNTER_NAME</code></pre>
+
+<p>Nowhere is explained which COUNTER_NAMEs are valid and which aren&#39;t - not all scalars (or even strings) are valid counter names. Take your guess, failure is of course completely silent. I found this out the hard way, as the first name I came up with was silently ignored.</p>
+
+<pre><code>   get_next_event_time() returns the time the next event is due, in a form
+   compatible with the UNIX time() function.</code></pre>
+
+<p>And surely, one would hope that POE supports sub-second accuracy as documented elsewhere, unlike the explanation above implies. Yet:</p>
+
+<pre><code>   POE::Kernel timers support subsecond accuracy, but don&rsquo;t expect too
+   much here. Perl is not the right language for realtime programming.</code></pre>
+
+<p>... of course, Perl is not the right language to expect sub-second accuracy - the manpage author must hate Perl to spread so much FUD in so little space. The Deliantra game server logs with 100&micro;s-accuracy because Perl is fast enough to require this, and is still able to deliver map updates with little jitter at exactly the right time. It does not, however, use POE.</p>
+
+<pre><code>   Furthermore, since the Kernel keeps track of everything sessions do, it
+   knows when a session has run out of tasks to perform.</code></pre>
+
+<p>This is impossible - how does the kernel know that a session is no longer watching for some (external) event (e.g. by some other session)? It cannot, and therefore this is wrong - but you would be hard pressed to find out how to work around this and tell the kernel manually about such events.</p>
+
+<p>It gets worse, though - the notion of &quot;task&quot; or &quot;resource&quot;, although used throughout the documentation, is not defined in a usable way. For example, waiting for a timeout is considered to be a task, waiting for a signal is not (a session that only waits for a signal is considered finished and gets removed). The user is left guessing when waiting for an event counts as task and when not (in fact, the issue with signals is mentioned in passing in a section about child watchers and directly contradicts earlier parts in that document).</p>
+
+<p>One could go on endlessly - ten years, no usable documentation.</p>
+
+<p>It is likely that differences between documentation, or the one or two things I had to guess, cause unanticipated problems with this adaptor.</p>
+
+</dd>
+<dt id="Fragile-and-inconsistent-API">Fragile and inconsistent API</dt>
+<dd>
+
+<p>The POE API is extremely inconsistent - sometimes you have to pass a session argument, sometimes it gets ignored, sometimes a session-specific method must not use a session argument.</p>
+
+<p>Error handling is sub-standard as well: even for programming mistakes, POE does not <code>croak</code> but, in most cases, just sets <code>$!</code> or simply does nothing at all, leading to fragile programs.</p>
+
+<p>Sometimes registering a handler uses the &quot;eventname, parameter&quot; ordering (timeouts), sometimes it is &quot;parameter, eventname&quot; (signals). There is little consistency overall.</p>
+
+</dd>
+<dt id="Lack-of-knowledge">Lack of knowledge</dt>
+<dd>
+
+<pre><code>   The IO::Poll event loop provides an alternative that theoretically
+   scales better than select().</code></pre>
+
+<p>The IO::Poll &quot;event loop&quot; (who in his right mind would call that an event loop) of course scales about identically (sometimes it is a bit faster, sometimes a bit slower) to select in theory, and also in practise, of course, as both are O(n) in the number of file descriptors, which is rather bad.</p>
+
+<p>This is just one place where it gets obvious how little the author of the POE manpage understands.</p>
+
+</dd>
+<dt id="No-idle-events">No idle events</dt>
+<dd>
+
+<p>The POE-recommended workaround to this is apparently to use <code>fork</code>. Consequently, idle watchers will have to be emulated by AnyEvent.</p>
+
+</dd>
+<dt id="Questionable-maintainer-behaviour">Questionable maintainer behaviour</dt>
+<dd>
+
+<p>The author of POE is known to fabricate statements and post these to public mailinglists - apparently, spreading FUD about competing (in his eyes) projects or their maintainers is acceptable to him.</p>
+
+<p>This has (I believe) zero effects on the quality or usefulness of his code, but it does completely undermine his trustworthyness - so don&#39;t blindly believe anything he says, he might have just made it up to suit his needs (benchmark results, the names of my ten wifes, the length of my penis, etc. etc.). When in doubt, double-check - not just him, anybody actually.</p>
+
+<p>Example: <a href="http://www.nntp.perl.org/group/perl.perl5.porters/2012/01/msg182141.html">http://www.nntp.perl.org/group/perl.perl5.porters/2012/01/msg182141.html</a>. I challenged him in that thread to provide evidence for his statement by giving at least two examples, but of course since he just made it up, he couldn&#39;t provide any evidence.</p>
+
+</dd>
+</dl>
+
+<p>On the good side, AnyEvent allows you to write your modules in a 100% POE-compatible way (bug-for-bug compatible even), without forcing your module to use POE - it is still open to better event models, of which there are plenty.</p>
+
+<p>Oh, and one other positive thing:</p>
+
+<pre><code>   RUNNING_IN_HELL</code></pre>
+
+<p>POE knows about the nature of the beast!</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a>, <a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/POE.html">POE</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

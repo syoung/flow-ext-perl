@@ -1,0 +1,244 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#EXCEPTIONS-IN-MOOSE">EXCEPTIONS IN MOOSE</a></li>
+  <li><a href="#EXCEPTION-STRINGIFICATION">EXCEPTION STRINGIFICATION</a></li>
+  <li><a href="#HANDLING-MOOSE-EXCEPTIONS">HANDLING MOOSE EXCEPTIONS</a>
+    <ul>
+      <li><a href="#Catching-with-Try::Tiny">Catching with Try::Tiny</a></li>
+      <li><a href="#Example-of-catching-ValidationFailedForTypeConstraint">Example of catching ValidationFailedForTypeConstraint</a></li>
+      <li><a href="#Example-of-catching-AttributeIsRequired">Example of catching AttributeIsRequired</a></li>
+    </ul>
+  </li>
+  <li><a href="#MOOSE-EXCEPTION-CLASSES">MOOSE EXCEPTION CLASSES</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Moose::Manual::Exceptions - Moose&#39;s exceptions</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.2012</p>
+
+<h1 id="EXCEPTIONS-IN-MOOSE">EXCEPTIONS IN MOOSE</h1>
+
+<p>Moose will throw an exception for all error conditions. This applies both to code in the Moose core <i>as well</i> as to all code generated when a class is made immutable. All exceptions are subclasses of the <code>Moose::Exception</code> class.</p>
+
+<p>Each type of error has its own unique subclass, and many subclasses have additional attributes to provide more information about the error&#39;s context, such as what classes or roles were involved.</p>
+
+<h1 id="EXCEPTION-STRINGIFICATION">EXCEPTION STRINGIFICATION</h1>
+
+<p>By default, Moose exceptions remove Moose internals from the stack trace. If you set the <code>MOOSE_FULL_EXCEPTION</code> environment variable to a true value, then the Moose internals will be included in the trace.</p>
+
+<h1 id="HANDLING-MOOSE-EXCEPTIONS">HANDLING MOOSE EXCEPTIONS</h1>
+
+<p>Because Moose&#39;s exceptions use the standard <code>die</code> mechanism, you are free to catch and handle errors however you like. You could use an <code>eval</code> block to catch Moose exceptions. However, the Moose team strongly recommends using <a href="../../../../lib/perl5/5.26.3/Try/Tiny.html">Try::Tiny</a> instead. Please refer to <a href="../../../../lib/perl5/5.26.3/Try/Tiny.html">Try::Tiny</a>&#39;s documentation for a discussion of how <code>eval</code> is dangerous.</p>
+
+<p>The following example demonstrates how to catch and inspect a <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Exception.html">Moose::Exception</a>. For the sake of simplicity, we will cause a very simple error. The <code>extends</code> keywords expects a list of superclass names. If we pass no superclass names, Moose will throw an instance of <a>Moose::Exception::ExtendsMissingArgs</a>.</p>
+
+<h2 id="Catching-with-Try::Tiny">Catching with Try::Tiny</h2>
+
+<pre><code>    use warnings;
+    use strict;
+    use Try::Tiny;
+
+    try {
+        package Example::Exception;
+        use Moose;
+        extends;    # &lt;-- error!
+    }
+    catch {
+        # $_ contains the instance of the exception thrown by the above try
+        # block, but $_ may get clobbered, so we should copy its value to
+        # another variable.
+        my $e = $_;
+
+        # Exception objects are not ubiquitous in Perl, so we must check
+        # whether $e is blessed. We also need to ensure that $e is actually
+        # the kind of exception we were expecting.
+        if ( blessed $e
+            &amp;&amp; $e-&gt;isa(&#39;Moose::Exception::ExtendsMissingArgs&#39;) ) {
+
+            my $class_name = $e-&gt;class_name;
+            warn &quot;You forgot to specify a superclass for $class_name, silly!&quot;;
+        }
+
+        # It&#39;s either another type of an object or not an object at all.
+        else {
+            warn &quot;$e\n&quot;;
+        }
+    }</code></pre>
+
+<h2 id="Example-of-catching-ValidationFailedForTypeConstraint">Example of catching ValidationFailedForTypeConstraint</h2>
+
+<pre><code>    use warnings;
+    use strict;
+
+    use Try::Tiny;
+
+    {
+        package Person;
+        use Moose;
+        use Moose::Util::TypeConstraints;
+
+        subtype &#39;NameStr&#39;,
+            as &#39;Str&#39;,
+            where { $_ =~ /^[a-zA-Z]+$/; };
+
+        has age =&gt; (
+            is       =&gt; &#39;ro&#39;,
+            isa      =&gt; &#39;Int&#39;,
+            required =&gt; 1
+        );
+
+        has name =&gt; (
+            is       =&gt; &#39;ro&#39;,
+            isa      =&gt; &#39;NameStr&#39;,
+            required =&gt; 1
+        );
+    }
+
+    my $person;
+    while ( !$person ) {
+        try {
+            print &#39;Enter your age : &#39;;
+            my $age = &lt;STDIN&gt;;
+            chomp $age;
+            print &#39;Enter your name : &#39;;
+            my $name = &lt;STDIN&gt;;
+            chomp $name;
+            $person = Person-&gt;new(
+                age  =&gt; $age,
+                name =&gt; $name
+            );
+            my $person_name = $person-&gt;name;
+            my $person_age  = $person-&gt;age;
+            print &quot;$person_name is $person_age years old\n&quot;;
+        }
+        catch {
+            my $e = $_;
+
+            if (
+                blessed $e
+                &amp;&amp; $e-&gt;isa(
+                    &#39;Moose::Exception::ValidationFailedForTypeConstraint&#39;)
+                ) {
+
+                my $attribute_name = $e-&gt;attribute-&gt;name;
+                my $type_name      = $e-&gt;type-&gt;name;
+                my $value          = $e-&gt;value;
+
+                warn
+                    &quot;You entered $value for $attribute_name, which is not a $type_name!&quot;;
+            }
+            else {
+                warn &quot;$e\n&quot;;
+            }
+        }
+    }</code></pre>
+
+<h2 id="Example-of-catching-AttributeIsRequired">Example of catching AttributeIsRequired</h2>
+
+<pre><code>    use warnings;
+    use strict;
+    use Try::Tiny;
+
+    {
+        package Example::RequiredAttribute;
+        use Moose;
+
+        has required_attribute =&gt; (
+            is       =&gt; &#39;ro&#39;,
+            isa      =&gt; &#39;Int&#39;,
+            required =&gt; 1
+        );
+    }
+
+    try {
+        # we&#39;re not passing required_attribute, so it&#39;ll throw an exception
+        my $object = Example::RequiredAttribute-&gt;new();
+    }
+    catch {
+        my $e = $_;
+        if ( blessed $e &amp;&amp; $e-&gt;isa(&#39;Moose::Exception::AttributeIsRequired&#39;) )
+        {
+            warn $e-&gt;message, &quot;\n&quot;;
+        }
+        else {
+            warn &quot;$e\n&quot;;
+        }
+    };</code></pre>
+
+<h1 id="MOOSE-EXCEPTION-CLASSES">MOOSE EXCEPTION CLASSES</h1>
+
+<p>All the exception classes are listed in <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Manual/Exceptions/Manifest.html">Moose::Manual::Exceptions::Manifest</a>.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<ul>
+
+<li><p>Stevan Little &lt;stevan.little@iinteractive.com&gt;</p>
+
+</li>
+<li><p>Dave Rolsky &lt;autarch@urth.org&gt;</p>
+
+</li>
+<li><p>Jesse Luehrs &lt;doy@tozt.net&gt;</p>
+
+</li>
+<li><p>Shawn M Moore &lt;code@sartak.org&gt;</p>
+
+</li>
+<li><p>&#x5D9;&#x5D5;&#x5D1;&#x5DC; &#x5E7;&#x5D5;&#x5D2;&#39;&#x5DE;&#x5DF; (Yuval Kogman) &lt;nothingmuch@woobling.org&gt;</p>
+
+</li>
+<li><p>Karen Etheridge &lt;ether@cpan.org&gt;</p>
+
+</li>
+<li><p>Florian Ragwitz &lt;rafl@debian.org&gt;</p>
+
+</li>
+<li><p>Hans Dieter Pearcey &lt;hdp@weftsoar.net&gt;</p>
+
+</li>
+<li><p>Chris Prather &lt;chris@prather.org&gt;</p>
+
+</li>
+<li><p>Matt S Trout &lt;mst@shadowcat.co.uk&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2006 by Infinity Interactive, Inc.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

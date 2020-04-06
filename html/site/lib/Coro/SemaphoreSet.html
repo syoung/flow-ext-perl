@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::SemaphoreSet - efficient set of counting semaphores</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro;
+
+ $sig = new Coro::SemaphoreSet [initial value];
+
+ $sig-&gt;down (&quot;semaphoreid&quot;); # wait for signal
+
+ # ... some other &quot;thread&quot;
+
+ $sig-&gt;up (&quot;semaphoreid&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements sets of counting semaphores (see <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Semaphore.html">Coro::Semaphore</a>). It is nothing more than a hash with normal semaphores as members, but is more efficiently managed.</p>
+
+<p>This is useful if you want to allow parallel tasks to run in parallel but not on the same problem. Just use a SemaphoreSet and lock on the problem identifier.</p>
+
+<p>You don&#39;t have to load <code>Coro::SemaphoreSet</code> manually, it will be loaded automatically when you <code>use Coro</code> and call the <code>new</code> constructor.</p>
+
+<dl>
+
+<dt id="new-initial-count">new [initial count]</dt>
+<dd>
+
+<p>Creates a new semaphore set with the given initial lock count for each individual semaphore. See <a href="../../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Semaphore.html">Coro::Semaphore</a>.</p>
+
+</dd>
+<dt id="semset-down-id">$semset-&gt;down ($id)</dt>
+<dd>
+
+<p>Decrement the counter, therefore &quot;locking&quot; the named semaphore. This method waits until the semaphore is available if the counter is zero.</p>
+
+</dd>
+<dt id="semset-up-id">$semset-&gt;up ($id)</dt>
+<dd>
+
+<p>Unlock the semaphore again. If the semaphore reaches the default count for this set and has no waiters, the space allocated for it will be freed.</p>
+
+</dd>
+<dt id="semset-try-id">$semset-&gt;try ($id)</dt>
+<dd>
+
+<p>Try to <code>down</code> the semaphore. Returns true when this was possible, otherwise return false and leave the semaphore unchanged.</p>
+
+</dd>
+<dt id="semset-count-id">$semset-&gt;count ($id)</dt>
+<dd>
+
+<p>Return the current semaphore count for the specified semaphore.</p>
+
+</dd>
+<dt id="semset-waiters-id">$semset-&gt;waiters ($id)</dt>
+<dd>
+
+<p>Returns the number (in scalar context) or list (in list context) of waiters waiting on the specified semaphore.</p>
+
+</dd>
+<dt id="semset-wait-id">$semset-&gt;wait ($id)</dt>
+<dd>
+
+<p>Same as Coro::Semaphore::wait on the specified semaphore.</p>
+
+</dd>
+<dt id="guard-semset-guard-id">$guard = $semset-&gt;guard ($id)</dt>
+<dd>
+
+<p>This method calls <code>down</code> and then creates a guard object. When the guard object is destroyed it automatically calls <code>up</code>.</p>
+
+</dd>
+<dt id="semaphore-semset-sem-id">$semaphore = $semset-&gt;sem ($id)</dt>
+<dd>
+
+<p>This SemaphoreSet version is based on Coro::Semaphore&#39;s. This function creates (if necessary) the underlying Coro::Semaphore object and returns it. You may legally call any Coro::Semaphore method on it, but note that calling <code>$semset-&gt;up</code> can invalidate the returned semaphore.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

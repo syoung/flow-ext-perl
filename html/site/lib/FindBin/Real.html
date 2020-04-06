@@ -1,0 +1,134 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORTABLE-FUNCTIONS">EXPORTABLE FUNCTIONS</a>
+    <ul>
+      <li><a href="#Bin">Bin</a></li>
+      <li><a href="#Script">Script</a></li>
+      <li><a href="#RealBin">RealBin</a></li>
+      <li><a href="#RealScript">RealScript</a></li>
+      <li><a href="#BinDepth-n">BinDepth(n)</a></li>
+      <li><a href="#Dir">Dir()</a></li>
+      <li><a href="#RealDir">RealDir()</a></li>
+    </ul>
+  </li>
+  <li><a href="#KNOWN-ISSUES">KNOWN ISSUES</a></li>
+  <li><a href="#KNOWN-BUGS">KNOWN BUGS</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>FindBin::Real - Locate directory of original perl script</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use FindBin::Real;
+ use lib FindBin::Real::Bin() . &#39;/../lib&#39;;
+
+ or
+
+ use FindBin::Real qw(Bin);
+ use lib Bin() . &#39;/../lib&#39;;
+
+ or
+
+ # Run from /usr/bin/www/some/path/ or /usr/bin/www/some/other/path or any
+ use FindBin::Real qw(BinDepth);
+ use lib BinDepth(3) . &#39;/lib&#39;;
+ # And always got /usr/bin/www/lib !</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Locates the full path to the script bin directory to allow the use of paths relative to the bin directory.</p>
+
+<p>This allows a user to setup a directory tree for some software with directories &lt;root&gt;/bin and &lt;root&gt;/lib and then the above example will allow the use of modules in the lib directory without knowing where the software tree is installed.</p>
+
+<p>If perl is invoked using the <b>-e</b> option or the perl script is read from <code>STDIN</code> then FindBin sets both <code>Bin()</code> and <code>RealBin()</code> return values to the current directory.</p>
+
+<h1 id="EXPORTABLE-FUNCTIONS">EXPORTABLE FUNCTIONS</h1>
+
+<h2 id="Bin">Bin</h2>
+
+<p>- path to bin directory from where script was invoked</p>
+
+<h2 id="Script">Script</h2>
+
+<p>- basename of script from which perl was invoked</p>
+
+<h2 id="RealBin">RealBin</h2>
+
+<p>- Bin() with all links resolved</p>
+
+<h2 id="RealScript">RealScript</h2>
+
+<p>- Script() with all links resolved</p>
+
+<h2 id="BinDepth-n">BinDepth(n)</h2>
+
+<p>- path to n-level parent directory</p>
+
+<h2 id="Dir">Dir()</h2>
+
+<p>- the same as Bin()</p>
+
+<h2 id="RealDir">RealDir()</h2>
+
+<p>- the same as RealBin()</p>
+
+<h1 id="KNOWN-ISSUES">KNOWN ISSUES</h1>
+
+<p>If there are two modules using <code>FindBin::Real</code> from different directories under the same interpreter, this WOULD work. Since <code>FindBin::Real</code> uses functions instead of <code>BEGIN</code> block in <code>FindBin</code>, it&#39;ll be executed on every script, and all callers will get it right. This module can be used under mod_perl and other persistent Perl environments, where you shouldn&#39;t use <code>FindBin</code>.</p>
+
+<h1 id="KNOWN-BUGS">KNOWN BUGS</h1>
+
+<p>If perl is invoked as</p>
+
+<pre><code>   perl filename</code></pre>
+
+<p>and <i>filename</i> does not have executable rights and a program called <i>filename</i> exists in the users <code>$ENV{PATH}</code> which satisfies both <b>-x</b> and <b>-T</b> then FindBin assumes that it was invoked via the <code>$ENV{PATH}</code>.</p>
+
+<p>Workaround is to invoke perl as</p>
+
+<pre><code> perl ./filename</code></pre>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Serguei Trouchelle &lt;<i>stro@railways.dp.ua</i>&gt;</p>
+
+<p>FindBin::Real uses code from FindBin module, which was written by</p>
+
+<p>Graham Barr &lt;<i>gbarr@pobox.com</i>&gt; Nick Ing-Simmons &lt;<i>nik@tiuk.ti.com</i>&gt;</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 1995 Graham Barr &amp; Nick Ing-Simmons. All rights reserved. Copyright (c) 2003-2005 Serguei Trouchelle. All rights reserved.</p>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

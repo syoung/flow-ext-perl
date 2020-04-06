@@ -1,0 +1,11 @@
+/flow/perl/bin/tkx-ed
+/flow/perl/bin/tkx-prove
+/flow/perl/lib/perl5/5.26.3/Tkx.pm
+/flow/perl/lib/perl5/5.26.3/Tkx/LabEntry.pm
+/flow/perl/lib/perl5/5.26.3/Tkx/MegaConfig.pm
+/flow/perl/lib/perl5/5.26.3/Tkx/Tutorial.pod
+/flow/perl/man/man1/tkx-ed.1
+/flow/perl/man/man3/Tkx.3
+/flow/perl/man/man3/Tkx::LabEntry.3
+/flow/perl/man/man3/Tkx::MegaConfig.3
+/flow/perl/man/man3/Tkx::Tutorial.3

@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#THANKS-TO">THANKS TO</a></li>
+  <li><a href="#ENVIRONMENT">ENVIRONMENT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::Requires - Checks to see if the module can be loaded</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    # in your Makefile.PL
+    use inc::Module::Install;
+    test_requires &#39;Test::Requires&#39;;
+
+    # in your test
+    use Test::More tests =&gt; 10;
+    use Test::Requires {
+        &#39;HTTP::MobileAttribute&#39; =&gt; 0.01, # skip all if HTTP::MobileAttribute doesn&#39;t installed
+    };
+    isa_ok HTTP::MobileAttribute-&gt;new, &#39;HTTP::MobileAttribute::NonMobile&#39;;
+
+    # or
+    use Test::More tests =&gt; 10;
+    use Test::Requires qw( 
+        HTTP::MobileAttribute
+    );
+    isa_ok HTTP::MobileAttribute-&gt;new, &#39;HTTP::MobileAttribute::NonMobile&#39;;
+
+    # or
+    use Test::More tests =&gt; 10;
+    use Test::Requires;
+    test_requires &#39;Some::Optional::Test::Required::Modules&#39;;
+    isa_ok HTTP::MobileAttribute-&gt;new, &#39;HTTP::MobileAttribute::NonMobile&#39;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Test::Requires checks to see if the module can be loaded.</p>
+
+<p>If this fails rather than failing tests this <b>skips all tests</b>.</p>
+
+<p>Test::Requires can also be used to require a minimum version of Perl:</p>
+
+<pre><code>    use Test::Requires &quot;5.010&quot;;  # quoting is necessary!!
+    
+    # or
+    use Test::Requires &quot;v5.10&quot;;</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Tokuhiro Matsuno &lt;tokuhirom @*(#RJKLFHFSDLJF gmail.com&gt;</p>
+
+<h1 id="THANKS-TO">THANKS TO</h1>
+
+<pre><code>    kazuho++ # some tricky stuff
+    miyagawa++ # original code from t/TestPlagger.pm
+    tomyhero++ # reported issue related older test::builder
+    tobyink++ # documented that Test::Requires &quot;5.010&quot; works</code></pre>
+
+<h1 id="ENVIRONMENT">ENVIRONMENT</h1>
+
+<p>If the <code>RELEASE_TESTING</code> environment variable is true, then instead of skipping tests, Test::Requires bails out.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a>&quot;TestPlagger.pm&quot; in t</a></p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

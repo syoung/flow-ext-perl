@@ -1,0 +1,16 @@
+/flow/perl/bin/bdf2gdfont.pl
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/GD.pm
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/GD/Group.pm
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/GD/Image.pm
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/GD/Polygon.pm
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/GD/Polyline.pm
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/GD/Simple.pm
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/auto/GD/GD.so
+/flow/perl/lib/perl5/5.26.3/x86_64-linux-thread-multi/auto/GD/autosplit.ix
+/flow/perl/man/man1/bdf2gdfont.pl.1
+/flow/perl/man/man3/GD.3
+/flow/perl/man/man3/GD::Group.3
+/flow/perl/man/man3/GD::Image.3
+/flow/perl/man/man3/GD::Polygon.3
+/flow/perl/man/man3/GD::Polyline.3
+/flow/perl/man/man3/GD::Simple.3

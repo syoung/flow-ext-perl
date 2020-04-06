@@ -1,0 +1,123 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#ALTERNATIVES">ALTERNATIVES</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::LWP - make LWP non-blocking - as much as possible</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::LWP; # afterwards LWP should not block</code></pre>
+
+<h1 id="ALTERNATIVES">ALTERNATIVES</h1>
+
+<p>Over the years, a number of less-invasive alternatives have popped up, which you might find more acceptable than this rather invasive and fragile module. All of them only support HTTP (and sometimes HTTPS).</p>
+
+<dl>
+
+<dt id="AnyEvent::HTTP"><a>AnyEvent::HTTP</a></dt>
+<dd>
+
+<p>Works fine without Coro. Requires using a very different API than LWP. Probably the best choice <i>iff</i> you can do with a completely different event-based API.</p>
+
+</dd>
+<dt id="LWP::Protocol::AnyEvent::http"><a>LWP::Protocol::AnyEvent::http</a></dt>
+<dd>
+
+<p>Makes LWP use <a>AnyEvent::HTTP</a>. Does not make LWP event-based, but allows Coro threads to schedule unimpeded through its AnyEvent integration.</p>
+
+<p>Lets you use the LWP API normally.</p>
+
+</dd>
+<dt id="LWP::Protocol::Coro::http"><a>LWP::Protocol::Coro::http</a></dt>
+<dd>
+
+<p>Basically the same as above, distinction unclear. :)</p>
+
+</dd>
+<dt id="AnyEvent::HTTP::LWP::UserAgent"><a>AnyEvent::HTTP::LWP::UserAgent</a></dt>
+<dd>
+
+<p>A different user agent implementation, not completely transparent to users, requires Coro.</p>
+
+</dd>
+</dl>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is an <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> user, you need to make sure that you use and run a supported event loop.</p>
+
+<p>This module tries to make <a href="../../../lib/perl5/site_perl/5.26.3/LWP.html">LWP</a> non-blocking with respect to other coroutines as much as possible, and with whatever means it takes.</p>
+
+<p>LWP really tries very hard to be blocking (and relies on a lot of undocumented functionality in IO::Socket), so this module had to be very invasive and must be loaded very early to take the proper effect.</p>
+
+<p>Note that the module <a>AnyEvent::HTTP</a> might offer an alternative to the full <a href="../../../lib/perl5/site_perl/5.26.3/LWP.html">LWP</a> that is designed to be non-blocking.</p>
+
+<p>Here is what it currently does (future versions of LWP might require different tricks):</p>
+
+<dl>
+
+<dt id="It-loads-Coro::Select-overwriting-the-perl-select-builtin-globally">It loads Coro::Select, overwriting the perl <code>select</code> builtin <i>globally</i>.</dt>
+<dd>
+
+<p>This is necessary because LWP calls select quite often for timeouts and who-knows-what.</p>
+
+<p>Impact: everybody else uses this (slower) version of select, too. It should be quite compatible to perls builtin select, though.</p>
+
+</dd>
+<dt id="It-overwrites-Socket::inet_aton-with-Coro::Util::inet_aton">It overwrites Socket::inet_aton with Coro::Util::inet_aton.</dt>
+<dd>
+
+<p>This is necessary because LWP might (and does) try to resolve hostnames this way.</p>
+
+<p>Impact: some code might not expect coroutine semantics, for example, when you fork you might prefer the blocking variant because other coroutines shouldn&#39;t actually run.</p>
+
+</dd>
+<dt id="It-replaces-the-base-class-of-Net::HTTP-Net::FTP-Net::NNTP">It replaces the base class of Net::HTTP, Net::FTP, Net::NNTP.</dt>
+<dd>
+
+<p>This is necessary because LWP does not always use select to see whether a filehandle can be read/written without blocking, so the base class <code>IO::Socket::INET</code> needs to be replaced by <code>Coro::Socket</code>.</p>
+
+<p>Impact: Coro::Socket is not at all compatible to IO::Socket::INET. While it duplicates some undocumented functionality required by LWP, it does not have all the methods of IO::Socket::INET and might act quite differently in practise. Also, protocols other than the above mentioned will still block, at least some of the time.</p>
+
+</dd>
+</dl>
+
+<p>All this likely makes other libraries than just LWP not block, but that&#39;s just a side effect you cannot rely on.</p>
+
+<p>Increases parallelism is not supported by all libraries, some might cache data globally.</p>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

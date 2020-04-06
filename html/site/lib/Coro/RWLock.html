@@ -1,0 +1,111 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::RWLock - reader/write locks</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro;
+
+ $lck = new Coro::RWLock;
+
+ $lck-&gt;rdlock; # acquire read lock
+ $lck-&gt;unlock; # unlock lock again
+
+ # or:
+ $lck-&gt;wrlock; # acquire write lock
+ $lck-&gt;unlock; # unlock lock again
+
+ # try a readlock
+ if ($lck-&gt;tryrdlock) {
+    ...;
+    $l-&gt;unlock;
+ }
+
+ # try a write lock
+ if ($lck-&gt;trywrlock) {
+    ...;
+    $l-&gt;unlock;
+ }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements reader/write locks. A read can be acquired for read by many coroutines in parallel as long as no writer has locked it (shared access). A single write lock can be acquired when no readers exist. RWLocks basically allow many concurrent readers (without writers) OR a single writer (but no readers).</p>
+
+<p>You don&#39;t have to load <code>Coro::RWLock</code> manually, it will be loaded automatically when you <code>use Coro</code> and call the <code>new</code> constructor.</p>
+
+<dl>
+
+<dt id="l-new-Coro::RWLock">$l = new Coro::RWLock;</dt>
+<dd>
+
+<p>Create a new reader/writer lock.</p>
+
+</dd>
+<dt id="l-rdlock">$l-&gt;rdlock</dt>
+<dd>
+
+<p>Acquire a read lock.</p>
+
+</dd>
+<dt id="l-tryrdlock">$l-&gt;tryrdlock</dt>
+<dd>
+
+<p>Try to acquire a read lock.</p>
+
+</dd>
+<dt id="l-wrlock">$l-&gt;wrlock</dt>
+<dd>
+
+<p>Acquire a write lock.</p>
+
+</dd>
+<dt id="l-trywrlock">$l-&gt;trywrlock</dt>
+<dd>
+
+<p>Try to acquire a write lock.</p>
+
+</dd>
+<dt id="l-unlock">$l-&gt;unlock</dt>
+<dd>
+
+<p>Give up a previous <code>rdlock</code> or <code>wrlock</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

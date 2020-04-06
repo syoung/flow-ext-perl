@@ -1,0 +1,876 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CORO-THREAD-LIFE-CYCLE">CORO THREAD LIFE CYCLE</a></li>
+  <li><a href="#GLOBAL-VARIABLES">GLOBAL VARIABLES</a></li>
+  <li><a href="#SIMPLE-CORO-CREATION">SIMPLE CORO CREATION</a></li>
+  <li><a href="#STATIC-METHODS">STATIC METHODS</a></li>
+  <li><a href="#CORO-OBJECT-METHODS">CORO OBJECT METHODS</a></li>
+  <li><a href="#GLOBAL-FUNCTIONS">GLOBAL FUNCTIONS</a></li>
+  <li><a href="#HOW-TO-WAIT-FOR-A-CALLBACK">HOW TO WAIT FOR A CALLBACK</a></li>
+  <li><a href="#BUGS-LIMITATIONS">BUGS/LIMITATIONS</a></li>
+  <li><a href="#WINDOWS-PROCESS-EMULATION">WINDOWS PROCESS EMULATION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro - the only real threads in perl</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Coro;
+  
+  async {
+     # some asynchronous thread of execution
+     print &quot;2\n&quot;;
+     cede; # yield back to main
+     print &quot;4\n&quot;;
+  };
+  print &quot;1\n&quot;;
+  cede; # yield to coro
+  print &quot;3\n&quot;;
+  cede; # and again
+  
+  # use locking
+  my $lock = new Coro::Semaphore;
+  my $locked;
+  
+  $lock-&gt;down;
+  $locked = 1;
+  $lock-&gt;up;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>For a tutorial-style introduction, please read the <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Intro.html">Coro::Intro</a> manpage. This manpage mainly contains reference information.</p>
+
+<p>This module collection manages continuations in general, most often in the form of cooperative threads (also called coros, or simply &quot;coro&quot; in the documentation). They are similar to kernel threads but don&#39;t (in general) run in parallel at the same time even on SMP machines. The specific flavor of thread offered by this module also guarantees you that it will not switch between threads unless necessary, at easily-identified points in your program, so locking and parallel access are rarely an issue, making thread programming much safer and easier than using other thread models.</p>
+
+<p>Unlike the so-called &quot;Perl threads&quot; (which are not actually real threads but only the windows process emulation (see section of same name for more details) ported to UNIX, and as such act as processes), Coro provides a full shared address space, which makes communication between threads very easy. And coro threads are fast, too: disabling the Windows process emulation code in your perl and using Coro can easily result in a two to four times speed increase for your programs. A parallel matrix multiplication benchmark (very communication-intensive) runs over 300 times faster on a single core than perls pseudo-threads on a quad core using all four cores.</p>
+
+<p>Coro achieves that by supporting multiple running interpreters that share data, which is especially useful to code pseudo-parallel processes and for event-based programming, such as multiple HTTP-GET requests running concurrently. See <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AnyEvent.html">Coro::AnyEvent</a> to learn more on how to integrate Coro into an event-based environment.</p>
+
+<p>In this module, a thread is defined as &quot;callchain + lexical variables + some package variables + C stack), that is, a thread has its own callchain, its own set of lexicals and its own set of perls most important global variables (see <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/State.html">Coro::State</a> for more configuration and background info).</p>
+
+<p>See also the <code>SEE ALSO</code> section at the end of this document - the Coro module family is quite large.</p>
+
+<h1 id="CORO-THREAD-LIFE-CYCLE">CORO THREAD LIFE CYCLE</h1>
+
+<p>During the long and exciting (or not) life of a coro thread, it goes through a number of states:</p>
+
+<dl>
+
+<dt id="Creation">1. Creation</dt>
+<dd>
+
+<p>The first thing in the life of a coro thread is its creation - obviously. The typical way to create a thread is to call the <code>async BLOCK</code> function:</p>
+
+<pre><code>   async {
+      # thread code goes here
+   };</code></pre>
+
+<p>You can also pass arguments, which are put in <code>@_</code>:</p>
+
+<pre><code>   async {
+      print $_[1]; # prints 2
+   } 1, 2, 3;</code></pre>
+
+<p>This creates a new coro thread and puts it into the ready queue, meaning it will run as soon as the CPU is free for it.</p>
+
+<p><code>async</code> will return a Coro object - you can store this for future reference or ignore it - a thread that is running, ready to run or waiting for some event is alive on its own.</p>
+
+<p>Another way to create a thread is to call the <code>new</code> constructor with a code-reference:</p>
+
+<pre><code>   new Coro sub {
+      # thread code goes here
+   }, @optional_arguments;</code></pre>
+
+<p>This is quite similar to calling <code>async</code>, but the important difference is that the new thread is not put into the ready queue, so the thread will not run until somebody puts it there. <code>async</code> is, therefore, identical to this sequence:</p>
+
+<pre><code>   my $coro = new Coro sub {
+      # thread code goes here
+   };
+   $coro-&gt;ready;
+   return $coro;</code></pre>
+
+</dd>
+<dt id="Startup">2. Startup</dt>
+<dd>
+
+<p>When a new coro thread is created, only a copy of the code reference and the arguments are stored, no extra memory for stacks and so on is allocated, keeping the coro thread in a low-memory state.</p>
+
+<p>Only when it actually starts executing will all the resources be finally allocated.</p>
+
+<p>The optional arguments specified at coro creation are available in <code>@_</code>, similar to function calls.</p>
+
+</dd>
+<dt id="Running-Blocking">3. Running / Blocking</dt>
+<dd>
+
+<p>A lot can happen after the coro thread has started running. Quite usually, it will not run to the end in one go (because you could use a function instead), but it will give up the CPU regularly because it waits for external events.</p>
+
+<p>As long as a coro thread runs, its Coro object is available in the global variable <code>$Coro::current</code>.</p>
+
+<p>The low-level way to give up the CPU is to call the scheduler, which selects a new coro thread to run:</p>
+
+<pre><code>   Coro::schedule;</code></pre>
+
+<p>Since running threads are not in the ready queue, calling the scheduler without doing anything else will block the coro thread forever - you need to arrange either for the coro to put woken up (readied) by some other event or some other thread, or you can put it into the ready queue before scheduling:</p>
+
+<pre><code>   # this is exactly what Coro::cede does
+   $Coro::current-&gt;ready;
+   Coro::schedule;</code></pre>
+
+<p>All the higher-level synchronisation methods (Coro::Semaphore, Coro::rouse_*...) are actually implemented via <code>-&gt;ready</code> and <code>Coro::schedule</code>.</p>
+
+<p>While the coro thread is running it also might get assigned a C-level thread, or the C-level thread might be unassigned from it, as the Coro runtime wishes. A C-level thread needs to be assigned when your perl thread calls into some C-level function and that function in turn calls perl and perl then wants to switch coroutines. This happens most often when you run an event loop and block in the callback, or when perl itself calls some function such as <code>AUTOLOAD</code> or methods via the <code>tie</code> mechanism.</p>
+
+</dd>
+<dt id="Termination">4. Termination</dt>
+<dd>
+
+<p>Many threads actually terminate after some time. There are a number of ways to terminate a coro thread, the simplest is returning from the top-level code reference:</p>
+
+<pre><code>   async {
+      # after returning from here, the coro thread is terminated
+   };
+
+   async {
+      return if 0.5 &lt;  rand; # terminate a little earlier, maybe
+      print &quot;got a chance to print this\n&quot;;
+      # or here
+   };</code></pre>
+
+<p>Any values returned from the coroutine can be recovered using <code>-&gt;join</code>:</p>
+
+<pre><code>   my $coro = async {
+      &quot;hello, world\n&quot; # return a string
+   };
+
+   my $hello_world = $coro-&gt;join;
+
+   print $hello_world;</code></pre>
+
+<p>Another way to terminate is to call <code>Coro::terminate</code>, which at any subroutine call nesting level:</p>
+
+<pre><code>   async {
+      Coro::terminate &quot;return value 1&quot;, &quot;return value 2&quot;;
+   };</code></pre>
+
+<p>Yet another way is to <code>-&gt;cancel</code> (or <code>-&gt;safe_cancel</code>) the coro thread from another thread:</p>
+
+<pre><code>   my $coro = async {
+      exit 1;
+   };
+
+   $coro-&gt;cancel; # also accepts values for -&gt;join to retrieve</code></pre>
+
+<p>Cancellation <i>can</i> be dangerous - it&#39;s a bit like calling <code>exit</code> without actually exiting, and might leave C libraries and XS modules in a weird state. Unlike other thread implementations, however, Coro is exceptionally safe with regards to cancellation, as perl will always be in a consistent state, and for those cases where you want to do truly marvellous things with your coro while it is being cancelled - that is, make sure all cleanup code is executed from the thread being cancelled - there is even a <code>-&gt;safe_cancel</code> method.</p>
+
+<p>So, cancelling a thread that runs in an XS event loop might not be the best idea, but any other combination that deals with perl only (cancelling when a thread is in a <code>tie</code> method or an <code>AUTOLOAD</code> for example) is safe.</p>
+
+<p>Last not least, a coro thread object that isn&#39;t referenced is <code>-&gt;cancel</code>&#39;ed automatically - just like other objects in Perl. This is not such a common case, however - a running thread is referencedy by <code>$Coro::current</code>, a thread ready to run is referenced by the ready queue, a thread waiting on a lock or semaphore is referenced by being in some wait list and so on. But a thread that isn&#39;t in any of those queues gets cancelled:</p>
+
+<pre><code>   async {
+      schedule; # cede to other coros, don&#39;t go into the ready queue
+   };
+
+   cede;
+   # now the async above is destroyed, as it is not referenced by anything.</code></pre>
+
+<p>A slightly embellished example might make it clearer:</p>
+
+<pre><code>   async {
+      my $guard = Guard::guard { print &quot;destroyed\n&quot; };
+      schedule while 1;
+   };
+
+   cede;</code></pre>
+
+<p>Superficially one might not expect any output - since the <code>async</code> implements an endless loop, the <code>$guard</code> will not be cleaned up. However, since the thread object returned by <code>async</code> is not stored anywhere, the thread is initially referenced because it is in the ready queue, when it runs it is referenced by <code>$Coro::current</code>, but when it calls <code>schedule</code>, it gets <code>cancel</code>ed causing the guard object to be destroyed (see the next section), and printing its message.</p>
+
+<p>If this seems a bit drastic, remember that this only happens when nothing references the thread anymore, which means there is no way to further execute it, ever. The only options at this point are leaking the thread, or cleaning it up, which brings us to...</p>
+
+</dd>
+<dt id="Cleanup">5. Cleanup</dt>
+<dd>
+
+<p>Threads will allocate various resources. Most but not all will be returned when a thread terminates, during clean-up.</p>
+
+<p>Cleanup is quite similar to throwing an uncaught exception: perl will work its way up through all subroutine calls and blocks. On its way, it will release all <code>my</code> variables, undo all <code>local</code>&#39;s and free any other resources truly local to the thread.</p>
+
+<p>So, a common way to free resources is to keep them referenced only by my variables:</p>
+
+<pre><code>   async {
+      my $big_cache = new Cache ...;
+   };</code></pre>
+
+<p>If there are no other references, then the <code>$big_cache</code> object will be freed when the thread terminates, regardless of how it does so.</p>
+
+<p>What it does <code>NOT</code> do is unlock any Coro::Semaphores or similar resources, but that&#39;s where the <code>guard</code> methods come in handy:</p>
+
+<pre><code>   my $sem = new Coro::Semaphore;
+
+   async {
+      my $lock_guard = $sem-&gt;guard;
+      # if we return, or die or get cancelled, here,
+      # then the semaphore will be &quot;up&quot;ed.
+   };</code></pre>
+
+<p>The <code>Guard::guard</code> function comes in handy for any custom cleanup you might want to do (but you cannot switch to other coroutines from those code blocks):</p>
+
+<pre><code>   async {
+      my $window = new Gtk2::Window &quot;toplevel&quot;;
+      # The window will not be cleaned up automatically, even when $window
+      # gets freed, so use a guard to ensure its destruction
+      # in case of an error:
+      my $window_guard = Guard::guard { $window-&gt;destroy };
+
+      # we are safe here
+   };</code></pre>
+
+<p>Last not least, <code>local</code> can often be handy, too, e.g. when temporarily replacing the coro thread description:</p>
+
+<pre><code>   sub myfunction {
+      local $Coro::current-&gt;{desc} = &quot;inside myfunction(@_)&quot;;
+
+      # if we return or die here, the description will be restored
+   }</code></pre>
+
+</dd>
+<dt id="Viva-La-Zombie-Muerte">6. Viva La Zombie Muerte</dt>
+<dd>
+
+<p>Even after a thread has terminated and cleaned up its resources, the Coro object still is there and stores the return values of the thread.</p>
+
+<p>When there are no other references, it will simply be cleaned up and freed.</p>
+
+<p>If there areany references, the Coro object will stay around, and you can call <code>-&gt;join</code> as many times as you wish to retrieve the result values:</p>
+
+<pre><code>   async {
+      print &quot;hi\n&quot;;
+      1
+   };
+
+   # run the async above, and free everything before returning
+   # from Coro::cede:
+   Coro::cede;
+
+   {
+      my $coro = async {
+         print &quot;hi\n&quot;;
+         1
+      };
+
+      # run the async above, and clean up, but do not free the coro
+      # object:
+      Coro::cede;
+
+      # optionally retrieve the result values
+      my @results = $coro-&gt;join;
+
+      # now $coro goes out of scope, and presumably gets freed
+   };</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="GLOBAL-VARIABLES">GLOBAL VARIABLES</h1>
+
+<dl>
+
+<dt id="Coro::main">$Coro::main</dt>
+<dd>
+
+<p>This variable stores the Coro object that represents the main program. While you can <code>ready</code> it and do most other things you can do to coro, it is mainly useful to compare again <code>$Coro::current</code>, to see whether you are running in the main program or not.</p>
+
+</dd>
+<dt id="Coro::current">$Coro::current</dt>
+<dd>
+
+<p>The Coro object representing the current coro (the last coro that the Coro scheduler switched to). The initial value is <code>$Coro::main</code> (of course).</p>
+
+<p>This variable is <b>strictly</b> <i>read-only</i>. You can take copies of the value stored in it and use it as any other Coro object, but you must not otherwise modify the variable itself.</p>
+
+</dd>
+<dt id="Coro::idle">$Coro::idle</dt>
+<dd>
+
+<p>This variable is mainly useful to integrate Coro into event loops. It is usually better to rely on <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AnyEvent.html">Coro::AnyEvent</a> or <a>Coro::EV</a>, as this is pretty low-level functionality.</p>
+
+<p>This variable stores a Coro object that is put into the ready queue when there are no other ready threads (without invoking any ready hooks).</p>
+
+<p>The default implementation dies with &quot;FATAL: deadlock detected.&quot;, followed by a thread listing, because the program has no other way to continue.</p>
+
+<p>This hook is overwritten by modules such as <code>Coro::EV</code> and <code>Coro::AnyEvent</code> to wait on an external event that hopefully wakes up a coro so the scheduler can run it.</p>
+
+<p>See <a>Coro::EV</a> or <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AnyEvent.html">Coro::AnyEvent</a> for examples of using this technique.</p>
+
+</dd>
+</dl>
+
+<h1 id="SIMPLE-CORO-CREATION">SIMPLE CORO CREATION</h1>
+
+<dl>
+
+<dt id="async-...-args">async { ... } [@args...]</dt>
+<dd>
+
+<p>Create a new coro and return its Coro object (usually unused). The coro will be put into the ready queue, so it will start running automatically on the next scheduler run.</p>
+
+<p>The first argument is a codeblock/closure that should be executed in the coro. When it returns argument returns the coro is automatically terminated.</p>
+
+<p>The remaining arguments are passed as arguments to the closure.</p>
+
+<p>See the <code>Coro::State::new</code> constructor for info about the coro environment in which coro are executed.</p>
+
+<p>Calling <code>exit</code> in a coro will do the same as calling exit outside the coro. Likewise, when the coro dies, the program will exit, just as it would in the main program.</p>
+
+<p>If you do not want that, you can provide a default <code>die</code> handler, or simply avoid dieing (by use of <code>eval</code>).</p>
+
+<p>Example: Create a new coro that just prints its arguments.</p>
+
+<pre><code>   async {
+      print &quot;@_\n&quot;;
+   } 1,2,3,4;</code></pre>
+
+</dd>
+<dt id="async_pool-...-args">async_pool { ... } [@args...]</dt>
+<dd>
+
+<p>Similar to <code>async</code>, but uses a coro pool, so you should not call terminate or join on it (although you are allowed to), and you get a coro that might have executed other code already (which can be good or bad :).</p>
+
+<p>On the plus side, this function is about twice as fast as creating (and destroying) a completely new coro, so if you need a lot of generic coros in quick successsion, use <code>async_pool</code>, not <code>async</code>.</p>
+
+<p>The code block is executed in an <code>eval</code> context and a warning will be issued in case of an exception instead of terminating the program, as <code>async</code> does. As the coro is being reused, stuff like <code>on_destroy</code> will not work in the expected way, unless you call terminate or cancel, which somehow defeats the purpose of pooling (but is fine in the exceptional case).</p>
+
+<p>The priority will be reset to <code>0</code> after each run, all <code>swap_sv</code> calls will be undone, tracing will be disabled, the description will be reset and the default output filehandle gets restored, so you can change all these. Otherwise the coro will be re-used &quot;as-is&quot;: most notably if you change other per-coro global stuff such as <code>$/</code> you <i>must needs</i> revert that change, which is most simply done by using local as in: <code>local $/</code>.</p>
+
+<p>The idle pool size is limited to <code>8</code> idle coros (this can be adjusted by changing $Coro::POOL_SIZE), but there can be as many non-idle coros as required.</p>
+
+<p>If you are concerned about pooled coros growing a lot because a single <code>async_pool</code> used a lot of stackspace you can e.g. <code>async_pool { terminate }</code> once per second or so to slowly replenish the pool. In addition to that, when the stacks used by a handler grows larger than 32kb (adjustable via $Coro::POOL_RSS) it will also be destroyed.</p>
+
+</dd>
+</dl>
+
+<h1 id="STATIC-METHODS">STATIC METHODS</h1>
+
+<p>Static methods are actually functions that implicitly operate on the current coro.</p>
+
+<dl>
+
+<dt id="schedule">schedule</dt>
+<dd>
+
+<p>Calls the scheduler. The scheduler will find the next coro that is to be run from the ready queue and switches to it. The next coro to be run is simply the one with the highest priority that is longest in its ready queue. If there is no coro ready, it will call the <code>$Coro::idle</code> hook.</p>
+
+<p>Please note that the current coro will <i>not</i> be put into the ready queue, so calling this function usually means you will never be called again unless something else (e.g. an event handler) calls <code>-&gt;ready</code>, thus waking you up.</p>
+
+<p>This makes <code>schedule</code> <i>the</i> generic method to use to block the current coro and wait for events: first you remember the current coro in a variable, then arrange for some callback of yours to call <code>-&gt;ready</code> on that once some event happens, and last you call <code>schedule</code> to put yourself to sleep. Note that a lot of things can wake your coro up, so you need to check whether the event indeed happened, e.g. by storing the status in a variable.</p>
+
+<p>See <b>HOW TO WAIT FOR A CALLBACK</b>, below, for some ways to wait for callbacks.</p>
+
+</dd>
+<dt id="cede">cede</dt>
+<dd>
+
+<p>&quot;Cede&quot; to other coros. This function puts the current coro into the ready queue and calls <code>schedule</code>, which has the effect of giving up the current &quot;timeslice&quot; to other coros of the same or higher priority. Once your coro gets its turn again it will automatically be resumed.</p>
+
+<p>This function is often called <code>yield</code> in other languages.</p>
+
+</dd>
+<dt id="Coro::cede_notself">Coro::cede_notself</dt>
+<dd>
+
+<p>Works like cede, but is not exported by default and will cede to <i>any</i> coro, regardless of priority. This is useful sometimes to ensure progress is made.</p>
+
+</dd>
+<dt id="terminate-arg">terminate [arg...]</dt>
+<dd>
+
+<p>Terminates the current coro with the given status values (see <a>cancel</a>). The values will not be copied, but referenced directly.</p>
+
+</dd>
+<dt id="Coro::on_enter-BLOCK-Coro::on_leave-BLOCK">Coro::on_enter BLOCK, Coro::on_leave BLOCK</dt>
+<dd>
+
+<p>These function install enter and leave winders in the current scope. The enter block will be executed when on_enter is called and whenever the current coro is re-entered by the scheduler, while the leave block is executed whenever the current coro is blocked by the scheduler, and also when the containing scope is exited (by whatever means, be it exit, die, last etc.).</p>
+
+<p><i>Neither invoking the scheduler, nor exceptions, are allowed within those BLOCKs</i>. That means: do not even think about calling <code>die</code> without an eval, and do not even think of entering the scheduler in any way.</p>
+
+<p>Since both BLOCKs are tied to the current scope, they will automatically be removed when the current scope exits.</p>
+
+<p>These functions implement the same concept as <code>dynamic-wind</code> in scheme does, and are useful when you want to localise some resource to a specific coro.</p>
+
+<p>They slow down thread switching considerably for coros that use them (about 40% for a BLOCK with a single assignment, so thread switching is still reasonably fast if the handlers are fast).</p>
+
+<p>These functions are best understood by an example: The following function will change the current timezone to &quot;Antarctica/South_Pole&quot;, which requires a call to <code>tzset</code>, but by using <code>on_enter</code> and <code>on_leave</code>, which remember/change the current timezone and restore the previous value, respectively, the timezone is only changed for the coro that installed those handlers.</p>
+
+<pre><code>   use POSIX qw(tzset);
+
+   async {
+      my $old_tz; # store outside TZ value here
+
+      Coro::on_enter {
+         $old_tz = $ENV{TZ}; # remember the old value
+
+         $ENV{TZ} = &quot;Antarctica/South_Pole&quot;;
+         tzset; # enable new value
+      };
+
+      Coro::on_leave {
+         $ENV{TZ} = $old_tz;
+         tzset; # restore old value
+      };
+
+      # at this place, the timezone is Antarctica/South_Pole,
+      # without disturbing the TZ of any other coro.
+   };</code></pre>
+
+<p>This can be used to localise about any resource (locale, uid, current working directory etc.) to a block, despite the existence of other coros.</p>
+
+<p>Another interesting example implements time-sliced multitasking using interval timers (this could obviously be optimised, but does the job):</p>
+
+<pre><code>   # &quot;timeslice&quot; the given block
+   sub timeslice(&amp;) {
+      use Time::HiRes ();
+
+      Coro::on_enter {
+         # on entering the thread, we set an VTALRM handler to cede
+         $SIG{VTALRM} = sub { cede };
+         # and then start the interval timer
+         Time::HiRes::setitimer &amp;Time::HiRes::ITIMER_VIRTUAL, 0.01, 0.01;
+      };
+      Coro::on_leave {
+         # on leaving the thread, we stop the interval timer again
+         Time::HiRes::setitimer &amp;Time::HiRes::ITIMER_VIRTUAL, 0, 0;
+      };
+
+      &amp;{+shift};
+   }
+
+   # use like this:
+   timeslice {
+      # The following is an endless loop that would normally
+      # monopolise the process. Since it runs in a timesliced
+      # environment, it will regularly cede to other threads.
+      while () { }
+   };</code></pre>
+
+</dd>
+<dt id="killall">killall</dt>
+<dd>
+
+<p>Kills/terminates/cancels all coros except the currently running one.</p>
+
+<p>Note that while this will try to free some of the main interpreter resources if the calling coro isn&#39;t the main coro, but one cannot free all of them, so if a coro that is not the main coro calls this function, there will be some one-time resource leak.</p>
+
+</dd>
+</dl>
+
+<h1 id="CORO-OBJECT-METHODS">CORO OBJECT METHODS</h1>
+
+<p>These are the methods you can call on coro objects (or to create them).</p>
+
+<dl>
+
+<dt id="new-Coro-sub-args">new Coro \&amp;sub [, @args...]</dt>
+<dd>
+
+<p>Create a new coro and return it. When the sub returns, the coro automatically terminates as if <code>terminate</code> with the returned values were called. To make the coro run you must first put it into the ready queue by calling the ready method.</p>
+
+<p>See <code>async</code> and <code>Coro::State::new</code> for additional info about the coro environment.</p>
+
+</dd>
+<dt id="success-coro-ready">$success = $coro-&gt;ready</dt>
+<dd>
+
+<p>Put the given coro into the end of its ready queue (there is one queue for each priority) and return true. If the coro is already in the ready queue, do nothing and return false.</p>
+
+<p>This ensures that the scheduler will resume this coro automatically once all the coro of higher priority and all coro of the same priority that were put into the ready queue earlier have been resumed.</p>
+
+</dd>
+<dt id="coro-suspend">$coro-&gt;suspend</dt>
+<dd>
+
+<p>Suspends the specified coro. A suspended coro works just like any other coro, except that the scheduler will not select a suspended coro for execution.</p>
+
+<p>Suspending a coro can be useful when you want to keep the coro from running, but you don&#39;t want to destroy it, or when you want to temporarily freeze a coro (e.g. for debugging) to resume it later.</p>
+
+<p>A scenario for the former would be to suspend all (other) coros after a fork and keep them alive, so their destructors aren&#39;t called, but new coros can be created.</p>
+
+</dd>
+<dt id="coro-resume">$coro-&gt;resume</dt>
+<dd>
+
+<p>If the specified coro was suspended, it will be resumed. Note that when the coro was in the ready queue when it was suspended, it might have been unreadied by the scheduler, so an activation might have been lost.</p>
+
+<p>To avoid this, it is best to put a suspended coro into the ready queue unconditionally, as every synchronisation mechanism must protect itself against spurious wakeups, and the one in the Coro family certainly do that.</p>
+
+</dd>
+<dt id="state-is_new">$state-&gt;is_new</dt>
+<dd>
+
+<p>Returns true iff this Coro object is &quot;new&quot;, i.e. has never been run yet. Those states basically consist of only the code reference to call and the arguments, but consumes very little other resources. New states will automatically get assigned a perl interpreter when they are transferred to.</p>
+
+</dd>
+<dt id="state-is_zombie">$state-&gt;is_zombie</dt>
+<dd>
+
+<p>Returns true iff the Coro object has been cancelled, i.e. its resources freed because they were <code>cancel</code>&#39;ed, <code>terminate</code>&#39;d, <code>safe_cancel</code>&#39;ed or simply went out of scope.</p>
+
+<p>The name &quot;zombie&quot; stems from UNIX culture, where a process that has exited and only stores and exit status and no other resources is called a &quot;zombie&quot;.</p>
+
+</dd>
+<dt id="is_ready-coro-is_ready">$is_ready = $coro-&gt;is_ready</dt>
+<dd>
+
+<p>Returns true iff the Coro object is in the ready queue. Unless the Coro object gets destroyed, it will eventually be scheduled by the scheduler.</p>
+
+</dd>
+<dt id="is_running-coro-is_running">$is_running = $coro-&gt;is_running</dt>
+<dd>
+
+<p>Returns true iff the Coro object is currently running. Only one Coro object can ever be in the running state (but it currently is possible to have multiple running Coro::States).</p>
+
+</dd>
+<dt id="is_suspended-coro-is_suspended">$is_suspended = $coro-&gt;is_suspended</dt>
+<dd>
+
+<p>Returns true iff this Coro object has been suspended. Suspended Coros will not ever be scheduled.</p>
+
+</dd>
+<dt id="coro-cancel-arg">$coro-&gt;cancel ($arg...)</dt>
+<dd>
+
+<p>Terminate the given Coro thread and make it return the given arguments as status (default: an empty list). Never returns if the Coro is the current Coro.</p>
+
+<p>This is a rather brutal way to free a coro, with some limitations - if the thread is inside a C callback that doesn&#39;t expect to be canceled, bad things can happen, or if the cancelled thread insists on running complicated cleanup handlers that rely on its thread context, things will not work.</p>
+
+<p>Any cleanup code being run (e.g. from <code>guard</code> blocks, destructors and so on) will be run without a thread context, and is not allowed to switch to other threads. A common mistake is to call <code>-&gt;cancel</code> from a destructor called by die&#39;ing inside the thread to be cancelled for example.</p>
+
+<p>On the plus side, <code>-&gt;cancel</code> will always clean up the thread, no matter what. If your cleanup code is complex or you want to avoid cancelling a C-thread that doesn&#39;t know how to clean up itself, it can be better to <code>-&gt;throw</code> an exception, or use <code>-&gt;safe_cancel</code>.</p>
+
+<p>The arguments to <code>-&gt;cancel</code> are not copied, but instead will be referenced directly (e.g. if you pass <code>$var</code> and after the call change that variable, then you might change the return values passed to e.g. <code>join</code>, so don&#39;t do that).</p>
+
+<p>The resources of the Coro are usually freed (or destructed) before this call returns, but this can be delayed for an indefinite amount of time, as in some cases the manager thread has to run first to actually destruct the Coro object.</p>
+
+</dd>
+<dt id="coro-safe_cancel-arg">$coro-&gt;safe_cancel ($arg...)</dt>
+<dd>
+
+<p>Works mostly like <code>-&gt;cancel</code>, but is inherently &quot;safer&quot;, and consequently, can fail with an exception in cases the thread is not in a cancellable state. Essentially, <code>-&gt;safe_cancel</code> is a <code>-&gt;cancel</code> with extra checks before canceling.</p>
+
+<p>It works a bit like throwing an exception that cannot be caught - specifically, it will clean up the thread from within itself, so all cleanup handlers (e.g. <code>guard</code> blocks) are run with full thread context and can block if they wish. The downside is that there is no guarantee that the thread can be cancelled when you call this method, and therefore, it might fail. It is also considerably slower than <code>cancel</code> or <code>terminate</code>.</p>
+
+<p>A thread is in a safe-cancellable state if it either has never been run yet, has already been canceled/terminated or otherwise destroyed, or has no C context attached and is inside an SLF function.</p>
+
+<p>The first two states are trivial - a thread that hasnot started or has already finished is safe to cancel.</p>
+
+<p>The last state basically means that the thread isn&#39;t currently inside a perl callback called from some C function (usually via some XS modules) and isn&#39;t currently executing inside some C function itself (via Coro&#39;s XS API).</p>
+
+<p>This call returns true when it could cancel the thread, or croaks with an error otherwise (i.e. it either returns true or doesn&#39;t return at all).</p>
+
+<p>Why the weird interface? Well, there are two common models on how and when to cancel things. In the first, you have the expectation that your coro thread can be cancelled when you want to cancel it - if the thread isn&#39;t cancellable, this would be a bug somewhere, so <code>-&gt;safe_cancel</code> croaks to notify of the bug.</p>
+
+<p>In the second model you sometimes want to ask nicely to cancel a thread, but if it&#39;s not a good time, well, then don&#39;t cancel. This can be done relatively easy like this:</p>
+
+<pre><code>   if (! eval { $coro-&gt;safe_cancel }) {
+      warn &quot;unable to cancel thread: $@&quot;;
+   }</code></pre>
+
+<p>However, what you never should do is first try to cancel &quot;safely&quot; and if that fails, cancel the &quot;hard&quot; way with <code>-&gt;cancel</code>. That makes no sense: either you rely on being able to execute cleanup code in your thread context, or you don&#39;t. If you do, then <code>-&gt;safe_cancel</code> is the only way, and if you don&#39;t, then <code>-&gt;cancel</code> is always faster and more direct.</p>
+
+</dd>
+<dt id="coro-schedule_to">$coro-&gt;schedule_to</dt>
+<dd>
+
+<p>Puts the current coro to sleep (like <code>Coro::schedule</code>), but instead of continuing with the next coro from the ready queue, always switch to the given coro object (regardless of priority etc.). The readyness state of that coro isn&#39;t changed.</p>
+
+<p>This is an advanced method for special cases - I&#39;d love to hear about any uses for this one.</p>
+
+</dd>
+<dt id="coro-cede_to">$coro-&gt;cede_to</dt>
+<dd>
+
+<p>Like <code>schedule_to</code>, but puts the current coro into the ready queue. This has the effect of temporarily switching to the given coro, and continuing some time later.</p>
+
+<p>This is an advanced method for special cases - I&#39;d love to hear about any uses for this one.</p>
+
+</dd>
+<dt id="coro-throw-scalar">$coro-&gt;throw ([$scalar])</dt>
+<dd>
+
+<p>If <code>$throw</code> is specified and defined, it will be thrown as an exception inside the coro at the next convenient point in time. Otherwise clears the exception object.</p>
+
+<p>Coro will check for the exception each time a schedule-like-function returns, i.e. after each <code>schedule</code>, <code>cede</code>, <code>Coro::Semaphore-&gt;down</code>, <code>Coro::Handle-&gt;readable</code> and so on. Most of those functions (all that are part of Coro itself) detect this case and return early in case an exception is pending.</p>
+
+<p>The exception object will be thrown &quot;as is&quot; with the specified scalar in <code>$@</code>, i.e. if it is a string, no line number or newline will be appended (unlike with <code>die</code>).</p>
+
+<p>This can be used as a softer means than either <code>cancel</code> or <code>safe_cancel </code>to ask a coro to end itself, although there is no guarantee that the exception will lead to termination, and if the exception isn&#39;t caught it might well end the whole program.</p>
+
+<p>You might also think of <code>throw</code> as being the moral equivalent of <code>kill</code>ing a coro with a signal (in this case, a scalar).</p>
+
+</dd>
+<dt id="coro-join">$coro-&gt;join</dt>
+<dd>
+
+<p>Wait until the coro terminates and return any values given to the <code>terminate</code> or <code>cancel</code> functions. <code>join</code> can be called concurrently from multiple threads, and all will be resumed and given the status return once the <code>$coro</code> terminates.</p>
+
+</dd>
+<dt id="coro-on_destroy-cb">$coro-&gt;on_destroy (\&amp;cb)</dt>
+<dd>
+
+<p>Registers a callback that is called when this coro thread gets destroyed, that is, after its resources have been freed but before it is joined. The callback gets passed the terminate/cancel arguments, if any, and <i>must not</i> die, under any circumstances.</p>
+
+<p>There can be any number of <code>on_destroy</code> callbacks per coro, and there is currently no way to remove a callback once added.</p>
+
+</dd>
+<dt id="oldprio-coro-prio-newprio">$oldprio = $coro-&gt;prio ($newprio)</dt>
+<dd>
+
+<p>Sets (or gets, if the argument is missing) the priority of the coro thread. Higher priority coro get run before lower priority coros. Priorities are small signed integers (currently -4 .. +3), that you can refer to using PRIO_xxx constants (use the import tag :prio to get then):</p>
+
+<pre><code>   PRIO_MAX &gt; PRIO_HIGH &gt; PRIO_NORMAL &gt; PRIO_LOW &gt; PRIO_IDLE &gt; PRIO_MIN
+       3    &gt;     1     &gt;      0      &gt;    -1    &gt;    -3     &gt;    -4
+
+   # set priority to HIGH
+   current-&gt;prio (PRIO_HIGH);</code></pre>
+
+<p>The idle coro thread ($Coro::idle) always has a lower priority than any existing coro.</p>
+
+<p>Changing the priority of the current coro will take effect immediately, but changing the priority of a coro in the ready queue (but not running) will only take effect after the next schedule (of that coro). This is a bug that will be fixed in some future version.</p>
+
+</dd>
+<dt id="newprio-coro-nice-change">$newprio = $coro-&gt;nice ($change)</dt>
+<dd>
+
+<p>Similar to <code>prio</code>, but subtract the given value from the priority (i.e. higher values mean lower priority, just as in UNIX&#39;s nice command).</p>
+
+</dd>
+<dt id="olddesc-coro-desc-newdesc">$olddesc = $coro-&gt;desc ($newdesc)</dt>
+<dd>
+
+<p>Sets (or gets in case the argument is missing) the description for this coro thread. This is just a free-form string you can associate with a coro.</p>
+
+<p>This method simply sets the <code>$coro-&gt;{desc}</code> member to the given string. You can modify this member directly if you wish, and in fact, this is often preferred to indicate major processing states that can then be seen for example in a <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Debug.html">Coro::Debug</a> session:</p>
+
+<pre><code>   sub my_long_function {
+      local $Coro::current-&gt;{desc} = &quot;now in my_long_function&quot;;
+      ...
+      $Coro::current-&gt;{desc} = &quot;my_long_function: phase 1&quot;;
+      ...
+      $Coro::current-&gt;{desc} = &quot;my_long_function: phase 2&quot;;
+      ...
+   }</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="GLOBAL-FUNCTIONS">GLOBAL FUNCTIONS</h1>
+
+<dl>
+
+<dt id="Coro::nready">Coro::nready</dt>
+<dd>
+
+<p>Returns the number of coro that are currently in the ready state, i.e. that can be switched to by calling <code>schedule</code> directory or indirectly. The value <code>0</code> means that the only runnable coro is the currently running one, so <code>cede</code> would have no effect, and <code>schedule</code> would cause a deadlock unless there is an idle handler that wakes up some coro.</p>
+
+</dd>
+<dt id="my-guard-Coro::guard">my $guard = Coro::guard { ... }</dt>
+<dd>
+
+<p>This function still exists, but is deprecated. Please use the <code>Guard::guard</code> function instead.</p>
+
+</dd>
+<dt id="unblock_sub">unblock_sub { ... }</dt>
+<dd>
+
+<p>This utility function takes a BLOCK or code reference and &quot;unblocks&quot; it, returning a new coderef. Unblocking means that calling the new coderef will return immediately without blocking, returning nothing, while the original code ref will be called (with parameters) from within another coro.</p>
+
+<p>The reason this function exists is that many event libraries (such as the venerable <a href="../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent/Impl/Event.html">Event</a> module) are not thread-safe (a weaker form of reentrancy). This means you must not block within event callbacks, otherwise you might suffer from crashes or worse. The only event library currently known that is safe to use without <code>unblock_sub</code> is <a href="../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent/Impl/EV.html">EV</a> (but you might still run into deadlocks if all event loops are blocked).</p>
+
+<p>Coro will try to catch you when you block in the event loop (&quot;FATAL: $Coro::idle blocked itself&quot;), but this is just best effort and only works when you do not run your own event loop.</p>
+
+<p>This function allows your callbacks to block by executing them in another coro where it is safe to block. One example where blocking is handy is when you use the <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AIO.html">Coro::AIO</a> functions to save results to disk, for example.</p>
+
+<p>In short: simply use <code>unblock_sub { ... }</code> instead of <code>sub { ... }</code> when creating event callbacks that want to block.</p>
+
+<p>If your handler does not plan to block (e.g. simply sends a message to another coro, or puts some other coro into the ready queue), there is no reason to use <code>unblock_sub</code>.</p>
+
+<p>Note that you also need to use <code>unblock_sub</code> for any other callbacks that are indirectly executed by any C-based event loop. For example, when you use a module that uses <a href="../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> (and you use <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AnyEvent.html">Coro::AnyEvent</a>) and it provides callbacks that are the result of some event callback, then you must not block either, or use <code>unblock_sub</code>.</p>
+
+</dd>
+<dt id="cb-rouse_cb">$cb = rouse_cb</dt>
+<dd>
+
+<p>Create and return a &quot;rouse callback&quot;. That&#39;s a code reference that, when called, will remember a copy of its arguments and notify the owner coro of the callback.</p>
+
+<p>See the next function.</p>
+
+</dd>
+<dt id="args-rouse_wait-cb">@args = rouse_wait [$cb]</dt>
+<dd>
+
+<p>Wait for the specified rouse callback (or the last one that was created in this coro).</p>
+
+<p>As soon as the callback is invoked (or when the callback was invoked before <code>rouse_wait</code>), it will return the arguments originally passed to the rouse callback. In scalar context, that means you get the <i>last</i> argument, just as if <code>rouse_wait</code> had a <code>return ($a1, $a2, $a3...)</code> statement at the end.</p>
+
+<p>See the section <b>HOW TO WAIT FOR A CALLBACK</b> for an actual usage example.</p>
+
+</dd>
+</dl>
+
+<h1 id="HOW-TO-WAIT-FOR-A-CALLBACK">HOW TO WAIT FOR A CALLBACK</h1>
+
+<p>It is very common for a coro to wait for some callback to be called. This occurs naturally when you use coro in an otherwise event-based program, or when you use event-based libraries.</p>
+
+<p>These typically register a callback for some event, and call that callback when the event occurred. In a coro, however, you typically want to just wait for the event, simplyifying things.</p>
+
+<p>For example <code>AnyEvent-&gt;child</code> registers a callback to be called when a specific child has exited:</p>
+
+<pre><code>   my $child_watcher = AnyEvent-&gt;child (pid =&gt; $pid, cb =&gt; sub { ... });</code></pre>
+
+<p>But from within a coro, you often just want to write this:</p>
+
+<pre><code>   my $status = wait_for_child $pid;</code></pre>
+
+<p>Coro offers two functions specifically designed to make this easy, <code>rouse_cb</code> and <code>rouse_wait</code>.</p>
+
+<p>The first function, <code>rouse_cb</code>, generates and returns a callback that, when invoked, will save its arguments and notify the coro that created the callback.</p>
+
+<p>The second function, <code>rouse_wait</code>, waits for the callback to be called (by calling <code>schedule</code> to go to sleep) and returns the arguments originally passed to the callback.</p>
+
+<p>Using these functions, it becomes easy to write the <code>wait_for_child</code> function mentioned above:</p>
+
+<pre><code>   sub wait_for_child($) {
+      my ($pid) = @_;
+
+      my $watcher = AnyEvent-&gt;child (pid =&gt; $pid, cb =&gt; rouse_cb);
+
+      my ($rpid, $rstatus) = rouse_wait;
+      $rstatus
+   }</code></pre>
+
+<p>In the case where <code>rouse_cb</code> and <code>rouse_wait</code> are not flexible enough, you can roll your own, using <code>schedule</code> and <code>ready</code>:</p>
+
+<pre><code>   sub wait_for_child($) {
+      my ($pid) = @_;
+
+      # store the current coro in $current,
+      # and provide result variables for the closure passed to -&gt;child
+      my $current = $Coro::current;
+      my ($done, $rstatus);
+
+      # pass a closure to -&gt;child
+      my $watcher = AnyEvent-&gt;child (pid =&gt; $pid, cb =&gt; sub {
+         $rstatus = $_[1]; # remember rstatus
+         $done = 1;        # mark $rstatus as valid
+         $current-&gt;ready;  # wake up the waiting thread
+      });
+
+      # wait until the closure has been called
+      schedule while !$done;
+
+      $rstatus
+   }</code></pre>
+
+<h1 id="BUGS-LIMITATIONS">BUGS/LIMITATIONS</h1>
+
+<dl>
+
+<dt id="fork-with-pthread-backend">fork with pthread backend</dt>
+<dd>
+
+<p>When Coro is compiled using the pthread backend (which isn&#39;t recommended but required on many BSDs as their libcs are completely broken), then coro will not survive a fork. There is no known workaround except to fix your libc and use a saner backend.</p>
+
+</dd>
+<dt id="perl-process-emulation-threads">perl process emulation (&quot;threads&quot;)</dt>
+<dd>
+
+<p>This module is not perl-pseudo-thread-safe. You should only ever use this module from the first thread (this requirement might be removed in the future to allow per-thread schedulers, but Coro::State does not yet allow this). I recommend disabling thread support and using processes, as having the windows process emulation enabled under unix roughly halves perl performance, even when not used.</p>
+
+<p>Attempts to use threads created in another emulated process will crash (&quot;cleanly&quot;, with a null pointer exception).</p>
+
+</dd>
+<dt id="coro-switching-is-not-signal-safe">coro switching is not signal safe</dt>
+<dd>
+
+<p>You must not switch to another coro from within a signal handler (only relevant with %SIG - most event libraries provide safe signals), <i>unless</i> you are sure you are not interrupting a Coro function.</p>
+
+<p>That means you <i>MUST NOT</i> call any function that might &quot;block&quot; the current coro - <code>cede</code>, <code>schedule</code> <code>Coro::Semaphore-&gt;down</code> or anything that calls those. Everything else, including calling <code>ready</code>, works.</p>
+
+</dd>
+</dl>
+
+<h1 id="WINDOWS-PROCESS-EMULATION">WINDOWS PROCESS EMULATION</h1>
+
+<p>A great many people seem to be confused about ithreads (for example, Chip Salzenberg called me unintelligent, incapable, stupid and gullible, while in the same mail making rather confused statements about perl ithreads (for example, that memory or files would be shared), showing his lack of understanding of this area - if it is hard to understand for Chip, it is probably not obvious to everybody).</p>
+
+<p>What follows is an ultra-condensed version of my talk about threads in scripting languages given on the perl workshop 2009:</p>
+
+<p>The so-called &quot;ithreads&quot; were originally implemented for two reasons: first, to (badly) emulate unix processes on native win32 perls, and secondly, to replace the older, real thread model (&quot;5.005-threads&quot;).</p>
+
+<p>It does that by using threads instead of OS processes. The difference between processes and threads is that threads share memory (and other state, such as files) between threads within a single process, while processes do not share anything (at least not semantically). That means that modifications done by one thread are seen by others, while modifications by one process are not seen by other processes.</p>
+
+<p>The &quot;ithreads&quot; work exactly like that: when creating a new ithreads process, all state is copied (memory is copied physically, files and code is copied logically). Afterwards, it isolates all modifications. On UNIX, the same behaviour can be achieved by using operating system processes, except that UNIX typically uses hardware built into the system to do this efficiently, while the windows process emulation emulates this hardware in software (rather efficiently, but of course it is still much slower than dedicated hardware).</p>
+
+<p>As mentioned before, loading code, modifying code, modifying data structures and so on is only visible in the ithreads process doing the modification, not in other ithread processes within the same OS process.</p>
+
+<p>This is why &quot;ithreads&quot; do not implement threads for perl at all, only processes. What makes it so bad is that on non-windows platforms, you can actually take advantage of custom hardware for this purpose (as evidenced by the forks module, which gives you the (i-) threads API, just much faster).</p>
+
+<p>Sharing data is in the i-threads model is done by transferring data structures between threads using copying semantics, which is very slow - shared data simply does not exist. Benchmarks using i-threads which are communication-intensive show extremely bad behaviour with i-threads (in fact, so bad that Coro, which cannot take direct advantage of multiple CPUs, is often orders of magnitude faster because it shares data using real threads, refer to my talk for details).</p>
+
+<p>As summary, i-threads *use* threads to implement processes, while the compatible forks module *uses* processes to emulate, uhm, processes. I-threads slow down every perl program when enabled, and outside of windows, serve no (or little) practical purpose, but disadvantages every single-threaded Perl program.</p>
+
+<p>This is the reason that I try to avoid the name &quot;ithreads&quot;, as it is misleading as it implies that it implements some kind of thread model for perl, and prefer the name &quot;windows process emulation&quot;, which describes the actual use and behaviour of it much better.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>Event-Loop integration: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AnyEvent.html">Coro::AnyEvent</a>, <a>Coro::EV</a>, <a>Coro::Event</a>.</p>
+
+<p>Debugging: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Debug.html">Coro::Debug</a>.</p>
+
+<p>Support/Utility: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Specific.html">Coro::Specific</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Util.html">Coro::Util</a>.</p>
+
+<p>Locking and IPC: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Signal.html">Coro::Signal</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Channel.html">Coro::Channel</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Semaphore.html">Coro::Semaphore</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/SemaphoreSet.html">Coro::SemaphoreSet</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/RWLock.html">Coro::RWLock</a>.</p>
+
+<p>I/O and Timers: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Timer.html">Coro::Timer</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Handle.html">Coro::Handle</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Socket.html">Coro::Socket</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/AIO.html">Coro::AIO</a>.</p>
+
+<p>Compatibility with other modules: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/LWP.html">Coro::LWP</a> (but see also <a>AnyEvent::HTTP</a> for a better-working alternative), <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/BDB.html">Coro::BDB</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Storable.html">Coro::Storable</a>, <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/Select.html">Coro::Select</a>.</p>
+
+<p>XS API: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/MakeMaker.html">Coro::MakeMaker</a>.</p>
+
+<p>Low level Configuration, Thread Environment, Continuations: <a href="../../../../root/.cpanm/work/1586168104.26463/Coro-6.55/blib/lib/Coro/State.html">Coro::State</a>.</p>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

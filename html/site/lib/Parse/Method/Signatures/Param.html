@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#ATTRIBUTES">ATTRIBUTES</a>
+    <ul>
+      <li><a href="#required">required</a></li>
+      <li><a href="#sigil">sigil</a></li>
+      <li><a href="#type_constraints">type_constraints</a></li>
+      <li><a href="#default_value">default_value</a></li>
+      <li><a href="#constraints">constraints</a></li>
+      <li><a href="#param_traits">param_traits</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#to_string">to_string</a></li>
+      <li><a href="#meta_type_constraint">meta_type_constraint</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Parse::Method::Signatures::Param - a parsed parameter from a signature</p>
+
+<h1 id="ATTRIBUTES">ATTRIBUTES</h1>
+
+<p>All attributes of this class are read-only.</p>
+
+<h2 id="required">required</h2>
+
+<p>Is this parameter required (true) or optional (false)?</p>
+
+<h2 id="sigil">sigil</h2>
+
+<p>The effective sigil (&#39;$&#39;, &#39;@&#39; or &#39;%&#39;) of this parameter.</p>
+
+<h2 id="type_constraints">type_constraints</h2>
+
+<ul>
+
+<p><b>Type:</b> <a href="../../../../../../../root/.cpanm/work/1586168422.2240/Parse-Method-Signatures-1.003019/blib/lib/Parse/Method/Signatures/TypeConstraint.html">Parse::Method::Signatures::TypeConstraint</a></p>
+
+<p><b>Predicate:</b> has_type_constraints</p>
+
+</ul>
+
+<p>Representation of the type constraint for this parameter. Most commonly you will just call <a href="#meta_type_constraint">&quot;meta_type_constraint&quot;</a> and not access this attribute directly.</p>
+
+<h2 id="default_value">default_value</h2>
+
+<ul>
+
+<p><b>Type:</b> Str</p>
+
+<p><b>Predicate:</b> has_default_value</p>
+
+</ul>
+
+<p>A string that should be eval&#39;d or injected to get the default value for this parameter. For example:</p>
+
+<pre><code> $name = &#39;bar&#39;</code></pre>
+
+<p>Would give a default_value of &quot;&#39;bar&#39;&quot;.</p>
+
+<h2 id="constraints">constraints</h2>
+
+<ul>
+
+<p><b>Type:</b> ArrayRef[Str]</p>
+
+<p><b>Predicate:</b> has_constraints</p>
+
+</ul>
+
+<p><code>where</code> constraints for this type. Each member of the array a the string (including enclosing braces) of the where constraint block.</p>
+
+<h2 id="param_traits">param_traits</h2>
+
+<ul>
+
+<p><b>Type:</b> ArrayRef[ Tupple[Str,Str] ]</p>
+
+<p><b>Predicate:</b> has_traits</p>
+
+</ul>
+
+<p>Traits that this parameter is declared to have. For instance</p>
+
+<pre><code> $foo does coerce</code></pre>
+
+<p>would have a trait of</p>
+
+<pre><code> [&#39;does&#39;, &#39;coerce&#39;]</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="to_string">to_string</h2>
+
+<h2 id="meta_type_constraint">meta_type_constraint</h2>
+
+<p>Get the <a href="../../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Meta/TypeConstraint.html">Moose::Meta::TypeConstraint</a> for this parameter. Check first that the type has a type constraint:</p>
+
+<pre><code> $tc = $param-&gt;meta_type_constraint if $param-&gt;has_type_constraints;</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../../root/.cpanm/work/1586168422.2240/Parse-Method-Signatures-1.003019/blib/lib/Parse/Method/Signatures.html">Parse::Method::Signatures</a>.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Ash Berlin &lt;ash@cpan.org&gt;.</p>
+
+<p>Florian Ragwitz &lt;rafl@debian.org&gt;.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>Licensed under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

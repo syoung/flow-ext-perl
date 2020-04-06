@@ -1,0 +1,183 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#signature">signature</a></li>
+      <li><a href="#param">param</a></li>
+    </ul>
+  </li>
+  <li><a href="#ATTRIBUTES">ATTRIBUTES</a>
+    <ul>
+      <li><a href="#input">input</a></li>
+      <li><a href="#offset">offset</a></li>
+      <li><a href="#signature_class">signature_class</a></li>
+      <li><a href="#param_class">param_class</a></li>
+      <li><a href="#type_constraint_class">type_constraint_class</a></li>
+      <li><a href="#from_namespace">from_namespace</a></li>
+      <li><a href="#type_constraint_callback">type_constraint_callback</a></li>
+    </ul>
+  </li>
+  <li><a href="#CAVEATS">CAVEATS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Parse::Method::Signatures - Perl6 like method signature parser</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Inspired by <a>Perl6::Signature</a> but streamlined to just support the subset deemed useful for <a>TryCatch</a> and <a>MooseX::Method::Signatures</a>.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<ul>
+
+<li><p>Document the parameter return types.</p>
+
+</li>
+<li><p>Probably lots of other things</p>
+
+</li>
+</ul>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>There are only two public methods to this module, both of which should be called as class methods. Both methods accept either a single (non-ref) scalar as the value for the <a href="#input">&quot;input&quot;</a> attribute, or normal new style arguments (hash or hash-ref).</p>
+
+<h2 id="signature">signature</h2>
+
+<pre><code> my $sig = Parse::Method::Signatures-&gt;signature( &#39;(Str $foo)&#39; )</code></pre>
+
+<p>Attempts to parse the (bracketed) method signature. Returns a value or croaks on error.</p>
+
+<h2 id="param">param</h2>
+
+<pre><code>  my $param = Parse::Method::Signatures-&gt;param( &#39;Str $foo where { length($_) &lt; 10 }&#39;)</code></pre>
+
+<p>Attempts to parse the specification for a single parameter. Returns value or croaks on error.</p>
+
+<h1 id="ATTRIBUTES">ATTRIBUTES</h1>
+
+<p>All the attributes on this class are read-only.</p>
+
+<h2 id="input">input</h2>
+
+<p><b>Type:</b> Str</p>
+
+<p>The string to parse.</p>
+
+<h2 id="offset">offset</h2>
+
+<p><b>Type:</b> Int</p>
+
+<p>Offset into <a href="#input">&quot;input&quot;</a> at which to start parsing. Useful for using with Devel::Declare linestring</p>
+
+<h2 id="signature_class">signature_class</h2>
+
+<p><b>Default:</b> Parse::Method::Signatures::Sig</p>
+
+<p><b>Type:</b> Str (loaded on demand class name)</p>
+
+<h2 id="param_class">param_class</h2>
+
+<p><b>Default:</b> Parse::Method::Signatures::Param</p>
+
+<p><b>Type:</b> Str (loaded on demand class name)</p>
+
+<h2 id="type_constraint_class">type_constraint_class</h2>
+
+<p><b>Default:</b> <a href="../../../../../../root/.cpanm/work/1586168422.2240/Parse-Method-Signatures-1.003019/blib/lib/Parse/Method/Signatures/TypeConstraint.html">Parse::Method::Signatures::TypeConstraint</a></p>
+
+<p><b>Type:</b> Str (loaded on demand class name)</p>
+
+<p>Class that is used to turn the parsed type constraint into an actual <a href="../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose/Meta/TypeConstraint.html">Moose::Meta::TypeConstraint</a> object.</p>
+
+<h2 id="from_namespace">from_namespace</h2>
+
+<p><b>Type:</b> ClassName</p>
+
+<p>Let this module know which package it is parsing signatures form. This is entirely optional, and the only effect is has is on parsing type constraints.</p>
+
+<p>If this attribute is set it is passed to <a href="#type_constraint_class">&quot;type_constraint_class&quot;</a> which can use it to introspect the package (commonly for <a href="../../../../lib/perl5/site_perl/5.26.3/MooseX/Types.html">MooseX::Types</a> exported types). See <a>&quot;find_registered_constraint&quot; in Parse::Method::Signature::TypeConstraints</a> for more details.</p>
+
+<h2 id="type_constraint_callback">type_constraint_callback</h2>
+
+<p><b>Type:</b> CodeRef</p>
+
+<p>Passed to the constructor of <a href="#type_constraint_class">&quot;type_constraint_class&quot;</a>. Default implementation of this callback asks Moose for a type constrain matching the name passed in. If you have more complex requirements, such as parsing types created by <a href="../../../../lib/perl5/site_perl/5.26.3/MooseX/Types.html">MooseX::Types</a> then you will want a callback similar to this:</p>
+
+<pre><code> # my $target_package defined elsewhere.
+ my $tc_cb = sub {
+   my ($pms_tc, $name) = @_;
+   my $code = $target_package-&gt;can($name);
+   $code ? eval { $code-&gt;() } 
+         : $pms_tc-&gt;find_registered_constraint($name);
+ }</code></pre>
+
+<p>Note that the above example is better provided by providing the <a href="#from_namespace">&quot;from_namespace&quot;</a> attribute.</p>
+
+<h1 id="CAVEATS">CAVEATS</h1>
+
+<p>Like Perl6::Signature, the parsing of certain constructs is currently only a &#39;best effort&#39; - specifically default values and where code blocks might not successfully for certain complex cases. Patches/Failing tests welcome.</p>
+
+<p>Additionally, default value specifications are not evaluated which means that no such lexical or similar errors will not be produced by this module. Constant folding will also not be performed.</p>
+
+<p>There are certain constructs that are simply too much hassle to avoid when the work around is simple. Currently the only cases that are known to parse wrong are when using anonymous variables (i.e. just sigils) in unpacked arrays. Take the following example:</p>
+
+<pre><code> method foo (ArrayRef [$, $], $some_value_we_care_about) {</code></pre>
+
+<p>In this case the <code>$]</code> is treated as one of perl&#39;s magic variables (specifically, the patch level of the Perl interpreter) rather than a <code>$</code> followed by a <code>]</code> as was almost certainly intended. The work around for this is simple: introduce a space between the characters:</p>
+
+<pre><code> method foo (ArrayRef [ $, $ ], $some_value_we_care_about) {</code></pre>
+
+<p>The same applies</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ash Berlin &lt;ash@cpan.org&gt;.</p>
+
+<p>Thanks to Florian Ragwitz &lt;rafl@debian.org&gt;.</p>
+
+<p>Many thanks to Piers Cawley to showing me the way to refactor my spaghetti code into something more manageable.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Devel/Declare.html">Devel::Declare</a> which is used by most modules that use this (currently by all modules known to the author.)</p>
+
+<p><a href="http://github.com/ashb/trycatch/tree">http://github.com/ashb/trycatch/tree</a>.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>Licensed under the same terms as Perl itself.</p>
+
+<p>This distribution copyright 2008-2009, Ash Berlin &lt;ash@cpan.org&gt;</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,228 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#generate-uuid">generate( $uuid )</a></li>
+      <li><a href="#generate_random-uuid">generate_random( $uuid )</a></li>
+      <li><a href="#generate_time-uuid">generate_time( $uuid )</a></li>
+      <li><a href="#unparse-uuid-string">unparse( $uuid, $string )</a></li>
+      <li><a href="#unparse_lower-uuid-string">unparse_lower( $uuid, $string )</a></li>
+      <li><a href="#unparse_upper-uuid-string">unparse_upper( $uuid, $string )</a></li>
+      <li><a href="#rc-parse-string-uuid">$rc = parse( $string, $uuid )</a></li>
+      <li><a href="#clear-uuid">clear( $uuid )</a></li>
+      <li><a href="#is_null-uuid">is_null( $uuid )</a></li>
+      <li><a href="#copy-dst-src">copy( $dst, $src )</a></li>
+      <li><a href="#compare-uuid1-uuid2">compare( $uuid1, $uuid2 )</a></li>
+      <li><a href="#string-uuid">$string = uuid()</a></li>
+    </ul>
+  </li>
+  <li><a href="#UUID-LIBRARY">UUID LIBRARY</a></li>
+  <li><a href="#EXPORTS">EXPORTS</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>UUID - DCE compatible Universally Unique Identifier library for Perl</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use UUID &#39;uuid&#39;;
+
+    $string = uuid();   # generate stringified UUID
+
+    UUID::generate($uuid);               # new binary UUID; prefer random
+    UUID::generate_random($uuid);        # new binary UUID; use random
+    UUID::generate_time($uuid);          # new binary UUID; use time
+
+    UUID::unparse($uuid, $string);       # stringify $uuid; system casing
+    UUID::unparse_lower($uuid, $string); # force lowercase stringify
+    UUID::unparse_upper($uuid, $string); # force uppercase stringify
+
+    $rc = UUID::parse($string, $uuid);   # map string to UUID; -1 on error
+
+    UUID::copy($dst, $src);              # copy binary UUID from $src to $dst
+    UUID::compare($uuid1, $uuid2);       # compare binary UUIDs
+
+    UUID::clear( $uuid );                # set binary UUID to NULL
+    UUID::is_null( $uuid );              # compare binary UUID to NULL
+    </code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>The UUID library is used to generate unique identifiers for objects that may be accessible beyond the local system. For instance, they could be used to generate unique HTTP cookies across multiple web servers without communication between the servers, and without fear of a name clash.</p>
+
+<p>The generated UUIDs can be reasonably expected to be unique within a system, and unique across all systems, and are compatible with those created by the Open Software Foundation (OSF) Distributed Computing Environment (DCE) utility uuidgen.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>Most of the UUID functions expose the underlying <i>libuuid</i> C interface rather directly. That is, many return their values in their parameters and nothing else.</p>
+
+<p>Not very Perlish, is it? It&#39;s been like that for a long time though, so not very likely to change any time soon.</p>
+
+<p>All take or return UUIDs in either binary or string format. The string format resembles the following:</p>
+
+<pre><code>    1b4e28ba-2fa1-11d2-883f-0016d3cca427</code></pre>
+
+<p>Or, in terms of printf(3) format:</p>
+
+<pre><code>    &quot;%08x-%04x-%04x-%04x-%012x&quot;</code></pre>
+
+<p>The binary format is simply a packed 16 byte binary value.</p>
+
+<h2 id="generate-uuid"><b>generate(</b> <i>$uuid</i> <b>)</b></h2>
+
+<p>Generates a new binary UUID based on high quality randomness from <i>/dev/urandom</i>, if available.</p>
+
+<p>Alternately, the current time, the local ethernet MAC address (if available), and random data generated using a pseudo-random generator are used.</p>
+
+<p>The previous content of <i>$uuid</i>, if any, is lost.</p>
+
+<h2 id="generate_random-uuid"><b>generate_random(</b> <i>$uuid</i> <b>)</b></h2>
+
+<p>Generates a new binary UUID but forces the use of the all-random algorithm, even if a high-quality random number generator (i.e., <i>/dev/urandom</i>) is not available, in which case a pseudo-random generator is used.</p>
+
+<p>Note that the use of a pseudo-random generator may compromise the uniqueness of UUIDs generated in this fashion.</p>
+
+<h2 id="generate_time-uuid"><b>generate_time(</b> <i>$uuid</i> <b>)</b></h2>
+
+<p>Generates a new binary UUID but forces the use of the alternative algorithm which uses the current time and the local ethernet MAC address (if available).</p>
+
+<p>This algorithm used to be the default one used to generate UUIDs, but because of the use of the ethernet MAC address, it can leak information about when and where the UUID was generated.</p>
+
+<p>This can cause privacy problems in some applications, so the <b>generate()</b> function only uses this algorithm if a high-quality source of randomness is not available.</p>
+
+<h2 id="unparse-uuid-string"><b>unparse(</b> <i>$uuid</i><b>,</b> <i>$string</i> <b>)</b></h2>
+
+<p>Converts the binary UUID in <i>$uuid</i> to string format and returns in <i>$string</i>. The previous content of <i>$string</i>, if any, is lost.</p>
+
+<p>The case of the hex digits returned may be upper or lower case, and is dependent on the system-dependent local default.</p>
+
+<h2 id="unparse_lower-uuid-string"><b>unparse_lower(</b> <i>$uuid</i><b>,</b> <i>$string</i> <b>)</b></h2>
+
+<p>Same as <b>unparse()</b> but <i>$string</i> is forced to lower case.</p>
+
+<h2 id="unparse_upper-uuid-string"><b>unparse_upper(</b> <i>$uuid</i><b>,</b> <i>$string</i> <b>)</b></h2>
+
+<p>Same as <b>unparse()</b> but <i>$string</i> is forced to upper case.</p>
+
+<h2 id="rc-parse-string-uuid"><b>$rc = parse(</b> <i>$string</i><b>,</b> <i>$uuid</i> <b>)</b></h2>
+
+<p>Converts the string format UUID in <i>$string</i> to binary and returns in <i>$uuid</i>. The previous content of <i>$uuid</i>, if any, is lost.</p>
+
+<p>Returns 0 on success and -1 on failure. Additionally on failure, the content of <i>$uuid</i> is unchanged.</p>
+
+<h2 id="clear-uuid"><b>clear(</b> <i>$uuid</i> <b>)</b></h2>
+
+<p>Sets <i>$uuid</i> equal to the value of the NULL UUID.</p>
+
+<h2 id="is_null-uuid"><b>is_null(</b> <i>$uuid</i> <b>)</b></h2>
+
+<p>Compares the value of <i>$uuid</i> to the NULL UUID.</p>
+
+<p>Returns 1 if NULL, and 0 otherwise.</p>
+
+<h2 id="copy-dst-src"><b>copy(</b> <i>$dst</i><b>,</b> <i>$src</i> <b>)</b></h2>
+
+<p>Copies the binary <i>$src</i> UUID to <i>$dst</i>.</p>
+
+<p>If <i>$src</i> isn&#39;t a UUID, <i>$dst</i> is set to the NULL UUID.</p>
+
+<h2 id="compare-uuid1-uuid2"><b>compare(</b> <i>$uuid1</i><b>,</b> <i>$uuid2</i> <b>)</b></h2>
+
+<p>Compares two binary UUIDs.</p>
+
+<p>Returns an integer less than, equal to, or greater than zero if <i>$uuid1</i> is less than, equal to, or greater than <i>$uuid2</i>.</p>
+
+<p>However, if either operand is not a UUID, falls back to a simple string comparison returning similar values.</p>
+
+<h2 id="string-uuid"><b></b><i>$string</i> <b>= uuid()</b></h2>
+
+<p>Creates a new string format UUID and returns it in a more Perlish way.</p>
+
+<p>Functionally the equivalent of calling <b>generate()</b> and then <b>unparse()</b>, but throwing away the intermediate binary UUID.</p>
+
+<h1 id="UUID-LIBRARY">UUID LIBRARY</h1>
+
+<p>On some systems external packages will need to be installed first. Notably, uuid-dev, libuuid-devel, or uuid-devel, depending on your platform.</p>
+
+<p>Some may also have more than one package available. It should be safe to install all variations. The UUID installer will then opt towards the older, faster library.</p>
+
+<h1 id="EXPORTS">EXPORTS</h1>
+
+<p>None by default. All functions may be imported in the usual manner, either individually or all at once using the &quot;<i>:all</i>&quot; tag.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<p>Need more tests and sanity checks.</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is Copyright (c) 2014-2016 by Rick Myers.</p>
+
+<p>This is free software, licensed under:</p>
+
+<pre><code>  The Artistic License 2.0 (GPL Compatible)</code></pre>
+
+<p>Details of this license can be found within the &#39;License&#39; text file.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Current maintainer:</p>
+
+<pre><code>  Rick Myers &lt;jrm@cpan.org&gt;.</code></pre>
+
+<p>Authors and/or previous maintainers:</p>
+
+<pre><code>  Lukas Zapletal &lt;lzap@cpan.org&gt;
+
+  Joseph N. Hall &lt;joseph.nathan.hall@gmail.com&gt;
+
+  Colin Faber &lt;cfaber@clusterfs.com&gt;
+
+  Peter J. Braam &lt;braam@mountainviewdata.com&gt;</code></pre>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<p>David E. Wheeler</p>
+
+<p>William Faulk</p>
+
+<p>gregor herrmann</p>
+
+<p>Slaven Rezic</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><b>uuid(3)</b>, <b>uuid_clear(3)</b>, <b>uuid_compare(3)</b>, <b>uuid_copy(3)</b>, <b>uuid_generate(3)</b>, <b>uuid_is_null(3)</b>, <b>uuid_parse(3)</b>, <b>uuid_unparse(3)</b>, <b>perl(1)</b>.</p>
+
+
+</body>
+
+</html>
+
+

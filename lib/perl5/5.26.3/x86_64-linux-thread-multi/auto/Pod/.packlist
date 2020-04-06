@@ -1,0 +1,17 @@
+/flow/perl/bin/pod2man
+/flow/perl/bin/pod2text
+/flow/perl/lib/perl5/5.26.3/Pod/Man.pm
+/flow/perl/lib/perl5/5.26.3/Pod/ParseLink.pm
+/flow/perl/lib/perl5/5.26.3/Pod/Text.pm
+/flow/perl/lib/perl5/5.26.3/Pod/Text/Color.pm
+/flow/perl/lib/perl5/5.26.3/Pod/Text/Overstrike.pm
+/flow/perl/lib/perl5/5.26.3/Pod/Text/Termcap.pm
+/flow/perl/man/man1/perlpodstyle.1
+/flow/perl/man/man1/pod2man.1
+/flow/perl/man/man1/pod2text.1
+/flow/perl/man/man3/Pod::Man.3
+/flow/perl/man/man3/Pod::ParseLink.3
+/flow/perl/man/man3/Pod::Text.3
+/flow/perl/man/man3/Pod::Text::Color.3
+/flow/perl/man/man3/Pod::Text::Overstrike.3
+/flow/perl/man/man3/Pod::Text::Termcap.3

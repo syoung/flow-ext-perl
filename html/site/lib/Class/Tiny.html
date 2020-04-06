@@ -1,0 +1,382 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#Defining-attributes">Defining attributes</a></li>
+      <li><a href="#Class::Tiny::Object-is-your-base-class">Class::Tiny::Object is your base class</a></li>
+      <li><a href="#Object-construction">Object construction</a></li>
+      <li><a href="#BUILD">BUILD</a></li>
+      <li><a href="#DEMOLISH">DEMOLISH</a></li>
+      <li><a href="#Introspection-and-internals">Introspection and internals</a></li>
+    </ul>
+  </li>
+  <li><a href="#RATIONALE">RATIONALE</a>
+    <ul>
+      <li><a href="#Why-this-instead-of-Object::Tiny-or-Class::Accessor-or-something-else">Why this instead of Object::Tiny or Class::Accessor or something else?</a></li>
+      <li><a href="#Why-this-instead-of-Moose-or-Moo">Why this instead of Moose or Moo?</a></li>
+    </ul>
+  </li>
+  <li><a href="#SUPPORT">SUPPORT</a>
+    <ul>
+      <li><a href="#Bugs-Feature-Requests">Bugs / Feature Requests</a></li>
+      <li><a href="#Source-Code">Source Code</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Class::Tiny - Minimalist class construction</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 1.006</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>In <i>Person.pm</i>:</p>
+
+<pre><code>  package Person;
+
+  use Class::Tiny qw( name );
+
+  1;</code></pre>
+
+<p>In <i>Employee.pm</i>:</p>
+
+<pre><code>  package Employee;
+  use parent &#39;Person&#39;;
+
+  use Class::Tiny qw( ssn ), {
+    timestamp =&gt; sub { time }   # attribute with default
+  };
+
+  1;</code></pre>
+
+<p>In <i>example.pl</i>:</p>
+
+<pre><code>  use Employee;
+
+  my $obj = Employee-&gt;new( name =&gt; &quot;Larry&quot;, ssn =&gt; &quot;111-22-3333&quot; );
+
+  # unknown attributes are ignored
+  my $obj = Employee-&gt;new( name =&gt; &quot;Larry&quot;, OS =&gt; &quot;Linux&quot; );
+  # $obj-&gt;{OS} does not exist</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module offers a minimalist class construction kit in around 120 lines of code. Here is a list of features:</p>
+
+<ul>
+
+<li><p>defines attributes via import arguments</p>
+
+</li>
+<li><p>generates read-write accessors</p>
+
+</li>
+<li><p>supports lazy attribute defaults</p>
+
+</li>
+<li><p>supports custom accessors</p>
+
+</li>
+<li><p>superclass provides a standard <code>new</code> constructor</p>
+
+</li>
+<li><p><code>new</code> takes a hash reference or list of key/value pairs</p>
+
+</li>
+<li><p><code>new</code> supports providing <code>BUILDARGS</code> to customize constructor options</p>
+
+</li>
+<li><p><code>new</code> calls <code>BUILD</code> for each class from parent to child</p>
+
+</li>
+<li><p>superclass provides a <code>DESTROY</code> method</p>
+
+</li>
+<li><p><code>DESTROY</code> calls <code>DEMOLISH</code> for each class from child to parent</p>
+
+</li>
+</ul>
+
+<p>Multiple-inheritance is possible, with superclass order determined via <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/mro.html#Functions">mro::get_linear_isa</a>.</p>
+
+<p>It uses no non-core modules for any recent Perl. On Perls older than v5.10 it requires <a href="../../../lib/perl5/5.26.3/MRO/Compat.html">MRO::Compat</a>. On Perls older than v5.14, it requires <a href="../../../lib/perl5/5.26.3/Devel/GlobalDestruction.html">Devel::GlobalDestruction</a>.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<h2 id="Defining-attributes">Defining attributes</h2>
+
+<p>Define attributes as a list of import arguments:</p>
+
+<pre><code>    package Foo::Bar;
+
+    use Class::Tiny qw(
+        name
+        id
+        height
+        weight
+    );</code></pre>
+
+<p>For each attribute, a read-write accessor is created unless a subroutine of that name already exists:</p>
+
+<pre><code>    $obj-&gt;name;               # getter
+    $obj-&gt;name( &quot;John Doe&quot; ); # setter</code></pre>
+
+<p>Attribute names must be valid subroutine identifiers or an exception will be thrown.</p>
+
+<p>You can specify lazy defaults by defining attributes with a hash reference. Keys define attribute names and values are constants or code references that will be evaluated when the attribute is first accessed if no value has been set. The object is passed as an argument to a code reference.</p>
+
+<pre><code>    package Foo::WithDefaults;
+
+    use Class::Tiny qw/name id/, {
+        title     =&gt; &#39;Peon&#39;,
+        skills    =&gt; sub { [] },
+        hire_date =&gt; sub { $_[0]-&gt;_build_hire_date },
+    };</code></pre>
+
+<p>When subclassing, if multiple accessors of the same name exist in different classes, any default (or lack of default) is determined by standard method resolution order.</p>
+
+<p>To make your own custom accessors, just pre-declare the method name before loading Class::Tiny:</p>
+
+<pre><code>    package Foo::Bar;
+
+    use subs &#39;id&#39;;
+
+    use Class::Tiny qw( name id );
+
+    sub id { ... }</code></pre>
+
+<p>Even if you pre-declare a method name, you must include it in the attribute list for Class::Tiny to register it as a valid attribute.</p>
+
+<p>If you set a default for a custom accessor, your accessor will need to retrieve the default and do something with it:</p>
+
+<pre><code>    package Foo::Bar;
+
+    use subs &#39;id&#39;;
+
+    use Class::Tiny qw( name ), { id =&gt; sub { int(rand(2*31)) } };
+
+    sub id {
+        my $self = shift;
+        if (@_) {
+            return $self-&gt;{id} = shift;
+        }
+        elsif ( exists $self-&gt;{id} ) {
+            return $self-&gt;{id};
+        }
+        else {
+            my $defaults =
+                Class::Tiny-&gt;get_all_attribute_defaults_for( ref $self );
+            return $self-&gt;{id} = $defaults-&gt;{id}-&gt;();
+        }
+    }</code></pre>
+
+<h2 id="Class::Tiny::Object-is-your-base-class">Class::Tiny::Object is your base class</h2>
+
+<p>If your class <b>does not</b> already inherit from some class, then Class::Tiny::Object will be added to your <code>@ISA</code> to provide <code>new</code> and <code>DESTROY</code>.</p>
+
+<p>If your class <b>does</b> inherit from something, then no additional inheritance is set up. If the parent subclasses Class::Tiny::Object, then all is well. If not, then you&#39;ll get accessors set up but no constructor or destructor. Don&#39;t do that unless you really have a special need for it.</p>
+
+<p>Define subclasses as normal. It&#39;s best to define them with <a href="../../../lib/perl5/5.26.3/base.html">base</a>, <a href="../../../lib/perl5/5.26.3/parent.html">parent</a> or <a>superclass</a> before defining attributes with Class::Tiny so the <code>@ISA</code> array is already populated at compile-time:</p>
+
+<pre><code>    package Foo::Bar::More;
+
+    use parent &#39;Foo::Bar&#39;;
+
+    use Class::Tiny qw( shoe_size );</code></pre>
+
+<h2 id="Object-construction">Object construction</h2>
+
+<p>If your class inherits from Class::Tiny::Object (as it should if you followed the advice above), it provides the <code>new</code> constructor for you.</p>
+
+<p>Objects can be created with attributes given as a hash reference or as a list of key/value pairs:</p>
+
+<pre><code>    $obj = Foo::Bar-&gt;new( name =&gt; &quot;David&quot; );
+
+    $obj = Foo::Bar-&gt;new( { name =&gt; &quot;David&quot; } );</code></pre>
+
+<p>If a reference is passed as a single argument, it must be able to be dereferenced as a hash or an exception is thrown.</p>
+
+<p>Unknown attributes in the constructor arguments will be ignored. Prior to version 1.000, unknown attributes were an error, but this made it harder for people to cleanly subclass Class::Tiny classes so this feature was removed.</p>
+
+<p>You can define a <code>BUILDARGS</code> method to change how arguments to new are handled. It will receive the constructor arguments as they were provided and must return a hash reference of key/value pairs (or else throw an exception).</p>
+
+<pre><code>    sub BUILDARGS {
+       my $class = shift;
+       my $name = shift || &quot;John Doe&quot;;
+       return { name =&gt; $name };
+     };
+
+     Foo::Bar-&gt;new( &quot;David&quot; );
+     Foo::Bar-&gt;new(); # &quot;John Doe&quot;</code></pre>
+
+<p>Unknown attributes returned from <code>BUILDARGS</code> will be ignored.</p>
+
+<h2 id="BUILD">BUILD</h2>
+
+<p>If your class or any superclass defines a <code>BUILD</code> method, it will be called by the constructor from the furthest parent class down to the child class after the object has been created.</p>
+
+<p>It is passed the constructor arguments as a hash reference. The return value is ignored. Use <code>BUILD</code> for validation, checking required attributes or setting default values that depend on other attributes.</p>
+
+<pre><code>    sub BUILD {
+        my ($self, $args) = @_;
+
+        for my $req ( qw/name age/ ) {
+            croak &quot;$req attribute required&quot; unless defined $self-&gt;$req;
+        }
+
+        croak &quot;Age must be non-negative&quot; if $self-&gt;age &lt; 0;
+
+        $self-&gt;msg( &quot;Hello &quot; . $self-&gt;name );
+    }</code></pre>
+
+<p>The argument reference is a copy, so deleting elements won&#39;t affect data in the original (but changes will be passed to other BUILD methods in <code>@ISA</code>).</p>
+
+<h2 id="DEMOLISH">DEMOLISH</h2>
+
+<p>Class::Tiny provides a <code>DESTROY</code> method. If your class or any superclass defines a <code>DEMOLISH</code> method, they will be called from the child class to the furthest parent class during object destruction. It is provided a single boolean argument indicating whether Perl is in global destruction. Return values and errors are ignored.</p>
+
+<pre><code>    sub DEMOLISH {
+        my ($self, $global_destruct) = @_;
+        $self-&gt;cleanup();
+    }</code></pre>
+
+<h2 id="Introspection-and-internals">Introspection and internals</h2>
+
+<p>You can retrieve an unsorted list of valid attributes known to Class::Tiny for a class and its superclasses with the <code>get_all_attributes_for</code> class method.</p>
+
+<pre><code>    my @attrs = Class::Tiny-&gt;get_all_attributes_for(&quot;Employee&quot;);
+    # returns qw/name ssn timestamp/</code></pre>
+
+<p>Likewise, a hash reference of all valid attributes and default values (or code references) may be retrieved with the <code>get_all_attribute_defaults_for</code> class method. Any attributes without a default will be <code>undef</code>.</p>
+
+<pre><code>    my $def = Class::Tiny-&gt;get_all_attribute_defaults_for(&quot;Employee&quot;);
+    # returns {
+    #   name =&gt; undef,
+    #   ssn =&gt; undef
+    #   timestamp =&gt; $coderef
+    # }</code></pre>
+
+<p>The <code>import</code> method uses two class methods, <code>prepare_class</code> and <code>create_attributes</code> to set up the <code>@ISA</code> array and attributes. Anyone attempting to extend Class::Tiny itself should use these instead of mocking up a call to <code>import</code>.</p>
+
+<p>When the first object is created, linearized <code>@ISA</code>, the valid attribute list and various subroutine references are cached for speed. Ensure that all inheritance and methods are in place before creating objects. (You don&#39;t want to be changing that once you create objects anyway, right?)</p>
+
+<h1 id="RATIONALE">RATIONALE</h1>
+
+<h2 id="Why-this-instead-of-Object::Tiny-or-Class::Accessor-or-something-else">Why this instead of Object::Tiny or Class::Accessor or something else?</h2>
+
+<p>I wanted something so simple that it could potentially be used by core Perl modules I help maintain (or hope to write), most of which either use <a href="../../../lib/perl5/5.26.3/Class/Struct.html">Class::Struct</a> or roll-their-own OO framework each time.</p>
+
+<p><a>Object::Tiny</a> and <a>Object::Tiny::RW</a> were close to what I wanted, but lacking some features I deemed necessary, and their maintainers have an even more strict philosophy against feature creep than I have.</p>
+
+<p>I also considered <a href="../../../lib/perl5/5.26.3/Class/Accessor.html">Class::Accessor</a>, which has been around a long time and is heavily used, but it, too, lacked features I wanted and did things in ways I considered poor design.</p>
+
+<p>I looked for something else on CPAN, but after checking a dozen class creators I realized I could implement exactly what I wanted faster than I could search CPAN for something merely sufficient.</p>
+
+<p>In general, compared to most things on CPAN (other than Object::Tiny), Class::Tiny is smaller in implementation and simpler in API.</p>
+
+<p>Specifically, here is how Class::Tiny (&quot;C::T&quot;) compares to Object::Tiny (&quot;O::T&quot;) and Class::Accessor (&quot;C::A&quot;):</p>
+
+<pre><code> FEATURE                            C::T    O::T      C::A
+ --------------------------------------------------------------
+ attributes defined via import      yes     yes       no
+ read/write accessors               yes     no        yes
+ lazy attribute defaults            yes     no        no
+ provides new                       yes     yes       yes
+ provides DESTROY                   yes     no        no
+ new takes either hashref or list   yes     no (list) no (hash)
+ Moo(se)-like BUILD/DEMOLISH        yes     no        no
+ Moo(se)-like BUILDARGS             yes     no        no
+ no extraneous methods via @ISA     yes     yes       no</code></pre>
+
+<h2 id="Why-this-instead-of-Moose-or-Moo">Why this instead of Moose or Moo?</h2>
+
+<p><a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose.html">Moose</a> and <a>Moo</a> are both excellent OO frameworks. Moose offers a powerful meta-object protocol (MOP), but is slow to start up and has about 30 non-core dependencies including XS modules. Moo is faster to start up and has about 10 pure Perl dependencies but provides no true MOP, relying instead on its ability to transparently upgrade Moo to Moose when Moose&#39;s full feature set is required.</p>
+
+<p>By contrast, Class::Tiny has no MOP and has <b>zero</b> non-core dependencies for Perls in the <a href="../../../lib/perl5/5.26.3/pod/perlpolicy.html">support window</a>. It has far less code, less complexity and no learning curve. If you don&#39;t need or can&#39;t afford what Moo or Moose offer, this is intended to be a reasonable fallback.</p>
+
+<p>That said, Class::Tiny offers Moose-like conventions for things like <code>BUILD</code> and <code>DEMOLISH</code> for some minimal interoperability and an easier upgrade path.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<h2 id="Bugs-Feature-Requests">Bugs / Feature Requests</h2>
+
+<p>Please report any bugs or feature requests through the issue tracker at <a href="https://github.com/dagolden/Class-Tiny/issues">https://github.com/dagolden/Class-Tiny/issues</a>. You will be notified automatically of any progress on your issue.</p>
+
+<h2 id="Source-Code">Source Code</h2>
+
+<p>This is open source software. The code repository is available for public review and contribution under the terms of the license.</p>
+
+<p><a href="https://github.com/dagolden/Class-Tiny">https://github.com/dagolden/Class-Tiny</a></p>
+
+<pre><code>  git clone https://github.com/dagolden/Class-Tiny.git</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>David Golden &lt;dagolden@cpan.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Dagfinn Ilmari Manns&aring;ker &lt;ilmari@ilmari.org&gt;</p>
+
+</li>
+<li><p>David Golden &lt;xdg@xdg.me&gt;</p>
+
+</li>
+<li><p>Gelu Lupas &lt;gelu@devnull.ro&gt;</p>
+
+</li>
+<li><p>Karen Etheridge &lt;ether@cpan.org&gt;</p>
+
+</li>
+<li><p>Olivier Mengu&eacute; &lt;dolmen@cpan.org&gt;</p>
+
+</li>
+<li><p>Toby Inkster &lt;tobyink@cpan.org&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is Copyright (c) 2013 by David Golden.</p>
+
+<p>This is free software, licensed under:</p>
+
+<pre><code>  The Apache License, Version 2.0, January 2004</code></pre>
+
+
+</body>
+
+</html>
+
+

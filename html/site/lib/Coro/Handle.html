@@ -1,0 +1,162 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Coro::Handle - non-blocking I/O with a blocking interface.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Coro::Handle;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is an <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> user, you need to make sure that you use and run a supported event loop.</p>
+
+<p>This module implements IO-handles in a coroutine-compatible way, that is, other coroutines can run while reads or writes block on the handle.</p>
+
+<p>It does so by using <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> to wait for readable/writable data, allowing other coroutines to run while one coroutine waits for I/O.</p>
+
+<p>Coro::Handle does NOT inherit from IO::Handle but uses tied objects.</p>
+
+<p>If at all possible, you should <i>always</i> prefer method calls on the handle object over invoking tied methods, i.e.:</p>
+
+<pre><code>   $fh-&gt;print ($str);         # NOT print $fh $str;
+   my $line = $fh-&gt;readline;  # NOT my $line = &lt;$fh&gt;;</code></pre>
+
+<p>The reason is that perl recurses within the interpreter when invoking tie magic, forcing the (temporary) allocation of a (big) stack. If you have lots of socket connections and they happen to wait in e.g. &lt;$fh&gt;, then they would all have a costly C coroutine associated with them.</p>
+
+<dl>
+
+<dt id="fh-new_from_fh-Coro::Handle-fhandle-arg-value">$fh = new_from_fh Coro::Handle $fhandle [, arg =&gt; value...]</dt>
+<dd>
+
+<p>Create a new non-blocking io-handle using the given perl-filehandle. Returns <code>undef</code> if no filehandle is given. The only other supported argument is &quot;timeout&quot;, which sets a timeout for each operation.</p>
+
+</dd>
+<dt id="fh-unblock-fh">$fh = unblock $fh</dt>
+<dd>
+
+<p>This is a convenience function that just calls <code>new_from_fh</code> on the given filehandle. Use it to replace a normal perl filehandle by a non-(coroutine-)blocking equivalent.</p>
+
+</dd>
+<dt id="fh-writable-fh-readable">$fh-&gt;writable, $fh-&gt;readable</dt>
+<dd>
+
+<p>Wait until the filehandle is readable or writable (and return true) or until an error condition happens (and return false).</p>
+
+</dd>
+<dt id="fh-readline-terminator">$fh-&gt;readline ([$terminator])</dt>
+<dd>
+
+<p>Similar to the builtin of the same name, but allows you to specify the input record separator in a coroutine-safe manner (i.e. not using a global variable). Paragraph mode is not supported, use &quot;\n\n&quot; to achieve the same effect.</p>
+
+</dd>
+<dt id="fh-autoflush">$fh-&gt;autoflush ([...])</dt>
+<dd>
+
+<p>Always returns true, arguments are being ignored (exists for compatibility only). Might change in the future.</p>
+
+</dd>
+<dt id="fh-fileno-fh-close-fh-read-fh-sysread-fh-syswrite-fh-print-fh-printf">$fh-&gt;fileno, $fh-&gt;close, $fh-&gt;read, $fh-&gt;sysread, $fh-&gt;syswrite, $fh-&gt;print, $fh-&gt;printf</dt>
+<dd>
+
+<p>Work like their function equivalents (except read, which works like sysread. You should not use the read function with Coro::Handle&#39;s, it will work but it&#39;s not efficient).</p>
+
+</dd>
+<dt id="connect-listen-bind-getsockopt-setsockopt-send-recv-peername-sockname-shutdown-peerport-peerhost">connect, listen, bind, getsockopt, setsockopt, send, recv, peername, sockname, shutdown, peerport, peerhost</dt>
+<dd>
+
+<p>Do the same thing as the perl builtins or IO::Socket methods (but return true on EINPROGRESS). Remember that these must be method calls.</p>
+
+</dd>
+<dt id="peeraddr-peerhost-peerport">peeraddr, peerhost, peerport</dt>
+<dd>
+
+<p>Return the peer host (as numericla IP address) and peer port (as integer).</p>
+
+</dd>
+<dt id="fh-peername-listen_fh-accept">($fh, $peername) = $listen_fh-&gt;accept</dt>
+<dd>
+
+<p>In scalar context, returns the newly accepted socket (or undef) and in list context return the ($fh, $peername) pair (or nothing).</p>
+
+</dd>
+<dt id="fh-timeout">$fh-&gt;timeout ([...])</dt>
+<dd>
+
+<p>The optional argument sets the new timeout (in seconds) for this handle. Returns the current (new) value.</p>
+
+<p><code>0</code> is a valid timeout, use <code>undef</code> to disable the timeout.</p>
+
+</dd>
+<dt id="fh-fh">$fh-&gt;fh</dt>
+<dd>
+
+<p>Returns the &quot;real&quot; (non-blocking) filehandle. Use this if you want to do operations on the file handle you cannot do using the Coro::Handle interface.</p>
+
+</dd>
+<dt id="fh-rbuf">$fh-&gt;rbuf</dt>
+<dd>
+
+<p>Returns the current contents of the read buffer (this is an lvalue, so you can change the read buffer if you like).</p>
+
+<p>You can use this function to implement your own optimized reader when neither readline nor sysread are viable candidates, like this:</p>
+
+<pre><code>  # first get the _real_ non-blocking filehandle
+  # and fetch a reference to the read buffer
+  my $nb_fh = $fh-&gt;fh;
+  my $buf = \$fh-&gt;rbuf;
+
+  while () {
+     # now use buffer contents, modifying
+     # if necessary to reflect the removed data
+
+     last if $$buf ne &quot;&quot;; # we have leftover data
+
+     # read another buffer full of data
+     $fh-&gt;readable or die &quot;end of file&quot;;
+     sysread $nb_fh, $$buf, 8192;
+  }</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="BUGS">BUGS</h1>
+
+<pre><code> - Perl&#39;s IO-Handle model is THE bug.</code></pre>
+
+<h1 id="AUTHOR-SUPPORT-CONTACT">AUTHOR/SUPPORT/CONTACT</h1>
+
+<pre><code>   Marc A. Lehmann &lt;schmorp@schmorp.de&gt;
+   http://software.schmorp.de/pkg/Coro.html</code></pre>
+
+
+</body>
+
+</html>
+
+

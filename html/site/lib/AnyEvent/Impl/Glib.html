@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::Impl::Glib - AnyEvent adaptor for Glib</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use AnyEvent;
+   use Glib;
+  
+   # this module gets loaded automatically as required</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides transparent support for AnyEvent. You don&#39;t have to do anything to make Glib work with AnyEvent except by loading Glib before creating the first AnyEvent watcher.</p>
+
+<p>Glib is probably the most inefficient event loop that has ever seen the light of the world: Glib not only scans all its watchers (really, ALL of them, whether I/O-related, timer-related or what not) during each loop iteration, it also does so multiple times and rebuilds the poll list for the kernel each time again, dynamically even. Newer versions of libglib fortunately do not call malloc/free on every single watcher invocation, though.</p>
+
+<p>Glib also enforces certain undocumented behaviours, for example, you cannot always remove active child watchers, and the conditions on when it is valid to do so are not documented. Of course, if you get it wrong, you get &quot;GLib-CRITICAL&quot; messages. This makes it extremely hard to write &quot;correct&quot; glib programs, as you have to study the source code to get it right, and hope future versions don&#39;t change any internals.</p>
+
+<p>AnyEvent implements the necessary workarounds, at a small performance cost.</p>
+
+<p>On the positive side, and most importantly, when it works, Glib generally works correctly, no quarrels there.</p>
+
+<p>If you create many watchers (as in: more than two), you might consider one of the <a>Glib::EV</a>, <a>EV::Glib</a> or <a>Glib::Event</a> modules that map Glib to other, more efficient, event loops.</p>
+
+<p>This module uses the default Glib main context for all its watchers.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent.html">AnyEvent</a>, <a href="../../../../../../root/.cpanm/work/1586168094.26023/AnyEvent-7.17/blib/lib/AnyEvent/Impl/Glib.html">Glib</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://anyevent.schmorp.de</code></pre>
+
+
+</body>
+
+</html>
+
+

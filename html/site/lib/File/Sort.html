@@ -1,0 +1,462 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Options">Options</a></li>
+      <li><a href="#Not-Implemented">Not Implemented</a></li>
+    </ul>
+  </li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#ENVIRONMENT">ENVIRONMENT</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#THANKS">THANKS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>File::Sort - Sort a file or merge sort multiple files</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use File::Sort qw(sort_file);
+  sort_file({
+    I =&gt; [qw(file_1 file_2)],
+    o =&gt; &#39;file_new&#39;, k =&gt; &#39;5.3,5.5rn&#39;, -t =&gt; &#39;|&#39;
+  });
+
+  sort_file(&#39;file1&#39;, &#39;file1.sorted&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module sorts text files by lines (or records). Comparisons are based on one or more sort keys extracted from each line of input, and are performed lexicographically. By default, if keys are not given, sort regards each input line as a single field. The sort is a merge sort. If you don&#39;t like that, feel free to change it.</p>
+
+<h2 id="Options">Options</h2>
+
+<p>The following options are available, and are passed in the hash reference passed to the function in the format:</p>
+
+<pre><code>  OPTION =&gt; VALUE</code></pre>
+
+<p>Where an option can take multiple values (like <code>I</code>, <code>k</code>, and <code>pos</code>), values may be passed via an anonymous array:</p>
+
+<pre><code>  OPTION =&gt; [VALUE1, VALUE2]</code></pre>
+
+<p>Where the OPTION is a switch, it should be passed a boolean VALUE of 1 or 0.</p>
+
+<p>This interface will always be supported, though a more perlish interface may be offered in the future, as well. This interface is basically a mapping of the command-line options to the Unix sort utility.</p>
+
+<dl>
+
+<dt id="I-INPUT"><code>I</code> <i>INPUT</i></dt>
+<dd>
+
+<p>Pass in the input file(s). This can be either a single string with the filename, or an array reference containing multiple filename strings.</p>
+
+</dd>
+<dt id="c"><code>c</code></dt>
+<dd>
+
+<p>Check that single input fle is ordered as specified by the arguments and the collating sequence of the current locale. No output is produced; only the exit code is affected.</p>
+
+</dd>
+<dt id="m"><code>m</code></dt>
+<dd>
+
+<p>Merge only; the input files are assumed to already be sorted.</p>
+
+</dd>
+<dt id="o-OUTPUT"><code>o</code> <i>OUTPUT</i></dt>
+<dd>
+
+<p>Specify the name of an <i>OUTPUT</i> file to be used instead of the standard output.</p>
+
+</dd>
+<dt id="u"><code>u</code></dt>
+<dd>
+
+<p>Unique: Suppresses all but one in each set of lines having equal keys. If used with the <b>c</b> option check that there are no lines with consecutive lines with duplicate keys, in addition to checking that the input file is sorted.</p>
+
+</dd>
+<dt id="y-MAX_SORT_RECORDS"><code>y</code> <i>MAX_SORT_RECORDS</i></dt>
+<dd>
+
+<p>Maximum number of lines (records) read before writing to temp file. Default is 200,000. This may eventually change to be kbytes instead of lines. Lines was easier to implement. Can also specify with MAX_SORT_RECORDS environment variable.</p>
+
+</dd>
+<dt id="F-MAX_SORT_FILES"><code>F</code> <i>MAX_SORT_FILES</i></dt>
+<dd>
+
+<p>Maximum number of temp files to be held open at once. Default to 40, as older Windows ports had quite a small limit. Can also specify with MAX_SORT_FILES environment variable. No temp files will be used at all if MAX_SORT_RECORDS is never reached.</p>
+
+</dd>
+<dt id="D"><code>D</code></dt>
+<dd>
+
+<p>Send debugging information to STDERR. Behavior subject to change.</p>
+
+</dd>
+</dl>
+
+<p>The following options override the default ordering rules. When ordering options appear independent of any key field specifications, the requested field ordering rules are applied globally to all sort keys. When attached to a specific key (see <b>k</b>), the specified ordering options override all global ordering options for that key.</p>
+
+<dl>
+
+<dt id="d"><code>d</code></dt>
+<dd>
+
+<p>Specify that only blank characters and alphanumeric characters, according to the current locale setting, are significant in comparisons. <b>d</b> overrides <b>i</b>.</p>
+
+</dd>
+<dt id="f"><code>f</code></dt>
+<dd>
+
+<p>Consider all lower-case characters that have upper-case equivalents, according to the current locale setting, to be the upper-case equivalent for the purposes of comparison.</p>
+
+</dd>
+<dt id="i"><code>i</code></dt>
+<dd>
+
+<p>Ignores all characters that are non-printable, according to the current locale setting.</p>
+
+</dd>
+<dt id="n"><code>n</code></dt>
+<dd>
+
+<p>Does numeric instead of string compare, using whatever perl considers to be a number in numeric comparisons.</p>
+
+</dd>
+<dt id="r"><code>r</code></dt>
+<dd>
+
+<p>Reverse the sense of the comparisons.</p>
+
+</dd>
+<dt id="b"><code>b</code></dt>
+<dd>
+
+<p>Ignore leading blank characters when determining the starting and ending positions of a restricted sort key. If the <b>b</b> option is specified before the first <b>k</b> option, it is applied to all <b>k</b> options. Otherwise, the <b>b</b> option can be attached indepently to each field_start or field_end option argument (see below).</p>
+
+</dd>
+<dt id="t-STRING"><code>t</code> <i>STRING</i></dt>
+<dd>
+
+<p>Use <i>STRING</i> as the field separator character; char is not considered to be part of a field (although it can be included in a sort key). Each occurrence of char is significant (for example, &lt;char&gt;&lt;char&gt; delimits an empty field). If <b>t</b> is not specified, blank characters are used as default field separators; each maximal non-empty sequence of blank characters that follows a non-blank character is a field separator.</p>
+
+</dd>
+<dt id="X-STRING"><code>X</code> <i>STRING</i></dt>
+<dd>
+
+<p>Same as <b>t</b>, but <i>STRING</i> is interpreted as a Perl regular expression instead. Do not escape any characters (<code>/</code> characters need to be escaped internally, and will be escaped for you).</p>
+
+<p>The string matched by <i>STRING</i> is not included in the fields themselves, unless demanded by perl&#39;s regex and split semantics (e.g., regexes in parentheses will add that matched expression as an extra field). See <a href="../../../lib/perl5/5.26.3/pod/perlre.html">perlre</a> and <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#split">&quot;split&quot; in perlfunc</a>.</p>
+
+</dd>
+<dt id="R-STRING"><code>R</code> <i>STRING</i></dt>
+<dd>
+
+<p>Record separator, defaults to newline.</p>
+
+</dd>
+<dt id="k-pos1-pos2"><code>k</code> <i>pos1[,pos2]</i></dt>
+<dd>
+
+<p>The keydef argument is a restricted sort key field definition. The format of this definition is:</p>
+
+<pre><code>    field_start[.first_char][type][,field_end[.last_char][type]]</code></pre>
+
+<p>where field_start and field_end define a key field restricted to a portion of the line, and type is a modifier from the list of characters <b>b</b>, <b>d</b>, <b>f</b>, <b>i</b>, <b>n</b>, <b>r</b>. The b modifier behaves like the <b>b</b> option, but applies only to the field_start or field_end to which it is attached. The other modifiers behave like the corresponding options, but apply only to the key field to which they are attached; they have this effect if specified with field_start, field_end, or both. If any modifier is attached to a field_start or a field_end, no option applies to either.</p>
+
+<p>Occurrences of the <b>k</b> option are significant in command line order. If no <b>k</b> option is specified, a default sort key of the entire line is used. When there are multiple keys fields, later keys are compared only after all earlier keys compare equal.</p>
+
+<p>Except when the <b>u</b> option is specified, lines that otherwise compare equal are ordered as if none of the options <b>d</b>, <b>f</b>, <b>i</b>, <b>n</b> or <b>k</b> were present (but with <b>r</b> still in effect, if it was specified) and with all bytes in the lines significant to the comparison. The order in which lines that still compare equal are written is unspecified.</p>
+
+</dd>
+<dt id="pos-pos1--pos2"><code>pos</code> <i>+pos1 [-pos2]</i></dt>
+<dd>
+
+<p>Similar to <b>k</b>, these are mostly obsolete switches, but some people like them and want to use them. Usage is:</p>
+
+<pre><code>    +field_start[.first_char][type] [-field_end[.last_char][type]]</code></pre>
+
+<p>Where field_end in <b>k</b> specified the last position to be included, it specifes the last position to NOT be included. Also, numbers are counted from 0 instead of 1. <b>pos2</b> must immediately follow corresponding <b>+pos1</b>. The rest should be the same as the <b>k</b> option.</p>
+
+<p>Mixing <b>+pos1</b> <b>pos2</b> with <b>k</b> is allowed, but will result in all of the <b>+pos1</b> <b>pos2</b> options being ordered AFTER the <b>k</b> options. It is best if you Don&#39;t Do That. Pick one and stick with it.</p>
+
+<p>Here are some equivalencies:</p>
+
+<pre><code>    pos =&gt; &#39;+1 -2&#39;              -&gt;  k =&gt; &#39;2,2&#39;
+    pos =&gt; &#39;+1.1 -1.2&#39;          -&gt;  k =&gt; &#39;2.2,2.2&#39;
+    pos =&gt; [&#39;+1 -2&#39;, &#39;+3 -5&#39;]   -&gt;  k =&gt; [&#39;2,2&#39;, &#39;4,5&#39;]
+    pos =&gt; [&#39;+2&#39;, &#39;+0b -1&#39;]     -&gt;  k =&gt; [&#39;3&#39;, &#39;1b,1&#39;]
+    pos =&gt; &#39;+2.1 -2.4&#39;          -&gt;  k =&gt; &#39;3.2,3.4&#39;
+    pos =&gt; &#39;+2.0 -3.0&#39;          -&gt;  k =&gt; &#39;3.1,4.0&#39;</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="Not-Implemented">Not Implemented</h2>
+
+<p>If the options are not listed as implemented above, or are not listed in TODO below, they are not in the plan for implementation. This includes <b>T</b> and <b>z</b>.</p>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>Sort file by straight string compare of each line, sending output to STDOUT.</p>
+
+<pre><code>    use File::Sort qw(sort_file);
+    sort_file(&#39;file&#39;);</code></pre>
+
+<p>Sort contents of file by second key in file.</p>
+
+<pre><code>    sort_file({k =&gt; 2, I =&gt; &#39;file&#39;});</code></pre>
+
+<p>Sort, in reverse order, contents of file1 and file2, placing output in outfile and using second character of second field as the sort key.</p>
+
+<pre><code>    sort_file({
+        r =&gt; 1, k =&gt; &#39;2.2,2.2&#39;, o =&gt; &#39;outfile&#39;,
+        I =&gt; [&#39;file1&#39;, &#39;file2&#39;]
+    });</code></pre>
+
+<p>Same sort but sorting numerically on characters 3 through 5 of the fifth field first, and only return records with unique keys.</p>
+
+<pre><code>    sort_file({
+        u =&gt; 1, r =&gt; 1, k =&gt; [&#39;5.3,5.5rn&#39;, &#39;2.2,2.2&#39;],
+        o =&gt; &#39;outfile&#39;, I =&gt; [&#39;file1&#39;, &#39;file2&#39;]
+    });</code></pre>
+
+<p>Print passwd(4) file sorted by numeric user ID.</p>
+
+<pre><code>    sort_file({t =&gt; &#39;:&#39;, k =&gt; &#39;3n&#39;, I =&gt; &#39;/etc/passwd&#39;});</code></pre>
+
+<p>For the anal sysadmin, check that passwd(4) file is sorted by numeric user ID.</p>
+
+<pre><code>    sort_file({c =&gt; 1, t =&gt; &#39;:&#39;, k =&gt; &#39;3n&#39;, I =&gt; &#39;/etc/passwd&#39;});</code></pre>
+
+<h1 id="ENVIRONMENT">ENVIRONMENT</h1>
+
+<p>Note that if you change the locale settings after the program has started up, you must call setlocale() for the new settings to take effect. For example:</p>
+
+<pre><code>    # get constants
+    use POSIX &#39;locale_h&#39;;
+
+    # e.g., blank out locale
+    $ENV{LC_ALL} = $ENV{LANG} = &#39;&#39;;
+
+    # use new ENV settings
+    setlocale(LC_CTYPE, &#39;&#39;);
+    setlocale(LC_COLLATE, &#39;&#39;);</code></pre>
+
+<dl>
+
+<dt id="LC_COLLATE">LC_COLLATE</dt>
+<dd>
+
+<p>Determine the locale for ordering rules.</p>
+
+</dd>
+<dt id="LC_CTYPE">LC_CTYPE</dt>
+<dd>
+
+<p>Determine the locale for the interpretation of sequences of bytes of text data as characters (for example, single- versus multi-byte characters in arguments and input files) and the behaviour of character classification for the <b>b</b>, <b>d</b>, <b>f</b>, <b>i</b> and <b>n</b> options.</p>
+
+</dd>
+<dt id="MAX_SORT_RECORDS">MAX_SORT_RECORDS</dt>
+<dd>
+
+<p>Default is 200,000. Maximum number of records to use before writing to a temp file. Overriden by <b>y</b> option.</p>
+
+</dd>
+<dt id="MAX_SORT_FILES">MAX_SORT_FILES</dt>
+<dd>
+
+<p>Maximum number of open temp files to use before merging open temp files. Overriden by <b>F</b> option.</p>
+
+</dd>
+</dl>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Exports <code>sort_file</code> on request.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<dl>
+
+<dt id="Better-debugging-and-error-reporting">Better debugging and error reporting</dt>
+<dd>
+
+</dd>
+<dt id="Performance-hit-with--u">Performance hit with -u</dt>
+<dd>
+
+</dd>
+<dt id="Do-bytes-instead-of-lines">Do bytes instead of lines</dt>
+<dd>
+
+</dd>
+<dt id="Better-test-suite">Better test suite</dt>
+<dd>
+
+</dd>
+<dt id="Switch-for-turning-off-locale">Switch for turning off locale ... ?</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<dl>
+
+<dt id="v1.01-Monday-January-14-2002">v1.01, Monday, January 14, 2002</dt>
+<dd>
+
+<p>Change license to be that of Perl.</p>
+
+</dd>
+<dt id="v1.00-Tuesday-November-13-2001">v1.00, Tuesday, November 13, 2001</dt>
+<dd>
+
+<p>Long overdue release.</p>
+
+<p>Add O_TRUNC to output open (D&#39;oh!).</p>
+
+<p>Played with somem of the -k options (Marco A. Romero).</p>
+
+<p>Fix filehandle close test of STDOUT (Gael Marziou).</p>
+
+<p>Some cleanup.</p>
+
+</dd>
+<dt id="v0.91-Saturday-February-12-2000">v0.91, Saturday, February 12, 2000</dt>
+<dd>
+
+<p>Closed all files in test.pl so they could be unlinked on some platforms. (Hubert Toullec)</p>
+
+<p>Documented <code>I</code> option. (Hubert Toullec)</p>
+
+<p>Removed O_EXCL flag from <code>sort_file</code>.</p>
+
+<p>Fixed bug in sorting multiple files. (Paul Eckert)</p>
+
+</dd>
+<dt id="v0.90-Friday-April-30-1999">v0.90, Friday, April 30, 1999</dt>
+<dd>
+
+<p>Complete rewrite. Took the code from this module to write sort utility for PPT project, then brought changes back over. As a result the interface has changed slightly, mostly in regard to what letters are used for options, but there are also some key behavioral differences. If you need the old interface, the old module will remain on CPAN, but will not be supported. Sorry for any inconvenience this may cause. The good news is that it should not be too difficult to update your code to use the new interface.</p>
+
+</dd>
+<dt id="v0.20">v0.20</dt>
+<dd>
+
+<p>Fixed bug with unique option (didn&#39;t work :).</p>
+
+<p>Switched to sysopen for better portability.</p>
+
+<p>Print to STDOUT if no output file supplied.</p>
+
+<p>Added c option to check sorting.</p>
+
+</dd>
+<dt id="v0.18-31-January-1998">v0.18 (31 January 1998)</dt>
+<dd>
+
+<p>Tests 3 and 4 failed because we hit the open file limit in the standard Windows port of perl5.004_02 (50). Adjusted the default for total number of temp files from 50 to 40 (leave room for other open files), changed docs. (Mike Blazer, Gurusamy Sarathy)</p>
+
+</dd>
+<dt id="v0.17-30-December-1998">v0.17 (30 December 1998)</dt>
+<dd>
+
+<p>Fixed bug in <code>_merge_files</code> that tried to <code>open</code> a passed <code>IO::File</code> object.</p>
+
+<p>Fixed up docs and did some more tests and benchmarks.</p>
+
+</dd>
+<dt id="v0.16-24-December-1998">v0.16 (24 December 1998)</dt>
+<dd>
+
+<p>One year between releases was too long. I made changes Miko O&#39;Sullivan wanted, and I didn&#39;t even know I had made them.</p>
+
+<p>Also now use <code>IO::File</code> to create temp files, so the TMPDIR option is no longer supported. Hopefully made the whole thing more robust and faster, while supporting more options for sorting, including delimited sorts, and arbitrary sorts.</p>
+
+<p>Made CHUNK default a lot larger, which improves performance. On low-memory systems, or where (e.g.) the MacPerl binary is not allocated much RAM, it might need to be lowered.</p>
+
+</dd>
+<dt id="v0.11-04-January-1998">v0.11 (04 January 1998)</dt>
+<dd>
+
+<p>More cleanup; fixed special case of no linebreak on last line; wrote test suite; fixed warning for redefined subs (sort1 and sort2).</p>
+
+</dd>
+<dt id="v0.10-03-January-1998">v0.10 (03 January 1998)</dt>
+<dd>
+
+<p>Some cleanup; made it not subject to system file limitations; separated many parts out into separate functions.</p>
+
+</dd>
+<dt id="v0.03-23-December-1997">v0.03 (23 December 1997)</dt>
+<dd>
+
+<p>Added reverse and numeric sorting options.</p>
+
+</dd>
+<dt id="v0.02-19-December-1997">v0.02 (19 December 1997)</dt>
+<dd>
+
+<p>Added unique and merge-only options.</p>
+
+</dd>
+<dt id="v0.01-18-December-1997">v0.01 (18 December 1997)</dt>
+<dd>
+
+<p>First release.</p>
+
+</dd>
+</dl>
+
+<h1 id="THANKS">THANKS</h1>
+
+<p>Mike Blazer &lt;blazer@mail.nevalink.ru&gt;, Vicki Brown &lt;vlb@cfcl.com&gt;, Tom Christiansen &lt;tchrist@perl.com&gt;, Albert Dvornik &lt;bert@mit.edu&gt;, Paul Eckert &lt;peckert@epicrealm.com&gt;, Gene Hsu &lt;gene@moreinfo.com&gt;, Andrew M. Langmead &lt;aml@world.std.com&gt;, Gael Marziou &lt;gael_marziou@hp.com&gt;, Brian L. Matthews &lt;blm@halcyon.com&gt;, Rich Morin &lt;rdm@cfcl.com&gt;, Matthias Neeracher &lt;neeri@iis.ee.ethz.ch&gt;, Miko O&#39;Sullivan &lt;miko@idocs.com&gt;, Tom Phoneix &lt;rootbeer@teleport.com&gt;, Marco A. Romero &lt;mromero@iglou.com&gt;, Gurusamy Sarathy &lt;gsar@activestate.com&gt;, Hubert Toullec &lt;Hubert.Toullec@wanadoo.fr&gt;.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Chris Nandor &lt;pudge@pobox.com&gt;, http://pudge.net/</p>
+
+<p>Copyright (c) 1997-2002 Chris Nandor. All rights reserved. This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>v1.01, Monday, January 14, 2002</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>sort(1), locale, PPT project, &lt;URL:http://sf.net/projects/ppt/&gt;.</p>
+
+
+</body>
+
+</html>
+
+

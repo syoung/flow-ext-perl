@@ -1,0 +1,396 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#TESTS">TESTS</a>
+    <ul>
+      <li><a href="#STDOUT">STDOUT</a></li>
+      <li><a href="#STDERR">STDERR</a></li>
+      <li><a href="#COMBINED-OUTPUT">COMBINED OUTPUT</a></li>
+      <li><a href="#OUTPUT">OUTPUT</a></li>
+    </ul>
+  </li>
+  <li><a href="#EXPORTS">EXPORTS</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#stdout_from">stdout_from</a></li>
+      <li><a href="#stderr_from">stderr_from</a></li>
+      <li><a href="#output_from">output_from</a></li>
+      <li><a href="#combined_from">combined_from</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#SOURCE-AVAILABILITY">SOURCE AVAILABILITY</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+  <li><a href="#COPYRIGHT-LICENSE">COPYRIGHT &amp; LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::Output - Utilities to test STDOUT and STDERR messages.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Test::More tests =&gt; 4;
+    use Test::Output;
+
+    sub writer {
+      print &quot;Write out.\n&quot;;
+      print STDERR &quot;Error out.\n&quot;;
+    }
+
+    stdout_is(\&amp;writer,&quot;Write out.\n&quot;,&#39;Test STDOUT&#39;);
+
+    stderr_isnt(\&amp;writer,&quot;No error out.\n&quot;,&#39;Test STDERR&#39;);
+
+    combined_is(
+                \&amp;writer,
+                &quot;Write out.\nError out.\n&quot;,
+                &#39;Test STDOUT &amp; STDERR combined&#39;
+               );
+
+    output_is(
+              \&amp;writer,
+              &quot;Write out.\n&quot;,
+              &quot;Error out.\n&quot;,
+              &#39;Test STDOUT &amp; STDERR&#39;
+            );
+
+   # Use bare blocks.
+
+   stdout_is { print &quot;test&quot; } &quot;test&quot;, &quot;Test STDOUT&quot;;
+   stderr_isnt { print &quot;bad test&quot; } &quot;test&quot;, &quot;Test STDERR&quot;;
+   output_is { print &#39;STDOUT&#39;; print STDERR &#39;STDERR&#39; }
+     &quot;STDOUT&quot;, &quot;STDERR&quot;, &quot;Test output&quot;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Test::Output provides a simple interface for testing output sent to <code>STDOUT</code> or <code>STDERR</code>. A number of different utilities are included to try and be as flexible as possible to the tester.</p>
+
+<p>Likewise, <a href="../../../lib/perl5/5.26.3/Capture/Tiny.html">Capture::Tiny</a> provides a much more robust capture mechanism without than the original <a>Test::Output::Tie</a>.</p>
+
+<h1 id="TESTS">TESTS</h1>
+
+<h2 id="STDOUT">STDOUT</h2>
+
+<dl>
+
+<dt id="stdout_is"><b>stdout_is</b></dt>
+<dd>
+
+</dd>
+<dt id="stdout_isnt"><b>stdout_isnt</b></dt>
+<dd>
+
+<pre><code>   stdout_is  ( $coderef, $expected, &#39;description&#39; );
+   stdout_is    { ... } $expected, &#39;description&#39;;
+   stdout_isnt( $coderef, $expected, &#39;description&#39; );
+   stdout_isnt  { ... } $expected, &#39;description&#39;;</code></pre>
+
+<p><code>stdout_is()</code> captures output sent to <code>STDOUT</code> from <code>$coderef</code> and compares it against <code>$expected</code>. The test passes if equal.</p>
+
+<p><code>stdout_isnt()</code> passes if <code>STDOUT</code> is not equal to <code>$expected</code>.</p>
+
+</dd>
+<dt id="stdout_like"><b>stdout_like</b></dt>
+<dd>
+
+</dd>
+<dt id="stdout_unlike"><b>stdout_unlike</b></dt>
+<dd>
+
+<pre><code>   stdout_like  ( $coderef, qr/$expected/, &#39;description&#39; );
+   stdout_like    { ... } qr/$expected/, &#39;description&#39;;
+   stdout_unlike( $coderef, qr/$expected/, &#39;description&#39; );
+   stdout_unlike  { ... } qr/$expected/, &#39;description&#39;;</code></pre>
+
+<p><code>stdout_like()</code> captures the output sent to <code>STDOUT</code> from <code>$coderef</code> and compares it to the regex in <code>$expected</code>. The test passes if the regex matches.</p>
+
+<p><code>stdout_unlike()</code> passes if STDOUT does not match the regex.</p>
+
+</dd>
+</dl>
+
+<h2 id="STDERR">STDERR</h2>
+
+<dl>
+
+<dt id="stderr_is"><b>stderr_is</b></dt>
+<dd>
+
+</dd>
+<dt id="stderr_isnt"><b>stderr_isnt</b></dt>
+<dd>
+
+<pre><code>   stderr_is  ( $coderef, $expected, &#39;description&#39; );
+   stderr_is    {... } $expected, &#39;description&#39;;
+
+   stderr_isnt( $coderef, $expected, &#39;description&#39; );
+   stderr_isnt  {... } $expected, &#39;description&#39;;</code></pre>
+
+<p><code>stderr_is()</code> is similar to <code>stdout_is</code>, except that it captures <code>STDERR</code>. The test passes if <code>STDERR</code> from <code>$coderef</code> equals <code>$expected</code>.</p>
+
+<p><code>stderr_isnt()</code> passes if <code>STDERR</code> is not equal to <code>$expected</code>.</p>
+
+</dd>
+<dt id="stderr_like"><b>stderr_like</b></dt>
+<dd>
+
+</dd>
+<dt id="stderr_unlike"><b>stderr_unlike</b></dt>
+<dd>
+
+<pre><code>   stderr_like  ( $coderef, qr/$expected/, &#39;description&#39; );
+   stderr_like   { ...} qr/$expected/, &#39;description&#39;;
+   stderr_unlike( $coderef, qr/$expected/, &#39;description&#39; );
+   stderr_unlike  { ...} qr/$expected/, &#39;description&#39;;</code></pre>
+
+<p><code>stderr_like()</code> is similar to <code>stdout_like()</code> except that it compares the regex <code>$expected</code> to <code>STDERR</code> captured from <code>$codref</code>. The test passes if the regex matches.</p>
+
+<p><code>stderr_unlike()</code> passes if <code>STDERR</code> does not match the regex.</p>
+
+</dd>
+</dl>
+
+<h2 id="COMBINED-OUTPUT">COMBINED OUTPUT</h2>
+
+<dl>
+
+<dt id="combined_is"><b>combined_is</b></dt>
+<dd>
+
+</dd>
+<dt id="combined_isnt"><b>combined_isnt</b></dt>
+<dd>
+
+<pre><code>   combined_is   ( $coderef, $expected, &#39;description&#39; );
+   combined_is   {... } $expected, &#39;description&#39;;
+   combined_isnt ( $coderef, $expected, &#39;description&#39; );
+   combined_isnt {... } $expected, &#39;description&#39;;</code></pre>
+
+<p><code>combined_is()</code> directs <code>STDERR</code> to <code>STDOUT</code> then captures <code>STDOUT</code>. This is equivalent to UNIXs <code>2&gt;&amp;1</code>. The test passes if the combined <code>STDOUT</code> and <code>STDERR</code> from $coderef equals $expected.</p>
+
+<p><code>combined_isnt()</code> passes if combined <code>STDOUT</code> and <code>STDERR</code> are not equal to <code>$expected</code>.</p>
+
+</dd>
+<dt id="combined_like"><b>combined_like</b></dt>
+<dd>
+
+</dd>
+<dt id="combined_unlike"><b>combined_unlike</b></dt>
+<dd>
+
+<pre><code>   combined_like   ( $coderef, qr/$expected/, &#39;description&#39; );
+   combined_like   { ...} qr/$expected/, &#39;description&#39;;
+   combined_unlike ( $coderef, qr/$expected/, &#39;description&#39; );
+   combined_unlike { ...} qr/$expected/, &#39;description&#39;;</code></pre>
+
+<p><code>combined_like()</code> is similar to <code>combined_is()</code> except that it compares a regex (<code>$expected)</code> to <code>STDOUT</code> and <code>STDERR</code> captured from <code>$codref</code>. The test passes if the regex matches.</p>
+
+<p><code>combined_unlike()</code> passes if the combined <code>STDOUT</code> and <code>STDERR</code> does not match the regex.</p>
+
+</dd>
+</dl>
+
+<h2 id="OUTPUT">OUTPUT</h2>
+
+<dl>
+
+<dt id="output_is"><b>output_is</b></dt>
+<dd>
+
+</dd>
+<dt id="output_isnt"><b>output_isnt</b></dt>
+<dd>
+
+<pre><code>   output_is  ( $coderef, $expected_stdout, $expected_stderr, &#39;description&#39; );
+   output_is    {... } $expected_stdout, $expected_stderr, &#39;description&#39;;
+   output_isnt( $coderef, $expected_stdout, $expected_stderr, &#39;description&#39; );
+   output_isnt  {... } $expected_stdout, $expected_stderr, &#39;description&#39;;</code></pre>
+
+<p>The <code>output_is()</code> function is a combination of the <code>stdout_is()</code> and <code>stderr_is()</code> functions. For example:</p>
+
+<pre><code>  output_is(sub {print &quot;foo&quot;; print STDERR &quot;bar&quot;;},&#39;foo&#39;,&#39;bar&#39;);</code></pre>
+
+<p>is functionally equivalent to</p>
+
+<pre><code>  stdout_is(sub {print &quot;foo&quot;;},&#39;foo&#39;)
+    &amp;&amp; stderr_is(sub {print STDERR &quot;bar&quot;;&#39;bar&#39;);</code></pre>
+
+<p>except that <code>$coderef</code> is only executed once.</p>
+
+<p>Unlike <code>stdout_is()</code> and <code>stderr_is()</code> which ignore STDERR and STDOUT respectively, <code>output_is()</code> requires both <code>STDOUT</code> and <code>STDERR</code> to match in order to pass. Setting either <code>$expected_stdout</code> or <code>$expected_stderr</code> to <code>undef</code> ignores <code>STDOUT</code> or <code>STDERR</code> respectively.</p>
+
+<pre><code>  output_is(sub {print &quot;foo&quot;; print STDERR &quot;bar&quot;;},&#39;foo&#39;,undef);</code></pre>
+
+<p>is the same as</p>
+
+<pre><code>  stdout_is(sub {print &quot;foo&quot;;},&#39;foo&#39;)</code></pre>
+
+<p><code>output_isnt()</code> provides the opposite function of <code>output_is()</code>. It is a combination of <code>stdout_isnt()</code> and <code>stderr_isnt()</code>.</p>
+
+<pre><code>  output_isnt(sub {print &quot;foo&quot;; print STDERR &quot;bar&quot;;},&#39;bar&#39;,&#39;foo&#39;);</code></pre>
+
+<p>is functionally equivalent to</p>
+
+<pre><code>  stdout_is(sub {print &quot;foo&quot;;},&#39;bar&#39;)
+    &amp;&amp; stderr_is(sub {print STDERR &quot;bar&quot;;&#39;foo&#39;);</code></pre>
+
+<p>As with <code>output_is()</code>, setting either <code>$expected_stdout</code> or <code>$expected_stderr</code> to <code>undef</code> ignores the output to that facility.</p>
+
+<pre><code>  output_isnt(sub {print &quot;foo&quot;; print STDERR &quot;bar&quot;;},undef,&#39;foo&#39;);</code></pre>
+
+<p>is the same as</p>
+
+<pre><code>  stderr_is(sub {print STDERR &quot;bar&quot;;},&#39;foo&#39;)</code></pre>
+
+</dd>
+<dt id="output_like"><b>output_like</b></dt>
+<dd>
+
+</dd>
+<dt id="output_unlike"><b>output_unlike</b></dt>
+<dd>
+
+<pre><code>  output_like  ( $coderef, $regex_stdout, $regex_stderr, &#39;description&#39; );
+  output_like  { ... } $regex_stdout, $regex_stderr, &#39;description&#39;;
+  output_unlike( $coderef, $regex_stdout, $regex_stderr, &#39;description&#39; );
+  output_unlike { ... } $regex_stdout, $regex_stderr, &#39;description&#39;;</code></pre>
+
+<p><code>output_like()</code> and <code>output_unlike()</code> follow the same principles as <code>output_is()</code> and <code>output_isnt()</code> except they use a regular expression for matching.</p>
+
+<p><code>output_like()</code> attempts to match <code>$regex_stdout</code> and <code>$regex_stderr</code> against <code>STDOUT</code> and <code>STDERR</code> produced by $coderef. The test passes if both match.</p>
+
+<pre><code>  output_like(sub {print &quot;foo&quot;; print STDERR &quot;bar&quot;;},qr/foo/,qr/bar/);</code></pre>
+
+<p>The above test is successful.</p>
+
+<p>Like <code>output_is()</code>, setting either <code>$regex_stdout</code> or <code>$regex_stderr</code> to <code>undef</code> ignores the output to that facility.</p>
+
+<pre><code>  output_like(sub {print &quot;foo&quot;; print STDERR &quot;bar&quot;;},qr/foo/,undef);</code></pre>
+
+<p>is the same as</p>
+
+<pre><code>  stdout_like(sub {print &quot;foo&quot;; print STDERR &quot;bar&quot;;},qr/foo/);</code></pre>
+
+<p><code>output_unlike()</code> test pass if output from <code>$coderef</code> doesn&#39;t match <code>$regex_stdout</code> and <code>$regex_stderr</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="EXPORTS">EXPORTS</h1>
+
+<p>By default, all subroutines are exported by default.</p>
+
+<ul>
+
+<li><p>:stdout - the subs with <code>stdout</code> in the name.</p>
+
+</li>
+<li><p>:stderr - the subs with <code>stderr</code> in the name.</p>
+
+</li>
+<li><p>:functions - the subs with <code>_from</code> at the end.</p>
+
+</li>
+<li><p>:output - the subs with <code>output</code> in the name.</p>
+
+</li>
+<li><p>:combined - the subs with <code>combined</code> in the name.</p>
+
+</li>
+<li><p>:tests - everything that outputs TAP</p>
+
+</li>
+<li><p>:all - everything (which is the same as the default)</p>
+
+</li>
+</ul>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="stdout_from">stdout_from</h2>
+
+<pre><code>  my $stdout = stdout_from($coderef)
+  my $stdout = stdout_from { ... };</code></pre>
+
+<p>stdout_from() executes $coderef and captures STDOUT.</p>
+
+<h2 id="stderr_from">stderr_from</h2>
+
+<pre><code>  my $stderr = stderr_from($coderef)
+  my $stderr = stderr_from { ... };</code></pre>
+
+<p><code>stderr_from()</code> executes <code>$coderef</code> and captures <code>STDERR</code>.</p>
+
+<h2 id="output_from">output_from</h2>
+
+<pre><code>  my ($stdout, $stderr) = output_from($coderef)
+  my ($stdout, $stderr) = output_from {...};</code></pre>
+
+<p><code>output_from()</code> executes <code>$coderef</code> one time capturing both <code>STDOUT</code> and <code>STDERR</code>.</p>
+
+<h2 id="combined_from">combined_from</h2>
+
+<pre><code>  my $combined = combined_from($coderef);
+  my $combined = combined_from {...};</code></pre>
+
+<p><code>combined_from()</code> executes <code>$coderef</code> one time combines <code>STDOUT</code> and <code>STDERR</code>, and captures them. <code>combined_from()</code> is equivalent to using <code>2&gt;&amp;1</code> in UNIX.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Currently maintained by brian d foy, <code>bdfoy@cpan.org</code>.</p>
+
+<p>Shawn Sorichetti, <code>&lt;ssoriche@cpan.org&gt;</code></p>
+
+<h1 id="SOURCE-AVAILABILITY">SOURCE AVAILABILITY</h1>
+
+<p>This module is in Github:</p>
+
+<pre><code>        http://github.com/briandfoy/test-output/tree/master</code></pre>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Please report any bugs or feature requests to <code>bug-test-output@rt.cpan.org</code>, or through the web interface at <a href="http://rt.cpan.org">http://rt.cpan.org</a>. I will be notified, and then you&#39;ll automatically be notified of progress on your bug as I make changes.</p>
+
+<h1 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h1>
+
+<p>Thanks to chromatic whose TieOut.pm was the basis for capturing output.</p>
+
+<p>Also thanks to rjbs for his help cleaning the documentation, and pushing me to <a href="../../../lib/perl5/5.26.3/Sub/Exporter.html">Sub::Exporter</a>. (This feature has been removed since it uses none of <a href="../../../lib/perl5/5.26.3/Sub/Exporter.html">Sub::Exporter</a>&#39;s strengths).</p>
+
+<p>Thanks to David Wheeler for providing code block support and tests.</p>
+
+<p>Thanks to Michael G Schwern for the solution to combining <code>STDOUT</code> and <code>STDERR</code>.</p>
+
+<h1 id="COPYRIGHT-LICENSE">COPYRIGHT &amp; LICENSE</h1>
+
+<p>Copyright 2005-2013 Shawn Sorichetti, All Rights Reserved.</p>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+
