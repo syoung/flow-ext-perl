@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>String::ShellQuote - quote strings for passing through the shell</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    $string = shell_quote @list;
+    $string = shell_quote_best_effort @list;
+    $string = shell_comment_quote $string;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module contains some functions which are useful for quoting strings which are going to pass through the shell or a shell-like object.</p>
+
+<dl>
+
+<dt id="shell_quote-string"><b>shell_quote</b> [<i>string</i>]...</dt>
+<dd>
+
+<p><b>shell_quote</b> quotes strings so they can be passed through the shell. Each <i>string</i> is quoted so that the shell will pass it along as a single argument and without further interpretation. If no <i>string</i>s are given an empty string is returned.</p>
+
+<p>If any <i>string</i> can&#39;t be safely quoted <b>shell_quote</b> will <b>croak</b>.</p>
+
+</dd>
+<dt id="shell_quote_best_effort-string"><b>shell_quote_best_effort</b> [<i>string</i>]...</dt>
+<dd>
+
+<p>This is like <b>shell_quote</b>, excpet if the string can&#39;t be safely quoted it does the best it can and returns the result, instead of dying.</p>
+
+</dd>
+<dt id="shell_comment_quote-string"><b>shell_comment_quote</b> [<i>string</i>]</dt>
+<dd>
+
+<p><b>shell_comment_quote</b> quotes the <i>string</i> so that it can safely be included in a shell-style comment (the current algorithm is that a sharp character is placed after any newlines in the string).</p>
+
+<p>This routine might be changed to accept multiple <i>string</i> arguments in the future. I haven&#39;t done this yet because I&#39;m not sure if the <i>string</i>s should be joined with blanks ($&quot;) or nothing ($,). Cast your vote today! Be sure to justify your answer.</p>
+
+</dd>
+</dl>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<pre><code>    $cmd = &#39;fuser 2&gt;/dev/null &#39; . shell_quote @files;
+    @pids = split &#39; &#39;, `$cmd`;
+
+    print CFG &quot;# Configured by: &quot;,
+                shell_comment_quote($ENV{LOGNAME}), &quot;\n&quot;;</code></pre>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Only Bourne shell quoting is supported. I&#39;d like to add other shells (particularly cmd.exe), but I&#39;m not familiar with them. It would be a big help if somebody supplied the details.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Roderick Schertler &lt;<i>roderick@argon.org</i>&gt;</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>perl(1).</p>
+
+
+</body>
+
+</html>
+
+

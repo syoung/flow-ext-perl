@@ -1,0 +1,6 @@
+/flow/perl/bin/shell-quote
+/flow/perl/html/bin/shell-quote.html
+/flow/perl/html/site/lib/String/ShellQuote.html
+/flow/perl/lib/perl5/site_perl/5.26.3/String/ShellQuote.pm
+/flow/perl/man/man1/shell-quote.1
+/flow/perl/man/man3/String::ShellQuote.3

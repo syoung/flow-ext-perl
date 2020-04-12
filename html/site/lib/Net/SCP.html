@@ -1,0 +1,262 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SUBROUTINES">SUBROUTINES</a></li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#FREQUENTLY-ASKED-QUESTIONS">FREQUENTLY ASKED QUESTIONS</a></li>
+  <li><a href="#GENERATING-AND-USING-SSH-KEYS">GENERATING AND USING SSH KEYS</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SCP - Perl extension for secure copy protocol</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  #procedural interface
+  use Net::SCP qw(scp iscp);
+  scp($source, $destination);
+  iscp($source, $destination); #shows command, asks for confirmation, and
+                               #allows user to type a password on tty
+
+  #OO interface
+  $scp = Net::SCP-&gt;new( &quot;hostname&quot;, &quot;username&quot; );
+  #with named params
+  $scp = Net::SCP-&gt;new( { &quot;host&quot;=&gt;$hostname, &quot;user&quot;=&gt;$username } );
+  $scp-&gt;get(&quot;filename&quot;) or die $scp-&gt;{errstr};
+  $scp-&gt;put(&quot;filename&quot;) or die $scp-&gt;{errstr};
+  #tmtowtdi
+  $scp = new Net::SCP;
+  $scp-&gt;scp($source, $destination);
+
+  #Net::FTP-style
+  $scp = Net::SCP-&gt;new(&quot;hostname&quot;);
+  $scp-&gt;login(&quot;user&quot;);
+  $scp-&gt;cwd(&quot;/dir&quot;);
+  $scp-&gt;size(&quot;file&quot;);
+  $scp-&gt;get(&quot;file&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Simple wrappers around ssh and scp commands.</p>
+
+<h1 id="SUBROUTINES">SUBROUTINES</h1>
+
+<dl>
+
+<dt id="scp-SOURCE-DESTINATION">scp SOURCE, DESTINATION</dt>
+<dd>
+
+<p>Can be called either as a subroutine or a method; however, the subroutine interface is depriciated.</p>
+
+<p>Calls scp in batch mode, with the <b>-B</b> <b>-p</b> <b>-q</b> and <b>-r</b> options. Returns false upon error, with a text error message accessable in $scp-&gt;{errstr}.</p>
+
+<p>Returns false and sets the <b>errstr</b> attribute if there is an error.</p>
+
+</dd>
+<dt id="iscp-SOURCE-DESTINATION">iscp SOURCE, DESTINATION</dt>
+<dd>
+
+<p>Can be called either as a subroutine or a method; however, the subroutine interface is depriciated.</p>
+
+<p>Prints the scp command to be execute, waits for the user to confirm, and (optionally) executes scp, with the <b>-p</b> and <b>-r</b> flags.</p>
+
+<p>Returns false and sets the <b>errstr</b> attribute if there is an error.</p>
+
+</dd>
+</dl>
+
+<h1 id="METHODS">METHODS</h1>
+
+<dl>
+
+<dt id="new-HOSTNAME-USER-HASHREF">new HOSTNAME [ USER ] | HASHREF</dt>
+<dd>
+
+<p>This is the constructor for a new Net::SCP object. You must specify a hostname, and may optionally provide a user. Alternatively, you may pass a hashref of named params, with the following keys:</p>
+
+<pre><code>    host - hostname
+    user - username
+    interactive - bool
+    cwd - current working directory on remote server</code></pre>
+
+</dd>
+<dt id="login-USER">login [USER]</dt>
+<dd>
+
+<p>Compatibility method. Optionally sets the user.</p>
+
+</dd>
+<dt id="cwd-CWD">cwd CWD</dt>
+<dd>
+
+<p>Sets the cwd (used for a subsequent get or put request without a full pathname).</p>
+
+</dd>
+<dt id="get-REMOTE_FILE-LOCAL_FILE">get REMOTE_FILE [, LOCAL_FILE]</dt>
+<dd>
+
+<p>Uses scp to transfer REMOTE_FILE from the remote host. If a local filename is omitted, uses the basename of the remote file.</p>
+
+</dd>
+<dt id="mkdir-DIRECTORY">mkdir DIRECTORY</dt>
+<dd>
+
+<p>Makes a directory on the remote server. Returns false and sets the <b>errstr</b> attribute on errors.</p>
+
+<p>(Implementation note: An ssh connection is established to the remote machine and &#39;/bin/mkdir <b>-p</b>&#39; is used to create the directory.)</p>
+
+</dd>
+<dt id="size-FILE">size FILE</dt>
+<dd>
+
+<p>Returns the size in bytes for the given file as stored on the remote server. Returns 0 on error, and sets the <b>errstr</b> attribute. In the case of an actual zero-length file on the remote server, the special value &#39;0e0&#39; is returned, which evaluates to zero when used as a number, but is true.</p>
+
+<p>(Implementation note: An ssh connection is established to the remote machine and wc is used to determine the file size.)</p>
+
+</dd>
+<dt id="put-LOCAL_FILE-REMOTE_FILE">put LOCAL_FILE [, REMOTE_FILE]</dt>
+<dd>
+
+<p>Uses scp to trasnfer LOCAL_FILE to the remote host. If a remote filename is omitted, uses the basename of the local file.</p>
+
+</dd>
+<dt id="binary">binary</dt>
+<dd>
+
+<p>Compatibility method: does nothing; returns true.</p>
+
+</dd>
+<dt id="quit">quit</dt>
+<dd>
+
+<p>Compatibility method: does nothing; returns true.</p>
+
+</dd>
+</dl>
+
+<h1 id="FREQUENTLY-ASKED-QUESTIONS">FREQUENTLY ASKED QUESTIONS</h1>
+
+<p>Q: How do you supply a password to connect with ssh within a perl script using the Net::SSH module?</p>
+
+<p>A: You don&#39;t (at least not with this module). Use RSA or DSA keys. See the quick help in the next section and the ssh-keygen(1) manpage.</p>
+
+<p>A #2: See <a>Net::SCP::Expect</a> instead.</p>
+
+<p>Q: My script is &quot;leaking&quot; scp processes.</p>
+
+<p>A: See <a href="../../../lib/perl5/5.26.3/pod/perlfaq8.html#How-do-I-avoid-zombies-on-a-Unix-system">&quot;How do I avoid zombies on a Unix system&quot; in perlfaq8</a>, <a href="../../../lib/perl5/5.26.3/IPC/Open2.html">IPC::Open2</a>, <a href="../../../lib/perl5/5.26.3/IPC/Open3.html">IPC::Open3</a> and <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#waitpid">&quot;waitpid&quot; in perlfunc</a>.</p>
+
+<h1 id="GENERATING-AND-USING-SSH-KEYS">GENERATING AND USING SSH KEYS</h1>
+
+<dl>
+
+<dt id="Generate-keys">1 Generate keys</dt>
+<dd>
+
+<p>Type:</p>
+
+<pre><code>   ssh-keygen -t rsa</code></pre>
+
+<p>And do not enter a passphrase unless you wanted to be prompted for one during file copying.</p>
+
+<p>Here is what you will see:</p>
+
+<pre><code>   $ ssh-keygen -t rsa
+   Generating public/private rsa key pair.
+   Enter file in which to save the key (/home/User/.ssh/id_rsa):
+   Enter passphrase (empty for no passphrase):
+
+   Enter same passphrase again:
+
+   Your identification has been saved in /home/User/.ssh/id_rsa.
+   Your public key has been saved in /home/User/.ssh/id_rsa.pub.
+   The key fingerprint is:
+   5a:cd:2b:0a:cd:d9:15:85:26:79:40:0c:55:2a:f4:23 User@JEFF-CPU</code></pre>
+
+</dd>
+<dt id="Copy-public-to-machines-you-want-to-upload-to">2 Copy public to machines you want to upload to</dt>
+<dd>
+
+<p><code>id_rsa.pub</code> is your public key. Copy it to <code>~/.ssh</code> on target machine.</p>
+
+<p>Put a copy of the public key file on each machine you want to log into. Name the copy <code>authorized_keys</code> (some implementations name this file <code>authorized_keys2</code>)</p>
+
+<p>Then type:</p>
+
+<pre><code>     chmod 600 authorized_keys</code></pre>
+
+<p>Then make sure your home dir on the remote machine is not group or world writeable.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Could really use a maintainer with enough time to at least review and apply patches more patches. Or the module should just be deprecated in favor of Net::SFTP::Expect or Net::SFTP::Foreign and made into a simple compatiblity wrapper.</p>
+
+<p>Ivan Kohler &lt;ivan-netscp_pod@420.am&gt;</p>
+
+<p>Major updates Anthony Deaver &lt;bishop@projectmagnus.org&gt;</p>
+
+<p>Thanks to Jon Gunnip &lt;jon@soundbite.com&gt; for fixing a bug with size().</p>
+
+<p>Patch for the mkdir method by Anthony Awtrey &lt;tony@awtrey.com&gt;.</p>
+
+<p>Thanks to terrence brannon &lt;tbone@directsynergy.com&gt; for the documentation in the GENERATING AND USING SSH KEYS section.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 2000 Ivan Kohler Copyright (c) 2007 Freeside Internet Services, Inc. All rights reserved. This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>Still has no-OO cruft.</p>
+
+<p>In order to work around some problems with commercial SSH2, if the source file is on the local system, and is not a directory, the <b>-r</b> flag is omitted. It&#39;s probably better just to use OpenSSH &lt;http://www.openssh.com/&gt; which is the de-facto standard these days anyway.</p>
+
+<p>The Net::FTP-style OO stuff is kinda lame. And incomplete.</p>
+
+<p>iscp doesnt expect you to be logging into the box that you are copying to for the first time. so it&#39;s completely clueless about how to handle the whole &#39;add this file to known hosts&#39; message so it just hangs after the user hits y. (Thanks to John L. Utz III). To avoid this, SSH to the box once first.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>For a perl implementation that does not require the system <b>scp</b> command, see <a>Net::SFTP</a> instead.</p>
+
+<p>For a wrapper version that allows you to use passwords, see <a>Net::SCP::Expect</a> instead.</p>
+
+<p>For a wrapper version of the newer SFTP protocol, see <a>Net::SFTP::Foreign</a> instead.</p>
+
+<p><a href="../../../lib/perl5/site_perl/5.26.3/Net/SSH.html">Net::SSH</a>, <a>Net::SSH::Perl</a>, <a>Net::SSH::Expect</a>, <a>Net::SSH2</a>, <a>IPC::PerlSSH</a></p>
+
+<p>scp(1), ssh(1), <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/IO/File.html">IO::File</a>, <a href="../../../lib/perl5/5.26.3/IPC/Open2.html">IPC::Open2</a>, <a href="../../../lib/perl5/5.26.3/IPC/Open3.html">IPC::Open3</a></p>
+
+
+</body>
+
+</html>
+
+

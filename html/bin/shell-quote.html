@@ -1,0 +1,140 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../displayToc.js"></script>
+<script language="JavaScript" src="../tocParas.js"></script>
+<script language="JavaScript" src="../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#AVAILABILITY">AVAILABILITY</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>shell-quote - quote arguments for safe use, unmodified in a shell command</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p><b>shell-quote</b> [<i>switch</i>]... <i>arg</i>...</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><b>shell-quote</b> lets you pass arbitrary strings through the shell so that they won&#39;t be changed by the shell. This lets you process commands or files with embedded white space or shell globbing characters safely. Here are a few examples.</p>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<dl>
+
+<dt id="ssh-preserving-args"><b>ssh preserving args</b></dt>
+<dd>
+
+<p>When running a remote command with ssh, ssh doesn&#39;t preserve the separate arguments it receives. It just joins them with spaces and passes them to <code>$SHELL -c</code>. This doesn&#39;t work as intended:</p>
+
+<pre><code>    ssh host touch &#39;hi there&#39;           # fails</code></pre>
+
+<p>It creates 2 files, <i>hi</i> and <i>there</i>. Instead, do this:</p>
+
+<pre><code>    cmd=`shell-quote touch &#39;hi there&#39;`
+    ssh host &quot;$cmd&quot;</code></pre>
+
+<p>This gives you just 1 file, <i>hi there</i>.</p>
+
+</dd>
+<dt id="process-find-output"><b>process find output</b></dt>
+<dd>
+
+<p>It&#39;s not ordinarily possible to process an arbitrary list of files output by <b>find</b> with a shell script. Anything you put in $IFS to split up the output could legitimately be in a file&#39;s name. Here&#39;s how you can do it using <b>shell-quote</b>:</p>
+
+<pre><code>    eval set -- `find -type f -print0 | xargs -0 shell-quote --`</code></pre>
+
+</dd>
+<dt id="debug-shell-scripts"><b>debug shell scripts</b></dt>
+<dd>
+
+<p><b>shell-quote</b> is better than <b>echo</b> for debugging shell scripts.</p>
+
+<pre><code>    debug() {
+        [ -z &quot;$debug&quot; ] || shell-quote &quot;debug:&quot; &quot;$@&quot;
+    }</code></pre>
+
+<p>With <b>echo</b> you can&#39;t tell the difference between <code>debug &#39;foo bar&#39;</code> and <code>debug foo bar</code>, but with <b>shell-quote</b> you can.</p>
+
+</dd>
+<dt id="save-a-command-for-later"><b>save a command for later</b></dt>
+<dd>
+
+<p><b>shell-quote</b> can be used to build up a shell command to run later. Say you want the user to be able to give you switches for a command you&#39;re going to run. If you don&#39;t want the switches to be re-evaluated by the shell (which is usually a good idea, else there are things the user can&#39;t pass through), you can do something like this:</p>
+
+<pre><code>    user_switches=
+    while [ $# != 0 ]
+    do
+        case x$1 in
+            x--pass-through)
+                [ $# -gt 1 ] || die &quot;need an argument for $1&quot;
+                user_switches=&quot;$user_switches &quot;`shell-quote -- &quot;$2&quot;`
+                shift;;
+            # process other switches
+        esac
+        shift
+    done
+    # later
+    eval &quot;shell-quote some-command $user_switches my args&quot;</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="OPTIONS">OPTIONS</h1>
+
+<dl>
+
+<dt id="debug"><b>--debug</b></dt>
+<dd>
+
+<p>Turn debugging on.</p>
+
+</dd>
+<dt id="help"><b>--help</b></dt>
+<dd>
+
+<p>Show the usage message and die.</p>
+
+</dd>
+<dt id="version"><b>--version</b></dt>
+<dd>
+
+<p>Show the version number and exit.</p>
+
+</dd>
+</dl>
+
+<h1 id="AVAILABILITY">AVAILABILITY</h1>
+
+<p>The code is licensed under the GNU GPL. Check http://www.argon.org/~roderick/ or CPAN for updated versions.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Roderick Schertler &lt;roderick@argon.org&gt;</p>
+
+
+</body>
+
+</html>
+
+

@@ -1186,3 +1186,69 @@ C<EXE_FILES: >
 
 =back
 
+=head2 Sun Apr 12 23:30:43 2020: C<Module> L<Net::SSH|Net::SSH>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.09>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Sun Apr 12 23:30:45 2020: C<Module> L<String::ShellQuote|String::ShellQuote>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.04>
+
+=item *
+
+C<EXE_FILES: shell-quote>
+
+=back
+
+=head2 Sun Apr 12 23:30:46 2020: C<Module> L<Net::SCP|Net::SCP>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.08>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
