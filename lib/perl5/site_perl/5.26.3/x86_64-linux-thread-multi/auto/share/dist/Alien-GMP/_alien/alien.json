@@ -1,0 +1,17 @@
+{
+   "alien_build_version" : "2.21",
+   "cflags" : "-I/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/auto/share/dist/Alien-GMP/include ",
+   "cflags_static" : "-I/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/auto/share/dist/Alien-GMP/include ",
+   "install_type" : "share",
+   "legacy" : {
+      "finished_installing" : 1,
+      "install_type" : "share",
+      "original_prefix" : "/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/auto/share/dist/Alien-GMP",
+      "version" : "6.2.0"
+   },
+   "libs" : "-L/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/auto/share/dist/Alien-GMP/lib -lgmp ",
+   "libs_static" : "-L/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/auto/share/dist/Alien-GMP/lib -lgmp ",
+   "perl_module_version" : "1.14",
+   "prefix" : "/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/auto/share/dist/Alien-GMP",
+   "version" : "6.2.0"
+}

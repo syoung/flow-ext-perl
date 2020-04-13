@@ -1,0 +1,182 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#random_bytes">random_bytes</a></li>
+      <li><a href="#random_bytes_hex">random_bytes_hex</a></li>
+      <li><a href="#random_bytes_b64">random_bytes_b64</a></li>
+      <li><a href="#random_bytes_b64u">random_bytes_b64u</a></li>
+      <li><a href="#random_string">random_string</a></li>
+      <li><a href="#random_string_from">random_string_from</a></li>
+      <li><a href="#rand">rand</a></li>
+      <li><a href="#irand">irand</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#bytes">bytes</a></li>
+      <li><a href="#bytes_hex">bytes_hex</a></li>
+      <li><a href="#bytes_b64">bytes_b64</a></li>
+      <li><a href="#bytes_b64u">bytes_b64u</a></li>
+      <li><a href="#string">string</a></li>
+      <li><a href="#string_from">string_from</a></li>
+      <li><a href="#double">double</a></li>
+      <li><a href="#int32">int32</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::PRNG::ChaCha20 - Cryptographically secure PRNG based on ChaCha20 (stream cipher) algorithm</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   ### Functional interface:
+   use Crypt::PRNG::ChaCha20 qw(random_bytes random_bytes_hex random_bytes_b64 random_string random_string_from rand irand);
+
+   $octets = random_bytes(45);
+   $hex_string = random_bytes_hex(45);
+   $base64_string = random_bytes_b64(45);
+   $base64url_string = random_bytes_b64u(45);
+   $alphanumeric_string = random_string(30);
+   $string = random_string_from(&#39;ACGT&#39;, 64);
+   $floating_point_number_0_to_1 = rand;
+   $floating_point_number_0_to_88 = rand(88);
+   $unsigned_32bit_int = irand;
+
+   ### OO interface:
+   use Crypt::PRNG::ChaCha20;
+
+   $prng = Crypt::PRNG::ChaCha20-&gt;new;
+   #or
+   $prng = Crypt::PRNG::ChaCha20-&gt;new(&quot;some data used for seeding PRNG&quot;);
+
+   $octets = $prng-&gt;bytes(45);
+   $hex_string = $prng-&gt;bytes_hex(45);
+   $base64_string = $prng-&gt;bytes_b64(45);
+   $base64url_string = $prng-&gt;bytes_b64u(45);
+   $alphanumeric_string = $prng-&gt;string(30);
+   $string = $prng-&gt;string_from(&#39;ACGT&#39;, 64);
+   $floating_point_number_0_to_1 = rand;
+   $floating_point_number_0_to_88 = rand(88);
+   $unsigned_32bit_int = irand;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to the ChaCha20 based pseudo random number generator</p>
+
+<p>All methods and functions are the same as for <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html">Crypt::PRNG</a>.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="random_bytes">random_bytes</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#random_bytes">&quot;random_bytes&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="random_bytes_hex">random_bytes_hex</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#random_bytes_hex">&quot;random_bytes_hex&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="random_bytes_b64">random_bytes_b64</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#random_bytes_b64">&quot;random_bytes_b64&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="random_bytes_b64u">random_bytes_b64u</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#random_bytes_b64u">&quot;random_bytes_b64u&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="random_string">random_string</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#random_string">&quot;random_string&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="random_string_from">random_string_from</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#random_string_from">&quot;random_string_from&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="rand">rand</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#rand">&quot;rand&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="irand">irand</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#irand">&quot;irand&quot; in Crypt::PRNG</a>.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#new">&quot;new&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="bytes">bytes</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#bytes">&quot;bytes&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="bytes_hex">bytes_hex</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#bytes_hex">&quot;bytes_hex&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="bytes_b64">bytes_b64</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#bytes_b64">&quot;bytes_b64&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="bytes_b64u">bytes_b64u</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#bytes_b64u">&quot;bytes_b64u&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="string">string</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#string">&quot;string&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="string_from">string_from</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#string_from">&quot;string_from&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="double">double</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#double">&quot;double&quot; in Crypt::PRNG</a>.</p>
+
+<h2 id="int32">int32</h2>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html#int32">&quot;int32&quot; in Crypt::PRNG</a>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG.html">Crypt::PRNG</a></p>
+
+</li>
+<li><p><a href="https://tools.ietf.org/html/rfc7539">https://tools.ietf.org/html/rfc7539</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

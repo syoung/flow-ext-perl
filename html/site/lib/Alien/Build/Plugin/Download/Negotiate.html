@@ -1,0 +1,217 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#PROPERTIES">PROPERTIES</a>
+    <ul>
+      <li><a href="#url">url</a></li>
+      <li><a href="#filter">filter</a></li>
+      <li><a href="#version">version</a></li>
+      <li><a href="#ssl">ssl</a></li>
+      <li><a href="#passive">passive</a></li>
+      <li><a href="#bootstrap_ssl">bootstrap_ssl</a></li>
+      <li><a href="#prefer">prefer</a></li>
+      <li><a href="#decoder">decoder</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#pick">pick</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Plugin::Download::Negotiate - Download negotiation plugin</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use alienfile;
+ share {
+   start_url &#39;http://ftp.gnu.org/gnu/make&#39;;
+   plugin &#39;Download&#39; =&gt; (
+     filter =&gt; qr/^make-.*\.tar\.gz$/,
+     version =&gt; qr/([0-9\.]+)/,
+   );
+ };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a negotiator plugin for downloading packages from the internet. This plugin picks the best Fetch, Decode and Prefer plugins to do the actual work. Which plugins are picked depend on the properties you specify, your platform and environment. It is usually preferable to use a negotiator plugin rather than the Fetch, Decode and Prefer plugins directly from your <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+<h1 id="PROPERTIES">PROPERTIES</h1>
+
+<h2 id="url">url</h2>
+
+<p>[DEPRECATED] use <code>start_url</code> instead.</p>
+
+<p>The Initial URL for your package. This may be a directory listing (either in HTML or ftp listing format) or the final tarball intended to be downloaded.</p>
+
+<h2 id="filter">filter</h2>
+
+<p>This is a regular expression that lets you filter out files that you do not want to consider downloading. For example, if the directory listing contained tarballs and readme files like this:</p>
+
+<pre><code> foo-1.0.0.tar.gz
+ foo-1.0.0.readme</code></pre>
+
+<p>You could specify a filter of <code>qr/\.tar\.gz$/</code> to make sure only tarballs are considered for download.</p>
+
+<h2 id="version">version</h2>
+
+<p>Regular expression to parse out the version from a filename. The regular expression should store the result in <code>$1</code>.</p>
+
+<p>Note: if you provide a <code>version</code> property, this plugin will assume that you will be downloading an initial index to select package downloads from. Depending on the protocol (and typically this is the case for http and HTML) that may bring in additional dependencies. If start_url points to a tarball or other archive directly (without needing to do through an index selection process), it is recommended that you not specify this property.</p>
+
+<h2 id="ssl">ssl</h2>
+
+<p>If your initial URL does not need SSL, but you know ahead of time that a subsequent request will need it (for example, if your directory listing is on <code>http</code>, but includes links to <code>https</code> URLs), then you can set this property to true, and the appropriate Perl SSL modules will be loaded.</p>
+
+<h2 id="passive">passive</h2>
+
+<p>If using FTP, attempt a passive mode transfer first, before trying an active mode transfer.</p>
+
+<h2 id="bootstrap_ssl">bootstrap_ssl</h2>
+
+<p>If set to true, then the download negotiator will avoid using plugins that have a dependency on <a href="../../../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a>, or other Perl SSL modules. The intent for this option is to allow OpenSSL to be alienized and be a useful optional dependency for <a href="../../../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a>.</p>
+
+<p>The implementation may improve over time, but as of this writing, this option relies on you having a working <code>curl</code> or <code>wget</code> with SSL support in your <code>PATH</code>.</p>
+
+<h2 id="prefer">prefer</h2>
+
+<p>How to sort candidates for selection. This should be one of three types of values:</p>
+
+<dl>
+
+<dt id="code-reference">code reference</dt>
+<dd>
+
+<p>This will be used as the prefer hook.</p>
+
+</dd>
+<dt id="true-value">true value</dt>
+<dd>
+
+<p>Use <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Prefer/SortVersions.html">Alien::Build::Plugin::Prefer::SortVersions</a>.</p>
+
+</dd>
+<dt id="false-value">false value</dt>
+<dd>
+
+<p>Don&#39;t set any preference at all. A hook must be installed, or another prefer plugin specified.</p>
+
+</dd>
+</dl>
+
+<h2 id="decoder">decoder</h2>
+
+<p>Override the detected decoder.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="pick">pick</h2>
+
+<pre><code> my($fetch, @decoders) = $plugin-&gt;pick;</code></pre>
+
+<p>Returns the fetch plugin and any optional decoders that should be used.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>, <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a>, <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

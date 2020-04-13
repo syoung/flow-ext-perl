@@ -1,0 +1,153 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#CONSTRUCTOR">CONSTRUCTOR</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#add_helper">add_helper</a></li>
+      <li><a href="#replace_helper">replace_helper</a></li>
+      <li><a href="#has_helper">has_helper</a></li>
+      <li><a href="#execute_helper">execute_helper</a></li>
+      <li><a href="#interpolate">interpolate</a></li>
+      <li><a href="#requires">requires</a></li>
+      <li><a href="#clone">clone</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Interpolate - Advanced interpolation engine for Alien builds</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="CONSTRUCTOR">CONSTRUCTOR</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $intr = Alien::Build::Interpolate-&gt;new;</code></pre>
+
+<h2 id="add_helper">add_helper</h2>
+
+<pre><code> $intr-&gt;add_helper($name =&gt; $code);
+ $intr-&gt;add_helper($name =&gt; $code, %requirements);</code></pre>
+
+<h2 id="replace_helper">replace_helper</h2>
+
+<pre><code> $intr-&gt;replace_helper($name =&gt; $code);
+ $intr-&gt;replace_helper($name =&gt; $code, %requirements);</code></pre>
+
+<h2 id="has_helper">has_helper</h2>
+
+<pre><code> my $coderef = $intr-&gt;has_helper($name);</code></pre>
+
+<p>Used to discover if a helper exists with the given name. Returns the code reference.</p>
+
+<h2 id="execute_helper">execute_helper</h2>
+
+<pre><code> my $value = $intr-&gt;execute_helper($name);</code></pre>
+
+<h2 id="interpolate">interpolate</h2>
+
+<pre><code> my $string = $intr-&gt;interpolate($template);</code></pre>
+
+<h2 id="requires">requires</h2>
+
+<pre><code> my %requires = $intr-&gt;requires($template);</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> my $intr2 = $intr-&gt;clone;</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

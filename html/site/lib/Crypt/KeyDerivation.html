@@ -1,0 +1,147 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#pbkdf1">pbkdf1</a></li>
+      <li><a href="#pbkdf2">pbkdf2</a></li>
+      <li><a href="#hkdf">hkdf</a></li>
+      <li><a href="#hkdf_extract">hkdf_extract</a></li>
+      <li><a href="#hkdf_expand">hkdf_expand</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::KeyDerivation - PBKDF1, PBKDF2 and HKDF key derivation functions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Crypt::KeyDerivation &#39;:all&#39;;
+
+  ### PBKDF1/2
+  $derived_key1 = pbkdf1($password, $salt, $iteration_count, $hash_name, $len);
+  $derived_key2 = pbkdf2($password, $salt, $iteration_count, $hash_name, $len);
+
+  ### HKDF &amp; co.
+  $derived_key3 = hkdf($keying_material, $salt, $hash_name, $len, $info);
+  $prk  = hkdf_extract($keying_material, $salt, $hash_name);
+  $okm1 = hkdf_expand($prk, $hash_name, $len, $info);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to Key derivation functions:</p>
+
+<ul>
+
+<li><p>PBKDF1 and PBKDF according to PKCS#5 v2.0 <a href="https://tools.ietf.org/html/rfc2898">https://tools.ietf.org/html/rfc2898</a></p>
+
+</li>
+<li><p>HKDF (+ related) according to <a href="https://tools.ietf.org/html/rfc5869">https://tools.ietf.org/html/rfc5869</a></p>
+
+</li>
+</ul>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="pbkdf1">pbkdf1</h2>
+
+<p><b>BEWARE:</b> if you are not sure, do not use <code>pbkdf1</code> but rather choose <code>pbkdf2</code>.</p>
+
+<pre><code>  $derived_key = pbkdf1($password, $salt, $iteration_count, $hash_name, $len);
+  #or
+  $derived_key = pbkdf1($password, $salt, $iteration_count, $hash_name);
+  #or
+  $derived_key = pbkdf1($password, $salt, $iteration_count);
+  #or
+  $derived_key = pbkdf1($password, $salt);
+
+  # $password ......... input keying material  (password)
+  # $salt ............. salt/nonce (expected length: 8)
+  # $iteration_count .. optional, DEFAULT: 5000
+  # $hash_name ........ optional, DEFAULT: &#39;SHA256&#39;
+  # $len .............. optional, derived key len, DEFAULT: 32</code></pre>
+
+<h2 id="pbkdf2">pbkdf2</h2>
+
+<pre><code>  $derived_key = pbkdf2($password, $salt, $iteration_count, $hash_name, $len);
+  #or
+  $derived_key = pbkdf2($password, $salt, $iteration_count, $hash_name);
+  #or
+  $derived_key = pbkdf2($password, $salt, $iteration_count);
+  #or
+  $derived_key = pbkdf2($password, $salt);
+
+  # $password ......... input keying material (password)
+  # $salt ............. salt/nonce
+  # $iteration_count .. optional, DEFAULT: 5000
+  # $hash_name ........ optional, DEFAULT: &#39;SHA256&#39;
+  # $len .............. optional, derived key len, DEFAULT: 32</code></pre>
+
+<h2 id="hkdf">hkdf</h2>
+
+<pre><code>  $okm2 = hkdf($password, $salt, $hash_name, $len, $info);
+  #or
+  $okm2 = hkdf($password, $salt, $hash_name, $len);
+  #or
+  $okm2 = hkdf($password, $salt, $hash_name);
+  #or
+  $okm2 = hkdf($password, $salt);
+
+  # $password ... input keying material (password)
+  # $salt ....... salt/nonce, if undef defaults to HashLen zero octets
+  # $hash_name .. optional, DEFAULT: &#39;SHA256&#39;
+  # $len ........ optional, derived key len, DEFAULT: 32
+  # $info ....... optional context and application specific information, DEFAULT: &#39;&#39;</code></pre>
+
+<h2 id="hkdf_extract">hkdf_extract</h2>
+
+<pre><code>  $prk  = hkdf_extract($password, $salt, $hash_name);
+  #or
+  $prk  = hkdf_extract($password, $salt, $hash_name);
+
+  # $password ... input keying material (password)
+  # $salt ....... salt/nonce, if undef defaults to HashLen zero octets
+  # $hash_name .. optional, DEFAULT: &#39;SHA256&#39;</code></pre>
+
+<h2 id="hkdf_expand">hkdf_expand</h2>
+
+<pre><code>  $okm = hkdf_expand($pseudokey, $hash_name, $len, $info);
+  #or
+  $okm = hkdf_expand($pseudokey, $hash_name, $len);
+  #or
+  $okm = hkdf_expand($pseudokey, $hash_name);
+  #or
+  $okm = hkdf_expand($pseudokey);
+
+  # $pseudokey .. input keying material
+  # $hash_name .. optional, DEFAULT: &#39;SHA256&#39;
+  # $len ........ optional, derived key len, DEFAULT: 32
+  # $info ....... optional context and application specific information, DEFAULT: &#39;&#39;</code></pre>
+
+
+</body>
+
+</html>
+
+

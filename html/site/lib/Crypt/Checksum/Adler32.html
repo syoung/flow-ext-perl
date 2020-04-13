@@ -1,0 +1,224 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#adler32_data">adler32_data</a></li>
+      <li><a href="#adler32_data_hex">adler32_data_hex</a></li>
+      <li><a href="#adler32_data_int">adler32_data_int</a></li>
+      <li><a href="#adler32_file">adler32_file</a></li>
+      <li><a href="#adler32_file_hex">adler32_file_hex</a></li>
+      <li><a href="#adler32_file_int">adler32_file_int</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#clone">clone</a></li>
+      <li><a href="#reset">reset</a></li>
+      <li><a href="#add">add</a></li>
+      <li><a href="#addfile">addfile</a></li>
+      <li><a href="#digest">digest</a></li>
+      <li><a href="#hexdigest">hexdigest</a></li>
+      <li><a href="#intdigest">intdigest</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Checksum::Adler32 - Compute Adler32 checksum</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   ### Functional interface:
+   use Crypt::Checksum::Adler32 &#39;:all&#39;;
+
+   # calculate Adler32 checksum from string/buffer
+   $checksum_raw  = adler32_data($data);
+   $checksum_hex  = adler32_data_hex($data);
+   $checksum_int  = adler32_data_int($data);
+   # calculate Adler32 checksum from file
+   $checksum_raw  = adler32_file(&#39;filename.dat&#39;);
+   $checksum_hex  = adler32_file_hex(&#39;filename.dat&#39;);
+   $checksum_int  = adler32_file_int(&#39;filename.dat&#39;);
+   # calculate Adler32 checksum from filehandle
+   $checksum_raw  = adler32_file(*FILEHANDLE);
+   $checksum_hex  = adler32_file_hex(*FILEHANDLE);
+   $checksum_int  = adler32_file_int(*FILEHANDLE);
+
+   ### OO interface:
+   use Crypt::Checksum::Adler32;
+
+   $d = Crypt::Checksum::Adler32-&gt;new;
+   $d-&gt;add(&#39;any data&#39;);
+   $d-&gt;add(&#39;another data&#39;);
+   $d-&gt;addfile(&#39;filename.dat&#39;);
+   $d-&gt;addfile(*FILEHANDLE);
+   $checksum_raw  = $d-&gt;digest;     # raw 4 bytes
+   $checksum_hex  = $d-&gt;hexdigest;  # hexadecimal form
+   $checksum_int  = $d-&gt;intdigest;  # 32bit unsigned integer</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Calculating Adler32 checksums.</p>
+
+<p><i>Updated: v0.057</i></p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code> use Crypt::Checksum::Adler32 qw(adler32_data adler32_data_hex adler32_data_int adler32_file adler32_file_hex adler32_file_int);</code></pre>
+
+<p>Or all of them at once:</p>
+
+<pre><code> use Crypt::Checksum::Adler32 &#39;:all&#39;;</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="adler32_data">adler32_data</h2>
+
+<p>Returns checksum as raw octects.</p>
+
+<pre><code> $checksum_raw = adler32_data(&#39;data string&#39;);
+ #or
+ $checksum_raw = adler32_data(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="adler32_data_hex">adler32_data_hex</h2>
+
+<p>Returns checksum as a hexadecimal string.</p>
+
+<pre><code> $checksum_hex = adler32_data_hex(&#39;data string&#39;);
+ #or
+ $checksum_hex = adler32_data_hex(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="adler32_data_int">adler32_data_int</h2>
+
+<p>Returns checksum as unsigned 32bit integer.</p>
+
+<pre><code> $checksum_int = adler32_data_int(&#39;data string&#39;);
+ #or
+ $checksum_int = adler32_data_int(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="adler32_file">adler32_file</h2>
+
+<p>Returns checksum as raw octects.</p>
+
+<pre><code> $checksum_raw = adler32_file(&#39;filename.dat&#39;);
+ #or
+ $checksum_raw = adler32_file(*FILEHANDLE);</code></pre>
+
+<h2 id="adler32_file_hex">adler32_file_hex</h2>
+
+<p>Returns checksum as a hexadecimal string.</p>
+
+<pre><code> $checksum_hex = adler32_file_hex(&#39;filename.dat&#39;);
+ #or
+ $checksum_hex = adler32_file_hex(*FILEHANDLE);</code></pre>
+
+<h2 id="adler32_file_int">adler32_file_int</h2>
+
+<p>Returns checksum as unsigned 32bit integer.</p>
+
+<pre><code> $checksum_int = adler32_file_int(&#39;filename.dat&#39;);
+ #or
+ $checksum_int = adler32_file_int(*FILEHANDLE);</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<p>Constructor, returns a reference to the checksum object.</p>
+
+<pre><code> $d = Crypt::Checksum::Adler32-&gt;new;</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<p>Creates a copy of the checksum object state and returns a reference to the copy.</p>
+
+<pre><code> $d-&gt;clone();</code></pre>
+
+<h2 id="reset">reset</h2>
+
+<p>Reinitialize the checksum object state and returns a reference to the checksum object.</p>
+
+<pre><code> $d-&gt;reset();</code></pre>
+
+<h2 id="add">add</h2>
+
+<p>All arguments are appended to the message we calculate checksum for. The return value is the checksum object itself.</p>
+
+<pre><code> $d-&gt;add(&#39;any data&#39;);
+ #or
+ $d-&gt;add(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="addfile">addfile</h2>
+
+<p>The content of the file (or filehandle) is appended to the message we calculate checksum for. The return value is the checksum object itself.</p>
+
+<pre><code> $d-&gt;addfile(&#39;filename.dat&#39;);
+ #or
+ $d-&gt;addfile(*FILEHANDLE);</code></pre>
+
+<p><b>BEWARE:</b> You have to make sure that the filehandle is in binary mode before you pass it as argument to the addfile() method.</p>
+
+<h2 id="digest">digest</h2>
+
+<p>Returns the binary checksum (raw bytes).</p>
+
+<pre><code> $result_raw = $d-&gt;digest();</code></pre>
+
+<h2 id="hexdigest">hexdigest</h2>
+
+<p>Returns the checksum encoded as a hexadecimal string.</p>
+
+<pre><code> $result_hex = $d-&gt;hexdigest();</code></pre>
+
+<h2 id="intdigest">intdigest</h2>
+
+<p>Returns the checksum encoded as unsigned 32bit integer.</p>
+
+<pre><code> $result_int = $d-&gt;intdigest();</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Adler-32">https://en.wikipedia.org/wiki/Adler-32</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

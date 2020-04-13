@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#Net::SSH::Perl::Packet-new-ssh-params">Net::SSH::Perl::Packet-&gt;new($ssh, %params)</a></li>
+      <li><a href="#Net::SSH::Perl::Packet-read-ssh">Net::SSH::Perl::Packet-&gt;read($ssh)</a></li>
+      <li><a href="#Net::SSH::Perl::Packet-read_poll-ssh">Net::SSH::Perl::Packet-&gt;read_poll($ssh)</a></li>
+      <li><a href="#Net::SSH::Perl::Packet-read_expect-ssh-type">Net::SSH::Perl::Packet-&gt;read_expect($ssh, $type)</a></li>
+      <li><a href="#packet-send-data">$packet-&gt;send([ $data ])</a></li>
+      <li><a href="#packet-type">$packet-&gt;type</a></li>
+      <li><a href="#packet-data">$packet-&gt;data</a></li>
+      <li><a href="#Net::SSH::Perl::Buffer-methods">Net::SSH::Perl::Buffer methods</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Packet - Packet layer of SSH protocol</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Packet;
+
+    # Send a packet to an ssh daemon.
+    my $pack = Net::SSH::Perl::Packet-&gt;new($ssh, type =&gt; SSH_MSG_NONE);
+    $pack-&gt;send;
+
+    # Receive a packet.
+    my $pack = Net::SSH::Perl::Packet-&gt;read($ssh);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Packet</i> implements the packet-layer piece of the SSH protocol. Messages between server and client are sent as binary data packets, which are encrypted (once the two sides have agreed on the encryption cipher, that is).</p>
+
+<p>Packets are made up primarily of a packet type, which describes the type of message and data contained therein, and the data itself. In addition, each packet: indicates its length in a 32-bit unsigned integer; contains padding to pad the length of the packet to a multiple of 8 bytes; and is verified by a 32-bit crc checksum.</p>
+
+<p>Refer to the SSH RFC for more details on the packet protocol and the SSH protocol in general.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<h2 id="Net::SSH::Perl::Packet-new-ssh-params">Net::SSH::Perl::Packet-&gt;new($ssh, %params)</h2>
+
+<p>Creates/starts a new packet in memory. <i>$ssh</i> is a <i>Net::SSH::Perl</i> object, which should already be connected to an ssh daemon. <i>%params</i> can contain the following keys:</p>
+
+<ul>
+
+<li><p>type</p>
+
+<p>The message type of this packet. This should be one of the values exported by <i>Net::SSH::Perl::Constants</i> from the <i>msg</i> tag; for example, <i>SSH_MSG_NONE</i>.</p>
+
+</li>
+<li><p>data</p>
+
+<p>A <i>Net::SSH::Perl::Buffer</i> object containing the data in this packet. Realistically, there aren&#39;t many times you&#39;ll need to supply this argument: when sending a packet, it will be created automatically; and when receiving a packet, the <i>read</i> method (see below) will create the buffer automatically, as well.</p>
+
+</li>
+</ul>
+
+<h2 id="Net::SSH::Perl::Packet-read-ssh">Net::SSH::Perl::Packet-&gt;read($ssh)</h2>
+
+<p>Reads a packet from the ssh daemon and returns that packet.</p>
+
+<p>This method will block until an entire packet has been read. The socket itself is non-blocking, but the method waits (using <i>select</i>) for data on the incoming socket, then processes that data when it comes in. If the data makes up a complete packet, the packet is returned to the caller. Otherwise <i>read</i> continues to try to read more data.</p>
+
+<h2 id="Net::SSH::Perl::Packet-read_poll-ssh">Net::SSH::Perl::Packet-&gt;read_poll($ssh)</h2>
+
+<p>Checks the data that&#39;s been read from the sshd to see if that data comprises a complete packet. If so, that packet is returned. If not, returns <code>undef</code>.</p>
+
+<p>This method does not block.</p>
+
+<h2 id="Net::SSH::Perl::Packet-read_expect-ssh-type">Net::SSH::Perl::Packet-&gt;read_expect($ssh, $type)</h2>
+
+<p>Reads the next packet from the daemon and dies if the packet type does not match <i>$type</i>. Otherwise returns the read packet.</p>
+
+<h2 id="packet-send-data">$packet-&gt;send([ $data ])</h2>
+
+<p>Sends a packet to the ssh daemon. <i>$data</i> is optional, and if supplied specifies the buffer to be sent in the packet (should be a <i>Net::SSH::Perl::Buffer</i> object). In addition, <i>$data</i>, if specified, <i>must</i> include the packed message type.</p>
+
+<p>If <i>$data</i> is not specified, <i>send</i> sends the buffer internal to the packet, which you&#39;ve presumably filled by calling the <i>put_*</i> methods (see below).</p>
+
+<h2 id="packet-type">$packet-&gt;type</h2>
+
+<p>Returns the message type of the packet <i>$packet</i>.</p>
+
+<h2 id="packet-data">$packet-&gt;data</h2>
+
+<p>Returns the message buffer from the packet <i>$packet</i>; a <i>Net::SSH::Perl::Buffer</i> object.</p>
+
+<h2 id="Net::SSH::Perl::Buffer-methods">Net::SSH::Perl::Buffer methods</h2>
+
+<p>Calling methods from the <i>Net::SSH::Perl::Buffer</i> class on your <i>Net::SSH::Perl::Packet</i> object will automatically invoke those methods on the buffer object internal to your packet object (which is created when your object is constructed). For example, if you executed the following code:</p>
+
+<pre><code>    my $packet = Net::SSH::Perl::Packet-&gt;new($ssh, type =&gt; SSH_CMSG_USER);
+    $packet-&gt;put_str($user);</code></pre>
+
+<p>this would construct a new packet object <i>$packet</i>, then fill its internal buffer by calling the <i>put_str</i> method on it.</p>
+
+<p>Refer to the <i>Net::SSH::Perl::Buffer</i> documentation (the <i>GET AND PUT METHODS</i> section) for more details on those methods.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

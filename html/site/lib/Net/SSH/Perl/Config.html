@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#Net::SSH::Perl::Config-new-host-args">Net::SSH::Perl::Config-&gt;new($host, %args)</a></li>
+      <li><a href="#cfg-read_config-file">$cfg-&gt;read_config($file)</a></li>
+      <li><a href="#cfg-merge_directive-line">$cfg-&gt;merge_directive($line)</a></li>
+      <li><a href="#cfg-get-key">$cfg-&gt;get($key)</a></li>
+      <li><a href="#cfg-set-key-value">$cfg-&gt;set($key, $value)</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Config - Load and manage SSH configuration</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Config;
+    my $cfg = Net::SSH::Perl::Config-&gt;new($host, foo =&gt; &#39;bar&#39;);
+    $cfg-&gt;read_config($config_file);
+    my $v = $cfg-&gt;get(&#39;foo&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Config</i> manages configuration data for <i>Net::SSH::Perl</i>. It merges options handed to it at object construction with options read from configuration files. Just as in the actual ssh program, the first obtained value of a configuration parameter is the value that&#39;s used; in other words, values given in the original parameter list will always override values read from configuration files.</p>
+
+<p>The configuration files should be in the same format used for the ssh command line program; see the <i>ssh</i> manpage for information on this format. <i>Net::SSH::Perl::Config</i> understands a subset of the configuration directives that can live in these files; this subset matches up with the functionality that <i>Net::SSH::Perl</i> can support. Unknown keywords will simply be skipped.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<h2 id="Net::SSH::Perl::Config-new-host-args">Net::SSH::Perl::Config-&gt;new($host, %args)</h2>
+
+<p>Constructs a new configuration container object and returns that object. <i>$host</i> is the host to which you&#39;re applying this configuration; you can leave it out (pass in an undefined or empty argument) if it&#39;s not applicable to you.</p>
+
+<p><i>$host</i> is needed for parsing the host-specific sections of the configuration files; the <i>Host</i> keyword restricts a set of directives as applying to a particular host (or set of hosts). When it encounters such a section, <i>Net::SSH::Perl::Config</i> will skip all of the directives in the section unless the host matches <i>$host</i>.</p>
+
+<p><i>%args</i> can contain the same arguments that you can pass to the <i>new</i> method of <i>Net::SSH::Perl</i>--those arguments are eventually passed through to this method when setting up the SSH object. The elements in <i>%args</i> override values in the configuration files.</p>
+
+<h2 id="cfg-read_config-file">$cfg-&gt;read_config($file)</h2>
+
+<p>Reads in the configuration file <i>$file</i> and adds any appropriate configuration data to the settings maintained by the <i>$cfg</i> object. If <i>$file</i> is unreadable, simply returns quietly.</p>
+
+<p>As stated above, values read from the configuration files are overridden by those passed in to the constructor. Furthermore, if you&#39;re reading from several config files in sequence, values read from the first files will override those read from the second, third, fourth, etc. files.</p>
+
+<h2 id="cfg-merge_directive-line">$cfg-&gt;merge_directive($line)</h2>
+
+<p>Merges the directive option <i>$line</i> into the configuration settings in <i>$cfg</i>. <i>$line</i> should be an option in the format used in the config file, eg. <i>&quot;BatchMode yes&quot;</i>. This is useful for merging in directives that are not necessarily in the config file, similar to how the <b>-o</b> option works in the <i>ssh</i> command line program.</p>
+
+<h2 id="cfg-get-key">$cfg-&gt;get($key)</h2>
+
+<p>Returns the value of the configuration parameter <i>$key</i>, and undefined if that parameter has not been set.</p>
+
+<h2 id="cfg-set-key-value">$cfg-&gt;set($key, $value)</h2>
+
+<p>Sets the value of the parameter <i>$key</i> to <i>$value</i>, and returns the new value.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

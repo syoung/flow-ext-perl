@@ -1,0 +1,165 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#eax_encrypt_authenticate">eax_encrypt_authenticate</a></li>
+      <li><a href="#eax_decrypt_verify">eax_decrypt_verify</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#adata_add">adata_add</a></li>
+      <li><a href="#encrypt_add">encrypt_add</a></li>
+      <li><a href="#encrypt_done">encrypt_done</a></li>
+      <li><a href="#decrypt_add">decrypt_add</a></li>
+      <li><a href="#decrypt_done">decrypt_done</a></li>
+      <li><a href="#clone">clone</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::AuthEnc::EAX - Authenticated encryption in EAX mode</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> ### OO interface
+ use Crypt::AuthEnc::EAX;
+
+ # encrypt and authenticate
+ my $ae = Crypt::AuthEnc::EAX-&gt;new(&quot;AES&quot;, $key, $iv);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data1&#39;);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data2&#39;);
+ my $ct = $ae-&gt;encrypt_add(&#39;data1&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data2&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data3&#39;);
+ my $tag = $ae-&gt;encrypt_done();
+
+ # decrypt and verify
+ my $ae = Crypt::AuthEnc::EAX-&gt;new(&quot;AES&quot;, $key, $iv);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data1&#39;);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data2&#39;);
+ my $pt = $ae-&gt;decrypt_add(&#39;ciphertext1&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext2&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext3&#39;);
+ my $tag = $ae-&gt;decrypt_done();
+ die &quot;decrypt failed&quot; unless $tag eq $expected_tag;
+
+ #or
+ my $result = $ae-&gt;decrypt_done($expected_tag); # 0 or 1
+
+ ### functional interface
+ use Crypt::AuthEnc::EAX qw(eax_encrypt_authenticate eax_decrypt_verify);
+
+ my ($ciphertext, $tag) = eax_encrypt_authenticate(&#39;AES&#39;, $key, $iv, $adata, $plaintext);
+ my $plaintext = eax_decrypt_verify(&#39;AES&#39;, $key, $iv, $adata, $ciphertext, $tag);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>EAX is a mode that requires a cipher, CTR and OMAC support and provides encryption and authentication. It is initialized with a random IV that can be shared publicly, additional authenticated data which can be fixed and public, and a random secret symmetric key.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code>  use Crypt::AuthEnc::EAX qw(eax_encrypt_authenticate eax_decrypt_verify);</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="eax_encrypt_authenticate">eax_encrypt_authenticate</h2>
+
+<pre><code> my ($ciphertext, $tag) = eax_encrypt_authenticate($cipher, $key, $iv, $adata, $plaintext);
+
+ # $cipher .. &#39;AES&#39; or name of any other cipher with 16-byte block len
+ # $key ..... AES key of proper length (128/192/256bits)
+ # $iv ...... unique initialization vector (no need to keep it secret)
+ # $adata ... additional authenticated data</code></pre>
+
+<h2 id="eax_decrypt_verify">eax_decrypt_verify</h2>
+
+<pre><code> my $plaintext = eax_decrypt_verify($cipher, $key, $iv, $adata, $ciphertext, $tag);
+ # on error returns undef</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $ae = Crypt::AuthEnc::EAX-&gt;new($cipher, $key, $iv);
+ #or
+ my $ae = Crypt::AuthEnc::EAX-&gt;new($cipher, $key, $iv, $adata);
+
+ # $cipher .. &#39;AES&#39; or name of any other cipher with 16-byte block len
+ # $key ..... AES key of proper length (128/192/256bits)
+ # $iv ...... unique initialization vector (no need to keep it secret)
+ # $adata ... additional authenticated data (optional)</code></pre>
+
+<h2 id="adata_add">adata_add</h2>
+
+<pre><code> $ae-&gt;adata_add($adata);                        # can be called multiple times</code></pre>
+
+<h2 id="encrypt_add">encrypt_add</h2>
+
+<pre><code> $ciphertext = $ae-&gt;encrypt_add($data);         # can be called multiple times</code></pre>
+
+<h2 id="encrypt_done">encrypt_done</h2>
+
+<pre><code> $tag = $ae-&gt;encrypt_done();                    # returns $tag value</code></pre>
+
+<h2 id="decrypt_add">decrypt_add</h2>
+
+<pre><code> $plaintext = $ae-&gt;decrypt_add($ciphertext);    # can be called multiple times</code></pre>
+
+<h2 id="decrypt_done">decrypt_done</h2>
+
+<pre><code> my $tag = $ae-&gt;decrypt_done;           # returns $tag value
+ #or
+ my $result = $ae-&gt;decrypt_done($tag);  # returns 1 (success) or 0 (failure)</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> my $ae_new = $ae-&gt;clone;</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/CCM.html">Crypt::AuthEnc::CCM</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/GCM.html">Crypt::AuthEnc::GCM</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/OCB.html">Crypt::AuthEnc::OCB</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/EAX_mode">https://en.wikipedia.org/wiki/EAX_mode</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

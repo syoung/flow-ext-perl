@@ -1,0 +1,193 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#cmake_generator">cmake_generator</a></li>
+      <li><a href="#is_dmake">is_dmake</a></li>
+    </ul>
+  </li>
+  <li><a href="#HELPERS">HELPERS</a>
+    <ul>
+      <li><a href="#cmake">cmake</a></li>
+      <li><a href="#cmake_generator1">cmake_generator</a></li>
+      <li><a href="#make">make</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Plugin::Build::CMake - CMake plugin for Alien::Build</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use alienfile;
+ 
+ share {
+   plugin &#39;Build::CMake&#39;;
+   build [
+     # this is the default build step, if you do not specify one.
+     [ &#39;%{cmake}&#39;,
+         @{ meta-&gt;prop-&gt;{plugin_build_cmake}-&gt;{args} },
+         # ... put extra cmake args here ...
+         &#39;%{.install.extract}&#39;
+     ],
+     &#39;%{make}&#39;,
+     &#39;%{make} install&#39;,
+   ];
+ };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This plugin helps build alienized projects that use <code>cmake</code>. The intention is to make this a core <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> plugin if/when it becomes stable enough.</p>
+
+<p>This plugin provides a meta property <code>plugin_build_cmake.args</code> which may change over time but for the moment includes:</p>
+
+<pre><code> -G %{cmake_generator}                          \
+ -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true    \
+ -DCMAKE_INSTALL_PREFIX:PATH=%{.install.prefix} \
+ -DCMAKE_INSTALL_LIBDIR:PATH=lib                \
+ -DCMAKE_MAKE_PROGRAM:PATH=%{make}</code></pre>
+
+<p>This plugin supports out-of-source builds via the meta property <code>out_of_source</code>.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="cmake_generator">cmake_generator</h2>
+
+<p>Returns the <code>cmake</code> generator according to your Perl&#39;s <code>make</code>.</p>
+
+<h2 id="is_dmake">is_dmake</h2>
+
+<p>Returns true if your Perls <code>make</code> appears to be <code>dmake</code>.</p>
+
+<h1 id="HELPERS">HELPERS</h1>
+
+<h2 id="cmake">cmake</h2>
+
+<p>This plugin replaces the default <code>cmake</code> helper with the one that comes from <a>Alien::cmake3</a>.</p>
+
+<h2 id="cmake_generator1">cmake_generator</h2>
+
+<p>This is the appropriate <code>cmake</code> generator to use based on the make used by your Perl. This is frequently <code>Unix Makefiles</code>. One place where it may be different is if your Windows Perl uses <code>nmake</code>, which comes with Visual C++.</p>
+
+<h2 id="make">make</h2>
+
+<p>This plugin <i>may</i> replace the default <code>make</code> helper if the default <code>make</code> is not supported by <code>cmake</code>. This is most often an issue with older versions of Strawberry Perl which used <code>dmake</code>. On Perls that use <code>dmake</code>, this plugin will search for GNU Make in the PATH, and if it can&#39;t be found will fallback on using <a>Alien::gmake</a>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Alien::Build"><a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a></dt>
+<dd>
+
+</dd>
+<dt id="Alien::Build::Plugin::Build::Autoconf"><a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/Autoconf.html">Alien::Build::Plugin::Build::Autoconf</a></dt>
+<dd>
+
+</dd>
+<dt id="alienfile"><a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

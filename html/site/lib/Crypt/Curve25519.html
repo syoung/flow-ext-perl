@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#secret_key">secret_key</a></li>
+      <li><a href="#public_key">public_key</a></li>
+      <li><a href="#shared_secret">shared_secret</a></li>
+      <li><a href="#generate">generate</a></li>
+    </ul>
+  </li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#curve25519_secret_key">curve25519_secret_key</a></li>
+      <li><a href="#curve25519_public_key">curve25519_public_key</a></li>
+      <li><a href="#curve25519_shared_secret">curve25519_shared_secret</a></li>
+      <li><a href="#curve25519">curve25519</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Curve25519 - Generate shared secret using elliptic-curve Diffie-Hellman function</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.06</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Crypt::Curve25519;
+
+    # Alice:
+    my $alice_secret_key = curve25519_secret_key(random_32_bytes());
+    my $alice_public_key = curve25519_public_key( $alice_secret_key );
+
+    # Bob:
+    my $bob_secret_key = curve25519_secret_key(random_32_bytes());
+    my $bob_public_key = curve25519_public_key( $bob_secret_key );
+
+    # Alice and Bob exchange their public keys
+    my $alice_public_key_hex = unpack(&#39;H64&#39;, $alice_public_key);
+    my $bob_public_key_hex   = unpack(&#39;H64&#39;, $bob_public_key);
+
+    # Alice calculates shared secret to communicate with Bob
+    my $shared_secret_with_bob = curve25519_shared_secret(
+        $alice_secret_key,
+        pack(&#39;H64&#39;, $bob_public_key_hex)
+    );
+
+    # Bob calculates shared secret to communicate with Alice
+    my $shared_secret_with_alice = curve25519_shared_secret(
+        $bob_secret_key,
+        pack(&#39;H64&#39;, $alice_public_key_hex)
+    );
+
+    # Shared secrets are equal
+    die &quot;Something horrible has happend!&quot;
+      unless $shared_secret_with_bob eq $shared_secret_with_alice;</code></pre>
+
+<p>This package provides also simplified OO interface:</p>
+
+<pre><code>    use Crypt::Curve25519 ();
+
+    my $c = Crypt::Curve25519-&gt;new();
+
+    # Alice:
+    my $alice_secret_key_hex = $c-&gt;secret_key(random_hexencoded_32_bytes());
+    my $alice_public_key_hex = $c-&gt;public_key( $alice_secret_key_hex );
+
+    # Bob:
+    my $bob_secret_key_hex = $c-&gt;secret_key(random_hexencoded_32_bytes());
+    my $bob_public_key_hex = $c-&gt;public_key( $bob_secret_key_hex );
+
+    # Alice and Bob exchange their public keys
+
+    # Alice calculates shared secret to communicate with Bob
+    my $shared_secret_with_bob_hex = $c-&gt;shared_secret(
+                                    $alice_secret_key_hex,
+                                    $bob_public_key_hex);
+
+    # Bob calculates shared secret to communicate with Alice
+    my $shared_secret_with_alice_hex = $c-&gt;shared_secret(
+                                    $bob_secret_key_hex,
+                                    $alice_public_key_hex);
+
+    # Shared secrets are equal
+    die &quot;Something horrible has happend!&quot;
+      unless $shared_secret_with_bob_hex eq $shared_secret_with_alice_hex;</code></pre>
+
+<p>Example functions to generate pseudo-random private secret key:</p>
+
+<pre><code>    sub random_32_bytes {
+        return join(&#39;&#39;, map { chr(int(rand(255))) } 1 .. 32);
+    }
+
+    sub random_hexencoded_32_bytes {
+       return unpack(&#39;H64&#39;, random_32_bytes());
+    }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Curve25519 is a state-of-the-art Diffie-Hellman function suitable for a wide variety of applications.</p>
+
+<p>Given a user&#39;s 32-byte secret key, Curve25519 computes the user&#39;s 32-byte public key. Given the user&#39;s 32-byte secret key and another user&#39;s 32-byte public key, Curve25519 computes a 32-byte secret shared by the two users. This secret can then be used to authenticate and encrypt messages between the two users.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code>    my $c = Crypt::Curve25519-&gt;new();</code></pre>
+
+<p>Create a new object</p>
+
+<h2 id="secret_key">secret_key</h2>
+
+<pre><code>    my $my_secret_key_hex = $c-&gt;secret_key( $my_random_32byte_string_hex );</code></pre>
+
+<p>Using hex encoded 32-byte random string from cryptographically safe source create masked secret key.</p>
+
+<h2 id="public_key">public_key</h2>
+
+<pre><code>    my $public_key_hex = $c-&gt;public_key( $my_secret_key_hex );</code></pre>
+
+<p>Using hex encoded masked secret key generate corresponding hex encoded 32-byte Curve25519 public key.</p>
+
+<h2 id="shared_secret">shared_secret</h2>
+
+<pre><code>    my $shared_secret_hex = $c-&gt;shared_secret(
+        $my_secret_key_hex, $his_public_key_hex
+    );</code></pre>
+
+<p>Using provided hex encoded keys generate 32-byte hex encoded shared secret, that both parties can use without disclosing their private secret keys.</p>
+
+<h2 id="generate">generate</h2>
+
+<p>Access to primitive method is also provided.</p>
+
+<pre><code>    my $key_hex = $c-&gt;generate($my_secret_key_hex, $basepoint_hex);
+
+    # public key
+    if ( $basepoint_hex eq unpack(&quot;H64&quot;, pack(&quot;H64&quot;, &quot;09&quot;)) ) {
+        print &quot;\$key_hex is a public key\n&quot;;
+    }
+    elsif ( $basepoint_hex eq $his_public_key_hex ) {
+        print &quot;\$key_hex is a shared secret\n&quot;;
+    }</code></pre>
+
+<p>Using provided hex encoded secret key and depending on the 32-byte hex encoded basepoint generate 32-byte hex encoded public key or shared secret.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="curve25519_secret_key">curve25519_secret_key</h2>
+
+<pre><code>    my $my_secret_key = curve25519_secret_key($my_random_32byte_string);</code></pre>
+
+<p>Using provided 32-byte random string from cryptographically safe source create masked secret key.</p>
+
+<h2 id="curve25519_public_key">curve25519_public_key</h2>
+
+<pre><code>    my $public_key = curve25519_public_key($my_secret_key);</code></pre>
+
+<p>Using masked secret key generate corresponding 32-byte Curve25519 public key.</p>
+
+<h2 id="curve25519_shared_secret">curve25519_shared_secret</h2>
+
+<pre><code>    my $shared_secret = curve25519_shared_secret(
+        $my_secret_key, $his_public_key
+    );</code></pre>
+
+<p>Using provided keys generate 32-byte shared secret, that both parties can use without disclosing their private secret keys.</p>
+
+<h2 id="curve25519">curve25519</h2>
+
+<p>Access to primitive function is also provided.</p>
+
+<pre><code>    use Crypt::Curve25519 &#39;curve25519&#39;;
+
+    my $key = curve25519($my_secret_key, $basepoint);
+
+    # public key
+    if ( $basepoint eq pack(&#39;H64&#39;, &#39;09&#39;) ) {
+        print &quot;\$key is a public key\n&quot;;
+    }
+    elsif ( $basepoint eq $his_public_key ) {
+        print &quot;\$key is a shared secret\n&quot;;
+    }</code></pre>
+
+<p>Using provided secret key and depending on the 32-byte basepoint generate 32-byte public key or shared secret.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="http://cr.yp.to/ecdh.html">http://cr.yp.to/ecdh.html</a></p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Alex J. G. Burzy&#x144;ski &lt;ajgb@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2014 by Alex J. G. Burzy&#x144;ski &lt;ajgb@cpan.org&gt;.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

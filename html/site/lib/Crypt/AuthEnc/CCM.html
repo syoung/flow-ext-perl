@@ -1,0 +1,163 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#ccm_encrypt_authenticate">ccm_encrypt_authenticate</a></li>
+      <li><a href="#ccm_decrypt_verify">ccm_decrypt_verify</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#encrypt_add">encrypt_add</a></li>
+      <li><a href="#encrypt_done">encrypt_done</a></li>
+      <li><a href="#decrypt_add">decrypt_add</a></li>
+      <li><a href="#decrypt_done">decrypt_done</a></li>
+      <li><a href="#clone">clone</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::AuthEnc::CCM - Authenticated encryption in CCM mode</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> ### OO interface
+ use Crypt::AuthEnc::CCM;
+
+ # encrypt and authenticate
+ my $ae = Crypt::AuthEnc::CCM-&gt;new(&quot;AES&quot;, $key, $iv, $adata, $tag_len, $pt_len);
+ my $ct = $ae-&gt;encrypt_add(&#39;data1&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data2&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data3&#39;);
+ my $tag = $ae-&gt;encrypt_done();
+
+ # decrypt and verify
+ my $ae = Crypt::AuthEnc::CCM-&gt;new(&quot;AES&quot;, $key, $iv, $adata, $tag_len, $pt_len);
+ my $pt = $ae-&gt;decrypt_add(&#39;ciphertext1&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext2&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext3&#39;);
+ my $tag = $ae-&gt;decrypt_done();
+ die &quot;decrypt failed&quot; unless $tag eq $expected_tag;
+
+ #or
+ my $result = $ae-&gt;decrypt_done($expected_tag); # 0 or 1
+
+ ### functional interface
+ use Crypt::AuthEnc::CCM qw(ccm_encrypt_authenticate ccm_decrypt_verify);
+
+ ($ciphertext, $tag) = ccm_encrypt_authenticate(&#39;AES&#39;, $key, $nonce, $adata, $tag_len, $plaintext);
+ $plaintext = ccm_decrypt_verify(&#39;AES&#39;, $key, $nonce, $adata, $ciphertext, $tag);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>CCM is a encrypt+authenticate mode that is centered around using AES (or any 16-byte cipher) as a primitive. Unlike EAX and OCB mode, it is only meant for packet mode where the length of the input is known in advance.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code> use Crypt::AuthEnc::CCM qw(ccm_encrypt_authenticate ccm_decrypt_verify);</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="ccm_encrypt_authenticate">ccm_encrypt_authenticate</h2>
+
+<pre><code> my ($ciphertext, $tag) = ccm_encrypt_authenticate($cipher, $key, $nonce, $adata, $tag_len, $plaintext);
+
+ # $cipher .. &#39;AES&#39; or name of any other cipher with 16-byte block len
+ # $key ..... key of proper length (e.g. 128/192/256bits for AES)
+ # $nonce ... unique nonce/salt (no need to keep it secret)
+ # $adata ... additional authenticated data
+ # $tag_len . required length of output tag</code></pre>
+
+<p>CCM parameters should follow <a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38c.pdf">http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38c.pdf</a></p>
+
+<pre><code> # tag length:   4, 6, 8, 10, 12, 14, 16 (reasonable minimum is 8)
+ # nonce length: 7, 8, 9, 10, 11, 12, 13 (if you are not sure, use 11)
+ # BEWARE nonce length determines max. enc/dec data size: max_data_size = 2^(8*(15-nonce_len))</code></pre>
+
+<h2 id="ccm_decrypt_verify">ccm_decrypt_verify</h2>
+
+<pre><code> my $plaintext = ccm_decrypt_verify($cipher, $key, $nonce, $adata, $ciphertext, $tag);
+ # on error returns undef</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $ae = Crypt::AuthEnc::CCM-&gt;new($cipher, $key, $nonce, $adata, $tag_len, $pt_len);
+
+ # $cipher .. &#39;AES&#39; or name of any other cipher with 16-byte block len
+ # $key ..... key of proper length (e.g. 128/192/256bits for AES)
+ # $nonce ... unique nonce/salt (no need to keep it secret)
+ # $adata ... additional authenticated data
+ # $tag_len . required length of output tag
+ # $pt_len .. expected length of plaintext/ciphertext to encrypt/decrypt</code></pre>
+
+<h2 id="encrypt_add">encrypt_add</h2>
+
+<pre><code> $ciphertext = $ae-&gt;encrypt_add($data);        # can be called multiple times</code></pre>
+
+<h2 id="encrypt_done">encrypt_done</h2>
+
+<pre><code> my $tag = $ae-&gt;encrypt_done;                  # returns $tag value</code></pre>
+
+<h2 id="decrypt_add">decrypt_add</h2>
+
+<pre><code> $plaintext = $ae-&gt;decrypt_add($ciphertext);   # can be called multiple times</code></pre>
+
+<h2 id="decrypt_done">decrypt_done</h2>
+
+<pre><code> my $tag = $ae-&gt;decrypt_done;           # returns $tag value
+ #or
+ my $result = $ae-&gt;decrypt_done($tag);  # returns 1 (success) or 0 (failure)</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> my $ae_new = $ae-&gt;clone;</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/EAX.html">Crypt::AuthEnc::EAX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/GCM.html">Crypt::AuthEnc::GCM</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/OCB.html">Crypt::AuthEnc::OCB</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/CCM_mode">https://en.wikipedia.org/wiki/CCM_mode</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

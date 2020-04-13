@@ -1,0 +1,122 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a></li>
+  <li><a href="#EXAMPLE">EXAMPLE</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>IDEA - Perl interface to IDEA block cipher</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Crypt::IDEA;
+    </code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This perl extension is an implementation of the IDEA block cipher algorithm. The module implements the Crypt::BlockCipher interface, which has the following methods</p>
+
+<dl>
+
+<dt id="blocksize-item-keysize-item-encrypt-item-decrypt">blocksize =item keysize =item encrypt =item decrypt</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<dl>
+
+<dt id="blocksize">blocksize</dt>
+<dd>
+
+<p>Returns the size (in bytes) of the block cipher.</p>
+
+</dd>
+<dt id="keysize">keysize</dt>
+<dd>
+
+<p>Returns the size (in bytes) of the key.</p>
+
+</dd>
+<dt id="new">new</dt>
+<dd>
+
+<pre><code>        my $cipher = new IDEA $key;</code></pre>
+
+<p>This creates a new IDEA BlockCipher object, using $key, where $key is a key of <code>keysize()</code> bytes.</p>
+
+</dd>
+<dt id="encrypt">encrypt</dt>
+<dd>
+
+<pre><code>        my $cipher = new IDEA $key;
+        my $ciphertext = $cipher-&gt;encrypt($plaintext);</code></pre>
+
+<p>This function encrypts $plaintext and returns the $ciphertext where $plaintext and $ciphertext should be of <code>blocksize()</code> bytes.</p>
+
+</dd>
+<dt id="decrypt">decrypt</dt>
+<dd>
+
+<pre><code>        my $cipher = new IDEA $key;
+        my $plaintext = $cipher-&gt;decrypt($ciphertext);</code></pre>
+
+<p>This function decrypts $ciphertext and returns the $plaintext where $plaintext and $ciphertext should be of <code>blocksize()</code> bytes.</p>
+
+</dd>
+</dl>
+
+<h1 id="EXAMPLE">EXAMPLE</h1>
+
+<pre><code>        my $key = pack(&quot;H32&quot;, &quot;0123456789ABCDEF0123456789ABCDEF&quot;);
+        my $cipher = new IDEA $key;
+        my $ciphertext = $cipher-&gt;encrypt(&quot;plaintex&quot;);  # NB - 8 bytes
+        print unpack(&quot;H16&quot;, $ciphertext), &quot;\n&quot;;</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>Crypt::CBD, Crypt::DES, Crypt::Blowfish</p>
+
+<p>Bruce Schneier, <i>Applied Cryptography</i>, 1995, Second Edition, published by John Wiley &amp; Sons, Inc.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>This implementation is copyright Systemics Ltd ( http://www.systemics.com/ ).</p>
+
+<p>The IDEA algorithm is patented in Europe and the United States by Ascom-Tech AG.</p>
+
+<p>Module altered between 1999 and 2005 to allow added functionality with perl -MCPAN, Changes by Dave Paris (edited lib paths, endian issues, new tests).</p>
+
+<p>Thank you to contributors for endian patches and new test suite!</p>
+
+
+</body>
+
+</html>
+
+

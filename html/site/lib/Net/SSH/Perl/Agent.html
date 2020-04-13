@@ -1,0 +1,120 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#Net::SSH::Perl::Agent-new-version">Net::SSH::Perl::Agent-&gt;new($version)</a></li>
+      <li><a href="#agent-identity_iterator">$agent-&gt;identity_iterator</a></li>
+      <li><a href="#agent-first_identity">$agent-&gt;first_identity</a></li>
+      <li><a href="#agent-next_identity">$agent-&gt;next_identity</a></li>
+      <li><a href="#agent-sign-key-data">$agent-&gt;sign($key, $data)</a></li>
+      <li><a href="#agent-decrypt-key-data-session_id">$agent-&gt;decrypt($key, $data, $session_id)</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Agent - Client for agent authentication</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Agent;
+    my $agent = Net::SSH::Perl::Agent-&gt;new(2);  ## SSH-2 protocol
+    my $iter = $agent-&gt;identity_iterator;
+    while (my($key, $comment) = $iter-&gt;()) {
+        ## Do something with $key.
+    }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Agent</i> provides a client for agent-based publickey authentication. The idea behind agent authentication is that an auth daemon is started as the parent of all of your other processes (eg. as the parent of your shell process); all other processes thus inherit the connection to the daemon.</p>
+
+<p>After loading your public keys into the agent using <i>ssh-add</i>, the agent listens on a Unix domain socket for requests for identities. When requested it sends back the public portions of the keys, which the SSH client (ie. <i>Net::SSH::Perl</i>, in this case) can send to the sshd, to determine if the keys will be accepted on the basis of authorization. If so, the client requests that the agent use the key to decrypt a random challenge (SSH-1) or sign a piece of data (SSH-2).</p>
+
+<p><i>Net::SSH::Perl::Agent</i> implements the client portion of the authentication agent; this is the piece that interfaces with <i>Net::SSH::Perl</i>&#39;s authentication mechanism to contact the agent daemon and ask for identities, etc. If you use publickey authentication (<i>RSA</i> authentication in SSH-1, <i>PublicKey</i> authentication in SSH-2), an attempt will automatically be made to contact the authentication agent. If the attempt succeeds, <i>Net::SSH::Perl</i> will try to use the identities returned from the agent, in addition to any identity files on disk.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<h2 id="Net::SSH::Perl::Agent-new-version">Net::SSH::Perl::Agent-&gt;new($version)</h2>
+
+<p>Constructs a new <i>Agent</i> object and returns that object.</p>
+
+<p><i>$version</i> should be either <i>1</i> or <i>2</i> and is a mandatory argument; it specifies the protocol version that the agent client should use when talking to the agent daemon.</p>
+
+<h2 id="agent-identity_iterator">$agent-&gt;identity_iterator</h2>
+
+<p>This is probably the easiest way to get at the identities provided by the agent. <i>identity_iterator</i> returns an iterator function that, when invoked, will returned the next identity in the list from the agent. For example:</p>
+
+<pre><code>    my $iter = $agent-&gt;identity_iterator;
+    while (my($key, $comment) = $iter-&gt;()) {
+         ## Do something with $key.
+    }</code></pre>
+
+<p>If called in scalar context, the iterator function will return the next key (a subclass of <i>Net::SSH::Perl::Key</i>). If called in list context (as above), both the key and the comment are returned.</p>
+
+<h2 id="agent-first_identity">$agent-&gt;first_identity</h2>
+
+<p>Returns the first identity in the list provided by the auth agent.</p>
+
+<p>If called in scalar context, the iterator function will return the next key (a subclass of <i>Net::SSH::Perl::Key</i>). If called in list context, both the key and the comment are returned.</p>
+
+<h2 id="agent-next_identity">$agent-&gt;next_identity</h2>
+
+<p>Returns the next identity in the list provided by the auth agent. You <i>must</i> call this <i>after</i> first calling the <i>first_identity</i> method. For example:</p>
+
+<pre><code>    my($key, $comment) = $agent-&gt;first_identity;
+    ## Do something.
+
+    while (($key, $comment) = $agent-&gt;next_identity) {
+        ## Do something.
+    }</code></pre>
+
+<p>If called in scalar context, the iterator function will return the next key (a subclass of <i>Net::SSH::Perl::Key</i>). If called in list context, both the key and the comment are returned.</p>
+
+<h2 id="agent-sign-key-data">$agent-&gt;sign($key, $data)</h2>
+
+<p>Asks the agent <i>$agent</i> to sign the data <i>$data</i> using the private portion of <i>$key</i>. The key and the data are sent to the agent, which returns the signature; the signature is then sent to the sshd for verification.</p>
+
+<p>This method is only applicable in SSH-2.</p>
+
+<h2 id="agent-decrypt-key-data-session_id">$agent-&gt;decrypt($key, $data, $session_id)</h2>
+
+<p>Asks the agent to which <i>$agent</i> holds an open connection to decrypt the data <i>$data</i> using the private portion of <i>$key</i>. <i>$data</i> should be a big integer (<i>Math::GMP</i> object), and is generally a challenge to a request for RSA authentication. <i>$session_id</i> is the SSH session ID:</p>
+
+<pre><code>    $ssh-&gt;session_id</code></pre>
+
+<p>where <i>$ssh</i> is a <i>Net::SSH::Perl::SSH1</i> object.</p>
+
+<p>This method is only applicable in SSH-1.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

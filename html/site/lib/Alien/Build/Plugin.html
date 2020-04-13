@@ -1,0 +1,263 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CONSTRUCTOR">CONSTRUCTOR</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#init">init</a></li>
+      <li><a href="#subplugin">subplugin</a></li>
+      <li><a href="#has">has</a></li>
+      <li><a href="#meta">meta</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Plugin - Plugin base class for Alien::Build</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>Create your plugin:</p>
+
+<pre><code> package Alien::Build::Plugin::Type::MyPlugin;
+ 
+ use Alien::Build::Plugin;
+ use Carp ();
+ 
+ has prop1 =&gt; &#39;default value&#39;;
+ has prop2 =&gt; sub { &#39;default value&#39; };
+ has prop3 =&gt; sub { Carp::croak &#39;prop3 is a required property&#39; };
+ 
+ sub init
+ {
+   my($self, $meta) = @_;
+ 
+   my $prop1 = $self-&gt;prop1;
+   my $prop2 = $self-&gt;prop2;
+   my $prop3 = $self-&gt;prop3;
+ 
+   $meta-&gt;register_hook(sub {
+     build =&gt; [ &#39;%{make}&#39;, &#39;%{make} install&#39; ],
+   });
+ }</code></pre>
+
+<p>From your <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a></p>
+
+<pre><code> use alienfile;
+ plugin &#39;Type::MyPlugin&#39; =&gt; (
+   prop2 =&gt; &#39;different value&#39;,
+   prop3 =&gt; &#39;need to provide since it is required&#39;,
+ );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This document describes the <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> plugin base class. For details on how to write a plugin, see <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/PluginAuthor.html">Alien::Build::Manual::PluginAuthor</a>.</p>
+
+<p>Listed are some common types of plugins:</p>
+
+<dl>
+
+<dt id="Alien::Build::Plugin::Build"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build.html">Alien::Build::Plugin::Build</a></dt>
+<dd>
+
+<p>Tools for building.</p>
+
+</dd>
+<dt id="Alien::Build::Plugin::Core"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Core.html">Alien::Build::Plugin::Core</a></dt>
+<dd>
+
+<p>Tools already included.</p>
+
+</dd>
+<dt id="Alien::Build::Plugin::Download"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Download.html">Alien::Build::Plugin::Download</a></dt>
+<dd>
+
+<p>Methods for retrieving from the internet.</p>
+
+</dd>
+<dt id="Alien::Build::Plugin::Decode"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Decode.html">Alien::Build::Plugin::Decode</a></dt>
+<dd>
+
+<p>Normally use Download plugins which will pick the correct Decode plugins.</p>
+
+</dd>
+<dt id="Alien::Build::Plugin::Extract"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Extract.html">Alien::Build::Plugin::Extract</a></dt>
+<dd>
+
+<p>Extract from archives that have been downloaded.</p>
+
+</dd>
+<dt id="Alien::Build::Plugin::Fetch"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Fetch.html">Alien::Build::Plugin::Fetch</a></dt>
+<dd>
+
+<p>Normally use Download plugins which will pick the correct Fetch plugins.</p>
+
+</dd>
+<dt id="Alien::Build::Plugin::Prefer"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Prefer.html">Alien::Build::Plugin::Prefer</a></dt>
+<dd>
+
+<p>Normally use Download plugins which will pick the correct Prefer plugins.</p>
+
+</dd>
+<dt id="Alien::Build::Plugin::Probe"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Probe.html">Alien::Build::Plugin::Probe</a></dt>
+<dd>
+
+<p>Look for packages already installed on the system.</p>
+
+</dd>
+</dl>
+
+<h1 id="CONSTRUCTOR">CONSTRUCTOR</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $plugin = Alien::Build::Plugin-&gt;new(%props);</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="init">init</h2>
+
+<pre><code> $plugin-&gt;init($ab_class-&gt;meta); # $ab is an Alien::Build class name</code></pre>
+
+<p>You provide the implementation for this. The intent is to register hooks and set meta properties on the <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> class.</p>
+
+<h2 id="subplugin">subplugin</h2>
+
+<p><b>DEPRECATED</b>: Maybe removed, but not before 1 October 2018.</p>
+
+<pre><code> my $plugin2 = $plugin1-&gt;subplugin($plugin_name, %args);</code></pre>
+
+<p>Finds the given plugin and loads it (unless already loaded) and creats a new instance and returns it. Most useful from a Negotiate plugin, like this:</p>
+
+<pre><code> sub init
+ {
+   my($self, $meta) = @_;
+   $self-&gt;subplugin(
+     &#39;Foo::Bar&#39;,  # loads Alien::Build::Plugin::Foo::Bar,
+                  # or throw exception
+     foo =&gt; 1,    # these key/value pairs passsed into new
+     bar =&gt; 2,    # for the plugin instance.
+   )-&gt;init($meta);
+ }</code></pre>
+
+<h2 id="has">has</h2>
+
+<pre><code> has $prop_name;
+ has $prop_name =&gt; $default;</code></pre>
+
+<p>Specifies a property of the plugin. You may provide a default value as either a string scalar, or a code reference. The code reference will be called to compute the default value, and if you want the default to be a list or hash reference, this is how you want to do it:</p>
+
+<pre><code> has foo =&gt; sub { [1,2,3] };</code></pre>
+
+<h2 id="meta">meta</h2>
+
+<pre><code> my $meta = $plugin-&gt;meta;</code></pre>
+
+<p>Returns the plugin meta object.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/PluginAuthor.html">Alien::Build::Manual::PluginAuthor</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

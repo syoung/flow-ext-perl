@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::OpenSSH::ConnectionCache - cache and reuse SSH connections transparently</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Net::OpenSSH;
+  use Net::OpenSSH::ConnectionCache;
+
+  for (1..10) {
+    my $ssh = Net::OpenSSH-&gt;new($host);
+    $ssh-&gt;system(&quot;$cmd $_&quot;);
+  }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module installs a <code>$Net::OpenSSH::FACTORY</code> hook implementing a SSH connection caching scheme.</p>
+
+<p><code>$Net::OpenSSH::ConnectionCache::MAX_SIZE</code> controls the cache size. Once as many connections are allocated, the module will try to free any of them before allocating a new one.</p>
+
+<p>The function <code>clean_cache</code> makes the module forget (and close) all the cached connections:</p>
+
+<pre><code>  Net::OpenSSH::ConnectionCache::clean_cache();</code></pre>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>Copyright (C) 2011, 2014 by Salvador Fandi&ntilde;o (sfandino@yahoo.com)</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself, either Perl version 5.10.0 or, at your option, any later version of Perl 5 you may have available.</p>
+
+
+</body>
+
+</html>
+
+

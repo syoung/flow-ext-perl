@@ -1,0 +1,178 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#gcm_encrypt_authenticate">gcm_encrypt_authenticate</a></li>
+      <li><a href="#gcm_decrypt_verify">gcm_decrypt_verify</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#iv_add">iv_add</a></li>
+      <li><a href="#adata_add">adata_add</a></li>
+      <li><a href="#encrypt_add">encrypt_add</a></li>
+      <li><a href="#encrypt_done">encrypt_done</a></li>
+      <li><a href="#decrypt_add">decrypt_add</a></li>
+      <li><a href="#decrypt_done">decrypt_done</a></li>
+      <li><a href="#reset">reset</a></li>
+      <li><a href="#clone">clone</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::AuthEnc::GCM - Authenticated encryption in GCM mode</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> ### OO interface
+ use Crypt::AuthEnc::GCM;
+
+ # encrypt and authenticate
+ my $ae = Crypt::AuthEnc::GCM-&gt;new(&quot;AES&quot;, $key, $iv);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data1&#39;);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data2&#39;);
+ my $ct = $ae-&gt;encrypt_add(&#39;data1&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data2&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data3&#39;);
+ my $tag = $ae-&gt;encrypt_done();
+
+ # decrypt and verify
+ my $ae = Crypt::AuthEnc::GCM-&gt;new(&quot;AES&quot;, $key, $iv);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data1&#39;);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data2&#39;);
+ my $pt = $ae-&gt;decrypt_add(&#39;ciphertext1&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext2&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext3&#39;);
+ my $tag = $ae-&gt;decrypt_done();
+ die &quot;decrypt failed&quot; unless $tag eq $expected_tag;
+
+ #or
+ my $result = $ae-&gt;decrypt_done($expected_tag); # 0 or 1
+
+ ### functional interface
+ use Crypt::AuthEnc::GCM qw(gcm_encrypt_authenticate gcm_decrypt_verify);
+
+ my ($ciphertext, $tag) = gcm_encrypt_authenticate(&#39;AES&#39;, $key, $iv, $adata, $plaintext);
+ my $plaintext = gcm_decrypt_verify(&#39;AES&#39;, $key, $iv, $adata, $ciphertext, $tag);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Galois/Counter Mode (GCM) - provides encryption and authentication.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code>  use Crypt::AuthEnc::GCM qw(gcm_encrypt_authenticate gcm_decrypt_verify);</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="gcm_encrypt_authenticate">gcm_encrypt_authenticate</h2>
+
+<pre><code> my ($ciphertext, $tag) = gcm_encrypt_authenticate($cipher, $key, $iv, $adata, $plaintext);
+
+ # $cipher .. &#39;AES&#39; or name of any other cipher with 16-byte block len
+ # $key ..... AES key of proper length (128/192/256bits)
+ # $iv ...... initialization vector
+ # $adata ... additional authenticated data</code></pre>
+
+<h2 id="gcm_decrypt_verify">gcm_decrypt_verify</h2>
+
+<pre><code> my $plaintext = gcm_decrypt_verify($cipher, $key, $iv, $adata, $ciphertext, $tag);
+ # on error returns undef</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $ae = Crypt::AuthEnc::GCM-&gt;new($cipher, $key);
+ #or
+ my $ae = Crypt::AuthEnc::GCM-&gt;new($cipher, $key, $iv);
+
+ # $cipher .. &#39;AES&#39; or name of any other cipher
+ # $key ..... encryption key of proper length
+ # $iv ...... initialization vector (optional, you can set it later via iv_add method)</code></pre>
+
+<h2 id="iv_add">iv_add</h2>
+
+<p>Set initialization vector (IV).</p>
+
+<pre><code> $ae-&gt;iv_add($iv_data);                        #can be called multiple times</code></pre>
+
+<h2 id="adata_add">adata_add</h2>
+
+<p>Add <b>additional authenticated data</b>. Can be called <b>after</b> all <code>iv_add</code> calls but before the first <code>encrypt_add</code> or <code>decrypt_add</code>.</p>
+
+<pre><code> $ae-&gt;adata_add($aad_data);                    # can be called multiple times</code></pre>
+
+<h2 id="encrypt_add">encrypt_add</h2>
+
+<pre><code> $ciphertext = $ae-&gt;encrypt_add($data);        # can be called multiple times</code></pre>
+
+<h2 id="encrypt_done">encrypt_done</h2>
+
+<pre><code> $tag = $ae-&gt;encrypt_done();                   # returns $tag value</code></pre>
+
+<h2 id="decrypt_add">decrypt_add</h2>
+
+<pre><code> $plaintext = $ae-&gt;decrypt_add($ciphertext);   # can be called multiple times</code></pre>
+
+<h2 id="decrypt_done">decrypt_done</h2>
+
+<pre><code> my $tag = $ae-&gt;decrypt_done;           # returns $tag value
+ #or
+ my $result = $ae-&gt;decrypt_done($tag);  # returns 1 (success) or 0 (failure)</code></pre>
+
+<h2 id="reset">reset</h2>
+
+<pre><code> $ae-&gt;reset;</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> my $ae_new = $ae-&gt;clone;</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/CCM.html">Crypt::AuthEnc::CCM</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/EAX.html">Crypt::AuthEnc::EAX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/OCB.html">Crypt::AuthEnc::OCB</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">https://en.wikipedia.org/wiki/Galois/Counter_Mode</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

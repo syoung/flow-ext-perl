@@ -1,0 +1,252 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#whirlpool">whirlpool</a></li>
+      <li><a href="#whirlpool_hex">whirlpool_hex</a></li>
+      <li><a href="#whirlpool_b64">whirlpool_b64</a></li>
+      <li><a href="#whirlpool_b64u">whirlpool_b64u</a></li>
+      <li><a href="#whirlpool_file">whirlpool_file</a></li>
+      <li><a href="#whirlpool_file_hex">whirlpool_file_hex</a></li>
+      <li><a href="#whirlpool_file_b64">whirlpool_file_b64</a></li>
+      <li><a href="#whirlpool_file_b64u">whirlpool_file_b64u</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#clone">clone</a></li>
+      <li><a href="#reset">reset</a></li>
+      <li><a href="#add">add</a></li>
+      <li><a href="#addfile">addfile</a></li>
+      <li><a href="#add_bits">add_bits</a></li>
+      <li><a href="#hashsize">hashsize</a></li>
+      <li><a href="#digest">digest</a></li>
+      <li><a href="#hexdigest">hexdigest</a></li>
+      <li><a href="#b64digest">b64digest</a></li>
+      <li><a href="#b64udigest">b64udigest</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Digest::Whirlpool - Hash function Whirlpool [size: 512 bits]</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   ### Functional interface:
+   use Crypt::Digest::Whirlpool qw( whirlpool whirlpool_hex whirlpool_b64 whirlpool_b64u
+                                whirlpool_file whirlpool_file_hex whirlpool_file_b64 whirlpool_file_b64u );
+
+   # calculate digest from string/buffer
+   $whirlpool_raw  = whirlpool(&#39;data string&#39;);
+   $whirlpool_hex  = whirlpool_hex(&#39;data string&#39;);
+   $whirlpool_b64  = whirlpool_b64(&#39;data string&#39;);
+   $whirlpool_b64u = whirlpool_b64u(&#39;data string&#39;);
+   # calculate digest from file
+   $whirlpool_raw  = whirlpool_file(&#39;filename.dat&#39;);
+   $whirlpool_hex  = whirlpool_file_hex(&#39;filename.dat&#39;);
+   $whirlpool_b64  = whirlpool_file_b64(&#39;filename.dat&#39;);
+   $whirlpool_b64u = whirlpool_file_b64u(&#39;filename.dat&#39;);
+   # calculate digest from filehandle
+   $whirlpool_raw  = whirlpool_file(*FILEHANDLE);
+   $whirlpool_hex  = whirlpool_file_hex(*FILEHANDLE);
+   $whirlpool_b64  = whirlpool_file_b64(*FILEHANDLE);
+   $whirlpool_b64u = whirlpool_file_b64u(*FILEHANDLE);
+
+   ### OO interface:
+   use Crypt::Digest::Whirlpool;
+
+   $d = Crypt::Digest::Whirlpool-&gt;new;
+   $d-&gt;add(&#39;any data&#39;);
+   $d-&gt;addfile(&#39;filename.dat&#39;);
+   $d-&gt;addfile(*FILEHANDLE);
+   $result_raw  = $d-&gt;digest;     # raw bytes
+   $result_hex  = $d-&gt;hexdigest;  # hexadecimal form
+   $result_b64  = $d-&gt;b64digest;  # Base64 form
+   $result_b64u = $d-&gt;b64udigest; # Base64 URL Safe form</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to the Whirlpool digest algorithm.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code>  use Crypt::Digest::Whirlpool qw(whirlpool whirlpool_hex whirlpool_b64 whirlpool_b64u
+                                      whirlpool_file whirlpool_file_hex whirlpool_file_b64 whirlpool_file_b64u);</code></pre>
+
+<p>Or all of them at once:</p>
+
+<pre><code>  use Crypt::Digest::Whirlpool &#39;:all&#39;;</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="whirlpool">whirlpool</h2>
+
+<p>Logically joins all arguments into a single string, and returns its Whirlpool digest encoded as a binary string.</p>
+
+<pre><code> $whirlpool_raw = whirlpool(&#39;data string&#39;);
+ #or
+ $whirlpool_raw = whirlpool(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="whirlpool_hex">whirlpool_hex</h2>
+
+<p>Logically joins all arguments into a single string, and returns its Whirlpool digest encoded as a hexadecimal string.</p>
+
+<pre><code> $whirlpool_hex = whirlpool_hex(&#39;data string&#39;);
+ #or
+ $whirlpool_hex = whirlpool_hex(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="whirlpool_b64">whirlpool_b64</h2>
+
+<p>Logically joins all arguments into a single string, and returns its Whirlpool digest encoded as a Base64 string, <b>with</b> trailing &#39;=&#39; padding.</p>
+
+<pre><code> $whirlpool_b64 = whirlpool_b64(&#39;data string&#39;);
+ #or
+ $whirlpool_b64 = whirlpool_b64(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="whirlpool_b64u">whirlpool_b64u</h2>
+
+<p>Logically joins all arguments into a single string, and returns its Whirlpool digest encoded as a Base64 URL Safe string (see RFC 4648 section 5).</p>
+
+<pre><code> $whirlpool_b64url = whirlpool_b64u(&#39;data string&#39;);
+ #or
+ $whirlpool_b64url = whirlpool_b64u(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="whirlpool_file">whirlpool_file</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its Whirlpool digest encoded as a binary string.</p>
+
+<pre><code> $whirlpool_raw = whirlpool_file(&#39;filename.dat&#39;);
+ #or
+ $whirlpool_raw = whirlpool_file(*FILEHANDLE);</code></pre>
+
+<h2 id="whirlpool_file_hex">whirlpool_file_hex</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its Whirlpool digest encoded as a hexadecimal string.</p>
+
+<pre><code> $whirlpool_hex = whirlpool_file_hex(&#39;filename.dat&#39;);
+ #or
+ $whirlpool_hex = whirlpool_file_hex(*FILEHANDLE);</code></pre>
+
+<p><b>BEWARE:</b> You have to make sure that the filehandle is in binary mode before you pass it as argument to the addfile() method.</p>
+
+<h2 id="whirlpool_file_b64">whirlpool_file_b64</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its Whirlpool digest encoded as a Base64 string, <b>with</b> trailing &#39;=&#39; padding.</p>
+
+<pre><code> $whirlpool_b64 = whirlpool_file_b64(&#39;filename.dat&#39;);
+ #or
+ $whirlpool_b64 = whirlpool_file_b64(*FILEHANDLE);</code></pre>
+
+<h2 id="whirlpool_file_b64u">whirlpool_file_b64u</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its Whirlpool digest encoded as a Base64 URL Safe string (see RFC 4648 section 5).</p>
+
+<pre><code> $whirlpool_b64url = whirlpool_file_b64u(&#39;filename.dat&#39;);
+ #or
+ $whirlpool_b64url = whirlpool_file_b64u(*FILEHANDLE);</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>The OO interface provides the same set of functions as <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Digest.html">Crypt::Digest</a>.</p>
+
+<h2 id="new">new</h2>
+
+<pre><code> $d = Crypt::Digest::Whirlpool-&gt;new();</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> $d-&gt;clone();</code></pre>
+
+<h2 id="reset">reset</h2>
+
+<pre><code> $d-&gt;reset();</code></pre>
+
+<h2 id="add">add</h2>
+
+<pre><code> $d-&gt;add(&#39;any data&#39;);
+ #or
+ $d-&gt;add(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="addfile">addfile</h2>
+
+<pre><code> $d-&gt;addfile(&#39;filename.dat&#39;);
+ #or
+ $d-&gt;addfile(*FILEHANDLE);</code></pre>
+
+<h2 id="add_bits">add_bits</h2>
+
+<pre><code> $d-&gt;add_bits($bit_string);   # e.g. $d-&gt;add_bits(&quot;111100001010&quot;);
+ #or
+ $d-&gt;add_bits($data, $nbits); # e.g. $d-&gt;add_bits(&quot;\xF0\xA0&quot;, 16);</code></pre>
+
+<h2 id="hashsize">hashsize</h2>
+
+<pre><code> $d-&gt;hashsize;
+ #or
+ Crypt::Digest::Whirlpool-&gt;hashsize();
+ #or
+ Crypt::Digest::Whirlpool::hashsize();</code></pre>
+
+<h2 id="digest">digest</h2>
+
+<pre><code> $result_raw = $d-&gt;digest();</code></pre>
+
+<h2 id="hexdigest">hexdigest</h2>
+
+<pre><code> $result_hex = $d-&gt;hexdigest();</code></pre>
+
+<h2 id="b64digest">b64digest</h2>
+
+<pre><code> $result_b64 = $d-&gt;b64digest();</code></pre>
+
+<h2 id="b64udigest">b64udigest</h2>
+
+<pre><code> $result_b64url = $d-&gt;b64udigest();</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Digest.html">Crypt::Digest</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Whirlpool_(cryptography)">https://en.wikipedia.org/wiki/Whirlpool_(cryptography)</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

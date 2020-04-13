@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Auth::Rhosts - Perform Rhosts authentication</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Auth;
+    my $auth = Net::SSH::Perl::Auth-&gt;new(&#39;Rhosts&#39;, $ssh);
+    print &quot;Valid auth&quot; if $auth-&gt;authenticate;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Auth::Rhosts</i> performs Rhosts authentication with a remote sshd server. When you create a new Rhosts auth object, you give it an <i>$ssh</i> object, which should contain an open connection to an ssh daemon, as well as any data that the authentication module needs to proceed. In this case, the <i>$ssh</i> object must contain the name of the user trying to open the connection.</p>
+
+<p>Rhosts authentication is fairly simple from a protocol point of view. However, note that the sshd server will require your client to be running on a privileged port (below 1024); this will, in turn, likely require your client to be running as root. If your client is not running on a privileged port, the Rhosts authentication request will be denied.</p>
+
+<p>If you&#39;re running as root, <i>Net::SSH::Perl</i> should automatically detect that and try to start up on a privileged port. If for some reason that isn&#39;t happening, take a look at the <i>Net::SSH::Perl</i> docs.</p>
+
+<p>With that aside, to use Rhosts authentication the client sends a request to the server to authenticate it, including the name of the user trying to authenticate. The server uses its <i>shosts.equiv</i>, <i>hosts.equiv</i>, etc. files to determine whether the user/host should be allowed access.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,119 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::OpenSSH::OSTracer - trace ssh master process at the OS level</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::OpenSSH;
+    $Net::OpenSSH::debug |= 512;
+
+    Net::OpenSSH-&gt;new($host)-&gt;system(&quot;echo hello world&quot;);
+
+    system &quot;less /tmp/net_openssh_master.*.strace&quot;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a Net::OpenSSH helper module that allows you to trace the master <code>ssh</code> process at the operating system level using the proper utility available in your system (e.g., <code>strace</code>, <code>truss</code>, <code>ktruss</code>, <code>tusc</code>, etc.).</p>
+
+<p>This feature can be used when debugging your programs or to report bugs on the module.</p>
+
+<p>It is enabled setting the flag 512 on the <code>$Net::OpenSSH::debug</code> variable:</p>
+
+<pre><code>  $Net::OpenSSH::debug |= 512;</code></pre>
+
+<p>By default the output files of the tracer are saved as <code>/tmp/net_openssh_master.$pid.$tracer_type</code>.</p>
+
+<p>Also, the output send by the tracer to stdout/stderr is saved as <code>/tmp/net_openssh_master.$pid.txt</code>.</p>
+
+<p>The module can be configured through the following global variables:</p>
+
+<dl>
+
+<dt id="Net::OpenSSH::OSTracer::type">$Net::OpenSSH::OSTracer::type</dt>
+<dd>
+
+<p>By default, the module decides which tracer to use in base to the operating system name. This variable allows one to select a different tracer.</p>
+
+<p>Currently accepted types are: <code>strace</code> (Linux), <code>ktrace</code> (*BSD), <code>tusc</code> (HP-UX) and <code>truss</code> (Solaris and AIX).</p>
+
+</dd>
+<dt id="Net::OpenSSH::OSTracer::cmd">$Net::OpenSSH::OSTracer::cmd</dt>
+<dd>
+
+<p>Command to execute for tracing the <code>ssh</code> process.</p>
+
+<p>By default, it infers it from the tracer type selected.</p>
+
+</dd>
+<dt id="Net::OpenSSH::OSTracer::output">$Net::OpenSSH::OSTracer::output</dt>
+<dd>
+
+<p>Basename for the destination file. The PID of the <code>ssh</code> process and the tracer type will be appended.</p>
+
+</dd>
+<dt id="Net::OpenSSH::OSTracer::sudo">$Net::OpenSSH::OSTracer::sudo</dt>
+<dd>
+
+<p>This variable can be used to request the tracer to be run with <code>sudo</code> (some operating systems as for example Ubuntu, do not allow one to attach tracers, even to your own processes, unless you do it as root).</p>
+
+<p>The variable has to be set with the path of the <code>sudo</code> binary. For instance:</p>
+
+<pre><code>  $Net::OpenSSH::OSTracer::sudo = &#39;/usr/bin/sudo&#39;;</code></pre>
+
+<p>If you need to pass a password to <code>sudo</code>, set the environment variable <code>SUDO_ASKPASS</code>. For instance:</p>
+
+<pre><code>  SUDO_ASKPASS=/usr/bin/ssh-askpass</code></pre>
+
+</dd>
+<dt id="Net::OpenSSH::OSTracer::delay">$Net::OpenSSH::OSTracer::delay</dt>
+<dd>
+
+<p>This variable can be used to delay the <code>ssh</code> execution so that the tracer can attach the process first. This is specially handy when using <code>sudo</code> with a password.</p>
+
+</dd>
+</dl>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>This module has not been tested under all the operating systems is says to support.</p>
+
+<p>If you find any problem, just report it, please!</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>Copyright (C) 2012 by Salvador Fandi&ntilde;o (sfandino@yahoo.com)</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself, either Perl version 5.10.0 or, at your option, any later version of Perl 5 you may have available.</p>
+
+
+</body>
+
+</html>
+
+

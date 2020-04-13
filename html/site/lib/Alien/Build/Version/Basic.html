@@ -1,0 +1,208 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CONSTRUCTOR">CONSTRUCTOR</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#version">version</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#as_string">as_string</a></li>
+      <li><a href="#cmp">cmp</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Version::Basic - Very basic version object for Alien::Build</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>OO interface:</p>
+
+<pre><code> use Alien::Build::Version::Basic;
+ 
+ my $version = Alien::Build::Version::Basic-&gt;new(&#39;1.2.3&#39;);
+ if($version &gt; &#39;1.2.2&#39;)  # true
+ {
+   ...
+ }</code></pre>
+
+<p>Function interface:</p>
+
+<pre><code> use Alien::Build::Version::Basic qw( version );
+ 
+ if(version(&#39;1.2.3&#39;) &gt; version(&#39;1.2.2&#39;)) # true
+ {
+   ...
+ }
+ 
+ my @sorted = sort map { version($_) } qw( 2.1 1.2.3 1.2.2 );
+ # will come out in the order 1.2.2, 1.2.3, 2.1</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides a very basic class for comparing versions. This is already a crowded space on CPAN. Parts of <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> already use <a>Sort::Versions</a>, which is fine for sorting versions. Sometimes you need to compare to see if versions match exact <i>values</i>, and the best candidates (such as <a>Sort::Versions</a> on CPAN compare <code>1.2.3.0</code> and <code>1.2.3</code> as being different. This class compares those two as the same.</p>
+
+<p>This class is also quite limited, in that it only works with version schemes using a doted version numbers or real numbers with a fixed number of digits. Versions with: dashes, letters, hex digits, or anything else are not supported.</p>
+
+<p>This class overloads both <code>&lt;=&gt;</code> and <code>cmp</code> to compare the version in the way that you would expect for version numbers. This way you can compare versions like numbers, or sort them using sort.</p>
+
+<pre><code> if(version($v1) &gt; version($v2))
+ {
+   ...
+ }
+ 
+ my @sorted = sort map { version($_) } @unsorted;</code></pre>
+
+<p>it also overloads <code>&quot;&quot;</code> to stringify as whatever string value you passed to the constructor.</p>
+
+<h1 id="CONSTRUCTOR">CONSTRUCTOR</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $version = Alien::Build::Version::Basic-&gt;new($value);</code></pre>
+
+<p>This is the long form of the constructor, if you don&#39;t want to import anything into your namespace.</p>
+
+<h2 id="version">version</h2>
+
+<pre><code> my $version = version($value);</code></pre>
+
+<p>This is the short form of the constructor, if you are sane. It is NOT exported by default so you will have to explicitly import it.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="as_string">as_string</h2>
+
+<pre><code> my $string = $version-&gt;as_string;
+ my $string = &quot;$version&quot;;</code></pre>
+
+<p>Returns the string representation of the version object.</p>
+
+<h2 id="cmp">cmp</h2>
+
+<pre><code> my $bool = $version-&gt;cmp($other);
+ my $bool = $version &lt;=&gt; $other;
+ my $bool = $version cmp $other;</code></pre>
+
+<p>Returns <code>-1</code>, <code>0</code> or <code>1</code> just like the regular <code>&lt;=&gt;</code> and <code>cmp</code> operators. Although <code>$version</code> must be a version object, <code>$other</code> may be either a version object, or a string that could be used to create a valid version object.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Sort::Versions"><a>Sort::Versions</a></dt>
+<dd>
+
+<p>Good, especially if you have to support rpm style versions (like <code>1.2.3-2-b</code>) or don&#39;t care if trailing zeros (<code>1.2.3</code> vs <code>1.2.3.0</code>) are treated as different values.</p>
+
+</dd>
+<dt id="version1"><a href="../../../../../lib/perl5/5.26.3/version.html">version</a></dt>
+<dd>
+
+<p>Problematic for historical reasons.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

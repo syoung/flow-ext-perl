@@ -1,0 +1,106 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Constants - Exportable constants</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Constants qw( constants );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Constants</i> provides a list of common and useful constants for use in communicating with an sshd server, etc.</p>
+
+<p>None of the constants are exported by default; you have to explicitly ask for them. Some of the constants are grouped into bundles that you can grab all at once, or you can just take the individual constants, one by one.</p>
+
+<p>If you wish to import a group, your <i>use</i> statement should look something like this:</p>
+
+<pre><code>    use Net::SSH::Perl::Constants qw( :group );</code></pre>
+
+<p>Here are the groups:</p>
+
+<ul>
+
+<li><p>msg</p>
+
+<p>All of the MSG constants. In the SSH packet layer protocol, each packet is identified by its type; for example, you have a packet type for starting RSA authentication, a different type for sending a command, etc. The MSG constants are used when creating a new packet, then:</p>
+
+<pre><code>    my $packet = $ssh-&gt;packet_start( I&lt;msg_constant&gt; );</code></pre>
+
+<p>See the <i>Net::SSH::Perl::Packet</i> and <i>Net::SSH::Perl</i> docs for details.</p>
+
+<p><i>Net::SSH::Perl</i> doesn&#39;t support all of the features of the ssh client, so it doesn&#39;t need all of its MSG constants. For a full list of such constants, and an explanation of each, see the SSH RFC.</p>
+
+<p>Here&#39;s the list of MSG constants supported by <i>Net::SSH::Perl</i>: SSH_MSG_NONE, SSH_MSG_DISCONNECT, SSH_SMSG_PUBLIC_KEY, SSH_CMSG_SESSION_KEY, SSH_CMSG_USER, SSH_CMSG_AUTH_RHOSTS, SSH_CMSG_AUTH_RSA, SSH_SMSG_AUTH_RSA_CHALLENGE, SSH_CMSG_AUTH_RSA_RESPONSE, SSH_CMSG_AUTH_PASSWORD, SSH_CMSG_EXEC_SHELL, SSH_CMSG_EXEC_CMD, SSH_SMSG_SUCCESS, SSH_SMSG_FAILURE, SSH_CMSG_STDIN_DATA, SSH_SMSG_STDOUT_DATA, SSH_SMSG_STDERR_DATA, SSH_CMSG_EOF, SSH_SMSG_EXITSTATUS, SSH_MSG_IGNORE, SSH_CMSG_EXIT_CONFIRMATION, SSH_CMSG_AUTH_RHOSTS_RSA, SSH_MSG_DEBUG, SSH_CMSG_REQUEST_COMPRESSION.</p>
+
+</li>
+<li><p>hosts</p>
+
+<p>The HOST constants: HOST_OK, HOST_NEW, and HOST_CHANGED. These are returned from the <code>_check_host_in_hostfile</code> routine in <i>Net::SSH::Perl::Util</i>. See those docs for that routine for an explanation of the meaning of these constants.</p>
+
+</li>
+<li><p>agent</p>
+
+<p>The AGENT constants, used when talking to an authentication agent: SSH_AGENTC_REQUEST_RSA_IDENTITIES, SSH_AGENT_RSA_IDENTITIES_ANSWER, SSH_AGENTC_RSA_CHALLENGE, SSH_AGENT_RSA_RESPONSE, SSH_AGENT_FAILURE, SSH_AGENT_SUCCESS, SSH2_AGENTC_REQUEST_IDENTITIES, SSH2_AGENT_IDENTITIES_ANSWER, SSH2_AGENTC_SIGN_REQUEST, SSH2_AGENT_SIGN_RESPONSE.</p>
+
+</li>
+</ul>
+
+<p>Other exportable constants, not belonging to a group, are:</p>
+
+<ul>
+
+<li><p>PROTOCOL_MAJOR</p>
+
+</li>
+<li><p>PROTOCOL_MINOR</p>
+
+<p>These two constants describe the version of the protocol supported by this SSH client (ie., <i>Net::SSH::Perl</i>). They&#39;re used when identifying the client to the server and vice versa.</p>
+
+</li>
+<li><p>PRIVATE_KEY_ID_STRING</p>
+
+<p>A special ID string written to private key files; if the ID string in the file doesn&#39;t match this, we stop reading the private key file.</p>
+
+</li>
+<li><p>MAX_PACKET_SIZE</p>
+
+<p>The maximum size of a packet in the packet layer.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

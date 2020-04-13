@@ -1,0 +1,221 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#PROPERTIES">PROPERTIES</a>
+    <ul>
+      <li><a href="#probe">probe</a></li>
+      <li><a href="#download">download</a></li>
+      <li><a href="#extract">extract</a></li>
+      <li><a href="#build">build</a></li>
+      <li><a href="#gather">gather</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Plugin::Test::Mock - Mock plugin for testing</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use alienfile;
+ plugin &#39;Test::Mock&#39; =&gt; (
+   probe    =&gt; &#39;share&#39;,
+   download =&gt; 1,
+   extract  =&gt; 1,
+   build    =&gt; 1,
+   gather   =&gt; 1,
+ );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This plugin is used for testing <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> plugins. Usually you only want to test one or two phases in an <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> for your plugin, but you still have to have a fully formed <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> that contains all required phases. This plugin lets you fill in the other phases with the appropriate hooks. This is usually better than using real plugins which may pull in additional dynamic requirements that you do not want to rely on at test time.</p>
+
+<h1 id="PROPERTIES">PROPERTIES</h1>
+
+<h2 id="probe">probe</h2>
+
+<pre><code> plugin &#39;Test::Mock&#39; =&gt; (
+   probe =&gt; $probe,
+ );</code></pre>
+
+<p>Override the probe behavior by one of the following:</p>
+
+<dl>
+
+<dt id="share">share</dt>
+<dd>
+
+<p>For a <code>share</code> build.</p>
+
+</dd>
+<dt id="system">system</dt>
+<dd>
+
+<p>For a <code>system</code> build.</p>
+
+</dd>
+<dt id="die">die</dt>
+<dd>
+
+<p>To throw an exception in the probe hook. This will usually cause <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> to try the next probe hook, if available, or to assume a <code>share</code> install.</p>
+
+</dd>
+</dl>
+
+<h2 id="download">download</h2>
+
+<pre><code> plugin &#39;Test::Mock&#39; =&gt; (
+   download =&gt; \%fs_spec,
+ );
+ 
+ plugin &#39;Test::Mock&#39; =&gt; (
+   download =&gt; 1,
+ );</code></pre>
+
+<p>Mock out a download. The <code>%fs_spec</code> is a hash where the hash values are directories and the string values are files. This a spec like this:</p>
+
+<pre><code> plugin &#39;Test::Mock&#39; =&gt; (
+   download =&gt; {
+     &#39;foo-1.00&#39; =&gt; {
+       &#39;README.txt&#39; =&gt; &quot;something to read&quot;,
+       &#39;foo.c&#39; =&gt; &quot;#include &lt;stdio.h&gt;\n&quot;,
+                  &quot;int main() {\n&quot;,
+                  &quot;  printf(\&quot;hello world\\n\&quot;);\n&quot;,
+                  &quot;}\n&quot;,
+     }
+   },
+ );</code></pre>
+
+<p>Would generate two files in the directory &#39;foo-1.00&#39;, a <code>README.txt</code> and a C file named <code>foo.c</code>. The default, if you provide a true non-hash value is to generate a single tarball with the name <code>foo-1.00.tar.gz</code>.</p>
+
+<h2 id="extract">extract</h2>
+
+<pre><code> plugin &#39;Test::Mock&#39; =&gt; (
+   extract =&gt; \%fs_spec,
+ );
+ 
+ plugin &#39;Test::Mock&#39; =&gt; (
+   extract =&gt; 1,
+ );</code></pre>
+
+<p>Similar to <code>download</code> above, but for the <code>extract</code> phase.</p>
+
+<h2 id="build">build</h2>
+
+<pre><code> plugin &#39;Test::Mock&#39; =&gt; (
+   build =&gt; [ \%fs_spec_build, \%fs_spec_install ],
+ );
+ 
+ plugin &#39;Test::Mock&#39; =&gt; (
+   build =&gt; 1,
+ );</code></pre>
+
+<h2 id="gather">gather</h2>
+
+<pre><code> plugin &#39;Test::Mock&#39; =&gt; (
+   gather =&gt; \%runtime_prop,
+ );
+ 
+ plugin &#39;Test::Mock&#39; =&gt; (
+   gather =&gt; 1,
+ );</code></pre>
+
+<p>This adds a gather hook (for both <code>share</code> and <code>system</code>) that adds the given runtime properties, or if a true non-hash value is provided, some reasonable runtime properties for testing.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

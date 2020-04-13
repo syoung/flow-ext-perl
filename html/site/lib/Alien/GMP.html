@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#C-support">C++ support</a></li>
+    </ul>
+  </li>
+  <li><a href="#Inline-support">Inline support</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::GMP - Alien package for the GNU Multiple Precision library.</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 1.14</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>In your Build.PL:</p>
+
+<pre><code> use Module::Build;
+ use Alien::GMP;
+ my $builder = Module::Build-&gt;new(
+   ...
+   configure_requires =&gt; {
+     &#39;Alien::GMP&#39; =&gt; &#39;0&#39;,
+     ...
+   },
+   extra_compiler_flags =&gt; Alien::GMP-&gt;cflags,
+   extra_linker_flags   =&gt; Alien::GMP-&gt;libs,
+   ...
+ );
+ 
+ $build-&gt;create_build_script;</code></pre>
+
+<p>In your Makefile.PL:</p>
+
+<pre><code> use ExtUtils::MakeMaker;
+ use Config;
+ use Alien::GMP;
+ 
+ WriteMakefile(
+   ...
+   CONFIGURE_REQUIRES =&gt; {
+     &#39;Alien::GMP&#39; =&gt; &#39;0&#39;,
+   },
+   CCFLAGS =&gt; Alien::GMP-&gt;cflags . &quot; $Config{ccflags}&quot;,
+   LIBS    =&gt; [ Alien::GMP-&gt;libs ],
+   ...
+ );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This distribution installs GMP so that it can be used by other Perl distributions. If already installed for your operating system, and it can be found, this distribution will use the GMP that comes with your operating system, otherwise it will download it from the Internet, build and install it for you.</p>
+
+<h2 id="C-support">C++ support</h2>
+
+<p>This Alien will provide the C++ bindings for GMP (libgmpxx) if possible. If you do not have a C++ compiler, or if your operating system vendor provides a GMP package without the needed C++ files then it will not be available. To use the C++ bindings, you can use the <code>alt</code> method to create a C++ instance of this GMP Alien. For example:</p>
+
+<pre><code> use ExtUtils::MakeMaker;
+ use Config;
+ use Alien::GMP;
+ 
+ WriteMakefile(
+   ...
+   CONFIGURE_REQUIRES =&gt; {
+     &#39;Alien::GMP&#39; =&gt; &#39;1.06&#39;, # require version that provides C++ bindings
+   },
+   CCFLAGS =&gt; Alien::GMP-&gt;alt(&#39;gmpxx&#39;)-&gt;cflags . &quot; $Config{ccflags}&quot;,
+   LIBS    =&gt; [ Alien::GMP-&gt;alt(&#39;gmpxx&#39;)-&gt;libs ],
+   ...
+ );</code></pre>
+
+<h1 id="Inline-support">Inline support</h1>
+
+<p>This module supports <a>Inline&#39;s with functionality</a>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="https://gmplib.org/">GMP</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Original author: Richard Sim&otilde;es (RSIMOES)</p>
+
+<p>Current maintainer: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Zakariyya Mughal (ZMUGHAL)</p>
+
+<p>William N. Braswell, Jr. (WBRASWELL)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is Copyright (c) 2012-2018 by Richard Sim&otilde;es.</p>
+
+<p>This is free software, licensed under:</p>
+
+<pre><code>  The GNU Lesser General Public License, Version 3, June 2007</code></pre>
+
+
+</body>
+
+</html>
+
+

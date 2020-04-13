@@ -1,0 +1,576 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#bfac">bfac</a></li>
+      <li><a href="#my-val-x-band-y-swap">my $val = $x-&gt;band($y, $swap)</a></li>
+      <li><a href="#my-ret-x-bxor-y-swap">my $ret = $x-&gt;bxor($y, $swap);</a></li>
+      <li><a href="#my-ret-x-bior-y-swap">my $ret = $x-&gt;bior($y, $swap);</a></li>
+      <li><a href="#blshift">blshift</a></li>
+      <li><a href="#brshift">brshift</a></li>
+      <li><a href="#bgcd">bgcd</a></li>
+      <li><a href="#blcm">blcm</a></li>
+      <li><a href="#bmodinv">bmodinv</a></li>
+      <li><a href="#broot">broot</a></li>
+      <li><a href="#brootrem">brootrem</a></li>
+      <li><a href="#bsqrt">bsqrt</a></li>
+      <li><a href="#bsqrtrem">bsqrtrem</a></li>
+      <li><a href="#is_perfect_power">is_perfect_power</a></li>
+      <li><a href="#is_perfect_square">is_perfect_square</a></li>
+      <li><a href="#legendre">legendre</a></li>
+      <li><a href="#jacobi">jacobi</a></li>
+      <li><a href="#fibonacci">fibonacci</a></li>
+      <li><a href="#probab_prime">probab_prime</a></li>
+      <li><a href="#x-add_ui_gmp-n">$x-&gt;add_ui_gmp($n)</a></li>
+      <li><a href="#quotient-remainder-x-bdiv-y">($quotient, $remainder) = $x-&gt;bdiv($y);</a></li>
+      <li><a href="#my-ret-x-div_2exp_gmp-n">my $ret = $x-&gt;div_2exp_gmp($n);</a></li>
+      <li><a href="#my-str-x-get_str_gmp-base">my $str = $x-&gt;get_str_gmp($base)</a></li>
+      <li><a href="#my-clone-x-gmp_copy">my $clone = $x-&gt;gmp_copy()</a></li>
+      <li><a href="#my-verdict-x-gmp_tstbit-bit_index">my $verdict = $x-&gt;gmp_tstbit($bit_index);</a></li>
+      <li><a href="#my-remainder-dividend-mmod_gmp-divisor">my $remainder = $dividend-&gt;mmod_gmp($divisor)</a></li>
+      <li><a href="#my-result-x-mod_2exp_gmp-shift">my $result = $x-&gt;mod_2exp_gmp($shift);</a></li>
+      <li><a href="#my-left_shifted-x-mul_2exp_gmp-shift">my $left_shifted = $x-&gt;mul_2exp_gmp($shift);</a></li>
+      <li><a href="#my-ret-base-powm_gmp-exp-mod">my $ret = $base-&gt;powm_gmp($exp, $mod);</a></li>
+      <li><a href="#my-plain_int_ret-x-sizeinbase_gmp-plain_int_base">my $plain_int_ret = $x-&gt;sizeinbase_gmp($plain_int_base);</a></li>
+      <li><a href="#my-int-x-intify">my $int = $x-&gt;intify();</a></li>
+      <li><a href="#gmp_build_version">_gmp_build_version()</a></li>
+      <li><a href="#gmp_lib_version">_gmp_lib_version()</a></li>
+      <li><a href="#gcd">gcd()</a></li>
+      <li><a href="#lcm">lcm()</a></li>
+      <li><a href="#constant">constant</a></li>
+      <li><a href="#destroy">destroy</a></li>
+      <li><a href="#new_from_scalar">new_from_scalar</a></li>
+      <li><a href="#new_from_scalar_with_base">new_from_scalar_with_base</a></li>
+      <li><a href="#op_add">op_add</a></li>
+      <li><a href="#op_div">op_div</a></li>
+      <li><a href="#op_eq">op_eq</a></li>
+      <li><a href="#op_mod">op_mod</a></li>
+      <li><a href="#op_mul">op_mul</a></li>
+      <li><a href="#op_pow">op_pow</a></li>
+      <li><a href="#op_spaceship">op_spaceship</a></li>
+      <li><a href="#op_sub">op_sub</a></li>
+      <li><a href="#stringify">stringify</a></li>
+      <li><a href="#uintify">uintify</a></li>
+    </ul>
+  </li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#VERSION-CONTROL">VERSION CONTROL</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#AUTHOR1">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+  <li><a href="#BUGS1">BUGS</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a>
+    <ul>
+      <li><a href="#Perldoc">Perldoc</a></li>
+      <li><a href="#Websites">Websites</a></li>
+      <li><a href="#Bugs-Feature-Requests">Bugs / Feature Requests</a></li>
+      <li><a href="#Source-Code">Source Code</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Math::GMP - High speed arbitrary size integer math</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.20</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Math::GMP;
+  my $n = Math::GMP-&gt;new(&#39;2&#39;);
+
+  $n = $n ** (256*1024);
+  $n = $n - 1;
+  print &quot;n is now $n\n&quot;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Math::GMP was designed to be a drop-in replacement both for Math::BigInt and for regular integer arithmetic. Unlike BigInt, though, Math::GMP uses the GNU gmp library for all of its calculations, as opposed to straight Perl functions. This can result in speed improvements.</p>
+
+<p>The downside is that this module requires a C compiler to install -- a small tradeoff in most cases. Also, this module is not 100% compatible with Math::BigInt.</p>
+
+<p>A Math::GMP object can be used just as a normal numeric scalar would be -- the module overloads most of the normal arithmetic operators to provide as seamless an interface as possible. However, if you need a perfect interface, you can do the following:</p>
+
+<pre><code>  use Math::GMP qw(:constant);
+
+  $n = 2 ** (256 * 1024);
+  print &quot;n is $n\n&quot;;</code></pre>
+
+<p>This would fail without the &#39;:constant&#39; since Perl would use normal doubles to compute the 250,000 bit number, and thereby overflow it into meaninglessness (smaller exponents yield less accurate data due to floating point rounding).</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>Although the non-overload interface is not complete, the following functions do exist:</p>
+
+<h2 id="new">new</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(123);</code></pre>
+
+<p>Creates a new Math::GMP object from the passed string or scalar.</p>
+
+<pre><code>  $x = Math::GMP-&gt;new(&#39;abcd&#39;, 36);</code></pre>
+
+<p>Creates a new Math::GMP object from the first parameter which should be represented in the base specified by the second parameter.</p>
+
+<h2 id="bfac">bfac</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(5);
+  my $val = $x-&gt;bfac();      # 1*2*3*4*5 = 120
+  print $val;</code></pre>
+
+<p>Calculates the factorial of $x and returns the result.</p>
+
+<h2 id="my-val-x-band-y-swap">my $val = $x-&gt;band($y, $swap)</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(6);
+  my $val = $x-&gt;band(3, 0);      # 0b110 &amp; 0b11 = 1
+  print $val;</code></pre>
+
+<p>Calculates the bit-wise AND of its two arguments and returns the result. $swap should be provided but is ignored.</p>
+
+<h2 id="my-ret-x-bxor-y-swap">my $ret = $x-&gt;bxor($y, $swap);</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(6);
+  my $val = $x-&gt;bxor(3, 0);      # 0b110 ^ 0b11 = 0b101
+  print $val;</code></pre>
+
+<p>Calculates the bit-wise XOR of its two arguments and returns the result.</p>
+
+<h2 id="my-ret-x-bior-y-swap">my $ret = $x-&gt;bior($y, $swap);</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(6);
+  my $val = $x-&gt;bior(3);      # 0b110 | 0b11 = 0b111
+  print $val;</code></pre>
+
+<p>Calculates the bit-wise OR of its two arguments and returns the result.</p>
+
+<h2 id="blshift">blshift</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(0b11);
+  my $result = $x-&gt;blshift(4, 0);
+  # $result = 0b11 &lt;&lt; 4 = 0b110000</code></pre>
+
+<p>Calculates the bit-wise left-shift of its two arguments and returns the result. Second argument is swap.</p>
+
+<h2 id="brshift">brshift</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(0b11001);
+  my $result = $x-&gt;brshift(3, 0);
+  # $result = 0b11001 &lt;&lt; 3 = 0b11</code></pre>
+
+<p>Calculates the bit-wise right-shift of its two arguments and returns the result. Second argument is swap.</p>
+
+<h2 id="bgcd">bgcd</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(6);
+  my $gcd = $x-&gt;bgcd(4);
+  # 6 / 2 = 3, 4 / 2 = 2 =&gt; 2
+  print $gcd</code></pre>
+
+<p>Returns the Greatest Common Divisor of the two arguments.</p>
+
+<h2 id="blcm">blcm</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(6);
+  my $lcm = $x-&gt;blcm(4);      # 6 * 2 = 12, 4 * 3 = 12 =&gt; 12
+  print $lcm;</code></pre>
+
+<p>Returns the Least Common Multiple of the two arguments.</p>
+
+<h2 id="bmodinv">bmodinv</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(5);
+  my $modinv = $x-&gt;bmodinv(7);   # 5 * 3 == 1 (mod 7) =&gt; 3
+  print $modinv;</code></pre>
+
+<p>Returns the modular inverse of $x (mod $y), if defined. This currently returns 0 if there is no inverse (but that may change in the future). Behaviour is undefined when $y is 0.</p>
+
+<h2 id="broot">broot</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(100);
+  my $root = $x-&gt;root(3);    # int(100 ** (1/3)) =&gt; 4
+  print $root;</code></pre>
+
+<p>Returns the integer n&#39;th root of its argument, given a positive integer n.</p>
+
+<h2 id="brootrem">brootrem</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(100);
+  my($root, $rem) = $x-&gt;rootrem(3); # 4 ** 3 + 36 = 100
+  print &quot;$x is $rem more than the cube of $root&quot;;</code></pre>
+
+<p>Returns the integer n&#39;th root of its argument, and the difference such that <code> $root ** $n + $rem == $x </code>.</p>
+
+<h2 id="bsqrt">bsqrt</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(6);
+  my $root = $x-&gt;bsqrt();      # int(sqrt(6)) =&gt; 2
+  print $root;</code></pre>
+
+<p>Returns the integer square root of its argument.</p>
+
+<h2 id="bsqrtrem">bsqrtrem</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(7);
+  my($root, $rem) = $x-&gt;sqrtrem(); # 2 ** 2 + 3 = 7
+  print &quot;$x is $rem more than the square of $root&quot;;</code></pre>
+
+<p>Returns the integer square root of its argument, and the difference such that <code> $root ** 2 + $rem == $x </code>.</p>
+
+<h2 id="is_perfect_power">is_perfect_power</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(100);
+  my $is_power = $x-&gt;is_perfect_power();
+  print &quot;$x is &quot; . ($is_power ? &quot;&quot; : &quot;not &quot;) . &quot;a perfect power&quot;;</code></pre>
+
+<p>Returns <code>TRUE</code> if its argument is a power, ie if there exist integers a and b with b &gt; 1 such that <code> $x == $a ** $b </code>.</p>
+
+<h2 id="is_perfect_square">is_perfect_square</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(100);
+  my $is_square = $x-&gt;is_perfect_square();
+  print &quot;$x is &quot; . ($is_square ? &quot;&quot; : &quot;not &quot;) . &quot;a perfect square&quot;;</code></pre>
+
+<p>Returns <code>TRUE</code> if its argument is the square of an integer.</p>
+
+<h2 id="legendre">legendre</h2>
+
+<pre><code>  $x = Math::GMP-&gt;new(6);
+  my $ret = $x-&gt;legendre(3);</code></pre>
+
+<p>Returns the value of the Legendre symbol ($x/$y). The value is defined only when $y is an odd prime; when the value is not defined, this currently returns 0 (but that may change in the future).</p>
+
+<h2 id="jacobi">jacobi</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(6);
+  my $jacobi_verdict = $x-&gt;jacobi(3);</code></pre>
+
+<p>Returns the value of the Jacobi symbol ($x/$y). The value is defined only when $y is odd; when the value is not defined, this currently returns 0 (but that may change in the future).</p>
+
+<h2 id="fibonacci">fibonacci</h2>
+
+<pre><code>  my $fib = Math::GMP::fibonacci(16);</code></pre>
+
+<p>Calculates the n&#39;th number in the Fibonacci sequence.</p>
+
+<h2 id="probab_prime">probab_prime</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(7);
+  my $is_prime_verdict = $x-&gt;probab_prime(10);</code></pre>
+
+<p>Probabilistically determines if the number is a prime. Argument is the number of checks to perform. Returns 0 if the number is definitely not a prime, 1 if it may be, and 2 if it definitely is a prime.</p>
+
+<h2 id="x-add_ui_gmp-n">$x-&gt;add_ui_gmp($n)</h2>
+
+<p>Adds to $x and mutates it in-place. $n must be a regular non-GMP, positive, integer.</p>
+
+<h2 id="quotient-remainder-x-bdiv-y">($quotient, $remainder) = $x-&gt;bdiv($y);</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(7);
+  my ($quo, $rem) = $x-&gt;bdiv(3);</code></pre>
+
+<p>Returns both the division and the modulo of an integer division operation.</p>
+
+<h2 id="my-ret-x-div_2exp_gmp-n">my $ret = $x-&gt;div_2exp_gmp($n);</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(200);
+  my $ret = $x-&gt;div_2exp_gmp(2);</code></pre>
+
+<p>Returns a right-shift of the Math::GMP object by an unsigned regular integer. Also look at blshift() .</p>
+
+<h2 id="my-str-x-get_str_gmp-base">my $str = $x-&gt;get_str_gmp($base)</h2>
+
+<pre><code>  my $init_n = 3 * 7 + 2 * 7 * 7 + 6 * 7 * 7 * 7;
+  my $x = Math::GMP-&gt;new($init_n);
+  my $ret = $x-&gt;get_str_gmp(7);
+
+  print $ret; # Prints &quot;6230&quot;.</code></pre>
+
+<p>Returns a string representation of the number in base $base.</p>
+
+<h2 id="my-clone-x-gmp_copy">my $clone = $x-&gt;gmp_copy()</h2>
+
+<p>Returns a copy of $x that can be modified without affecting the original.</p>
+
+<h2 id="my-verdict-x-gmp_tstbit-bit_index">my $verdict = $x-&gt;gmp_tstbit($bit_index);</h2>
+
+<p>Returns whether or not bit No. $bit_index is 1 in $x.</p>
+
+<h2 id="my-remainder-dividend-mmod_gmp-divisor">my $remainder = $dividend-&gt;mmod_gmp($divisor)</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(2 . (&#39;0&#39; x 200) . 4);
+  my $y = Math::GMP-&gt;new(5);
+
+  my $ret = $x-&gt;mmod_gmp($y);
+  # $ret is now Math::GMP of 4.</code></pre>
+
+<p>From the GMP documentation:</p>
+
+<p>Divide dividend and divisor and put the remainder in remainder. The remainder is always positive, and its value is less than the value of the divisor.</p>
+
+<h2 id="my-result-x-mod_2exp_gmp-shift">my $result = $x-&gt;mod_2exp_gmp($shift);</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(0b10001011);
+  my $ret = $x-&gt;mod_2exp_gmp(4);
+
+  # $ret is now Math::GMP of 0b1011</code></pre>
+
+<p>Returns a Math::GMP object containing the lower $shift bits of $x (while not modifying $x).</p>
+
+<h2 id="my-left_shifted-x-mul_2exp_gmp-shift">my $left_shifted = $x-&gt;mul_2exp_gmp($shift);</h2>
+
+<pre><code>  my $x = Math::GMP-&gt;new(0b10001011);
+  my $ret = $x-&gt;mul_2exp_gmp(4);
+
+  # $ret is now Math::GMP of 0b1000_1011_0000</code></pre>
+
+<p>Returns a Math::GMP object containing $x shifted by $shift bits (where $shift is a plain integer).</p>
+
+<h2 id="my-ret-base-powm_gmp-exp-mod">my $ret = $base-&gt;powm_gmp($exp, $mod);</h2>
+
+<pre><code>    my $base = Math::GMP-&gt;new(157);
+    my $exp = Math::GMP-&gt;new(100);
+    my $mod = Math::GMP-&gt;new(5013);
+
+    my $ret = $base-&gt;powm_gmp($exp, $mod);
+
+    # $ret is now (($base ** $exp) % $mod)</code></pre>
+
+<p>Returns $base raised to the power of $exp modulo $mod.</p>
+
+<h2 id="my-plain_int_ret-x-sizeinbase_gmp-plain_int_base">my $plain_int_ret = $x-&gt;sizeinbase_gmp($plain_int_base);</h2>
+
+<p>Returns the size of $x in base $plain_int_base .</p>
+
+<h2 id="my-int-x-intify">my $int = $x-&gt;intify();</h2>
+
+<p>Returns the value of the object as an unblessed (and limited-in-precision) integer.</p>
+
+<h2 id="gmp_build_version">_gmp_build_version()</h2>
+
+<pre><code>  my $gmp_version = Math::GMP::_gmp_build_version;
+  if ($gmp_version ge 6.0.0) {
+    print &quot;Math::GMP was built against libgmp-6.0.0 or later&quot;;
+  }</code></pre>
+
+<p>Class method that returns as a vstring the version of libgmp against which this module was built.</p>
+
+<h2 id="gmp_lib_version">_gmp_lib_version()</h2>
+
+<pre><code>  my $gmp_version = Math::GMP::_gmp_lib_version;
+  if ($gmp_version ge 6.0.0) {
+    print &quot;Math::GMP is now running with libgmp-6.0.0 or later&quot;;
+  }</code></pre>
+
+<p>Class method that returns as a vstring the version of libgmp it is currently running.</p>
+
+<h2 id="gcd">gcd()</h2>
+
+<p>An alias to bgcd() .</p>
+
+<h2 id="lcm">lcm()</h2>
+
+<p>An alias to blcm() .</p>
+
+<h2 id="constant">constant</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="destroy">destroy</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="new_from_scalar">new_from_scalar</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="new_from_scalar_with_base">new_from_scalar_with_base</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_add">op_add</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_div">op_div</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_eq">op_eq</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_mod">op_mod</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_mul">op_mul</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_pow">op_pow</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_spaceship">op_spaceship</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="op_sub">op_sub</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="stringify">stringify</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h2 id="uintify">uintify</h2>
+
+<p>For internal use. <b>Do not use directly</b>.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>As of version 1.0, Math::GMP is mostly compatible with the old Math::BigInt version. It is not a full replacement for the rewritten Math::BigInt versions, though. See the <a>SEE ALSO section</a> on how to achieve to use Math::GMP and retain full compatibility to Math::BigInt.</p>
+
+<p>There are some slight incompatibilities, such as output of positive numbers not being prefixed by a &#39;+&#39; sign. This is intentional.</p>
+
+<p>There are also some things missing, and not everything might work as expected.</p>
+
+<h1 id="VERSION-CONTROL">VERSION CONTROL</h1>
+
+<p>The version control repository of this module is a git repository hosted on GitHub at: <a href="https://github.com/turnstep/Math-GMP">https://github.com/turnstep/Math-GMP</a>. Pull requests are welcome.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>Math::BigInt has a new interface to use a different library than the default pure Perl implementation. You can use, for instance, Math::GMP with it:</p>
+
+<pre><code>  use Math::BigInt lib =&gt; &#39;GMP&#39;;</code></pre>
+
+<p>If Math::GMP is not installed, it will fall back to its own Perl implementation.</p>
+
+<p>See <a href="../../../lib/perl5/5.26.3/Math/BigInt.html">Math::BigInt</a> and <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Math/BigInt/GMP.html">Math::BigInt::GMP</a> or <a>Math::BigInt::Pari</a> or <a>Math::BigInt::BitVect</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Chip Turner &lt;chip@redhat.com&gt;, based on the old Math::BigInt by Mark Biggar and Ilya Zakharevich. Further extensive work provided by Tels &lt;tels@bloodgate.com&gt;.</p>
+
+<h1 id="AUTHOR1">AUTHOR</h1>
+
+<p>Shlomi Fish &lt;shlomif@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is Copyright (c) 2000 by James H. Turner.</p>
+
+<p>This is free software, licensed under:</p>
+
+<pre><code>  The GNU Lesser General Public License, Version 2.1, February 1999</code></pre>
+
+<h1 id="BUGS1">BUGS</h1>
+
+<p>Please report any bugs or feature requests on the bugtracker website <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Math-GMP">https://rt.cpan.org/Public/Dist/Display.html?Name=Math-GMP</a> or by email to <a href="mailto:bug-math-gmp@rt.cpan.org">bug-math-gmp@rt.cpan.org</a>.</p>
+
+<p>When submitting a bug or request, please include a test-file or a patch to an existing test-file that illustrates the bug or desired feature.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<h2 id="Perldoc">Perldoc</h2>
+
+<p>You can find documentation for this module with the perldoc command.</p>
+
+<pre><code>  perldoc Math::GMP</code></pre>
+
+<h2 id="Websites">Websites</h2>
+
+<p>The following websites have more information about this module, and may be of help to you. As always, in addition to those websites please use your favorite search engine to discover more resources.</p>
+
+<ul>
+
+<li><p>MetaCPAN</p>
+
+<p>A modern, open-source CPAN search engine, useful to view POD in HTML format.</p>
+
+<p><a href="https://metacpan.org/release/Math-GMP">https://metacpan.org/release/Math-GMP</a></p>
+
+</li>
+<li><p>RT: CPAN&#39;s Bug Tracker</p>
+
+<p>The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.</p>
+
+<p><a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Math-GMP">https://rt.cpan.org/Public/Dist/Display.html?Name=Math-GMP</a></p>
+
+</li>
+<li><p>CPANTS</p>
+
+<p>The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.</p>
+
+<p><a href="http://cpants.cpanauthors.org/dist/Math-GMP">http://cpants.cpanauthors.org/dist/Math-GMP</a></p>
+
+</li>
+<li><p>CPAN Testers</p>
+
+<p>The CPAN Testers is a network of smoke testers who run automated tests on uploaded CPAN distributions.</p>
+
+<p><a href="http://www.cpantesters.org/distro/M/Math-GMP">http://www.cpantesters.org/distro/M/Math-GMP</a></p>
+
+</li>
+<li><p>CPAN Testers Matrix</p>
+
+<p>The CPAN Testers Matrix is a website that provides a visual overview of the test results for a distribution on various Perls/platforms.</p>
+
+<p><a href="http://matrix.cpantesters.org/?dist=Math-GMP">http://matrix.cpantesters.org/?dist=Math-GMP</a></p>
+
+</li>
+<li><p>CPAN Testers Dependencies</p>
+
+<p>The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies for a distribution.</p>
+
+<p><a href="http://deps.cpantesters.org/?module=Math::GMP">http://deps.cpantesters.org/?module=Math::GMP</a></p>
+
+</li>
+</ul>
+
+<h2 id="Bugs-Feature-Requests">Bugs / Feature Requests</h2>
+
+<p>Please report any bugs or feature requests by email to <code>bug-math-gmp at rt.cpan.org</code>, or through the web interface at <a href="https://rt.cpan.org/Public/Bug/Report.html?Queue=Math-GMP">https://rt.cpan.org/Public/Bug/Report.html?Queue=Math-GMP</a>. You will be automatically notified of any progress on the request by the system.</p>
+
+<h2 id="Source-Code">Source Code</h2>
+
+<p>The code is open to the world, and available for you to hack on. Please feel free to browse it and play with it, or whatever. If you want to contribute patches, please send me a diff or prod me to pull from your repository :)</p>
+
+<p><a href="https://github.com/turnstep/Math-GMP">https://github.com/turnstep/Math-GMP</a></p>
+
+<pre><code>  git clone https://github.com/turnstep/Math-GMP.git</code></pre>
+
+
+</body>
+
+</html>
+
+

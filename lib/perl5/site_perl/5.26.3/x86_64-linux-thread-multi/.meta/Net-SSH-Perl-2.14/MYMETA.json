@@ -1,0 +1,63 @@
+{
+   "abstract" : "Perl client interface to SSH",
+   "author" : [
+      "David Robins <dbrobins@cpan.org>",
+      "Lance Kinley <lkinley@rythmos.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "emacs, CPAN::Meta::Converter version 2.150010",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : 2
+   },
+   "name" : "Net-SSH-Perl",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "runtime" : {
+         "recommends" : {
+            "Crypt::RSA" : "0",
+            "Digest::BubbleBabble" : "0",
+            "Module::Signature" : "0.50",
+            "Term::ReadKey" : "0"
+         },
+         "requires" : {
+            "Crypt::Curve25519" : "0.05",
+            "Crypt::IDEA" : "0",
+            "CryptX" : "0.032",
+            "Digest::MD5" : "0",
+            "File::HomeDir" : "0",
+            "File::Spec" : "0",
+            "IO::Socket" : "0",
+            "Math::GMP" : "1.04",
+            "Scalar::Util" : "0",
+            "String::CRC32" : "1.2"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "http://rt.cpan.org/Public/Dist/Display.html?Name=Net-SSH-Perl"
+      },
+      "homepage" : "http://search.cpan.org/dist/Net-SSH-Perl/",
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ],
+      "x_MailingList" : "https://lists.sourceforge.net/lists/listinfo/ssh-sftp-perl-users",
+      "x_Repository" : "https://github.com/lkinley/Net-SSH-Perl"
+   },
+   "version" : "2.14",
+   "x_serialization_backend" : "JSON::PP version 2.97001"
+}

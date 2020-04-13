@@ -1,0 +1,177 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#chacha20poly1305_encrypt_authenticate">chacha20poly1305_encrypt_authenticate</a></li>
+      <li><a href="#chacha20poly1305_decrypt_verify">chacha20poly1305_decrypt_verify</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#adata_add">adata_add</a></li>
+      <li><a href="#encrypt_add">encrypt_add</a></li>
+      <li><a href="#encrypt_done">encrypt_done</a></li>
+      <li><a href="#decrypt_add">decrypt_add</a></li>
+      <li><a href="#decrypt_done">decrypt_done</a></li>
+      <li><a href="#set_iv">set_iv</a></li>
+      <li><a href="#set_iv_rfc7905">set_iv_rfc7905</a></li>
+      <li><a href="#clone">clone</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::AuthEnc::ChaCha20Poly1305 - Authenticated encryption in ChaCha20-Poly1305 mode</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> ### OO interface
+ use Crypt::AuthEnc::ChaCha20Poly1305;
+
+ # encrypt and authenticate
+ my $ae = Crypt::AuthEnc::ChaCha20Poly1305-&gt;new($key, $iv);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data1&#39;);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data2&#39;);
+ my $ct = $ae-&gt;encrypt_add(&#39;data1&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data2&#39;);
+ $ct .= $ae-&gt;encrypt_add(&#39;data3&#39;);
+ my $tag = $ae-&gt;encrypt_done();
+
+ # decrypt and verify
+ my $ae = Crypt::AuthEnc::ChaCha20Poly1305-&gt;new($key, $iv);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data1&#39;);
+ $ae-&gt;adata_add(&#39;additional_authenticated_data2&#39;);
+ my $pt = $ae-&gt;decrypt_add(&#39;ciphertext1&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext2&#39;);
+ $pt .= $ae-&gt;decrypt_add(&#39;ciphertext3&#39;);
+ my $tag = $ae-&gt;decrypt_done();
+ die &quot;decrypt failed&quot; unless $tag eq $expected_tag;
+
+ #or
+ my $result = $ae-&gt;decrypt_done($expected_tag); # 0 or 1
+
+ ### functional interface
+ use Crypt::AuthEnc::ChaCha20Poly1305 qw(chacha20poly1305_encrypt_authenticate chacha20poly1305_decrypt_verify);
+
+ my ($ciphertext, $tag) = chacha20poly1305_encrypt_authenticate($key, $iv, $adata, $plaintext);
+ my $plaintext = chacha20poly1305_decrypt_verify($key, $iv, $adata, $ciphertext, $tag);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides encryption and authentication based on ChaCha20 + Poly1305 as defined in RFC 7539 - <a href="https://tools.ietf.org/html/rfc7539">https://tools.ietf.org/html/rfc7539</a></p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code>  use Crypt::AuthEnc::ChaCha20Poly1305 qw(chacha20poly1305_encrypt_authenticate chacha20poly1305_decrypt_verify);</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="chacha20poly1305_encrypt_authenticate">chacha20poly1305_encrypt_authenticate</h2>
+
+<pre><code> my ($ciphertext, $tag) = chacha20poly1305_encrypt_authenticate($key, $iv, $adata, $plaintext);
+
+ # $key ..... key of proper length (128 or 256 bits / 16 or 32 bytes)
+ # $iv ...... initialization vector (64 or 96 bits / 8 or 12 bytes)
+ # $adata ... additional authenticated data (optional)</code></pre>
+
+<h2 id="chacha20poly1305_decrypt_verify">chacha20poly1305_decrypt_verify</h2>
+
+<pre><code> my $plaintext = chacha20poly1305_decrypt_verify($key, $iv, $adata, $ciphertext, $tag);
+ # on error returns undef</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $ae = Crypt::AuthEnc::ChaCha20Poly1305-&gt;new($key, $iv);
+
+ # $key ..... encryption key of proper length (128 or 256 bits / 16 or 32 bytes)
+ # $iv ...... initialization vector (64 or 96 bits / 8 or 12 bytes)</code></pre>
+
+<h2 id="adata_add">adata_add</h2>
+
+<p>Add <b>additional authenticated data</b>. Can be called before the first <code>encrypt_add</code> or <code>decrypt_add</code>;</p>
+
+<pre><code> $ae-&gt;adata_add($aad_data);                     # can be called multiple times</code></pre>
+
+<h2 id="encrypt_add">encrypt_add</h2>
+
+<pre><code> $ciphertext = $ae-&gt;encrypt_add($data);         # can be called multiple times</code></pre>
+
+<h2 id="encrypt_done">encrypt_done</h2>
+
+<pre><code> $tag = $ae-&gt;encrypt_done();                    # returns $tag value</code></pre>
+
+<h2 id="decrypt_add">decrypt_add</h2>
+
+<pre><code> $plaintext = $ae-&gt;decrypt_add($ciphertext);    # can be called multiple times</code></pre>
+
+<h2 id="decrypt_done">decrypt_done</h2>
+
+<pre><code> my $tag = $ae-&gt;decrypt_done;           # returns $tag value
+ #or
+ my $result = $ae-&gt;decrypt_done($tag);  # returns 1 (success) or 0 (failure)</code></pre>
+
+<h2 id="set_iv">set_iv</h2>
+
+<pre><code> my $ae = Crypt::AuthEnc::ChaCha20Poly1305-&gt;new($key)-&gt;set_iv($iv);
+ # $iv ...... initialization vector (64 or 96 bits / 8 or 12 bytes)</code></pre>
+
+<h2 id="set_iv_rfc7905">set_iv_rfc7905</h2>
+
+<p>See <a href="https://tools.ietf.org/html/rfc7905">https://tools.ietf.org/html/rfc7905</a></p>
+
+<pre><code> my $ae = Crypt::AuthEnc::ChaCha20Poly1305-&gt;new($key)-&gt;set_iv_rfc7905($iv, $seqnum);
+ # $iv ...... initialization vector (96 bits / 12 bytes)
+ # $seqnum .. 64bit integer (sequence number)</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> my $ae_new = $ae-&gt;clone;</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/GCM.html">Crypt::AuthEnc::GCM</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/CCM.html">Crypt::AuthEnc::CCM</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/EAX.html">Crypt::AuthEnc::EAX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/AuthEnc/OCB.html">Crypt::AuthEnc::OCB</a></p>
+
+</li>
+<li><p><a href="https://tools.ietf.org/html/rfc7539">https://tools.ietf.org/html/rfc7539</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

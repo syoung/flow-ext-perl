@@ -1,0 +1,241 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#ATTRIBUTES">ATTRIBUTES</a>
+    <ul>
+      <li><a href="#out">out</a></li>
+      <li><a href="#err">err</a></li>
+      <li><a href="#exit">exit</a></li>
+      <li><a href="#signal">signal</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#success">success</a></li>
+      <li><a href="#exit_is">exit_is</a></li>
+      <li><a href="#exit_isnt">exit_isnt</a></li>
+      <li><a href="#out_like">out_like</a></li>
+      <li><a href="#out_unlike">out_unlike</a></li>
+      <li><a href="#err_like">err_like</a></li>
+      <li><a href="#err_unlike">err_unlike</a></li>
+      <li><a href="#note">note</a></li>
+      <li><a href="#diag">diag</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::Alien::Run - Run object</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Test2::V0;
+ use Test::Alien;
+ 
+ run_ok([ $^X, -e =&gt; &#39;print &quot;some output&quot;; exit 22&#39;])
+   -&gt;exit_is(22)
+   -&gt;out_like(qr{some});</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This class stores information about a process run as performed by <a>Test::Alien#run_ok</a>. That function is the <i>ONLY</i> way to create an instance of this class.</p>
+
+<h1 id="ATTRIBUTES">ATTRIBUTES</h1>
+
+<h2 id="out">out</h2>
+
+<pre><code> my $str = $run-&gt;out;</code></pre>
+
+<p>The standard output from the run.</p>
+
+<h2 id="err">err</h2>
+
+<pre><code> my $str = $run-&gt;err;</code></pre>
+
+<p>The standard error from the run.</p>
+
+<h2 id="exit">exit</h2>
+
+<pre><code> my $int = $run-&gt;exit;</code></pre>
+
+<p>The exit value of the run.</p>
+
+<h2 id="signal">signal</h2>
+
+<pre><code> my $int = $run-&gt;signal;</code></pre>
+
+<p>The signal that killed the run, or zero if the process was terminated normally.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>These methods return the run object itself, so they can be chained, as in the synopsis above.</p>
+
+<h2 id="success">success</h2>
+
+<pre><code> $run-&gt;success;
+ $run-&gt;success($message);</code></pre>
+
+<p>Passes if the process terminated normally with an exit value of 0.</p>
+
+<h2 id="exit_is">exit_is</h2>
+
+<pre><code> $run-&gt;exit_is($exit);
+ $run-&gt;exit_is($exit, $message);</code></pre>
+
+<p>Passes if the process terminated with the given exit value.</p>
+
+<h2 id="exit_isnt">exit_isnt</h2>
+
+<pre><code> $run-&gt;exit_isnt($exit);
+ $run-&gt;exit_isnt($exit, $message);</code></pre>
+
+<p>Passes if the process terminated with an exit value of anything but the given value.</p>
+
+<h2 id="out_like">out_like</h2>
+
+<pre><code> $run-&gt;out_like($regex);
+ $run-&gt;out_like($regex, $message);</code></pre>
+
+<p>Passes if the output of the run matches the given pattern.</p>
+
+<h2 id="out_unlike">out_unlike</h2>
+
+<pre><code> $run-&gt;out_unlike($regex);
+ $run-&gt;out_unlike($regex, $message);</code></pre>
+
+<p>Passes if the output of the run does not match the given pattern.</p>
+
+<h2 id="err_like">err_like</h2>
+
+<pre><code> $run-&gt;err_like($regex);
+ $run-&gt;err_like($regex, $message);</code></pre>
+
+<p>Passes if the standard error of the run matches the given pattern.</p>
+
+<h2 id="err_unlike">err_unlike</h2>
+
+<pre><code> $run-&gt;err_unlike($regex);
+ $run-&gt;err_unlike($regex, $message);</code></pre>
+
+<p>Passes if the standard error of the run does not match the given pattern.</p>
+
+<h2 id="note">note</h2>
+
+<pre><code> $run-&gt;note;</code></pre>
+
+<p>Send the output and standard error as test note.</p>
+
+<h2 id="diag">diag</h2>
+
+<pre><code> $run-&gt;diag;</code></pre>
+
+<p>Send the output and standard error as test diagnostic.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Test::Alien"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien.html">Test::Alien</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

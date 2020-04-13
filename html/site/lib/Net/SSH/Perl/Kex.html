@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+  <li><a href="#POD-ERRORS">POD ERRORS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Kex - SSH2 Key Exchange</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Kex;
+    my $kex = Net::SSH::Perl::Kex-&gt;new($ssh);
+    $kex-&gt;exchange;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Kex</i> implements base functionality for SSH2 key exchange. The basic idea is this: Kex itself initializes the client algorithm proposal, sends it to the server, then waits for the server&#39;s proposal. From these proposals Kex chooses the algorithms that will be used in the communications between client and server (eg. encryption algorithm, MAC algorithm, etc.). Different algorithms can be used in each direction; for example, client to server communications could be encrypted using 3DES, and server to client could be encrypted using RC4.</p>
+
+<p>The algorithm negotiation phase, as described above, includes negotiation for the key-exchange algorithm to be used. After algorithm negotiation, the Kex object is reblessed into the key exchange class (eg. &#39;Net::SSH::Perl::Kex::DH1&#39;), and then the subclass&#39;s <i>exchange</i> method is called to perform the key exchange.</p>
+
+<p>Once control returns to Kex::exchange, the client waits for the <i>SSH_MSG_NEWKEYS</i> message; once received, the client turns on its incoming encryption/MAC/compression algorithms, then sends an <i>SSH_MSG_NEWKEYS</i> message to the server. Finally, it turns on its outgoing encryption/MAC/compression algorithms.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+<p>New key exchange mechanisms added by: Lance Kinley E&lt;lkinley@loyaltymethods.com&gt;</p>
+
+<h1 id="POD-ERRORS">POD ERRORS</h1>
+
+<p>Hey! <b>The above document had some coding errors, which are explained below:</b></p>
+
+<dl>
+
+<dt id="Around-line-336">Around line 336:</dt>
+<dd>
+
+<p>Unknown E content in E&lt;lkinley@loyaltymethods.com&gt;</p>
+
+</dd>
+</dl>
+
+
+</body>
+
+</html>
+
+

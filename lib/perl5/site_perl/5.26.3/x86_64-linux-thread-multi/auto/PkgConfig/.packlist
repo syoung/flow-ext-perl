@@ -1,0 +1,9 @@
+/flow/perl/bin/pkg-config.pl
+/flow/perl/bin/ppkg-config
+/flow/perl/html/bin/pkg-config.html
+/flow/perl/html/bin/ppkg-config.html
+/flow/perl/html/site/lib/PkgConfig.html
+/flow/perl/lib/perl5/site_perl/5.26.3/PkgConfig.pm
+/flow/perl/man/man1/pkg-config.pl.1
+/flow/perl/man/man1/ppkg-config.1
+/flow/perl/man/man3/PkgConfig.3

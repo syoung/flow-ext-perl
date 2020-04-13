@@ -1,0 +1,375 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#read_rawfile">read_rawfile</a></li>
+      <li><a href="#write_rawfile">write_rawfile</a></li>
+      <li><a href="#slow_eq">slow_eq</a></li>
+      <li><a href="#pem_to_der">pem_to_der</a></li>
+      <li><a href="#der_to_pem">der_to_pem</a></li>
+      <li><a href="#random_v4uuid">random_v4uuid</a></li>
+      <li><a href="#is_v4uuid">is_v4uuid</a></li>
+      <li><a href="#increment_octets_le">increment_octets_le</a></li>
+      <li><a href="#increment_octets_be">increment_octets_be</a></li>
+      <li><a href="#encode_b64">encode_b64</a></li>
+      <li><a href="#decode_b64">decode_b64</a></li>
+      <li><a href="#encode_b64u">encode_b64u</a></li>
+      <li><a href="#decode_b64u">decode_b64u</a></li>
+      <li><a href="#encode_b32r">encode_b32r</a></li>
+      <li><a href="#decode_b32r">decode_b32r</a></li>
+      <li><a href="#encode_b32b">encode_b32b</a></li>
+      <li><a href="#decode_b32b">decode_b32b</a></li>
+      <li><a href="#encode_b32z">encode_b32z</a></li>
+      <li><a href="#decode_b32z">decode_b32z</a></li>
+      <li><a href="#encode_b32c">encode_b32c</a></li>
+      <li><a href="#decode_b32c">decode_b32c</a></li>
+      <li><a href="#encode_b58b">encode_b58b</a></li>
+      <li><a href="#decode_b58b">decode_b58b</a></li>
+      <li><a href="#encode_b58f">encode_b58f</a></li>
+      <li><a href="#decode_b58f">decode_b58f</a></li>
+      <li><a href="#encode_b58r">encode_b58r</a></li>
+      <li><a href="#decode_b58r">decode_b58r</a></li>
+      <li><a href="#encode_b58t">encode_b58t</a></li>
+      <li><a href="#decode_b58t">decode_b58t</a></li>
+      <li><a href="#encode_b58s">encode_b58s</a></li>
+      <li><a href="#decode_b58s">decode_b58s</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Misc - miscellaneous functions related to (or used by) CryptX</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>This module contains a collection of mostly unsorted functions loosely-related to CryptX distribution but not implementing cryptography.</p>
+
+<p>Most of them are also available in other perl modules but once you utilize CryptX you might avoid dependencies on other modules by using functions from Crypt::Misc.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<pre><code> use Crypt::Misc &#39;:all&#39;;
+
+ # Base64 and Base64/URL-safe functions
+ $base64    = encode_b64($rawbytes);
+ $rawbytes  = decode_b64($base64);
+ $base64url = encode_b64u($encode_b64u);
+ $rawbytes  = decode_b64u($base64url);
+
+ # read/write file
+ $rawdata = read_rawfile($filename);
+ write_rawfile($filename, $rawdata);
+
+ # convert PEM/DER
+ $der_data = pem_to_der($pem_data);
+ $pem_data = der_to_pem($der_data);
+
+  # others
+  die &quot;mismatch&quot; unless slow_eq($str1, $str2);</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>By default, Crypt::Misc doesn&#39;t import any function. You can import individual functions like this:</p>
+
+<pre><code> use Crypt::Misc qw(read_rawfile);</code></pre>
+
+<p>Or import all available functions:</p>
+
+<pre><code> use Crypt::Misc &#39;:all&#39;;</code></pre>
+
+<h2 id="read_rawfile">read_rawfile</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code> $rawdata = read_rawfile($filename);</code></pre>
+
+<p>Read file <code>$filename</code> into a scalar as a binary data (without decoding/transformation).</p>
+
+<h2 id="write_rawfile">write_rawfile</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code> write_rawfile($filename, $rawdata);</code></pre>
+
+<p>Write <code>$rawdata</code> to file <code>$filename</code> as binary data.</p>
+
+<h2 id="slow_eq">slow_eq</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code> if (slow_eq($data1, $data2)) { ... }</code></pre>
+
+<p>Constant time compare (to avoid timing side-channel).</p>
+
+<h2 id="pem_to_der">pem_to_der</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code>  $der_data = pem_to_der($pem_data);
+  #or
+  $der_data = pem_to_der($pem_data, $password);</code></pre>
+
+<p>Convert PEM to DER representation. Supports also password protected PEM data.</p>
+
+<h2 id="der_to_pem">der_to_pem</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code>  $pem_data = der_to_pem($der_data, $header_name);
+  #or
+  $pem_data = der_to_pem($der_data, $header_name, $password);
+  #or
+  $pem_data = der_to_pem($der_data, $header_name, $passord, $cipher_name);
+
+  # $header_name e.g. &quot;PUBLIC KEY&quot;, &quot;RSA PRIVATE KEY&quot; ...
+  # $cipher_name e.g. &quot;DES-EDE3-CBC&quot;, &quot;AES-256-CBC&quot; (DEFAULT) ...</code></pre>
+
+<p>Convert DER to PEM representation. Supports also password protected PEM data.</p>
+
+<h2 id="random_v4uuid">random_v4uuid</h2>
+
+<p><i>Since: 0.031</i></p>
+
+<pre><code> my $uuid = random_v4uuid();</code></pre>
+
+<p>Returns cryptographically strong Version 4 random UUID: <code>xxxxxxxx-xxxx-4xxx-Yxxx-xxxxxxxxxxxx</code> where <code>x</code> is any hexadecimal digit and <code>Y</code> is one of 8, 9, A, B (1000, 1001, 1010, 1011) e.g. <code>f47ac10b-58cc-4372-a567-0e02b2c3d479</code>.</p>
+
+<h2 id="is_v4uuid">is_v4uuid</h2>
+
+<p><i>Since: 0.031</i></p>
+
+<pre><code>  if (is_v4uuid($uuid)) {
+    ...
+  }</code></pre>
+
+<p>Checks the given <code>$uuid</code> string whether it matches V4 UUID format and returns <code>0</code> (mismatch) or <code>1</code> (match).</p>
+
+<h2 id="increment_octets_le">increment_octets_le</h2>
+
+<p><i>Since: 0.048</i></p>
+
+<pre><code> $octects = increment_octets_le($octets);</code></pre>
+
+<p>Take input <code>$octets</code> as a little-endian big number and return an increment.</p>
+
+<h2 id="increment_octets_be">increment_octets_be</h2>
+
+<p><i>Since: 0.048</i></p>
+
+<pre><code> $octects = increment_octets_be($octets);</code></pre>
+
+<p>Take input <code>$octets</code> as a big-endian big number and return an increment.</p>
+
+<h2 id="encode_b64">encode_b64</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code> $base64string = encode_b64($rawdata);</code></pre>
+
+<p>Encode $rawbytes into Base64 string, no line-endings in the output string.</p>
+
+<h2 id="decode_b64">decode_b64</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code> $rawdata = decode_b64($base64string);</code></pre>
+
+<p>Decode a Base64 string.</p>
+
+<h2 id="encode_b64u">encode_b64u</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code> $base64url_string = encode_b64($rawdata);</code></pre>
+
+<p>Encode $rawbytes into Base64/URL-Safe string, no line-endings in the output string.</p>
+
+<h2 id="decode_b64u">decode_b64u</h2>
+
+<p><i>Since: 0.029</i></p>
+
+<pre><code> $rawdata = decode_b64($base64url_string);</code></pre>
+
+<p>Decode a Base64/URL-Safe string.</p>
+
+<h2 id="encode_b32r">encode_b32r</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b32r($rawdata);</code></pre>
+
+<p>Encode bytes into Base32 (rfc4648 alphabet) string, without &quot;=&quot; padding.</p>
+
+<h2 id="decode_b32r">decode_b32r</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b32r($string);</code></pre>
+
+<p>Decode a Base32 (rfc4648 alphabet) string into bytes.</p>
+
+<h2 id="encode_b32b">encode_b32b</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b32b($rawdata);</code></pre>
+
+<p>Encode bytes into Base32 (base32hex alphabet) string, without &quot;=&quot; padding.</p>
+
+<h2 id="decode_b32b">decode_b32b</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b32b($string);</code></pre>
+
+<p>Decode a Base32 (base32hex alphabet) string into bytes.</p>
+
+<h2 id="encode_b32z">encode_b32z</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b32z($rawdata);</code></pre>
+
+<p>Encode bytes into Base32 (zbase32 alphabet) string.</p>
+
+<h2 id="decode_b32z">decode_b32z</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b32z($string);</code></pre>
+
+<p>Decode a Base32 (zbase32 alphabet) string into bytes.</p>
+
+<h2 id="encode_b32c">encode_b32c</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b32c($rawdata);</code></pre>
+
+<p>Encode bytes into Base32 (crockford alphabet) string.</p>
+
+<h2 id="decode_b32c">decode_b32c</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b32c($string);</code></pre>
+
+<p>Decode a Base32 (crockford alphabet) string into bytes.</p>
+
+<h2 id="encode_b58b">encode_b58b</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b58b($rawdata);</code></pre>
+
+<p>Encode bytes into Base58 (Bitcoin alphabet) string.</p>
+
+<h2 id="decode_b58b">decode_b58b</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b58b($string);</code></pre>
+
+<p>Decode a Base58 (Bitcoin alphabet) string into bytes.</p>
+
+<h2 id="encode_b58f">encode_b58f</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b58f($rawdata);</code></pre>
+
+<p>Encode bytes into Base58 (Flickr alphabet) string.</p>
+
+<h2 id="decode_b58f">decode_b58f</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b58f($string);</code></pre>
+
+<p>Decode a Base58 (Flickr alphabet) string into bytes.</p>
+
+<h2 id="encode_b58r">encode_b58r</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b58r($rawdata);</code></pre>
+
+<p>Encode bytes into Base58 (Ripple alphabet) string.</p>
+
+<h2 id="decode_b58r">decode_b58r</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b58r($string);</code></pre>
+
+<p>Decode a Base58 (Ripple alphabet) string into bytes.</p>
+
+<h2 id="encode_b58t">encode_b58t</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b58t($rawdata);</code></pre>
+
+<p>Encode bytes into Base58 (Tipple alphabet) string.</p>
+
+<h2 id="decode_b58t">decode_b58t</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b58t($string);</code></pre>
+
+<p>Decode a Base58 (Tipple alphabet) string into bytes.</p>
+
+<h2 id="encode_b58s">encode_b58s</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $string = encode_b58s($rawdata);</code></pre>
+
+<p>Encode bytes into Base58 (Stellar alphabet) string.</p>
+
+<h2 id="decode_b58s">decode_b58s</h2>
+
+<p><i>Since: 0.049</i></p>
+
+<pre><code> $rawdata = decode_b58s($string);</code></pre>
+
+<p>Decode a Base58 (Stellar alphabet) string into bytes.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

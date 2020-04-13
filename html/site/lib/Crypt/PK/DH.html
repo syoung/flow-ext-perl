@@ -1,0 +1,258 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#generate_key">generate_key</a></li>
+      <li><a href="#import_key">import_key</a></li>
+      <li><a href="#import_key_raw">import_key_raw</a></li>
+      <li><a href="#export_key">export_key</a></li>
+      <li><a href="#export_key_raw">export_key_raw</a></li>
+      <li><a href="#shared_secret">shared_secret</a></li>
+      <li><a href="#is_private">is_private</a></li>
+      <li><a href="#size">size</a></li>
+      <li><a href="#key2hash">key2hash</a></li>
+      <li><a href="#params2hash">params2hash</a></li>
+    </ul>
+  </li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#dh_shared_secret">dh_shared_secret</a></li>
+    </ul>
+  </li>
+  <li><a href="#DEPRECATED-INTERFACE">DEPRECATED INTERFACE</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::PK::DH - Public key cryptography based on Diffie-Hellman</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> ### OO interface
+
+ #Shared secret
+ my $priv = Crypt::PK::DH-&gt;new(&#39;Alice_priv_dh1.key&#39;);
+ my $pub = Crypt::PK::DH-&gt;new(&#39;Bob_pub_dh1.key&#39;);
+ my $shared_secret = $priv-&gt;shared_secret($pub);
+
+ #Key generation
+ my $pk = Crypt::PK::DH-&gt;new();
+ $pk-&gt;generate_key(128);
+ my $private = $pk-&gt;export_key(&#39;private&#39;);
+ my $public = $pk-&gt;export_key(&#39;public&#39;);
+
+ or
+
+ my $pk = Crypt::PK::DH-&gt;new();
+ $pk-&gt;generate_key(&#39;ike2048&#39;);
+ my $private = $pk-&gt;export_key(&#39;private&#39;);
+ my $public = $pk-&gt;export_key(&#39;public&#39;);
+
+ or
+
+ my $pk = Crypt::PK::DH-&gt;new();
+ $pk-&gt;generate_key({ p =&gt; $p, g =&gt; $g });
+ my $private = $pk-&gt;export_key(&#39;private&#39;);
+ my $public = $pk-&gt;export_key(&#39;public&#39;);
+
+ ### Functional interface
+
+ #Shared secret
+ my $shared_secret = dh_shared_secret(&#39;Alice_priv_dh1.key&#39;, &#39;Bob_pub_dh1.key&#39;);</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code>  my $pk = Crypt::PK::DH-&gt;new();
+  #or
+  my $pk = Crypt::PK::DH-&gt;new($priv_or_pub_key_filename);
+  #or
+  my $pk = Crypt::PK::DH-&gt;new(\$buffer_containing_priv_or_pub_key);</code></pre>
+
+<h2 id="generate_key">generate_key</h2>
+
+<p>Uses Yarrow-based cryptographically strong random number generator seeded with random data taken from <code>/dev/random</code> (UNIX) or <code>CryptGenRandom</code> (Win32).</p>
+
+<pre><code> $pk-&gt;generate_key($groupsize);
+ ### $groupsize (in bytes) corresponds to DH parameters (p, g) predefined by libtomcrypt
+ # 96   =&gt;  DH-768
+ # 128  =&gt;  DH-1024
+ # 192  =&gt;  DH-1536
+ # 256  =&gt;  DH-2048
+ # 384  =&gt;  DH-3072
+ # 512  =&gt;  DH-4096
+ # 768  =&gt;  DH-6144
+ # 1024 =&gt;  DH-8192</code></pre>
+
+<p>The following variants are available since CryptX-0.032</p>
+
+<pre><code> $pk-&gt;generate_key($groupname)
+ ### $groupname corresponds to values defined in RFC7296 and RFC3526
+ # &#39;ike768&#39;  =&gt;  768-bit MODP (Group 1)
+ # &#39;ike1024&#39; =&gt; 1024-bit MODP (Group 2)
+ # &#39;ike1536&#39; =&gt; 1536-bit MODP (Group 5)
+ # &#39;ike2048&#39; =&gt; 2048-bit MODP (Group 14)
+ # &#39;ike3072&#39; =&gt; 3072-bit MODP (Group 15)
+ # &#39;ike4096&#39; =&gt; 4096-bit MODP (Group 16)
+ # &#39;ike6144&#39; =&gt; 6144-bit MODP (Group 17)
+ # &#39;ike8192&#39; =&gt; 8192-bit MODP (Group 18)
+
+ $pk-&gt;generate_key($param_hash)
+ # $param_hash is { g =&gt; $g, p =&gt; $p }
+ # where $g is the generator (base) in a hex string and $p is the prime in a hex string
+
+ $pk-&gt;generate_key(\$dh_param)
+ # $dh_param is the content of DER or PEM file with DH parameters
+ # e.g. openssl dhparam 2048</code></pre>
+
+<h2 id="import_key">import_key</h2>
+
+<p>Loads private or public key (exported by <a href="#export_key">&quot;export_key&quot;</a>).</p>
+
+<pre><code>  $pk-&gt;import_key($filename);
+  #or
+  $pk-&gt;import_key(\$buffer_containing_key);</code></pre>
+
+<h2 id="import_key_raw">import_key_raw</h2>
+
+<p><i>Since: CryptX-0.032</i></p>
+
+<pre><code>  $pk-&gt;import_key_raw($raw_bytes, $type, $params)
+  ### $raw_bytes is a binary string containing the key
+  ### $type is either &#39;private&#39; or &#39;public&#39;
+  ### $param is either a name (&#39;ike2038&#39;) or hash containing the p,g values { g=&gt;$g, p=&gt;$p }
+  ### in hex strings</code></pre>
+
+<h2 id="export_key">export_key</h2>
+
+<p><b>BEWARE:</b> DH key format change - since v0.049 it is compatible with libtomcrypt 1.18.</p>
+
+<pre><code> my $private = $pk-&gt;export_key(&#39;private&#39;);
+ #or
+ my $public = $pk-&gt;export_key(&#39;public&#39;);</code></pre>
+
+<h2 id="export_key_raw">export_key_raw</h2>
+
+<p><i>Since: CryptX-0.032</i></p>
+
+<pre><code> $raw_bytes = $dh-&gt;export_key_raw(&#39;public&#39;)
+ #or
+ $raw_bytes = $dh-&gt;export_key_raw(&#39;private&#39;)</code></pre>
+
+<h2 id="shared_secret">shared_secret</h2>
+
+<pre><code> # Alice having her priv key $pk and Bob&#39;s public key $pkb
+ my $pk  = Crypt::PK::DH-&gt;new($priv_key_filename);
+ my $pkb = Crypt::PK::DH-&gt;new($pub_key_filename);
+ my $shared_secret = $pk-&gt;shared_secret($pkb);
+
+ # Bob having his priv key $pk and Alice&#39;s public key $pka
+ my $pk = Crypt::PK::DH-&gt;new($priv_key_filename);
+ my $pka = Crypt::PK::DH-&gt;new($pub_key_filename);
+ my $shared_secret = $pk-&gt;shared_secret($pka);  # same value as computed by Alice</code></pre>
+
+<h2 id="is_private">is_private</h2>
+
+<pre><code> my $rv = $pk-&gt;is_private;
+ # 1 .. private key loaded
+ # 0 .. public key loaded
+ # undef .. no key loaded</code></pre>
+
+<h2 id="size">size</h2>
+
+<pre><code> my $size = $pk-&gt;size;
+ # returns key size in bytes or undef if no key loaded</code></pre>
+
+<h2 id="key2hash">key2hash</h2>
+
+<pre><code> my $hash = $pk-&gt;key2hash;
+
+ # returns hash like this (or undef if no key loaded):
+ {
+   type =&gt; 0,   # integer: 1 .. private, 0 .. public
+   size =&gt; 256, # integer: key size in bytes
+   x =&gt; &quot;FBC1062F73B9A17BB8473A2F5A074911FA7F20D28FB...&quot;, #private key
+   y =&gt; &quot;AB9AAA40774D3CD476B52F82E7EE2D8A8D40CD88BF4...&quot;, #public key
+   g =&gt; &quot;2&quot;, # generator/base
+   p =&gt; &quot;FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80D...&quot;, # prime
+}</code></pre>
+
+<h2 id="params2hash">params2hash</h2>
+
+<p><i>Since: CryptX-0.032</i></p>
+
+<pre><code> my $params = $pk-&gt;params2hash;
+
+ # returns hash like this (or undef if no key loaded):
+ {
+   g =&gt; &quot;2&quot;, # generator/base
+   p =&gt; &quot;FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80D...&quot;, # prime
+}</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="dh_shared_secret">dh_shared_secret</h2>
+
+<p>DH based shared secret generation. See method <a href="#shared_secret">&quot;shared_secret&quot;</a> below.</p>
+
+<pre><code> #on Alice side
+ my $shared_secret = dh_shared_secret(&#39;Alice_priv_dh1.key&#39;, &#39;Bob_pub_dh1.key&#39;);
+
+ #on Bob side
+ my $shared_secret = dh_shared_secret(&#39;Bob_priv_dh1.key&#39;, &#39;Alice_pub_dh1.key&#39;);</code></pre>
+
+<h1 id="DEPRECATED-INTERFACE">DEPRECATED INTERFACE</h1>
+
+<p>The following functions/methods were removed in removed in v0.049:</p>
+
+<pre><code> encrypt
+ decrypt
+ sign_message
+ verify_message
+ sign_hash
+ verify_hash
+
+ dh_encrypt
+ dh_decrypt
+ dh_sign_message
+ dh_verify_message
+ dh_sign_hash
+ dh_verify_hash</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange">https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

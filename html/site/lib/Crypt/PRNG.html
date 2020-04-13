@@ -1,0 +1,237 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#random_bytes">random_bytes</a></li>
+      <li><a href="#random_bytes_hex">random_bytes_hex</a></li>
+      <li><a href="#random_bytes_b64">random_bytes_b64</a></li>
+      <li><a href="#random_bytes_b64u">random_bytes_b64u</a></li>
+      <li><a href="#random_string_from">random_string_from</a></li>
+      <li><a href="#random_string">random_string</a></li>
+      <li><a href="#rand">rand</a></li>
+      <li><a href="#irand">irand</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#add_entropy">add_entropy</a></li>
+      <li><a href="#bytes">bytes</a></li>
+      <li><a href="#bytes_hex">bytes_hex</a></li>
+      <li><a href="#bytes_b64">bytes_b64</a></li>
+      <li><a href="#bytes_b64u">bytes_b64u</a></li>
+      <li><a href="#string">string</a></li>
+      <li><a href="#string_from">string_from</a></li>
+      <li><a href="#double">double</a></li>
+      <li><a href="#int32">int32</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::PRNG - Cryptographically secure random number generator</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   ### Functional interface:
+   use Crypt::PRNG qw(random_bytes random_bytes_hex random_bytes_b64 random_bytes_b64u
+                      random_string random_string_from rand irand);
+
+   $octets = random_bytes(45);
+   $hex_string = random_bytes_hex(45);
+   $base64_string = random_bytes_b64(45);
+   $base64url_string = random_bytes_b64u(45);
+   $alphanumeric_string = random_string(30);
+   $string = random_string_from(&#39;ACGT&#39;, 64);
+   $floating_point_number_0_to_1 = rand;
+   $floating_point_number_0_to_88 = rand(88);
+   $unsigned_32bit_int = irand;
+
+   ### OO interface:
+   use Crypt::PRNG;
+
+   $prng = Crypt::PRNG-&gt;new;
+   #or
+   $prng = Crypt::PRNG-&gt;new(&quot;RC4&quot;);
+   #or
+   $prng = Crypt::PRNG-&gt;new(&quot;RC4&quot;, &quot;some data used for seeding PRNG&quot;);
+
+   $octets = $prng-&gt;bytes(45);
+   $hex_string = $prng-&gt;bytes_hex(45);
+   $base64_string = $prng-&gt;bytes_b64(45);
+   $base64url_string = $prng-&gt;bytes_b64u(45);
+   $alphanumeric_string = $prng-&gt;string(30);
+   $string = $prng-&gt;string_from(&#39;ACGT&#39;, 64);
+   $floating_point_number_0_to_1 = $prng-&gt;double;
+   $floating_point_number_0_to_88 = $prng-&gt;double(88);
+   $unsigned_32bit_int = $prng-&gt;int32;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to the ChaCha20 based pseudo random number generator (thread-safe and fork-safe).</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="random_bytes">random_bytes</h2>
+
+<pre><code>   $octets = random_bytes($length);</code></pre>
+
+<p>Returns <code>$length</code> random octects.</p>
+
+<h2 id="random_bytes_hex">random_bytes_hex</h2>
+
+<pre><code>   $hex_string = random_bytes_hex($length);</code></pre>
+
+<p>Returns <code>$length</code> random octects encoded as hexadecimal string.</p>
+
+<h2 id="random_bytes_b64">random_bytes_b64</h2>
+
+<pre><code>   $base64_string = random_bytes_b64($length);</code></pre>
+
+<p>Returns <code>$length</code> random octects Base64 encoded.</p>
+
+<h2 id="random_bytes_b64u">random_bytes_b64u</h2>
+
+<pre><code>   $base64url_string = random_bytes_b64u($length);</code></pre>
+
+<p>Returns <code>$length</code> random octects Base64 URL Safe (RFC 4648 section 5) encoded.</p>
+
+<h2 id="random_string_from">random_string_from</h2>
+
+<pre><code>   $string = random_string_from($range, $length);
+   #e.g.
+   $string = random_string_from(&quot;ABCD&quot;, 10);</code></pre>
+
+<p>Returns a random string made of <code>$length</code> chars randomly chosen from <code>$range</code> string.</p>
+
+<h2 id="random_string">random_string</h2>
+
+<pre><code>   $alphanumeric_string = random_string($length);
+   #or
+   $alphanumeric_string = random_string;  # default length = 20</code></pre>
+
+<p>Similar to random_string_from, only <code>$range</code> is fixed to <code>&#39;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&#39;</code>.</p>
+
+<h2 id="rand">rand</h2>
+
+<pre><code>   $n = rand;
+   #or
+   $n = rand($limit);</code></pre>
+
+<p>Returns a random floating point number from range <code>[0,1)</code> (if called without parameter) or <code>[0,$limit)</code>.</p>
+
+<h2 id="irand">irand</h2>
+
+<pre><code>   $i = irand;</code></pre>
+
+<p>Returns a random unsigned 32bit integer - range <code>0 .. 0xFFFFFFFF</code>.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code>   $prng = Crypt::PRNG-&gt;new;
+   #or
+   $prng = Crypt::PRNG-&gt;new($alg);
+   #or
+   $prng = Crypt::PRNG-&gt;new($alg, $seed);
+
+   # $alg  ... algorithm name &#39;Frotuna&#39; (DEFAULT), &#39;RC4&#39;, &#39;Sober128&#39; or &#39;Yarrow&#39;
+   # $seed ... will be used as an initial entropy for seeding PRNG</code></pre>
+
+<p>If <code>$seed</code> is not specified the PRNG is automatically seeded with 32bytes random data taken from <code>/dev/random</code> (UNIX) or <code>CryptGenRandom</code> (Win32)</p>
+
+<h2 id="add_entropy">add_entropy</h2>
+
+<pre><code>  $prng-&gt;add_entropy($random_data);
+  #or
+  $prng-&gt;add_entropy();</code></pre>
+
+<p>If called without parameter it uses 32bytes random data taken from <code>/dev/random</code> (UNIX) or <code>CryptGenRandom</code> (Win32).</p>
+
+<p><b>BEWARE:</b> you probably do not need this function at all as the module does automatic seeding on initialization as well as reseeding after fork and thread creation.</p>
+
+<h2 id="bytes">bytes</h2>
+
+<pre><code>   $octets = $prng-&gt;bytes($length);</code></pre>
+
+<p>See <a href="#random_bytes">random_bytes</a></p>
+
+<h2 id="bytes_hex">bytes_hex</h2>
+
+<pre><code>   $hex_string = $prng-&gt;bytes_hex($length);</code></pre>
+
+<p>See <a href="#random_bytes_hex">random_bytes_hex</a></p>
+
+<h2 id="bytes_b64">bytes_b64</h2>
+
+<pre><code>   $base64_string = $prng-&gt;bytes_b64($length);</code></pre>
+
+<p>See <a href="#random_bytes_b64">random_bytes_b64</a></p>
+
+<h2 id="bytes_b64u">bytes_b64u</h2>
+
+<pre><code>   $base64url_string = $prng-&gt;bytes_b64u($length);</code></pre>
+
+<p>See <a href="#random_bytes_b64u">random_bytes_b64u</a></p>
+
+<h2 id="string">string</h2>
+
+<pre><code>   $alphanumeric_string = $prng-&gt;string($length);
+   #or
+   $alphanumeric_string = $prng-&gt;string;</code></pre>
+
+<p>See <a href="#random_string">random_string</a></p>
+
+<h2 id="string_from">string_from</h2>
+
+<pre><code>   $string = $prng-&gt;string_from($range, $length);</code></pre>
+
+<p>See <a href="#random_string_from">random_string_from</a></p>
+
+<h2 id="double">double</h2>
+
+<pre><code>   $n = $prng-&gt;double;
+   #or
+   $n = $prng-&gt;double($limit);</code></pre>
+
+<p>See <a href="#rand">rand</a></p>
+
+<h2 id="int32">int32</h2>
+
+<pre><code>   $i = $prng-&gt;int32;</code></pre>
+
+<p>See <a href="#irand">irand</a></p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG/Fortuna.html">Crypt::PRNG::Fortuna</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG/RC4.html">Crypt::PRNG::RC4</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG/Sober128.html">Crypt::PRNG::Sober128</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/PRNG/Yarrow.html">Crypt::PRNG::Yarrow</a></p>
+
+
+</body>
+
+</html>
+
+

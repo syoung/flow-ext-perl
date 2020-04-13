@@ -1252,3 +1252,311 @@ C<EXE_FILES: >
 
 =back
 
+=head2 Mon Apr 13 00:51:17 2020: C<Module> L<Digest::BubbleBabble|Digest::BubbleBabble>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.02>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:08:41 2020: C<Module> L<Crypt::Curve25519|Crypt::Curve25519>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.06>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:08:43 2020: C<Module> L<String::CRC32|String::CRC32>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.8>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:09:27 2020: C<Module> L<CryptX|CryptX>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.068>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:09:30 2020: C<Module> L<FFI::CheckLib|FFI::CheckLib>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.26>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:09:32 2020: C<Module> L<File::chdir|File::chdir>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.1010>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:09:55 2020: C<Module> L<PkgConfig|PkgConfig>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.23026>
+
+=item *
+
+C<EXE_FILES: script/pkg-config.pl script/ppkg-config>
+
+=back
+
+=head2 Mon Apr 13 01:10:19 2020: C<Module> L<Alien::Build|Alien::Build>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.21>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:10:21 2020: C<Module> L<Sort::Versions|Sort::Versions>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.62>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:10:37 2020: C<Module> L<Crypt::IDEA|Crypt::IDEA>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.10>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:17:00 2020: C<Module> L<Alien::GMP|Alien::GMP>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.14>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:17:03 2020: C<Module> L<Math::GMP|Math::GMP>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.20>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:17:59 2020: C<Module> L<Net::SSH::Perl|Net::SSH::Perl>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.14>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Mon Apr 13 01:20:30 2020: C<Module> L<Net::OpenSSH|Net::OpenSSH>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 0.78>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+

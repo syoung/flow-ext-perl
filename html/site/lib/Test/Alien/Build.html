@@ -1,0 +1,337 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#alienfile">alienfile</a></li>
+      <li><a href="#alienfile_ok">alienfile_ok</a></li>
+      <li><a href="#alienfile_skip_if_missing_prereqs">alienfile_skip_if_missing_prereqs</a></li>
+      <li><a href="#alien_install_type_is">alien_install_type_is</a></li>
+      <li><a href="#alien_download_ok">alien_download_ok</a></li>
+      <li><a href="#alien_extract_ok">alien_extract_ok</a></li>
+      <li><a href="#alien_build_ok">alien_build_ok</a></li>
+      <li><a href="#alien_build_clean">alien_build_clean</a></li>
+      <li><a href="#alien_clean_install">alien_clean_install</a></li>
+      <li><a href="#alien_checkpoint_ok">alien_checkpoint_ok</a></li>
+      <li><a href="#alien_resume_ok">alien_resume_ok</a></li>
+      <li><a href="#alien_rc">alien_rc</a></li>
+      <li><a href="#alien_subtest">alien_subtest</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::Alien::Build - Tools for testing Alien::Build + alienfile</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Test2::V0;
+ use Test::Alien::Build;
+ 
+ # returns an instance of Alien::Build.
+ my $build = alienfile_ok q{
+   use alienfile;
+ 
+   plugin &#39;My::Plugin&#39; =&gt; (
+     foo =&gt; 1,
+     bar =&gt; &#39;string&#39;,
+     ...
+   );
+ };
+ 
+ alien_build_ok &#39;builds okay.&#39;;
+ 
+ done_testing;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides some tools for testing <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> and <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>. Outside of <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> core development, It is probably most useful for <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin.html">Alien::Build::Plugin</a> developers.</p>
+
+<p>This module also unsets a number of <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> specific environment variables, in order to make tests reproducible even when overrides are set in different environments. So if you want to test those variables in various states you should explicitly set them in your test script. These variables are unset if they defined: <code>ALIEN_BUILD_PRELOAD</code> <code>ALIEN_BUILD_POSTLOAD</code> <code>ALIEN_INSTALL_TYPE</code>.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="alienfile">alienfile</h2>
+
+<pre><code> my $build = alienfile;
+ my $build = alienfile q{ use alienfile ... };
+ my $build = alienfile filename =&gt; &#39;alienfile&#39;;</code></pre>
+
+<p>Create a Alien::Build instance from the given <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>. The first two forms are abbreviations.</p>
+
+<pre><code> my $build = alienfile;
+ # is the same as
+ my $build = alienfile filename =&gt; &#39;alienfile&#39;;</code></pre>
+
+<p>and</p>
+
+<pre><code> my $build = alienfile q{ use alienfile ... };
+ # is the same as
+ my $build = alienfile source =&gt; q{ use alienfile ... };</code></pre>
+
+<p>Except for the second abbreviated form sets the line number before feeding the source into <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> so that you will get diagnostics with the correct line numbers.</p>
+
+<dl>
+
+<dt id="source">source</dt>
+<dd>
+
+<p>The source for the alienfile as a string. You must specify one of <code>source</code> or <code>filename</code>.</p>
+
+</dd>
+<dt id="filename">filename</dt>
+<dd>
+
+<p>The filename for the alienfile. You must specify one of <code>source</code> or <code>filename</code>.</p>
+
+</dd>
+<dt id="root">root</dt>
+<dd>
+
+<p>The build root.</p>
+
+</dd>
+<dt id="stage">stage</dt>
+<dd>
+
+<p>The staging area for the build.</p>
+
+</dd>
+<dt id="prefix">prefix</dt>
+<dd>
+
+<p>The install prefix for the build.</p>
+
+</dd>
+</dl>
+
+<h2 id="alienfile_ok">alienfile_ok</h2>
+
+<pre><code> my $build = alienfile_ok;
+ my $build = alienfile_ok q{ use alienfile ... };
+ my $build = alienfile_ok filename =&gt; &#39;alienfile&#39;;
+ my $build = alienfile_ok $build;</code></pre>
+
+<p>Same as <code>alienfile</code> above, except that it runs as a test, and will not throw an exception on failure (it will return undef instead).</p>
+
+<p>[version 1.49]</p>
+
+<p>As of version 1.49 you can also pass in an already formed instance of <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>. This allows you to do something like this:</p>
+
+<pre><code> subtest &#39;a subtest&#39; =&gt; sub {
+   my $build = alienfile q{ use alienfile; ... };
+   alienfile_skip_if_missing_prereqs; # skip if alienfile prereqs are missing
+   alienfile_ok $build;  # delayed pass/fail for the compile of alienfile
+ };</code></pre>
+
+<h2 id="alienfile_skip_if_missing_prereqs">alienfile_skip_if_missing_prereqs</h2>
+
+<pre><code> alienfile_skip_if_missing_prereqs;
+ alienfile_skip_if_missing_prereqs $phase;</code></pre>
+
+<p>Skips the test or subtest if the prereqs for the alienfile are missing. If <code>$phase</code> is not given, then either <code>share</code> or <code>system</code> will be detected.</p>
+
+<h2 id="alien_install_type_is">alien_install_type_is</h2>
+
+<pre><code> alien_install_type_is $type;
+ alien_install_type_is $type, $name;</code></pre>
+
+<p>Simple test to see if the install type is what you expect. <code>$type</code> should be one of <code>system</code> or <code>share</code>.</p>
+
+<h2 id="alien_download_ok">alien_download_ok</h2>
+
+<pre><code> my $file = alien_download_ok;
+ my $file = alien_download_ok $name;</code></pre>
+
+<p>Makes a download attempt and test that a file or directory results. Returns the file or directory if successful. Returns <code>undef</code> otherwise.</p>
+
+<h2 id="alien_extract_ok">alien_extract_ok</h2>
+
+<pre><code> my $dir = alien_extract_ok;
+ my $dir = alien_extract_ok $archive;
+ my $dir = alien_extract_ok $archive, $name;
+ my $dir = alien_extract_ok undef, $name;</code></pre>
+
+<p>Makes an extraction attempt and test that a directory results. Returns the directory if successful. Returns <code>undef</code> otherwise.</p>
+
+<h2 id="alien_build_ok">alien_build_ok</h2>
+
+<pre><code> my $alien = alien_build_ok;
+ my $alien = alien_build_ok $name;
+ my $alien = alien_build_ok { class =&gt; $class };
+ my $alien = alien_build_ok { class =&gt; $class }, $name;</code></pre>
+
+<p>Runs the download and build stages. Passes if the build succeeds. Returns an instance of <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> which can be passed into <code>alien_ok</code> from <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien.html">Test::Alien</a>. Returns <code>undef</code> if the test fails.</p>
+
+<p>Options</p>
+
+<dl>
+
+<dt id="class">class</dt>
+<dd>
+
+<p>The base class to use for your alien. This is <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> by default. Should be a subclass of <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>, or at least adhere to its API.</p>
+
+</dd>
+</dl>
+
+<h2 id="alien_build_clean">alien_build_clean</h2>
+
+<pre><code> alien_build_clean;</code></pre>
+
+<p>Removes all files with the current build, except for the runtime prefix. This helps test that the final install won&#39;t depend on the build files.</p>
+
+<h2 id="alien_clean_install">alien_clean_install</h2>
+
+<pre><code> alien_clean_install;</code></pre>
+
+<p>Runs <code>$build-&gt;clean_install</code>, and verifies it did not crash.</p>
+
+<h2 id="alien_checkpoint_ok">alien_checkpoint_ok</h2>
+
+<pre><code> alien_checkpoint_ok;
+ alien_checkpoint_ok $test_name;</code></pre>
+
+<p>Test the checkpoint of a build.</p>
+
+<h2 id="alien_resume_ok">alien_resume_ok</h2>
+
+<pre><code> alien_resume_ok;
+ alien_resume_ok $test_name;</code></pre>
+
+<p>Test a resume a checkpointed build.</p>
+
+<h2 id="alien_rc">alien_rc</h2>
+
+<pre><code> alien_rc $code;</code></pre>
+
+<p>Creates <code>rc.pl</code> file in a temp directory and sets ALIEN_BUILD_RC. Useful for testing plugins that should be called from <code>~/.alienbuild/rc.pl</code>. Note that because of the nature of how the <code>~/.alienbuild/rc.pl</code> file works, you can only use this once!</p>
+
+<h2 id="alien_subtest">alien_subtest</h2>
+
+<pre><code> alien_subtest $test_name =&gt; sub {
+   ...
+ };</code></pre>
+
+<p>Clear the build object and clear the build object before and after the subtest.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Alien"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a></dt>
+<dd>
+
+</dd>
+<dt id="alienfile1"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a></dt>
+<dd>
+
+</dd>
+<dt id="Alien::Build"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a></dt>
+<dd>
+
+</dd>
+<dt id="Test::Alien"><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien.html">Test::Alien</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

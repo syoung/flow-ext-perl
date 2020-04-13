@@ -1,0 +1,184 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#xcbc">xcbc</a></li>
+      <li><a href="#xcbc_hex">xcbc_hex</a></li>
+      <li><a href="#xcbc_b64">xcbc_b64</a></li>
+      <li><a href="#xcbc_b64u">xcbc_b64u</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#clone">clone</a></li>
+      <li><a href="#reset">reset</a></li>
+      <li><a href="#add">add</a></li>
+      <li><a href="#addfile">addfile</a></li>
+      <li><a href="#mac">mac</a></li>
+      <li><a href="#hexmac">hexmac</a></li>
+      <li><a href="#b64mac">b64mac</a></li>
+      <li><a href="#b64umac">b64umac</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Mac::XCBC - Message authentication code XCBC (RFC 3566)</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   ### Functional interface:
+   use Crypt::Mac::XCBC qw( xcbc xcbc_hex );
+
+   # calculate MAC from string/buffer
+   $xcbc_raw  = xcbc($cipher_name, $key, &#39;data buffer&#39;);
+   $xcbc_hex  = xcbc_hex($cipher_name, $key, &#39;data buffer&#39;);
+   $xcbc_b64  = xcbc_b64($cipher_name, $key, &#39;data buffer&#39;);
+   $xcbc_b64u = xcbc_b64u($cipher_name, $key, &#39;data buffer&#39;);
+
+   ### OO interface:
+   use Crypt::Mac::XCBC;
+
+   $d = Crypt::Mac::XCBC-&gt;new($cipher_name, $key);
+   $d-&gt;add(&#39;any data&#39;);
+   $d-&gt;addfile(&#39;filename.dat&#39;);
+   $d-&gt;addfile(*FILEHANDLE);
+   $result_raw  = $d-&gt;mac;     # raw bytes
+   $result_hex  = $d-&gt;hexmac;  # hexadecimal form
+   $result_b64  = $d-&gt;b64mac;  # Base64 form
+   $result_b64u = $d-&gt;b64umac; # Base64 URL Safe form</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to the XCBC message authentication code (MAC) algorithm.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code>  use Crypt::Mac::XCBC qw(xcbc xcbc_hex );</code></pre>
+
+<p>Or all of them at once:</p>
+
+<pre><code>  use Crypt::Mac::XCBC &#39;:all&#39;;</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="xcbc">xcbc</h2>
+
+<p>Logically joins all arguments into a single string, and returns its XCBC message authentication code encoded as a binary string.</p>
+
+<pre><code> $xcbc_raw = xcbc($cipher_name, $key, &#39;data buffer&#39;);
+ #or
+ $xcbc_raw = xcbc($cipher_name, $key, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="xcbc_hex">xcbc_hex</h2>
+
+<p>Logically joins all arguments into a single string, and returns its XCBC message authentication code encoded as a hexadecimal string.</p>
+
+<pre><code> $xcbc_hex = xcbc_hex($cipher_name, $key, &#39;data buffer&#39;);
+ #or
+ $xcbc_hex = xcbc_hex($cipher_name, $key, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="xcbc_b64">xcbc_b64</h2>
+
+<p>Logically joins all arguments into a single string, and returns its XCBC message authentication code encoded as a Base64 string.</p>
+
+<pre><code> $xcbc_b64 = xcbc_b64($cipher_name, $key, &#39;data buffer&#39;);
+ #or
+ $xcbc_b64 = xcbc_b64($cipher_name, $key, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="xcbc_b64u">xcbc_b64u</h2>
+
+<p>Logically joins all arguments into a single string, and returns its XCBC message authentication code encoded as a Base64 URL Safe string (see RFC 4648 section 5).</p>
+
+<pre><code> $xcbc_b64url = xcbc_b64u($cipher_name, $key, &#39;data buffer&#39;);
+ #or
+ $xcbc_b64url = xcbc_b64u($cipher_name, $key, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> $d = Crypt::Mac::XCBC-&gt;new($cipher_name, $key);</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> $d-&gt;clone();</code></pre>
+
+<h2 id="reset">reset</h2>
+
+<pre><code> $d-&gt;reset();</code></pre>
+
+<h2 id="add">add</h2>
+
+<pre><code> $d-&gt;add(&#39;any data&#39;);
+ #or
+ $d-&gt;add(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="addfile">addfile</h2>
+
+<pre><code> $d-&gt;addfile(&#39;filename.dat&#39;);
+ #or
+ $d-&gt;addfile(*FILEHANDLE);</code></pre>
+
+<h2 id="mac">mac</h2>
+
+<pre><code> $result_raw = $d-&gt;mac();</code></pre>
+
+<h2 id="hexmac">hexmac</h2>
+
+<pre><code> $result_hex = $d-&gt;hexmac();</code></pre>
+
+<h2 id="b64mac">b64mac</h2>
+
+<pre><code> $result_b64 = $d-&gt;b64mac();</code></pre>
+
+<h2 id="b64umac">b64umac</h2>
+
+<pre><code> $result_b64url = $d-&gt;b64umac();</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a></p>
+
+</li>
+<li><p><a href="https://www.ietf.org/rfc/rfc3566.txt">https://www.ietf.org/rfc/rfc3566.txt</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

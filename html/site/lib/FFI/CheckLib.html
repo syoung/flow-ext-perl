@@ -1,0 +1,287 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#find_lib">find_lib</a></li>
+      <li><a href="#assert_lib">assert_lib</a></li>
+      <li><a href="#check_lib_or_exit">check_lib_or_exit</a></li>
+      <li><a href="#find_lib_or_exit">find_lib_or_exit</a></li>
+      <li><a href="#find_lib_or_die">find_lib_or_die</a></li>
+      <li><a href="#check_lib">check_lib</a></li>
+      <li><a href="#which">which</a></li>
+      <li><a href="#where">where</a></li>
+      <li><a href="#has_symbols">has_symbols</a></li>
+      <li><a href="#system_path">system_path</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>FFI::CheckLib - Check that a library is available for FFI</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.26</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use FFI::CheckLib;
+ 
+ check_lib_or_exit( lib =&gt; &#39;jpeg&#39;, symbol =&gt; &#39;jinit_memory_mgr&#39; );
+ check_lib_or_exit( lib =&gt; [ &#39;iconv&#39;, &#39;jpeg&#39; ] );
+ 
+ # or prompt for path to library and then:
+ print &quot;where to find jpeg library: &quot;;
+ my $path = &lt;STDIN&gt;;
+ check_lib_or_exit( lib =&gt; &#39;jpeg&#39;, libpath =&gt; $path );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module checks whether a particular dynamic library is available for FFI to use. It is modeled heavily on <a href="../../../lib/perl5/site_perl/5.26.3/Devel/CheckLib.html">Devel::CheckLib</a>, but will find dynamic libraries even when development packages are not installed. It also provides a <a>find_lib</a> function that will return the full path to the found dynamic library, which can be feed directly into <a>FFI::Platypus</a> or another FFI system.</p>
+
+<p>Although intended mainly for FFI modules via <a>FFI::Platypus</a> and similar, this module does not actually use any FFI to do its detection and probing. This module does not have any non-core runtime dependencies. The test suite does depend on <a href="../../../lib/perl5/5.26.3/Test2/Suite.html">Test2::Suite</a>.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>All of these take the same named parameters and are exported by default.</p>
+
+<h2 id="find_lib">find_lib</h2>
+
+<pre><code> my(@libs) = find_lib(%args);</code></pre>
+
+<p>This will return a list of dynamic libraries, or empty list if none were found.</p>
+
+<p>[version 0.05]</p>
+
+<p>If called in scalar context it will return the first library found.</p>
+
+<p>Arguments are key value pairs with these keys:</p>
+
+<dl>
+
+<dt id="lib">lib</dt>
+<dd>
+
+<p>Must be either a string with the name of a single library or a reference to an array of strings of library names. Depending on your platform, <code>CheckLib</code> will prepend <code>lib</code> or append <code>.dll</code> or <code>.so</code> when searching.</p>
+
+<p>[version 0.11]</p>
+
+<p>As a special case, if <code>*</code> is specified then any libs found will match.</p>
+
+</dd>
+<dt id="libpath">libpath</dt>
+<dd>
+
+<p>A string or array of additional paths to search for libraries.</p>
+
+</dd>
+<dt id="systempath">systempath</dt>
+<dd>
+
+<p>[version 0.11]</p>
+
+<p>A string or array of system paths to search for instead of letting <a href="../../../../../root/.cpanm/work/1586740115.5251/FFI-CheckLib-0.26/blib/lib/FFI/CheckLib.html">FFI::CheckLib</a> determine the system path. You can set this to <code>[]</code> in order to not search <i>any</i> system paths.</p>
+
+</dd>
+<dt id="symbol">symbol</dt>
+<dd>
+
+<p>A string or a list of symbol names that must be found.</p>
+
+</dd>
+<dt id="verify">verify</dt>
+<dd>
+
+<p>A code reference used to verify a library really is the one that you want. It should take two arguments, which is the name of the library and the full path to the library pathname. It should return true if it is acceptable, and false otherwise. You can use this in conjunction with <a>FFI::Platypus</a> to determine if it is going to meet your needs. Example:</p>
+
+<pre><code> use FFI::CheckLib;
+ use FFI::Platypus;
+ 
+ my($lib) = find_lib(
+   lib =&gt; &#39;foo&#39;,
+   verify =&gt; sub {
+     my($name, $libpath) = @_;
+ 
+     my $ffi = FFI::Platypus-&gt;new;
+     $ffi-&gt;lib($libpath);
+ 
+     my $f = $ffi-&gt;function(&#39;foo_version&#39;, [] =&gt; &#39;int&#39;);
+ 
+     return $f-&gt;call() &gt;= 500; # we accept version 500 or better
+   },
+ );</code></pre>
+
+</dd>
+<dt id="recursive">recursive</dt>
+<dd>
+
+<p>[version 0.11]</p>
+
+<p>Recursively search for libraries in any non-system paths (those provided via <code>libpath</code> above).</p>
+
+</dd>
+<dt id="try_linker_script">try_linker_script</dt>
+<dd>
+
+<p>[version 0.24]</p>
+
+<p>Some vendors provide <code>.so</code> files that are linker scripts that point to the real binary shared library. These linker scripts can be used by gcc or clang, but are not directly usable by <a>FFI::Platypus</a> and friends. On select platforms, this options will use the linker command (<code>ld</code>) to attempt to resolve the real <code>.so</code> for non-binary files. Since there is extra overhead this is off by default.</p>
+
+<p>An example is libyaml on Red Hat based Linux distributions. On Debian these are handled with symlinks and no trickery is required.</p>
+
+</dd>
+<dt id="alien">alien</dt>
+<dd>
+
+<p>[version 0.25]</p>
+
+<p>If no libraries can be found, try the given aliens instead. The Alien classes specified must provide the <a>Alien::Base</a> interface for dynamic libraries, which is to say they should provide a method called <code>dynamic_libs</code> that returns a list of dynamic libraries.</p>
+
+</dd>
+</dl>
+
+<h2 id="assert_lib">assert_lib</h2>
+
+<pre><code> assert_lib(%args);</code></pre>
+
+<p>This behaves exactly the same as <a>find_lib</a>, except that instead of returning empty list of failure it throws an exception.</p>
+
+<h2 id="check_lib_or_exit">check_lib_or_exit</h2>
+
+<pre><code> check_lib_or_exit(%args);</code></pre>
+
+<p>This behaves exactly the same as <a>assert_lib</a>, except that instead of dying, it warns (with exactly the same error message) and exists. This is intended for use in <code>Makefile.PL</code> or <code>Build.PL</code></p>
+
+<h2 id="find_lib_or_exit">find_lib_or_exit</h2>
+
+<p>[version 0.05]</p>
+
+<pre><code> my(@libs) = find_lib_or_exit(%args);</code></pre>
+
+<p>This behaves exactly the same as <a>find_lib</a>, except that if the library is not found, it will call exit with an appropriate diagnostic.</p>
+
+<h2 id="find_lib_or_die">find_lib_or_die</h2>
+
+<p>[version 0.06]</p>
+
+<pre><code> my(@libs) = find_lib_or_die(%args);</code></pre>
+
+<p>This behaves exactly the same as <a>find_lib</a>, except that if the library is not found, it will die with an appropriate diagnostic.</p>
+
+<h2 id="check_lib">check_lib</h2>
+
+<pre><code> my $bool = check_lib(%args);</code></pre>
+
+<p>This behaves exactly the same as <a>find_lib</a>, except that it returns true (1) on finding the appropriate libraries or false (0) otherwise.</p>
+
+<h2 id="which">which</h2>
+
+<p>[version 0.17]</p>
+
+<pre><code> my $path = where($name);</code></pre>
+
+<p>Return the path to the first library that matches the given name.</p>
+
+<p>Not exported by default.</p>
+
+<h2 id="where">where</h2>
+
+<p>[version 0.17]</p>
+
+<pre><code> my @paths = where($name);</code></pre>
+
+<p>Return the paths to all the libraries that match the given name.</p>
+
+<p>Not exported by default.</p>
+
+<h2 id="has_symbols">has_symbols</h2>
+
+<p>[version 0.17]</p>
+
+<pre><code> my $bool = has_symbols($path, @symbol_names);</code></pre>
+
+<p>Returns true if <i>all</i> of the symbols can be found in the dynamic library located at the given path. Can be useful in conjunction with <code>verify</code> with <code>find_lib</code> above.</p>
+
+<p>Not exported by default.</p>
+
+<h2 id="system_path">system_path</h2>
+
+<p>[version 0.20]</p>
+
+<pre><code> my $path = FFI::CheckLib::system_path;</code></pre>
+
+<p>Returns the system path as a list reference. On some systems, this is <code>PATH</code> on others it might be <code>LD_LIBRARY_PATH</code> on still others it could be something completely different. So although you <i>may</i> add items to this list, you should probably do some careful consideration before you do so.</p>
+
+<p>This function is not exportable, even on request.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="FFI::Platypus"><a>FFI::Platypus</a></dt>
+<dd>
+
+<p>Call library functions dynamically without a compiler.</p>
+
+</dd>
+<dt id="Dist::Zilla::Plugin::FFI::CheckLib"><a>Dist::Zilla::Plugin::FFI::CheckLib</a></dt>
+<dd>
+
+<p><a>Dist::Zilla</a> plugin for this module.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Bakkiaraj Murugesan (bakkiaraj)</p>
+
+<p>Dan Book (grinnz, DBOOK)</p>
+
+<p>Ilya Pavlov (Ilya, ILUX)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2014-2018 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

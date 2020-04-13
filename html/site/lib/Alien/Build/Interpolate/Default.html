@@ -1,0 +1,282 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#CONSTRUCTOR">CONSTRUCTOR</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+    </ul>
+  </li>
+  <li><a href="#HELPERS">HELPERS</a>
+    <ul>
+      <li><a href="#ar">ar</a></li>
+      <li><a href="#bison">bison</a></li>
+      <li><a href="#bzip2">bzip2</a></li>
+      <li><a href="#cc">cc</a></li>
+      <li><a href="#cmake">cmake</a></li>
+      <li><a href="#cp">cp</a></li>
+      <li><a href="#devnull">devnull</a></li>
+      <li><a href="#flex">flex</a></li>
+      <li><a href="#gmake">gmake</a></li>
+      <li><a href="#install">install</a></li>
+      <li><a href="#ld">ld</a></li>
+      <li><a href="#m4">m4</a></li>
+      <li><a href="#make">make</a></li>
+      <li><a href="#make_path">make_path</a></li>
+      <li><a href="#nasm">nasm</a></li>
+      <li><a href="#patch">patch</a></li>
+      <li><a href="#perl">perl</a></li>
+      <li><a href="#pkgconf">pkgconf</a></li>
+      <li><a href="#cwd">cwd</a></li>
+      <li><a href="#sh">sh</a></li>
+      <li><a href="#rm">rm</a></li>
+      <li><a href="#xz">xz</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Interpolate::Default - Default interpolator for Alien::Build</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="CONSTRUCTOR">CONSTRUCTOR</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $intr = Alien::Build::Interpolate::Default-&gt;new;</code></pre>
+
+<h1 id="HELPERS">HELPERS</h1>
+
+<h2 id="ar">ar</h2>
+
+<pre><code> %{ar}</code></pre>
+
+<p>The ar command.</p>
+
+<h2 id="bison">bison</h2>
+
+<pre><code> %{bison}</code></pre>
+
+<p>Requires: <a>Alien::bison</a> 0.17 if not already in <code>PATH</code>.</p>
+
+<h2 id="bzip2">bzip2</h2>
+
+<pre><code> %{bzip2}</code></pre>
+
+<p>Requires: <a>Alien::Libbz2</a> 0.04 if not already in <code>PATH</code>.</p>
+
+<h2 id="cc">cc</h2>
+
+<pre><code> %{cc}</code></pre>
+
+<p>The C Compiler used to build Perl</p>
+
+<h2 id="cmake">cmake</h2>
+
+<pre><code> %{cmake}</code></pre>
+
+<p>Requires: <a>Alien::CMake</a> 0.07 if cmake is not already in <code>PATH</code>.</p>
+
+<p>Deprecated: Use the <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/CMake.html">Alien::Build::Plugin::Build::CMake</a> plugin instead (which will replace this helper with one that works with <a>Alien::cmake3</a> that works better).</p>
+
+<h2 id="cp">cp</h2>
+
+<pre><code> %{cp}</code></pre>
+
+<p>The copy command.</p>
+
+<h2 id="devnull">devnull</h2>
+
+<pre><code> %{devnull}</code></pre>
+
+<p>The null device, if available. On Unix style operating systems this will be <code>/dev/null</code> on Windows it is <code>NUL</code>.</p>
+
+<h2 id="flex">flex</h2>
+
+<pre><code> %{flex}</code></pre>
+
+<p>Requires: <a>Alien::flex</a> 0.08 if not already in <code>PATH</code>.</p>
+
+<h2 id="gmake">gmake</h2>
+
+<pre><code> %{gmake}</code></pre>
+
+<p>Requires: <a>Alien::gmake</a> 0.11</p>
+
+<p>Deprecated: use <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/Make.html">Alien::Build::Plugin::Build::Make</a> instead.</p>
+
+<h2 id="install">install</h2>
+
+<pre><code> %{install}</code></pre>
+
+<p>The Unix <code>install</code> command. Not normally available on Windows.</p>
+
+<h2 id="ld">ld</h2>
+
+<pre><code> %{ld}</code></pre>
+
+<p>The linker used to build Perl</p>
+
+<h2 id="m4">m4</h2>
+
+<pre><code> %{m4}</code></pre>
+
+<p>Requires: <a>Alien::m4</a> 0.08</p>
+
+<p><a>Alien::m4</a> should pull in a version of <code>m4</code> that will work with Autotools.</p>
+
+<h2 id="make">make</h2>
+
+<pre><code> %{make}</code></pre>
+
+<p>Make. On Unix this will be the same make used by Perl. On Windows this will be <code>gmake</code> or <code>nmake</code> if those are available, and only <code>dmake</code> if the first two are not available.</p>
+
+<h2 id="make_path">make_path</h2>
+
+<pre><code> %{make_path}</code></pre>
+
+<p>Make directory, including all parent directories as needed. This is usually <code>mkdir -p</code> on Unix and simply <code>md</code> on windows.</p>
+
+<h2 id="nasm">nasm</h2>
+
+<pre><code> %{nasm}</code></pre>
+
+<p>Requires: <a>Alien::nasm</a> 0.11 if not already in the <code>PATH</code>.</p>
+
+<h2 id="patch">patch</h2>
+
+<pre><code> %{patch}</code></pre>
+
+<p>Requires: <a>Alien::patch</a> 0.09 if not already in the <code>PATH</code>.</p>
+
+<p>On Windows this will normally render <code>patch --binary</code>, which makes patch work like it does on Unix.</p>
+
+<h2 id="perl">perl</h2>
+
+<pre><code> %{perl}</code></pre>
+
+<p>Requires: <a>Devel::FindPerl</a></p>
+
+<h2 id="pkgconf">pkgconf</h2>
+
+<pre><code> %{pkgconf}</code></pre>
+
+<p>Requires: <a>Alien::pkgconf</a> 0.06.</p>
+
+<h2 id="cwd">cwd</h2>
+
+<pre><code> %{cwd}</code></pre>
+
+<h2 id="sh">sh</h2>
+
+<pre><code> %{sh}</code></pre>
+
+<p>Unix style command interpreter (/bin/sh).</p>
+
+<p>Deprecated: use the <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/MSYS.html">Alien::Build::Plugin::Build::MSYS</a> plugin instead.</p>
+
+<h2 id="rm">rm</h2>
+
+<pre><code> %{rm}</code></pre>
+
+<p>The remove command</p>
+
+<h2 id="xz">xz</h2>
+
+<pre><code> %{xz}</code></pre>
+
+<p>Requires: <a>Alien::xz</a> 0.02 if not already in the <code>PATH</code>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

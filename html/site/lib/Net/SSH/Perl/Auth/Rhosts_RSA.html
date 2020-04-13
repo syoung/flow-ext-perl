@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Auth::Rhosts_RSA - Perform Rhosts-RSA authentication</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Auth;
+    my $auth = Net::SSH::Perl::Auth-&gt;new(&#39;Rhosts_RSA&#39;, $ssh);
+    print &quot;Valid auth&quot; if $auth-&gt;authenticate;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Auth::Rhosts_RSA</i> performs Rhosts with RSA authentication with a remote sshd server. This is standard Rhosts authentication, plus a challenge-response phase where the server RSA-authenticates the client based on its host key. When you create a new Rhosts_RSA auth object, you give it an <i>$ssh</i> object, which should contain an open connection to an ssh daemon, as well as any data that the authentication module needs to proceed. In this case, the <i>$ssh</i> object must contain the name of the user trying to open the connection.</p>
+
+<p>Note that the sshd server will require two things from your client:</p>
+
+<dl>
+
+<dt id="Privileged-Port">1. Privileged Port</dt>
+<dd>
+
+<p>sshd will require your client to be running on a privileged port (below 1024); this will, in turn, likely require your client to be running as root. If your client is not running on a privileged port, the Rhosts-RSA authentication request will be denied.</p>
+
+<p>If you&#39;re running as root, <i>Net::SSH::Perl</i> should automatically detect that and try to start up on a privileged port. If for some reason that isn&#39;t happening, take a look at the <i>Net::SSH::Perl</i> docs.</p>
+
+</dd>
+<dt id="Private-Host-Key">2. Private Host Key</dt>
+<dd>
+
+<p>In order to do RSA-authentication on your host key, your client must be able to read the host key. This will likely be impossible unless you&#39;re running as root, because the private host key file (<i>/etc/ssh_host_key</i>) is readable only by root.</p>
+
+</dd>
+</dl>
+
+<p>With that aside, to use Rhosts-RSA authentication the client sends a request to the server to authenticate it, including the name of the user trying to authenticate, as well as the public parts of the host key. The server first ensures that the host can be authenticated using standard Rhosts authentication (<i>shosts.equiv</i>, <i>hosts.equiv</i>, etc.). If the client passes this test, the server sends an encrypted challenge to the client. The client must decrypt this challenge using its private host key, then respond to the server with its response.</p>
+
+<p>Once the response has been sent, the server responds with success or failure.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

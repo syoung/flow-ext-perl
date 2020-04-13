@@ -1,0 +1,2625 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Under-the-hood">Under the hood</a></li>
+      <li><a href="#Net::OpenSSH-Vs.-Net::SSH::.-modules">Net::OpenSSH Vs. Net::SSH::.* modules</a></li>
+    </ul>
+  </li>
+  <li><a href="#API">API</a>
+    <ul>
+      <li><a href="#Optional-arguments">Optional arguments</a></li>
+      <li><a href="#Error-handling">Error handling</a></li>
+      <li><a href="#Net::OpenSSH-methods">Net::OpenSSH methods</a></li>
+      <li><a href="#Shell-quoting">Shell quoting</a></li>
+      <li><a href="#Timeouts">Timeouts</a></li>
+      <li><a href="#Variable-expansion">Variable expansion</a></li>
+      <li><a href="#Tunnels">Tunnels</a>
+        <ul>
+          <li><a href="#Tunnels-targeting-UNIX-sockets">Tunnels targeting UNIX sockets</a></li>
+          <li><a href="#Port-forwarding">Port forwarding</a></li>
+        </ul>
+      </li>
+      <li><a href="#Data-encoding">Data encoding</a></li>
+      <li><a href="#Diverting-new">Diverting new</a></li>
+    </ul>
+  </li>
+  <li><a href="#rd-PARTY-MODULE-INTEGRATION">3rd PARTY MODULE INTEGRATION</a>
+    <ul>
+      <li><a href="#Expect">Expect</a></li>
+      <li><a href="#Net::Telnet">Net::Telnet</a></li>
+      <li><a href="#mod_perl-and-mod_perl2">mod_perl and mod_perl2</a></li>
+      <li><a href="#Net::SFTP::Foreign">Net::SFTP::Foreign</a></li>
+      <li><a href="#Net::SSH::Any">Net::SSH::Any</a></li>
+      <li><a href="#Object::Remote">Object::Remote</a></li>
+      <li><a href="#AnyEvent-and-similar-frameworks">AnyEvent (and similar frameworks)</a></li>
+      <li><a href="#Other-modules">Other modules</a></li>
+    </ul>
+  </li>
+  <li><a href="#TROUBLESHOOTING">TROUBLESHOOTING</a></li>
+  <li><a href="#DEBUGGING">DEBUGGING</a></li>
+  <li><a href="#SECURITY">SECURITY</a></li>
+  <li><a href="#FAQ">FAQ</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#BUGS-AND-SUPPORT">BUGS AND SUPPORT</a>
+    <ul>
+      <li><a href="#Experimental-features">Experimental features</a></li>
+      <li><a href="#Known-issues">Known issues</a></li>
+      <li><a href="#Reporting-bugs-and-asking-for-help">Reporting bugs and asking for help</a></li>
+      <li><a href="#Commercial-support">Commercial support</a></li>
+      <li><a href="#My-wishlist">My wishlist</a></li>
+    </ul>
+  </li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#CONTRIBUTING-CODE">CONTRIBUTING CODE</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::OpenSSH - Perl SSH client package implemented on top of OpenSSH</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Net::OpenSSH;
+
+  my $ssh = Net::OpenSSH-&gt;new($host);
+  $ssh-&gt;error and
+    die &quot;Couldn&#39;t establish SSH connection: &quot;. $ssh-&gt;error;
+
+  $ssh-&gt;system(&quot;ls /tmp&quot;) or
+    die &quot;remote command failed: &quot; . $ssh-&gt;error;
+
+  my @ls = $ssh-&gt;capture(&quot;ls&quot;);
+  $ssh-&gt;error and
+    die &quot;remote ls command failed: &quot; . $ssh-&gt;error;
+
+  my ($out, $err) = $ssh-&gt;capture2(&quot;find /root&quot;);
+  $ssh-&gt;error and
+    die &quot;remote find command failed: &quot; . $ssh-&gt;error;
+
+  my ($rin, $pid) = $ssh-&gt;pipe_in(&quot;cat &gt;/tmp/foo&quot;) or
+    die &quot;pipe_in method failed: &quot; . $ssh-&gt;error;
+
+  print $rin &quot;hello\n&quot;;
+  close $rin;
+
+  my ($rout, $pid) = $ssh-&gt;pipe_out(&quot;cat /tmp/foo&quot;) or
+    die &quot;pipe_out method failed: &quot; . $ssh-&gt;error;
+
+  while (&lt;$rout&gt;) { print }
+  close $rout;
+
+  my ($in, $out ,$pid) = $ssh-&gt;open2(&quot;foo&quot;);
+  my ($pty, $pid) = $ssh-&gt;open2pty(&quot;foo&quot;);
+  my ($in, $out, $err, $pid) = $ssh-&gt;open3(&quot;foo&quot;);
+  my ($pty, $err, $pid) = $ssh-&gt;open3pty(&quot;login&quot;);
+
+  my $sftp = $ssh-&gt;sftp();
+  $sftp-&gt;error and die &quot;SFTP failed: &quot; . $sftp-&gt;error;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Net::OpenSSH is a secure shell client package implemented on top of OpenSSH binary client (<code>ssh</code>).</p>
+
+<h2 id="Under-the-hood">Under the hood</h2>
+
+<p>This package is implemented around the multiplexing feature found in later versions of OpenSSH. That feature allows one to run several sessions over a single SSH connection (OpenSSH 4.1 was the first one to provide all the required functionality).</p>
+
+<p>When a new Net::OpenSSH object is created, the OpenSSH <code>ssh</code> client is run in master mode, establishing a persistent (for the lifetime of the object) connection to the server.</p>
+
+<p>Then, every time a new operation is requested a new <code>ssh</code> process is started in slave mode, effectively reusing the master SSH connection to send the request to the remote side.</p>
+
+<h2 id="Net::OpenSSH-Vs.-Net::SSH::.-modules">Net::OpenSSH Vs. Net::SSH::.* modules</h2>
+
+<p>Why should you use Net::OpenSSH instead of any of the other Perl SSH clients available?</p>
+
+<p>Well, this is my (biased) opinion:</p>
+
+<p><a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Net/SSH/Perl.html">Net::SSH::Perl</a> is not well maintained nowadays (update: a new maintainer has stepped in so this situation could change!!!), requires a bunch of modules (some of them very difficult to install) to be acceptably efficient and has an API that is limited in some ways.</p>
+
+<p><a>Net::SSH2</a> is much better than Net::SSH::Perl, but not completely stable yet. It can be very difficult to install on some specific operating systems and its API is also limited, in the same way as <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Net/SSH/Perl.html">Net::SSH::Perl</a>.</p>
+
+<p>Using <a>Net::SSH::Expect</a>, in general, is a bad idea. Handling interaction with a shell via Expect in a generic way just can not be reliably done.</p>
+
+<p>Net::SSH is just a wrapper around any SSH binary commands available on the machine. It can be very slow as they establish a new SSH connection for every operation performed.</p>
+
+<p>In comparison, Net::OpenSSH is a pure perl module that does not have any mandatory dependencies (obviously, besides requiring OpenSSH binaries).</p>
+
+<p>Net::OpenSSH has a very perlish interface. Most operations are performed in a fashion very similar to that of the Perl builtins and common modules (e.g. <a href="../../../lib/perl5/5.26.3/IPC/Open2.html">IPC::Open2</a>).</p>
+
+<p>It is also very fast. The overhead introduced by launching a new ssh process for every operation is not appreciable (at least on my Linux box). The bottleneck is the latency intrinsic to the protocol, so Net::OpenSSH is probably as fast as an SSH client can be.</p>
+
+<p>Being based on OpenSSH is also an advantage: a proved, stable, secure (to paranoid levels), inseparably and well maintained implementation of the SSH protocol is used.</p>
+
+<p>On the other hand, Net::OpenSSH does not work on Windows, not even under Cygwin.</p>
+
+<p>Net::OpenSSH specifically requires the OpenSSH SSH client (AFAIK, the multiplexing feature is not available from any other SSH client). However, note that it will interact with any server software, not just servers running OpenSSH <code>sshd</code>.</p>
+
+<p>For password authentication, <a>IO::Pty</a> has to be installed. Other modules and binaries are also required to implement specific functionality (for instance <a>Net::SFTP::Foreign</a>, <a>Expect</a> or <a href="http://man.he.net/man1/rsync">rsync(1)</a>).</p>
+
+<p>Net::OpenSSH and Net::SSH2 do not support version 1 of the SSH protocol.</p>
+
+<h1 id="API">API</h1>
+
+<h2 id="Optional-arguments">Optional arguments</h2>
+
+<p>Almost all methods in this package accept as first argument an optional reference to a hash containing parameters (<code>\%opts</code>). For instance, these two method calls are equivalent:</p>
+
+<pre><code>  my $out1 = $ssh-&gt;capture(@cmd);
+  my $out2 = $ssh-&gt;capture({}, @cmd);</code></pre>
+
+<h2 id="Error-handling">Error handling</h2>
+
+<p>Most methods return undef (or an empty list) to indicate failure.</p>
+
+<p>The <a href="#error">&quot;error&quot;</a> method can always be used to explicitly check for errors. For instance:</p>
+
+<pre><code>  my ($output, $errput) = $ssh-&gt;capture2({timeout =&gt; 1}, &quot;find /&quot;);
+  $ssh-&gt;error and die &quot;ssh failed: &quot; . $ssh-&gt;error;</code></pre>
+
+<h2 id="Net::OpenSSH-methods">Net::OpenSSH methods</h2>
+
+<p>These are the methods provided by the package:</p>
+
+<dl>
+
+<dt id="Net::OpenSSH-new-host-opts">Net::OpenSSH-&gt;new($host, %opts)</dt>
+<dd>
+
+<p>Creates a new SSH master connection</p>
+
+<p><code>$host</code> can be a hostname or an IP address. It may also contain the name of the user, her password and the TCP port number where the server is listening:</p>
+
+<pre><code>   my $ssh1 = Net::OpenSSH-&gt;new(&#39;jack@foo.bar.com&#39;);
+   my $ssh2 = Net::OpenSSH-&gt;new(&#39;jack:secret@foo.bar.com:10022&#39;);
+   my $ssh3 = Net::OpenSSH-&gt;new(&#39;jsmith@2001:db8::1428:57ab&#39;); # IPv6</code></pre>
+
+<p>IPv6 addresses may optionally be enclosed in brackets:</p>
+
+<pre><code>   my $ssh4 = Net::OpenSSH-&gt;new(&#39;jsmith@[::1]:1022&#39;);</code></pre>
+
+<p>This method always succeeds in returning a new object. Error checking has to be performed explicitly afterwards:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new($host, %opts);
+  $ssh-&gt;error and die &quot;Can&#39;t ssh to $host: &quot; . $ssh-&gt;error;</code></pre>
+
+<p>If you have problems getting Net::OpenSSH to connect to the remote host read the troubleshooting chapter near the end of this document.</p>
+
+<p>Accepted options:</p>
+
+<dl>
+
+<dt id="user-user_name">user =&gt; $user_name</dt>
+<dd>
+
+<p>Login name</p>
+
+</dd>
+<dt id="port-port">port =&gt; $port</dt>
+<dd>
+
+<p>TCP port number where the server is running</p>
+
+</dd>
+<dt id="password-password">password =&gt; $password</dt>
+<dd>
+
+<p>User given password for authentication.</p>
+
+<p>Note that using password authentication in automated scripts is a very bad idea. When possible, you should use public key authentication instead.</p>
+
+</dd>
+<dt id="passphrase-passphrase">passphrase =&gt; $passphrase</dt>
+<dd>
+
+<p>Uses given passphrase to open private key.</p>
+
+</dd>
+<dt id="key_path-private_key_path">key_path =&gt; $private_key_path</dt>
+<dd>
+
+<p>Uses the key stored on the given file path for authentication.</p>
+
+</dd>
+<dt id="gateway-gateway">gateway =&gt; $gateway</dt>
+<dd>
+
+<p>If the given argument is a gateway object as returned by <a>&quot;find_gateway&quot; in Net::OpenSSH::Gateway</a> method, use it to connect to the remote host.</p>
+
+<p>If it is a hash reference, call the <code>find_gateway</code> method first.</p>
+
+<p>For instance, the following code fragments are equivalent:</p>
+
+<pre><code>  my $gateway = Net::OpenSSH::Gateway-&gt;find_gateway(
+          proxy =&gt; &#39;http://proxy.corporate.com&#39;);
+  $ssh = Net::OpenSSH-&gt;new($host, gateway =&gt; $gateway);</code></pre>
+
+<p>and</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new($host,
+          gateway =&gt; { proxy =&gt; &#39;http://proxy.corporate.com&#39;});</code></pre>
+
+</dd>
+<dt id="proxy_command-proxy_command">proxy_command =&gt; $proxy_command</dt>
+<dd>
+
+<p>Use the given command to establish the connection to the remote host (see <code>ProxyCommand</code> on <a href="http://man.he.net/man5/ssh_config">ssh_config(5)</a>).</p>
+
+</dd>
+<dt id="batch_mode-1">batch_mode =&gt; 1</dt>
+<dd>
+
+<p>Disables querying the user for password and passphrases.</p>
+
+</dd>
+<dt id="ctl_dir-path">ctl_dir =&gt; $path</dt>
+<dd>
+
+<p>Directory where the SSH master control socket will be created.</p>
+
+<p>This directory and its parents must be writable only by the current effective user or root, otherwise the connection will be aborted to avoid insecure operation.</p>
+
+<p>By default <code>~/.libnet-openssh-perl</code> is used.</p>
+
+</dd>
+<dt id="ctl_path-path">ctl_path =&gt; $path</dt>
+<dd>
+
+<p>Path to the SSH master control socket.</p>
+
+<p>Usually this option should be avoided as the module is able to pick an unused socket path by itself. An exception to that rule is when the <code>external_master</code> feature is enabled.</p>
+
+<p>Note that the length of the path is usually limited to between 92 and 108 bytes, depending of the underlying operating system.</p>
+
+</dd>
+<dt id="ssh_cmd-cmd">ssh_cmd =&gt; $cmd</dt>
+<dd>
+
+<p>Name or full path to OpenSSH <code>ssh</code> binary. For instance:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new($host, ssh_cmd =&gt; &#39;/opt/OpenSSH/bin/ssh&#39;);</code></pre>
+
+</dd>
+<dt id="scp_cmd-cmd">scp_cmd =&gt; $cmd</dt>
+<dd>
+
+<p>Name or full path to OpenSSH <code>scp</code> binary.</p>
+
+<p>By default it is inferred from the <code>ssh</code> one.</p>
+
+</dd>
+<dt id="rsync_cmd-cmd">rsync_cmd =&gt; $cmd</dt>
+<dd>
+
+<p>Name or full path to <code>rsync</code> binary. Defaults to <code>rsync</code>.</p>
+
+</dd>
+<dt id="remote_shell-name">remote_shell =&gt; $name</dt>
+<dd>
+
+<p>Name of the remote shell. Used to select the argument quoter backend.</p>
+
+</dd>
+<dt id="timeout-timeout">timeout =&gt; $timeout</dt>
+<dd>
+
+<p>Maximum acceptable time that can elapse without network traffic or any other event happening on methods that are not immediate (for instance, when establishing the master SSH connection or inside methods <code>capture</code>, <code>system</code>, <code>scp_get</code>, etc.).</p>
+
+<p>See also <a href="#Timeouts">&quot;Timeouts&quot;</a>.</p>
+
+</dd>
+<dt id="kill_ssh_on_timeout-1">kill_ssh_on_timeout =&gt; 1</dt>
+<dd>
+
+<p>This option tells Net::OpenSSH to kill the local slave SSH process when some operation times out.</p>
+
+<p>See also <a href="#Timeouts">&quot;Timeouts&quot;</a>.</p>
+
+</dd>
+<dt id="strict_mode-0">strict_mode =&gt; 0</dt>
+<dd>
+
+<p>By default, the connection will be aborted if the path to the socket used for multiplexing is found to be non-secure (for instance, when any of the parent directories is writable by other users).</p>
+
+<p>This option can be used to disable that feature. Use with care!!!</p>
+
+</dd>
+<dt id="async-1">async =&gt; 1</dt>
+<dd>
+
+<p>By default, the constructor waits until the multiplexing socket is available. That option can be used to defer the waiting until the socket is actually used.</p>
+
+<p>For instance, the following code connects to several remote machines in parallel:</p>
+
+<pre><code>  my (%ssh, %ls);
+  # multiple connections are established in parallel:
+  for my $host (@hosts) {
+      $ssh{$host} = Net::OpenSSH-&gt;new($host, async =&gt; 1);
+  }
+  # then to run some command in all the hosts (sequentially):
+  for my $host (@hosts) {
+      $ssh{$host}-&gt;system(&#39;ls /&#39;);
+  }</code></pre>
+
+</dd>
+<dt id="connect-0">connect =&gt; 0</dt>
+<dd>
+
+<p>Do not launch the master SSH process yet.</p>
+
+</dd>
+<dt id="master_opts">master_opts =&gt; [...]</dt>
+<dd>
+
+<p>Additional options to pass to the <code>ssh</code> command when establishing the master connection. For instance:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new($host,
+      master_opts =&gt; [-o =&gt; &quot;ProxyCommand corkscrew httpproxy 8080 $host&quot;]);</code></pre>
+
+</dd>
+<dt id="default_ssh_opts">default_ssh_opts =&gt; [...]</dt>
+<dd>
+
+<p>Default slave SSH command line options for <a href="#open_ex">&quot;open_ex&quot;</a> and derived methods.</p>
+
+<p>For instance:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new($host,
+      default_ssh_opts =&gt; [-o =&gt; &quot;ConnectionAttempts=0&quot;]);</code></pre>
+
+</dd>
+<dt id="forward_agent-1">forward_agent =&gt; 1</dt>
+<dd>
+
+<p>Enables forwarding of the authentication agent.</p>
+
+<p>This option can not be used when passing a passphrase (via <a href="#passphrase">&quot;passphrase&quot;</a>) to unlock the login private key.</p>
+
+<p>Note that Net::OpenSSH will not run <code>ssh-agent</code> for you. This has to be done ahead of time and the environment variable <code>SSH_AUTH_SOCK</code> set pointing to the proper place.</p>
+
+</dd>
+<dt id="forward_X11-1">forward_X11 =&gt; 1</dt>
+<dd>
+
+<p>Enables forwarding of the X11 protocol</p>
+
+</dd>
+<dt id="default_stdin_fh-fh">default_stdin_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="default_stdout_fh-fh">default_stdout_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="default_stderr_fh-fh">default_stderr_fh =&gt; $fh</dt>
+<dd>
+
+<p>Default I/O streams for <a href="#open_ex">&quot;open_ex&quot;</a> and derived methods (currently, that means any method but <a href="#pipe_in">&quot;pipe_in&quot;</a> and <a href="#pipe_out">&quot;pipe_out&quot;</a> and I plan to remove those exceptions soon!).</p>
+
+<p>For instance:</p>
+
+<pre><code>  open my $stderr_fh, &#39;&gt;&gt;&#39;, &#39;/tmp/$host.err&#39; or die ...;
+  open my $stdout_fh, &#39;&gt;&gt;&#39;, &#39;/tmp/$host.log&#39; or die ...;
+
+  my $ssh = Net::OpenSSH-&gt;new($host, default_stderr_fh =&gt; $stderr_fh,
+                                     default_stdout_fh =&gt; $stdout_fh);
+  $ssh-&gt;error and die &quot;SSH connection failed: &quot; . $ssh-&gt;error;
+
+  $ssh-&gt;scp_put(&quot;/foo/bar*&quot;, &quot;/tmp&quot;)
+    or die &quot;scp failed: &quot; . $ssh-&gt;error;</code></pre>
+
+</dd>
+<dt id="default_stdin_file-fn">default_stdin_file = $fn</dt>
+<dd>
+
+</dd>
+<dt id="default_stdout_file-fn">default_stdout_file = $fn</dt>
+<dd>
+
+</dd>
+<dt id="default_stderr_file-fn">default_stderr_file = $fn</dt>
+<dd>
+
+<p>Opens the given file names and use them as the defaults.</p>
+
+</dd>
+<dt id="master_stdout_fh-fh">master_stdout_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="master_stderr_fh-fh">master_stderr_fh =&gt; $fh</dt>
+<dd>
+
+<p>Redirect corresponding stdio streams of the master SSH process to given filehandles.</p>
+
+</dd>
+<dt id="master_stdout_discard-bool">master_stdout_discard =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="master_stderr_discard-bool">master_stderr_discard =&gt; $bool</dt>
+<dd>
+
+<p>Discard corresponding stdio streams.</p>
+
+</dd>
+<dt id="expand_vars-bool">expand_vars =&gt; $bool</dt>
+<dd>
+
+<p>Activates variable expansion inside command arguments and file paths.</p>
+
+<p>See <a href="#Variable-expansion">&quot;Variable expansion&quot;</a> below.</p>
+
+</dd>
+<dt id="vars-vars">vars =&gt; \%vars</dt>
+<dd>
+
+<p>Initial set of variables.</p>
+
+</dd>
+<dt id="external_master-1">external_master =&gt; 1</dt>
+<dd>
+
+<p>Instead of launching a new OpenSSH client in master mode, the module tries to reuse an already existent one. <code>ctl_path</code> must also be passed when this option is set. See also <a href="#get_ctl_path">&quot;get_ctl_path&quot;</a>.</p>
+
+<p>Example:</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new(&#39;foo&#39;, external_master =&gt; 1, ctl_path = $path);</code></pre>
+
+<p>When <code>external_master</code> is set, the hostname argument becomes optional (<code>0.0.0.0</code> is passed to OpenSSH which does not use it at all).</p>
+
+</dd>
+<dt id="default_encoding-encoding">default_encoding =&gt; $encoding</dt>
+<dd>
+
+</dd>
+<dt id="default_stream_encoding-encoding">default_stream_encoding =&gt; $encoding</dt>
+<dd>
+
+</dd>
+<dt id="default_argument_encoding-encoding">default_argument_encoding =&gt; $encoding</dt>
+<dd>
+
+<p>Set default encodings. See <a href="#Data-encoding">&quot;Data encoding&quot;</a>.</p>
+
+</dd>
+<dt id="password_prompt-string">password_prompt =&gt; $string</dt>
+<dd>
+
+</dd>
+<dt id="password_prompt-re">password_prompt =&gt; $re</dt>
+<dd>
+
+<p>By default, when using password authentication, the module expects the remote side to send a password prompt matching <code>/[?:]/</code>.</p>
+
+<p>This option can be used to override that default for the rare cases when a different prompt is used.</p>
+
+<p>Examples:</p>
+
+<pre><code>   password_prompt =&gt; &#39;]&#39;; # no need to escape &#39;]&#39;
+   password_prompt =&gt; qr/[:?&gt;]/;</code></pre>
+
+</dd>
+<dt id="login_handler-custom_login_handler">login_handler =&gt; \&amp;custom_login_handler</dt>
+<dd>
+
+<p>Some remote SSH server may require a custom login/authentication interaction not natively supported by Net::OpenSSH. In that cases, you can use this option to replace the default login logic.</p>
+
+<p>The callback will be invoked repeatedly as <code>custom_login_handler($ssh, $pty, $data)</code> where <code>$ssh</code> is the current Net::OpenSSH object, <code>pty</code> a <a>IO::Pty</a> object attached to the slave <code>ssh</code> process tty and <code>$data</code> a reference to an scalar you can use at will.</p>
+
+<p>The login handler must return 1 after the login process has completed successfully or 0 in case it still needs to do something else. If some error happens, it must die.</p>
+
+<p>Note, that blocking operations should not be performed inside the login handler (at least if you want the <code>async</code> and <code>timeout</code> features to work).</p>
+
+<p>See also the sample script <code>login_handler.pl</code> in the <code>examples</code> directory.</p>
+
+<p>Usage of this option is incompatible with the <code>password</code> and <code>passphrase</code> options, you will have to handle password or passphrases from the custom handler yourself.</p>
+
+</dd>
+<dt id="master_setpgrp-1">master_setpgrp =&gt; 1</dt>
+<dd>
+
+<p>When this option is set, the master process is run as a different process group. As a consequence it will not die when the user presses Ctrl-C at the terminal.</p>
+
+<p>In order to allow the master SSH process to request any information from the user, the module may set it as the terminal controlling process while the connection is established (using <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/POSIX.html#tcsetpgrp">&quot;tcsetpgrp&quot; in POSIX</a>). Afterwards, the terminal controlling process is reset.</p>
+
+<p>This feature is highly experimental. Report any problems you may find, please.</p>
+
+</dd>
+<dt id="master_pty_force-1">master_pty_force =&gt; 1</dt>
+<dd>
+
+<p>By default, Net::OpenSSH attaches the master SSH process to a pty only when some kind of interactive authentication is requested. If this flag is set a pty will be attached always.</p>
+
+<p>That allows to get better diagnostics for some kind of errors (as for instance, bad host keys) and also allows to retrieve the pty log using <a>get_master_pty_log</a>.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="ssh-error">$ssh-&gt;error</dt>
+<dd>
+
+<p>Returns the error condition for the last performed operation.</p>
+
+<p>The returned value is a dualvar as $! (see <a href="../../../lib/perl5/5.26.3/pod/perlvar.html#pod">&quot;$!&quot; in perlvar</a>) that renders an informative message when used in string context or an error number in numeric context (error codes appear in <a href="../../../../../root/.cpanm/work/1586740826.24889/Net-OpenSSH-0.78/blib/lib/Net/OpenSSH/Constants.html">Net::OpenSSH::Constants</a>).</p>
+
+</dd>
+<dt id="ssh-get_master_pty_log">$ssh-&gt;get_master_pty_log</dt>
+<dd>
+
+<p>In order to handle password authentication or entering the passphrase for a private key, Net::OpenSSH may run the master SSH process attached to a pty.</p>
+
+<p>In that case and after a constructor call returns a connection failure error, this method can be called to retrieve the output captured at the pty (the log is discarded when the connection is established successfully).</p>
+
+<p>Any data consumed from the pty by custom login handlers will be missing from the the returned log.</p>
+
+</dd>
+<dt id="ssh-get_user">$ssh-&gt;get_user</dt>
+<dd>
+
+</dd>
+<dt id="ssh-get_host">$ssh-&gt;get_host</dt>
+<dd>
+
+</dd>
+<dt id="ssh-get_port">$ssh-&gt;get_port</dt>
+<dd>
+
+<p>Return the corresponding SSH login parameters.</p>
+
+</dd>
+<dt id="ssh-get_ctl_path">$ssh-&gt;get_ctl_path</dt>
+<dd>
+
+<p>Returns the path to the socket where the OpenSSH master process listens for new multiplexed connections.</p>
+
+</dd>
+<dt id="in-out-err-pid-ssh-open_ex-opts-cmd">($in, $out, $err, $pid) = $ssh-&gt;open_ex(\%opts, @cmd)</dt>
+<dd>
+
+<p><i>Note: this is a low level method which, probably, you do not need to use!</i></p>
+
+<p>That method starts the command <code>@cmd</code> on the remote machine creating new pipes for the IO channels as specified on the <code>%opts</code> hash.</p>
+
+<p>If <code>@cmd</code> is omitted, the remote user shell is run.</p>
+
+<p>Returns four values, the first three (<code>$in</code>, <code>$out</code> and <code>$err</code>) correspond to the local side of the pipes created (they can be undef) and the fourth (<code>$pid</code>) to the PID of the new SSH slave process. An empty list is returned on failure.</p>
+
+<p>Note that <code>waitpid</code> has to be used afterwards to reap the slave SSH process.</p>
+
+<p>Accepted options:</p>
+
+<dl>
+
+<dt id="stdin_pipe-1">stdin_pipe =&gt; 1</dt>
+<dd>
+
+<p>Creates a new pipe and connects the reading side to the stdin stream of the remote process. The writing side is returned as the first value (<code>$in</code>).</p>
+
+</dd>
+<dt id="stdin_pty-1">stdin_pty =&gt; 1</dt>
+<dd>
+
+<p>Similar to <code>stdin_pipe</code>, but instead of a regular pipe it uses a pseudo-tty (pty).</p>
+
+<p>Note that on some operating systems (e.g. HP-UX, AIX), ttys are not reliable. They can overflow when large chunks are written or when data is written faster than it is read.</p>
+
+</dd>
+<dt id="stdin_fh-fh">stdin_fh =&gt; $fh</dt>
+<dd>
+
+<p>Duplicates <code>$fh</code> and uses it as the stdin stream of the remote process.</p>
+
+</dd>
+<dt id="stdin_file-filename">stdin_file =&gt; $filename</dt>
+<dd>
+
+</dd>
+<dt id="stdin_file-open_args">stdin_file =&gt; \@open_args</dt>
+<dd>
+
+<p>Opens the file of the given name for reading and uses it as the remote process stdin stream.</p>
+
+<p>If an array reference is passed its contents are used as the arguments for the underlying open call. For instance:</p>
+
+<pre><code>  $ssh-&gt;system({stdin_file =&gt; [&#39;-|&#39;, &#39;gzip -c -d file.gz&#39;]}, $rcmd);</code></pre>
+
+</dd>
+<dt id="stdin_discard-1">stdin_discard =&gt; 1</dt>
+<dd>
+
+<p>Uses /dev/null as the remote process stdin stream.</p>
+
+</dd>
+<dt id="stdout_pipe-1">stdout_pipe =&gt; 1</dt>
+<dd>
+
+<p>Creates a new pipe and connects the writing side to the stdout stream of the remote process. The reading side is returned as the second value (<code>$out</code>).</p>
+
+</dd>
+<dt id="stdout_pty-1">stdout_pty =&gt; 1</dt>
+<dd>
+
+<p>Connects the stdout stream of the remote process to the pseudo-pty. This option requires <code>stdin_pty</code> to be also set.</p>
+
+</dd>
+<dt id="stdout_fh-fh">stdout_fh =&gt; $fh</dt>
+<dd>
+
+<p>Duplicates <code>$fh</code> and uses it as the stdout stream of the remote process.</p>
+
+</dd>
+<dt id="stdout_file-filename">stdout_file =&gt; $filename</dt>
+<dd>
+
+</dd>
+<dt id="stdout_file-open_args">stdout_file =&gt; \@open_args</dt>
+<dd>
+
+<p>Opens the file of the given filename and redirect stdout there.</p>
+
+</dd>
+<dt id="stdout_discard-1">stdout_discard =&gt; 1</dt>
+<dd>
+
+<p>Uses /dev/null as the remote process stdout stream.</p>
+
+</dd>
+<dt id="stdinout_socket-1">stdinout_socket =&gt; 1</dt>
+<dd>
+
+<p>Creates a new socketpair, attaches the stdin an stdout streams of the slave SSH process to one end and returns the other as the first value (<code>$in</code>) and undef for the second (<code>$out</code>).</p>
+
+<p>Example:</p>
+
+<pre><code>  my ($socket, undef, undef, $pid) = $ssh-&gt;open_ex({stdinout_socket =&gt; 1},
+                                                   &#39;/bin/netcat $dest&#39;);</code></pre>
+
+<p>See also <a href="#open2socket">&quot;open2socket&quot;</a>.</p>
+
+</dd>
+<dt id="stdinout_dpipe-cmd">stdinout_dpipe =&gt; $cmd</dt>
+<dd>
+
+</dd>
+<dt id="stdinout_dpipe-cmd1">stdinout_dpipe =&gt; \@cmd</dt>
+<dd>
+
+<p>Runs the given command locally attaching its stdio streams to those of the remote SSH command. Conceptually it is equivalent to the <a href="http://man.he.net/man1/dpipe">dpipe(1)</a> shell command.</p>
+
+</dd>
+<dt id="stderr_pipe-1">stderr_pipe =&gt; 1</dt>
+<dd>
+
+<p>Creates a new pipe and connects the writing side to the stderr stream of the remote process. The reading side is returned as the third value (<code>$err</code>).</p>
+
+<p>Example:</p>
+
+<pre><code>  my $pid = $ssh-&gt;open_ex({stdinout_dpipe =&gt; &#39;vncviewer -stdio&#39;},
+                          x11vnc =&gt; &#39;-inetd&#39;);</code></pre>
+
+</dd>
+<dt id="stderr_fh-fh">stderr_fh =&gt; $fh</dt>
+<dd>
+
+<p>Duplicates <code>$fh</code> and uses it as the stderr stream of the remote process.</p>
+
+</dd>
+<dt id="stderr_file-filename">stderr_file =&gt; $filename</dt>
+<dd>
+
+<p>Opens the file of the given name and redirects stderr there.</p>
+
+</dd>
+<dt id="stderr_to_stdout-1">stderr_to_stdout =&gt; 1</dt>
+<dd>
+
+<p>Makes stderr point to stdout.</p>
+
+</dd>
+<dt id="tty-bool">tty =&gt; $bool</dt>
+<dd>
+
+<p>Tells <code>ssh</code> to allocate a pseudo-tty for the remote process. By default, a tty is allocated if remote command stdin stream is attached to a tty.</p>
+
+<p>When this flag is set and stdin is not attached to a tty, the ssh master and slave processes may generate spurious warnings about failed tty operations. This is caused by a bug present in older versions of OpenSSH.</p>
+
+</dd>
+<dt id="close_slave_pty-0">close_slave_pty =&gt; 0</dt>
+<dd>
+
+<p>When a pseudo pty is used for the stdin stream, the slave side is automatically closed on the parent process after forking the ssh command.</p>
+
+<p>This option disables that feature, so that the slave pty can be accessed on the parent process as <code>$pty-&gt;slave</code>. It will have to be explicitly closed (see <a>IO::Pty</a>)</p>
+
+</dd>
+<dt id="quote_args-bool">quote_args =&gt; $bool</dt>
+<dd>
+
+<p>See <a href="#Shell-quoting">&quot;Shell quoting&quot;</a> below.</p>
+
+</dd>
+<dt id="remote_shell-shell">remote_shell =&gt; $shell</dt>
+<dd>
+
+<p>Sets the remote shell. Allows one to change the argument quoting mechanism in a per-command fashion.</p>
+
+<p>This may be useful when interacting with a Windows machine where argument parsing may be done at the command level in custom ways.</p>
+
+<p>Example:</p>
+
+<pre><code>  $ssh-&gt;system({remote_shell =&gt; &#39;MSWin&#39;}, echo =&gt; $line);
+  $ssh-&gt;system({remote_shell =&gt; &#39;MSCmd,MSWin&#39;}, type =&gt; $file);</code></pre>
+
+</dd>
+<dt id="forward_agent-bool">forward_agent =&gt; $bool</dt>
+<dd>
+
+<p>Enables/disables forwarding of the authentication agent.</p>
+
+<p>This option can only be used when agent forwarding has been previously requested on the constructor.</p>
+
+</dd>
+<dt id="forward_X11-bool">forward_X11 =&gt; $bool</dt>
+<dd>
+
+<p>Enables/disables forwarding of the X11 protocol.</p>
+
+<p>This option can only be used when X11 forwarding has been previously requested on the constructor.</p>
+
+</dd>
+<dt id="ssh_opts-opts">ssh_opts =&gt; \@opts</dt>
+<dd>
+
+<p>List of extra options for the <code>ssh</code> command.</p>
+
+<p>This feature should be used with care, as the given options are not checked in any way by the module, and they could interfere with it.</p>
+
+</dd>
+<dt id="tunnel-bool">tunnel =&gt; $bool</dt>
+<dd>
+
+<p>Instead of executing a command in the remote host, this option instruct Net::OpenSSH to create a TCP tunnel. The arguments become the target IP and port or the remote path for an Unix socket.</p>
+
+<p>Example:</p>
+
+<pre><code>  my ($in, $out, undef, $pid) = $ssh-&gt;open_ex({tunnel =&gt; 1}, $IP, $port);
+  my ($in, $out, undef, $pid) = $ssh-&gt;open_ex({tunnel =&gt; 1}, $socket_path);</code></pre>
+
+<p>See also <a href="#Tunnels">&quot;Tunnels&quot;</a>.</p>
+
+</dd>
+<dt id="subsystem-bool">subsystem =&gt; $bool</dt>
+<dd>
+
+<p>Request a connection to a SSH subsystem. The name of the subsystem must be passed as an argument, as in the following example:</p>
+
+<pre><code>  my $s = $ssh-&gt;open2socket({subsystem =&gt; 1}, &#39;netconf&#39;);</code></pre>
+
+</dd>
+<dt id="encoding-encoding">encoding =&gt; $encoding</dt>
+<dd>
+
+</dd>
+<dt id="argument_encoding-encoding">argument_encoding =&gt; $encoding</dt>
+<dd>
+
+<p>Set encodings. See <a href="#Data-encoding">&quot;Data encoding&quot;</a>.</p>
+
+</dd>
+</dl>
+
+<p>Usage example:</p>
+
+<pre><code>  # similar to IPC::Open2 open2 function:
+  my ($in_pipe, $out_pipe, undef, $pid) =
+      $ssh-&gt;open_ex( { stdin_pipe =&gt; 1,
+                       stdout_pipe =&gt; 1 },
+                     @cmd )
+      or die &quot;open_ex failed: &quot; . $ssh-&gt;error;
+  # do some IO through $in/$out
+  # ...
+  waitpid($pid);</code></pre>
+
+</dd>
+<dt id="setpgrp-1">setpgrp =&gt; 1</dt>
+<dd>
+
+<p>Calls <code>setpgrp</code> after forking the child process. As a result it will not die when the user presses Ctrl+C at the console. See also <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#setpgrp">&quot;setpgrp&quot; in perlfunc</a>.</p>
+
+<p>Using this option without also setting <code>master_setpgrp</code> on the constructor call is mostly useless as the signal will be delivered to the master process and all the remote commands aborted.</p>
+
+<p>This feature is experimental.</p>
+
+</dd>
+<dt id="ssh-system-opts-cmd">$ssh-&gt;system(\%opts, @cmd)</dt>
+<dd>
+
+<p>Runs the command <code>@cmd</code> on the remote machine.</p>
+
+<p>Returns true on success, undef otherwise.</p>
+
+<p>The error status is set to <code>OSSH_SLAVE_CMD_FAILED</code> when the remote command exits with a non zero code (the code is available from <code>$?</code>, see <a href="../../../lib/perl5/5.26.3/pod/perlvar.html#pod">&quot;$?&quot; in perlvar</a>).</p>
+
+<p>Example:</p>
+
+<pre><code>  $ssh-&gt;system(&#39;ls -R /&#39;)
+    or die &quot;ls failed: &quot; . $ssh-&gt;error&quot;;</code></pre>
+
+<p>As for <code>system</code> builtin, <code>SIGINT</code> and <code>SIGQUIT</code> signals are blocked. (see <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#system">&quot;system&quot; in perlfunc</a>). Also, setting <code>$SIG{CHLD}</code> to <code>IGNORE</code> or to a custom signal handler will interfere with this method.</p>
+
+<p>Accepted options:</p>
+
+<dl>
+
+<dt id="stdin_data-input">stdin_data =&gt; $input</dt>
+<dd>
+
+</dd>
+<dt id="stdin_data-input1">stdin_data =&gt; \@input</dt>
+<dd>
+
+<p>Sends the given data through the stdin stream to the remote process.</p>
+
+<p>For example, the following code creates a file on the remote side:</p>
+
+<pre><code>  $ssh-&gt;system({stdin_data =&gt; \@data}, &quot;cat &gt;/tmp/foo&quot;)
+    or die &quot;unable to write file: &quot; . $ssh-&gt;error;</code></pre>
+
+</dd>
+<dt id="timeout-timeout1">timeout =&gt; $timeout</dt>
+<dd>
+
+<p>The operation is aborted after <code>$timeout</code> seconds elapsed without network activity.</p>
+
+<p>See also <a href="#Timeouts">&quot;Timeouts&quot;</a>.</p>
+
+</dd>
+<dt id="async-11">async =&gt; 1</dt>
+<dd>
+
+<p>Does not wait for the child process to exit. The PID of the new process is returned.</p>
+
+<p>Note that when this option is combined with <code>stdin_data</code>, the given data will be transferred to the remote side before returning control to the caller.</p>
+
+<p>See also the <a href="#spawn">&quot;spawn&quot;</a> method documentation below.</p>
+
+</dd>
+<dt id="stdin_fh-fh1">stdin_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stdin_discard-bool">stdin_discard =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="stdout_fh-fh1">stdout_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stdout_discard-bool">stdout_discard =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="stderr_fh-fh1">stderr_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stderr_discard-bool">stderr_discard =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="stderr_to_stdout-bool">stderr_to_stdout =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="stdinout_dpipe-cmd2">stdinout_dpipe =&gt; $cmd</dt>
+<dd>
+
+</dd>
+<dt id="tty-bool1">tty =&gt; $bool</dt>
+<dd>
+
+<p>See the <a href="#open_ex">&quot;open_ex&quot;</a> method documentation for an explanation of these options.</p>
+
+</dd>
+<dt id="stdin_keep_open-bool">stdin_keep_open =&gt; $bool</dt>
+<dd>
+
+<p>When <code>stdin_data</code> is given, the module closes the stdin stream once all the data has been sent. Unfortunately, some SSH buggy servers fail to handle this event correctly and close the channel prematurely.</p>
+
+<p>As a workaround, when this flag is set the stdin is left open until the remote process terminates.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="ok-ssh-test-opts-cmd">$ok = $ssh-&gt;test(\%opts, @cmd);</dt>
+<dd>
+
+<p>Runs the given command and returns its success/failure exit status as 1 or 0 respectively. Returns undef when something goes wrong in the SSH layer.</p>
+
+<p>Error status is not set to OSSH_SLAVE_CMD_FAILED when the remote command exits with a non-zero code.</p>
+
+<p>By default this method discards the remote command <code>stdout</code> and <code>sterr</code> streams.</p>
+
+<p>Usage example:</p>
+
+<pre><code>  if ($ssh-&gt;test(ps =&gt; -C =&gt; $executable)) {
+    say &quot;$executable is running on remote machine&quot;
+  }
+  else {
+    die &quot;something got wrong: &quot;. $ssh-&gt;error if $ssh-&gt;error;
+
+    say &quot;$executable is not running on remote machine&quot;
+  }</code></pre>
+
+<p>This method support the same set of options as <code>system</code>, except <code>async</code> and <code>tunnel</code>.</p>
+
+</dd>
+<dt id="output-ssh-capture-opts-cmd">$output = $ssh-&gt;capture(\%opts, @cmd);</dt>
+<dd>
+
+</dd>
+<dt id="output-ssh-capture-opts-cmd1">@output = $ssh-&gt;capture(\%opts, @cmd);</dt>
+<dd>
+
+<p>This method is conceptually equivalent to the perl backquote operator (e.g. <code>`ls`</code>): it runs the command on the remote machine and captures its output.</p>
+
+<p>In scalar context returns the output as a scalar. In list context returns the output broken into lines (it honors <code>$/</code>, see <a href="../../../lib/perl5/5.26.3/pod/perlvar.html#pod">&quot;$/&quot; in perlvar</a>).</p>
+
+<p>The exit status of the remote command is returned in <code>$?</code>.</p>
+
+<p>When an error happens while capturing (for instance, the operation times out), the partial captured output will be returned. Error conditions have to be explicitly checked using the <a href="#error">&quot;error&quot;</a> method. For instance:</p>
+
+<pre><code>  my $output = $ssh-&gt;capture({ timeout =&gt; 10 },
+                             &quot;echo hello; sleep 20; echo bye&quot;);
+  $ssh-&gt;error and
+      warn &quot;operation didn&#39;t complete successfully: &quot;. $ssh-&gt;error;
+  print $output;</code></pre>
+
+<p>Setting <code>$SIG{CHLD}</code> to a custom signal handler or to <code>IGNORE</code> will interfere with this method.</p>
+
+<p>Accepted options:</p>
+
+<dl>
+
+<dt id="stdin_data-input2">stdin_data =&gt; $input</dt>
+<dd>
+
+</dd>
+<dt id="stdin_data-input3">stdin_data =&gt; \@input</dt>
+<dd>
+
+</dd>
+<dt id="stdin_keep_open-bool1">stdin_keep_open =&gt; $bool</dt>
+<dd>
+
+<p>See the <a href="#system">&quot;system&quot;</a> method documentation for an explanation of these options.</p>
+
+</dd>
+<dt id="timeout-timeout2">timeout =&gt; $timeout</dt>
+<dd>
+
+<p>See <a href="#Timeouts">&quot;Timeouts&quot;</a>.</p>
+
+</dd>
+<dt id="stdin_fh-fh2">stdin_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stdin_discard-bool1">stdin_discard =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="stderr_fh-fh2">stderr_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stderr_discard-bool1">stderr_discard =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="stderr_to_stdout-bool1">stderr_to_stdout =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="tty-bool2">tty =&gt; $bool</dt>
+<dd>
+
+<p>See the <a href="#open_ex">&quot;open_ex&quot;</a> method documentation for an explanation of these options.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="output-errput-ssh-capture2-opts-cmd">($output, $errput) = $ssh-&gt;capture2(\%opts, @cmd)</dt>
+<dd>
+
+<p>captures the output sent to both stdout and stderr by <code>@cmd</code> on the remote machine.</p>
+
+<p>Setting <code>$SIG{CHLD}</code> to a custom signal handler or to <code>IGNORE</code> will also interfere with this method.</p>
+
+<p>The accepted options are:</p>
+
+<dl>
+
+<dt id="stdin_data-input4">stdin_data =&gt; $input</dt>
+<dd>
+
+</dd>
+<dt id="stdin_data-input5">stdin_data =&gt; \@input</dt>
+<dd>
+
+</dd>
+<dt id="stdin_keep_open-bool2">stdin_keep_open =&gt; $bool</dt>
+<dd>
+
+<p>See the <a href="#system">&quot;system&quot;</a> method documentation for an explanation of these options.</p>
+
+</dd>
+<dt id="timeout-timeout3">timeout =&gt; $timeout</dt>
+<dd>
+
+<p>See <a href="#Timeouts">&quot;Timeouts&quot;</a>.</p>
+
+</dd>
+<dt id="stdin_fh-fh3">stdin_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stdin_discard-bool2">stdin_discard =&gt; $bool</dt>
+<dd>
+
+</dd>
+<dt id="tty-bool3">tty =&gt; $bool</dt>
+<dd>
+
+<p>See the <a href="#open_ex">&quot;open_ex&quot;</a> method documentation for an explanation of these options.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="in-pid-ssh-pipe_in-opts-cmd">($in, $pid) = $ssh-&gt;pipe_in(\%opts, @cmd)</dt>
+<dd>
+
+<p>This method is similar to the following Perl <code>open</code> call</p>
+
+<pre><code>  $pid = open $in, &#39;|-&#39;, @cmd</code></pre>
+
+<p>but running @cmd on the remote machine (see <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#open">&quot;open&quot; in perlfunc</a>).</p>
+
+<p>No options are currently accepted.</p>
+
+<p>There is no need to perform a waitpid on the returned PID as it will be done automatically by perl when <code>$in</code> is closed.</p>
+
+<p>Example:</p>
+
+<pre><code>  my ($in, $pid) = $ssh-&gt;pipe_in(&#39;cat &gt;/tmp/fpp&#39;)
+      or die &quot;pipe_in failed: &quot; . $ssh-&gt;error;
+  print $in $_ for @data;
+  close $in or die &quot;close failed&quot;;</code></pre>
+
+</dd>
+<dt id="out-pid-ssh-pipe_out-opts-cmd">($out, $pid) = $ssh-&gt;pipe_out(\%opts, @cmd)</dt>
+<dd>
+
+<p>Reciprocal to previous method, it is equivalent to</p>
+
+<pre><code>  $pid = open $out, &#39;-|&#39;, @cmd</code></pre>
+
+<p>running @cmd on the remote machine.</p>
+
+<p>No options are currently accepted.</p>
+
+</dd>
+<dt id="in-out-pid-ssh-open2-opts-cmd">($in, $out, $pid) = $ssh-&gt;open2(\%opts, @cmd)</dt>
+<dd>
+
+</dd>
+<dt id="pty-pid-ssh-open2pty-opts-cmd">($pty, $pid) = $ssh-&gt;open2pty(\%opts, @cmd)</dt>
+<dd>
+
+</dd>
+<dt id="socket-pid-ssh-open2socket-opts-cmd">($socket, $pid) = $ssh-&gt;open2socket(\%opts, @cmd)</dt>
+<dd>
+
+</dd>
+<dt id="in-out-err-pid-ssh-open3-opts-cmd">($in, $out, $err, $pid) = $ssh-&gt;open3(\%opts, @cmd)</dt>
+<dd>
+
+</dd>
+<dt id="pty-err-pid-ssh-open3pty-opts-cmd">($pty, $err, $pid) = $ssh-&gt;open3pty(\%opts, @cmd)</dt>
+<dd>
+
+<p>Shortcuts around <a href="#open_ex">&quot;open_ex&quot;</a> method.</p>
+
+</dd>
+<dt id="pid-ssh-spawn-opts-_">$pid = $ssh-&gt;spawn(\%opts, @_)</dt>
+<dd>
+
+<p>Another <a href="#open_ex">&quot;open_ex&quot;</a> shortcut, it launches a new remote process in the background and returns the PID of the local slave SSH process.</p>
+
+<p>At some later point in your script, <code>waitpid</code> should be called on the returned PID in order to reap the slave SSH process.</p>
+
+<p>For instance, you can run some command on several hosts in parallel with the following code:</p>
+
+<pre><code>  my %conn = map { $_ =&gt; Net::OpenSSH-&gt;new($_, async =&gt; 1) } @hosts;
+  my @pid;
+  for my $host (@hosts) {
+      open my($fh), &#39;&gt;&#39;, &quot;/tmp/out-$host.txt&quot;
+        or die &quot;unable to create file: $!&quot;;
+      push @pid, $conn{$host}-&gt;spawn({stdout_fh =&gt; $fh}, $cmd);
+  }
+
+  waitpid($_, 0) for @pid;</code></pre>
+
+<p>Note that <code>spawn</code> should not be used to start detached remote processes that may survive the local program (see also the <a href="#FAQ">&quot;FAQ&quot;</a> about running remote processes detached).</p>
+
+</dd>
+<dt id="socket-pid-ssh-open_tunnel-opts-dest_host-port">($socket, $pid) = $ssh-&gt;open_tunnel(\%opts, $dest_host, $port)</dt>
+<dd>
+
+</dd>
+<dt id="socket-pid-ssh-open_tunnel-opts-socket_path">($socket, $pid) = $ssh-&gt;open_tunnel(\%opts, $socket_path)</dt>
+<dd>
+
+<p>Similar to <a href="#open2socket">&quot;open2socket&quot;</a>, but instead of running a command, it opens a TCP tunnel to the given address. See also <a href="#Tunnels">&quot;Tunnels&quot;</a>.</p>
+
+</dd>
+<dt id="out-ssh-capture_tunnel-opts-dest_host-port">$out = $ssh-&gt;capture_tunnel(\%opts, $dest_host, $port)</dt>
+<dd>
+
+</dd>
+<dt id="out-ssh-capture_tunnel-opts-dest_host-port1">@out = $ssh-&gt;capture_tunnel(\%opts, $dest_host, $port)</dt>
+<dd>
+
+<p>Similar to <a href="#capture">&quot;capture&quot;</a>, but instead of running a command, it opens a TCP tunnel.</p>
+
+<p>Example:</p>
+
+<pre><code>  $out = $ssh-&gt;capture_tunnel({stdin_data =&gt; join(&quot;\r\n&quot;,
+                                                  &quot;GET / HTTP/1.0&quot;,
+                                                  &quot;Host: www.perl.org&quot;,
+                                                  &quot;&quot;, &quot;&quot;) },
+                              &#39;www.perl.org&#39;, 80)</code></pre>
+
+<p>See also <a href="#Tunnels">&quot;Tunnels&quot;</a>.</p>
+
+</dd>
+<dt id="ssh-scp_get-opts-remote1-remote2-...-local_dir_or_file">$ssh-&gt;scp_get(\%opts, $remote1, $remote2,..., $local_dir_or_file)</dt>
+<dd>
+
+</dd>
+<dt id="ssh-scp_put-opts-local-local2-...-remote_dir_or_file">$ssh-&gt;scp_put(\%opts, $local, $local2,..., $remote_dir_or_file)</dt>
+<dd>
+
+<p>These two methods are wrappers around the <code>scp</code> command that allow transfers of files to/from the remote host using the existing SSH master connection.</p>
+
+<p>When transferring several files, the target argument must point to an existing directory. If only one file is to be transferred, the target argument can be a directory or a file name or can be omitted. For instance:</p>
+
+<pre><code>  $ssh-&gt;scp_get({glob =&gt; 1}, &#39;/var/tmp/foo*&#39;, &#39;/var/tmp/bar*&#39;, &#39;/tmp&#39;);
+  $ssh-&gt;scp_put(&#39;/etc/passwd&#39;);</code></pre>
+
+<p>Both <a href="#scp_get">&quot;scp_get&quot;</a> and <a href="#scp_put">&quot;scp_put&quot;</a> methods return a true value when all the files are transferred correctly, otherwise they return undef.</p>
+
+<p>Accepted options:</p>
+
+<dl>
+
+<dt id="quiet-0">quiet =&gt; 0</dt>
+<dd>
+
+<p>By default, <code>scp</code> is called with the quiet flag <code>-q</code> enabled in order to suppress progress information. This option allows one to re-enable the progress indication bar.</p>
+
+</dd>
+<dt id="verbose-1">verbose =&gt; 1</dt>
+<dd>
+
+<p>Calls <code>scp</code> with the <code>-v</code> flag.</p>
+
+</dd>
+<dt id="recursive-1">recursive =&gt; 1</dt>
+<dd>
+
+<p>Copies files and directories recursively.</p>
+
+</dd>
+<dt id="glob-1">glob =&gt; 1</dt>
+<dd>
+
+<p>Enables expansion of shell metacharacters in the sources list so that wildcards can be used to select files.</p>
+
+</dd>
+<dt id="glob_flags-flags">glob_flags =&gt; $flags</dt>
+<dd>
+
+<p>Second argument passed to <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/File/Glob.html#bsd_glob">File::Glob::bsd_glob</a> function. Only available for <a href="#scp_put">&quot;scp_put&quot;</a> method.</p>
+
+</dd>
+<dt id="copy_attrs-1">copy_attrs =&gt; 1</dt>
+<dd>
+
+<p>Copies modification and access times and modes from the original files.</p>
+
+</dd>
+<dt id="bwlimit-Kbits">bwlimit =&gt; $Kbits</dt>
+<dd>
+
+<p>Limits the used bandwidth, specified in Kbit/s.</p>
+
+</dd>
+<dt id="timeout-secs">timeout =&gt; $secs</dt>
+<dd>
+
+<p>The transfer is aborted if the connection does not finish before the given timeout elapses. See also <a href="#Timeouts">&quot;Timeouts&quot;</a>.</p>
+
+</dd>
+<dt id="async-12">async =&gt; 1</dt>
+<dd>
+
+<p>Does not wait for the <code>scp</code> command to finish. When this option is used, the method returns the PID of the child <code>scp</code> process.</p>
+
+<p>For instance, it is possible to transfer files to several hosts in parallel as follows:</p>
+
+<pre><code>  use Errno;
+  my (%pid, %ssh);
+  for my $host (@hosts) {
+    $ssh{$host} = Net::OpenSSH-&gt;new($host, async =&gt; 1);
+  }
+  for my $host (@hosts) {
+    $pid{$host} = $ssh{$host}-&gt;scp_put({async =&gt; 1}, $local_fn, $remote_fn)
+      or warn &quot;scp_put to $host failed: &quot; . $ssh{$host}-&gt;error . &quot;\n&quot;;
+  }
+  for my $host (@hosts) {
+    if (my $pid = $pid{$host}) {
+      if (waitpid($pid, 0) &gt; 0) {
+        my $exit = ($? &gt;&gt; 8);
+        $exit and warn &quot;transfer of file to $host failed ($exit)\n&quot;;
+      }
+      else {
+        redo if ($! == EINTR);
+        warn &quot;waitpid($pid) failed: $!\n&quot;;
+      }
+    }
+  }</code></pre>
+
+</dd>
+<dt id="stdout_fh-fh2">stdout_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stderr_fh-fh3">stderr_fh =&gt; $fh</dt>
+<dd>
+
+</dd>
+<dt id="stderr_to_stdout-11">stderr_to_stdout =&gt; 1</dt>
+<dd>
+
+<p>These options are passed unchanged to method <a href="#open_ex">&quot;open_ex&quot;</a>, allowing capture of the output of the <code>scp</code> program.</p>
+
+<p>Note that <code>scp</code> will not generate progress reports unless its stdout stream is attached to a tty.</p>
+
+</dd>
+<dt id="ssh_opts-opts1">ssh_opts =&gt; \@opts</dt>
+<dd>
+
+<p>List of extra options for the <code>ssh</code> command.</p>
+
+<p>This feature should be used with care, as the given options are not checked in any way by the module, and they could interfere with it.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="ssh-rsync_get-opts-remote1-remote2-...-local_dir_or_file">$ssh-&gt;rsync_get(\%opts, $remote1, $remote2,..., $local_dir_or_file)</dt>
+<dd>
+
+</dd>
+<dt id="ssh-rsync_put-opts-local1-local2-...-remote_dir_or_file">$ssh-&gt;rsync_put(\%opts, $local1, $local2,..., $remote_dir_or_file)</dt>
+<dd>
+
+<p>These methods use <code>rsync</code> over SSH to transfer files from/to the remote machine.</p>
+
+<p>They accept the same set of options as the <code>scp</code> ones.</p>
+
+<p>Any unrecognized option will be passed as an argument to the <code>rsync</code> command (see <a href="http://man.he.net/man1/rsync">rsync(1)</a>). Underscores can be used instead of dashes in <code>rsync</code> option names.</p>
+
+<p>For instance:</p>
+
+<pre><code>  $ssh-&gt;rsync_get({exclude =&gt; &#39;*~&#39;,
+                   verbose =&gt; 1,
+                   safe_links =&gt; 1},
+                  &#39;/remote/dir&#39;, &#39;/local/dir&#39;);</code></pre>
+
+</dd>
+<dt id="sftp-ssh-sftp-sftp_opts">$sftp = $ssh-&gt;sftp(%sftp_opts)</dt>
+<dd>
+
+<p>Creates a new <a>Net::SFTP::Foreign</a> object for SFTP interaction that runs through the ssh master connection.</p>
+
+</dd>
+<dt id="call-ssh-make_remote_command-opts-cmd">@call = $ssh-&gt;make_remote_command(\%opts, @cmd)</dt>
+<dd>
+
+</dd>
+<dt id="call-ssh-make_remote_command-opts-cmd1">$call = $ssh-&gt;make_remote_command(\%opts, @cmd)</dt>
+<dd>
+
+<p>This method returns the arguments required to execute a command on the remote machine via SSH. For instance:</p>
+
+<pre><code>  my @call = $ssh-&gt;make_remote_command(ls =&gt; &quot;/var/log&quot;);
+  system @call;</code></pre>
+
+<p>In scalar context, returns the arguments quoted and joined into one string:</p>
+
+<pre><code>  my $remote = $ssh-&gt;make_remote_comand(&quot;cd /tmp/ &amp;&amp; tar xf -&quot;);
+  system &quot;tar cf - . | $remote&quot;;</code></pre>
+
+<p>The options accepted are as follows:</p>
+
+<dl>
+
+<dt id="tty-bool4">tty =&gt; $bool</dt>
+<dd>
+
+<p>Enables/disables allocation of a tty on the remote side.</p>
+
+</dd>
+<dt id="forward_agent-bool1">forward_agent =&gt; $bool</dt>
+<dd>
+
+<p>Enables/disables forwarding of authentication agent.</p>
+
+<p>This option can only be used when agent forwarding has been previously requested on the constructor.</p>
+
+</dd>
+<dt id="tunnel-1">tunnel =&gt; 1</dt>
+<dd>
+
+<p>Return a command to create a connection to some TCP server reachable from the remote host. In that case the arguments are the destination address and port. For instance:</p>
+
+<pre><code>  $cmd = $ssh-&gt;make_remote_command({tunnel =&gt; 1}, $host, $port);</code></pre>
+
+</dd>
+<dt id="subsystem-1">subsystem =&gt; 1</dt>
+<dd>
+
+<p>Return a command for invoking a SSH subsystem (i.e. SFTP or netconf). In that case the only argument is the subsystem name.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="ssh-wait_for_master-async">$ssh-&gt;wait_for_master($async)</dt>
+<dd>
+
+<p>When the connection has been established by calling the constructor with the <code>async</code> option, this call allows one to advance the process.</p>
+
+<p>If <code>$async</code> is true, it will perform any work that can be done immediately without waiting (for instance, entering the password or checking for the existence of the multiplexing socket) and then return. If a false value is given, it will finalize the connection process and wait until the multiplexing socket is available.</p>
+
+<p>It returns a true value after the connection has been successfully established. False is returned if the connection process fails or if it has not yet completed (then, the <a href="#error">&quot;error&quot;</a> method can be used to distinguish between both cases).</p>
+
+<p>From version 0.64 upwards, undef is returned when the master is still in an unstable state (login, killing, etc.) and 0 when it is in a stable state (running, stopped or gone).</p>
+
+</dd>
+<dt id="ssh-check_master">$ssh-&gt;check_master</dt>
+<dd>
+
+<p>This method runs several checks to ensure that the master connection is still alive.</p>
+
+</dd>
+<dt id="ssh-shell_quote-args">$ssh-&gt;shell_quote(@args)</dt>
+<dd>
+
+<p>Returns the list of arguments quoted so that they will be restored to their original form when parsed by the remote shell.</p>
+
+<p>In scalar context returns the list of arguments quoted and joined.</p>
+
+<p>Usually this task is done automatically by the module. See <a href="#Shell-quoting">&quot;Shell quoting&quot;</a> below.</p>
+
+<p>This method can also be used as a class method.</p>
+
+<p>Example:</p>
+
+<pre><code>  my $quoted_args = Net::OpenSSH-&gt;shell_quote(@args);
+  system(&#39;ssh&#39;, &#39;--&#39;, $host, $quoted_args);</code></pre>
+
+</dd>
+<dt id="ssh-shell_quote_glob-args">$ssh-&gt;shell_quote_glob(@args)</dt>
+<dd>
+
+<p>This method is like the previous <code>shell_quote</code> but leaves wildcard characters unquoted.</p>
+
+<p>It can be used as a class method also.</p>
+
+</dd>
+<dt id="ssh-set_expand_vars-bool">$ssh-&gt;set_expand_vars($bool)</dt>
+<dd>
+
+<p>Enables/disables variable expansion feature (see <a href="#Variable-expansion">&quot;Variable expansion&quot;</a>).</p>
+
+</dd>
+<dt id="ssh-get_expand_vars">$ssh-&gt;get_expand_vars</dt>
+<dd>
+
+<p>Returns current state of variable expansion feature.</p>
+
+</dd>
+<dt id="ssh-set_var-name-value">$ssh-&gt;set_var($name, $value)</dt>
+<dd>
+
+</dd>
+<dt id="ssh-get_var-name-value">$ssh-&gt;get_var($name, $value)</dt>
+<dd>
+
+<p>These methods allow one to change and to retrieve the value of the given name.</p>
+
+</dd>
+<dt id="ssh-get_master_pid">$ssh-&gt;get_master_pid</dt>
+<dd>
+
+<p>Returns the PID of the master SSH process</p>
+
+</dd>
+<dt id="ssh-master_exited">$ssh-&gt;master_exited</dt>
+<dd>
+
+<p>This methods allows one to tell the module that the master process has exited when we get its PID from some external wait or waitpid call. For instance:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new(&#39;foo&#39;, async =&gt; 1);
+
+  # create new processes
+  # ...
+
+  # rip them...
+  my $master_pid = $ssh-&gt;master_pid;
+  while ((my $pid = wait) &gt; 0) {
+    if ($pid == $master_pid) {
+      $ssh-&gt;master_exited;
+    }
+  }</code></pre>
+
+<p>If your program rips the master process and this method is not called, the OS could reassign the PID to a new unrelated process and the module would try to kill it at object destruction time.</p>
+
+</dd>
+<dt id="ssh-disconnect-async">$ssh-&gt;disconnect($async)</dt>
+<dd>
+
+<p>Shuts down the SSH connection.</p>
+
+<p>Usually, you don&#39;t need to call this method explicitly, but just let the Net::OpenSSH object go out of scope.</p>
+
+<p>If <code>async</code> is true, it doesn&#39;t wait for the SSH connection to terminate. In that case, <a href="#wait_for_master">&quot;wait_for_master&quot;</a> must be called repeatedly until the shutdown sequence terminates (See the <a href="#AnyEvent">&quot;AnyEvent&quot;</a> integration section below).</p>
+
+</dd>
+<dt id="pid-ssh-sshfs_import-opts-remote_fs-local_mnt_point">$pid = $ssh-&gt;sshfs_import(\%opts, $remote_fs, $local_mnt_point)</dt>
+<dd>
+
+</dd>
+<dt id="pid-ssh-sshfs_export-opts-local_fs-remote_mnt_point">$pid = $ssh-&gt;sshfs_export(\%opts, $local_fs, $remote_mnt_point)</dt>
+<dd>
+
+<p>These methods use <a href="http://man.he.net/man1/sshfs">sshfs(1)</a> to import or export a file system through the SSH connection.</p>
+
+<p>They return the <code>$pid</code> of the <code>sshfs</code> process or of the slave <code>ssh</code> process used to proxy it. Killing that process unmounts the file system, though, it may be probably better to use <a href="http://man.he.net/man1/fusermount">fusermount(1)</a>.</p>
+
+<p>The options accepted are as follows:</p>
+
+<dl>
+
+<dt id="ssh_opts-ssh_opts">ssh_opts =&gt; \@ssh_opts</dt>
+<dd>
+
+<p>Options passed to the slave <code>ssh</code> process.</p>
+
+</dd>
+<dt id="sshfs_opts-sshfs_opts">sshfs_opts =&gt; \@sshfs_opts</dt>
+<dd>
+
+<p>Options passed to the <code>sshfs</code> command. For instance, to mount the file system in read-only mode:</p>
+
+<pre><code>  my $pid = $ssh-&gt;sshfs_export({sshfs_opts =&gt; [-o =&gt; &#39;ro&#39;]},
+                               &quot;/&quot;, &quot;/mnt/foo&quot;);</code></pre>
+
+</dd>
+</dl>
+
+<p>Note that this command requires a recent version of <code>sshfs</code> to work (at the time of writing, it requires the yet unreleased version available from the FUSE git repository!).</p>
+
+<p>See also the <a href="http://man.he.net/man1/sshfs">sshfs(1)</a> man page and the <code>sshfs</code> and FUSE web sites at <a href="https://github.com/libfuse/sshfs">https://github.com/libfuse/sshfs</a> and <a href="https://github.com/libfuse/libfuse">https://github.com/libfuse/libfuse</a> respectively.</p>
+
+</dd>
+<dt id="or-ssh-object_remote-args">$or = $ssh-&gt;object_remote(@args)</dt>
+<dd>
+
+<p>Returns an <a>Object::Remote::Connection</a> instance running on top of the Net::OpenSSH connection.</p>
+
+<p>Example:</p>
+
+<pre><code>   my $or = $ssh-&gt;object_remote;
+   my $hostname = Sys::Hostname-&gt;can::on($or, &#39;hostname&#39;);
+   say $hostname-&gt;();</code></pre>
+
+<p>See also <a>Object::Remote</a>.</p>
+
+</dd>
+<dt id="any-ssh-any-opts">$any = $ssh-&gt;any(%opts)</dt>
+<dd>
+
+<p>Wraps the current object inside a Net::SSH::Any one.</p>
+
+<p>Example:</p>
+
+<pre><code>  my $any = $ssh-&gt;any;
+  my $content = $any-&gt;scp_get_content(&quot;my-file.txt&quot;);</code></pre>
+
+</dd>
+<dt id="pid-ssh-disown_master">$pid = $ssh-&gt;disown_master</dt>
+<dd>
+
+<p>Under normal operation Net::OpenSSH controls the life-time of the master <code>ssh</code> process and when the object is destroyed the master process and any connection running over it are terminated.</p>
+
+<p>In some (rare) cases, it is desirable to let the master process and all the running connections survive. Calling this method does just that, it tells Net::OpenSSH object that the master process is not its own anymore.</p>
+
+<p>The return value is the PID of the master process.</p>
+
+<p>Note also that disowning the master process does not affect the operation of the module in any other regard.</p>
+
+<p>For instance:</p>
+
+<pre><code>  # See examples/sshfs_mount.pl for a working program
+  my $ssh = Net::OpenSSH-&gt;new($host);
+  my $sshfs_pid = $ssh-&gt;sshfs_import(&quot;/home/foo&quot;, &quot;my-remote-home&quot;);
+  $ssh-&gt;disown_master;
+  $ssh-&gt;stop; # tells the master to stop accepting requests
+  exit(0);</code></pre>
+
+</dd>
+</dl>
+
+<h2 id="Shell-quoting">Shell quoting</h2>
+
+<p>By default, when invoking remote commands, this module tries to mimic perl <code>system</code> builtin in regard to argument processing. Quoting <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#system">&quot;system&quot; in perlfunc</a>:</p>
+
+<pre><code>  Argument processing varies depending on the number of arguments.  If
+  there is more than one argument in LIST, or if LIST is an array with
+  more than one value, starts the program given by the first element
+  of the list with arguments given by the rest of the list.  If there
+  is only one scalar argument, the argument is checked for shell
+  metacharacters, and if there are any, the entire argument is passed
+  to the system&#39;s command shell for parsing (this is &quot;/bin/sh -c&quot; on
+  Unix platforms, but varies on other platforms).</code></pre>
+
+<p>Take for example Net::OpenSSH <a href="#system">&quot;system&quot;</a> method:</p>
+
+<pre><code>  $ssh-&gt;system(&quot;ls -l *&quot;);
+  $ssh-&gt;system(&#39;ls&#39;, &#39;-l&#39;, &#39;/&#39;);</code></pre>
+
+<p>The first call passes the argument unchanged to ssh and it is executed in the remote side through the shell which interprets metacharacters.</p>
+
+<p>The second call escapes any shell metacharacters so that, effectively, it is equivalent to calling the command directly and not through the shell.</p>
+
+<p>Under the hood, as the Secure Shell protocol does not provide for this mode of operation and always spawns a new shell where it runs the given command, Net::OpenSSH quotes any shell metacharacters in the command list.</p>
+
+<p>All the methods that invoke a remote command (system, open_ex, etc.) accept the option <code>quote_args</code> that allows one to force/disable shell quoting.</p>
+
+<p>For instance:</p>
+
+<pre><code>  $ssh-&gt;system({quote_args =&gt; 1}, &quot;/path with spaces/bin/foo&quot;);</code></pre>
+
+<p>will correctly handle the spaces in the program path.</p>
+
+<p>The shell quoting mechanism implements some extensions (for instance, performing redirections to /dev/null on the remote side) that can be disabled with the option <code>quote_args_extended</code>:</p>
+
+<pre><code>  $ssh-&gt;system({ stderr_discard =&gt; 1,
+                 quote_args =&gt; 1, quote_args_extended =&gt; 0 },
+               @cmd);</code></pre>
+
+<p>The option <code>quote_args</code> can also be used to disable quoting when more than one argument is passed. For instance, to get some pattern expanded by the remote shell:</p>
+
+<pre><code>  $ssh-&gt;system({quote_args =&gt; 0}, &#39;ls&#39;, &#39;-l&#39;, &quot;/tmp/files_*.dat&quot;);</code></pre>
+
+<p>The method <code>shell_quote</code> can be used to selectively quote some arguments and leave others untouched:</p>
+
+<pre><code>  $ssh-&gt;system({quote_args =&gt; 0},
+               $ssh-&gt;shell_quote(&#39;ls&#39;, &#39;-l&#39;),
+               &quot;/tmp/files_*.dat&quot;);</code></pre>
+
+<p>When the glob option is set in <code>scp</code> and <code>rsync</code> file transfer methods, an alternative quoting method which knows about file wildcards and passes them unquoted is used. The set of wildcards recognized currently is the one supported by <a href="http://man.he.net/man1/bash">bash(1)</a>.</p>
+
+<p>Another way to selectively use quote globing or fully disable quoting for some specific arguments is to pass them as scalar references or double scalar references respectively. In practice, that means prepending them with one or two backslashes. For instance:</p>
+
+<pre><code>  # quote the last argument for globing:
+  $ssh-&gt;system(&#39;ls&#39;, &#39;-l&#39;, \&#39;/tmp/my files/filed_*dat&#39;);
+
+  # append a redirection to the remote command
+  $ssh-&gt;system(&#39;ls&#39;, &#39;-lR&#39;, \\&#39;&gt;/tmp/ls-lR.txt&#39;);
+
+  # expand remote shell variables and glob in the same command:
+  $ssh-&gt;system(&#39;tar&#39;, &#39;czf&#39;, \\&#39;$HOME/out.tgz&#39;, \&#39;/var/log/server.*.log&#39;);</code></pre>
+
+<p>As shell quoting is a tricky matter, I expect bugs to appear in this area. You can see how <code>ssh</code> is called, and the quoting used setting the following debug flag:</p>
+
+<pre><code>  $Net::OpenSSH::debug |= 16;</code></pre>
+
+<p>By default, the module assumes the remote shell is some variant of a POSIX or Bourne shell (<code>bash</code>, <code>dash</code>, <code>ksh</code>, etc.). If this is not the case, the construction option <code>remote_shell</code> can be used to select an alternative quoting mechanism.</p>
+
+<p>For instance:</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new($host, remote_shell =&gt; &#39;csh&#39;);
+  $ssh-&gt;system(echo =&gt; &quot;hard\n to\n  quote\n   argument!&quot;);</code></pre>
+
+<p>Currently there are quoters available for POSIX (Bourne) compatible shells, <code>csh</code> and the two Windows variants <code>MSWin</code> (for servers using <a>Win32::CreateProcess</a>, see <a href="../../../../../root/.cpanm/work/1586740826.24889/Net-OpenSSH-0.78/blib/lib/Net/OpenSSH/ShellQuoter/MSWin.html">Net::OpenSSH::ShellQuoter::MSWin</a>) and <code>MSCmd</code> (for servers using <code>cmd.exe</code>, see <a href="../../../../../root/.cpanm/work/1586740826.24889/Net-OpenSSH-0.78/blib/lib/Net/OpenSSH/ShellQuoter/MSCmd.html">Net::OpenSSH::ShellQuoter::MSCmd</a>).</p>
+
+<p>In any case, you can always do the quoting yourself and pass the quoted remote command as a single string:</p>
+
+<pre><code>  # for VMS
+  $ssh-&gt;system(&#39;DIR/SIZE NFOO::USERS:[JSMITH.DOCS]*.TXT;0&#39;);</code></pre>
+
+<p>Note that the current quoting mechanism does not handle possible aliases defined by the remote shell. In that case, to force execution of the command instead of the alias, the full path to the command must be used.</p>
+
+<h2 id="Timeouts">Timeouts</h2>
+
+<p>In order to stop remote processes when they timeout, the ideal approach would be to send them signals through the SSH connection as specified by the protocol standard.</p>
+
+<p>Unfortunately OpenSSH does not implement that feature so Net::OpenSSH has to use other imperfect approaches:</p>
+
+<ul>
+
+<li><p>close slave I/O streams</p>
+
+<p>Closing the STDIN and STDOUT streams of the unresponsive remote process will effectively deliver a SIGPIPE when it tries to access any of them.</p>
+
+<p>Remote processes may not access STDIN or STDOUT and even then, Net::OpenSSH can only close these channels when it is capturing them, so this approach does not always work.</p>
+
+</li>
+<li><p>killing the local SSH slave process</p>
+
+<p>This action may leave the remote process running, creating a remote orphan so Net::OpenSSH does not use it unless the construction option <code>kill_ssh_on_timeout</code> is set.</p>
+
+</li>
+</ul>
+
+<p>Luckily, future versions of OpenSSH will support signaling remote processes via the mux channel.</p>
+
+<h2 id="Variable-expansion">Variable expansion</h2>
+
+<p>The variable expansion feature allows one to define variables that are expanded automatically inside command arguments and file paths.</p>
+
+<p>This feature is disabled by default. It is intended to be used with <a>Net::OpenSSH::Parallel</a> and other similar modules.</p>
+
+<p>Variables are delimited by a pair of percent signs (<code>%</code>), for instance <code>%HOST%</code>. Also, two consecutive percent signs are replaced by a single one.</p>
+
+<p>The special variables <code>HOST</code>, <code>USER</code> and <code>PORT</code> are maintained internally by the module and take the obvious values.</p>
+
+<p>Variable expansion is performed before shell quoting (see <a href="#Shell-quoting">&quot;Shell quoting&quot;</a>).</p>
+
+<p>Some usage example:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new(&#39;server.foo.com&#39;, expand_vars =&gt; 1);
+  $ssh-&gt;set_var(ID =&gt; 42);
+  $ssh-&gt;system(&quot;ls &gt;/tmp/ls.out-%HOST%-%ID%&quot;);</code></pre>
+
+<p>will redirect the output of the <code>ls</code> command to <code>/tmp/ls.out-server.foo.com-42</code> on the remote host.</p>
+
+<h2 id="Tunnels">Tunnels</h2>
+
+<p>Besides running commands on the remote host, Net::OpenSSH also allows one to tunnel TCP connections to remote machines reachable from the SSH server.</p>
+
+<p>That feature is made available through the <code>tunnel</code> option of the <a href="#open_ex">&quot;open_ex&quot;</a> method, and also through wrapper methods <a href="#open_tunnel">&quot;open_tunnel&quot;</a> and <a href="#capture_tunnel">&quot;capture_tunnel&quot;</a> and most others where it makes sense.</p>
+
+<p>Example:</p>
+
+<pre><code>  $ssh-&gt;system({tunnel =&gt; 1,
+                stdin_data =&gt; &quot;GET / HTTP/1.0\r\n\r\n&quot;,
+                stdout_file =&gt; &quot;/tmp/$server.res&quot;},
+               $server, 80)
+      or die &quot;unable to retrieve page: &quot; . $ssh-&gt;error;</code></pre>
+
+<p>or capturing the output of several requests in parallel:</p>
+
+<pre><code>  my @pids;
+  for (@servers) {
+    my $pid = $ssh-&gt;spawn({tunnel =&gt; 1,
+                           stdin_file =&gt; &quot;/tmp/request.req&quot;,
+                           stdout_file =&gt; &quot;/tmp/$_.res&quot;},
+                          $_, 80);
+    if ($pid) {
+      push @pids, $pid;
+    }
+    else {
+      warn &quot;unable to spawn tunnel process to $_: &quot; . $ssh-&gt;error;
+    }
+  }
+  waitpid ($_, 0) for (@pids);</code></pre>
+
+<p>Under the hood, in order to create a tunnel, a new <code>ssh</code> process is spawned with the option <code>-W${address}:${port}</code> (available from OpenSSH 5.4 and upwards) making it redirect its stdio streams to the remote given address. Unlike when <code>ssh</code> <code>-L</code> options is used to create tunnels, no TCP port is opened on the local machine at any time so this is a perfectly secure operation.</p>
+
+<p>The PID of the new process is returned by the named methods. It must be reaped once the pipe or socket handlers for the local side of the tunnel have been closed.</p>
+
+<p>OpenSSH 5.4 or later is required for the tunnels functionality to work. Also, note that tunnel forwarding may be administratively forbidden at the server side (see <a href="http://man.he.net/man8/sshd">sshd(8)</a> and <a href="http://man.he.net/man5/sshd_config">sshd_config(5)</a> or the documentation provided by your SSH server vendor).</p>
+
+<h3 id="Tunnels-targeting-UNIX-sockets">Tunnels targeting UNIX sockets</h3>
+
+<p>When connecting to hosts running a recent version of OpenSSH sshd, it is also possible to open connections targeting Unix sockets.</p>
+
+<p>For instance:</p>
+
+<pre><code>  my $response = $ssh-&gt;capture({tunnel =&gt; 1, stdin_data =&gt; $request },
+                               &quot;/tmp/socket-foo&quot;);</code></pre>
+
+<p>Currently, this feature requires a patched OpenSSH ssh client. The patch is available as <code>patches/openssh-fwd-stdio-to-streamlocal-1.patch</code>.</p>
+
+<h3 id="Port-forwarding">Port forwarding</h3>
+
+<p><a href="../../../../../root/.cpanm/work/1586740826.24889/Net-OpenSSH-0.78/blib/lib/Net/OpenSSH.html">Net::OpenSSH</a> does not offer direct support for handling port forwardings between server and client. But that can be done easily anyway passing custom SSH options to its methods.</p>
+
+<p>For instance, tunnel creation options can be passed to the constructor:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new(...
+                    master_opts =&gt; -Llocalhost:1234:localhost:3306&#39;);</code></pre>
+
+<p>The port forwardings can also be changed for a running SSH connection using a Control command:</p>
+
+<pre><code>    # setting up a tunnel:
+    $ssh-&gt;system({ssh_opts =&gt; [&#39;-O&#39;,&#39;forward&#39;,
+                               &#39;-L127.0.0.1:12345:127.0.0.1:3306&#39;]});
+
+    # canceling it:
+    $ssh-&gt;system({ssh_opts =&gt; [&#39;-O&#39;, &#39;cancel&#39;,
+                               &#39;-L127.0.0.1:12345:127.0.0.1:3306&#39;]});</code></pre>
+
+<h2 id="Data-encoding">Data encoding</h2>
+
+<p>Net::OpenSSH has some support for transparently converting the data send or received from the remote server to Perl internal unicode representation.</p>
+
+<p>The methods supporting that feature are those that move data from/to Perl data structures (e.g. <code>capture</code>, <code>capture2</code>, <code>capture_tunnel</code> and methods supporting the <code>stdin_data</code> option). Data accessed through pipes, sockets or redirections is not affected by the encoding options.</p>
+
+<p>It is also possible to set the encoding of the command and arguments passed to the remote server on the command line.</p>
+
+<p>By default, if no encoding option is given on the constructor or on the method calls, Net::OpenSSH will not perform any encoding transformation, effectively processing the data as <code>latin1</code>.</p>
+
+<p>When data can not be converted between the Perl internal representation and the selected encoding inside some Net::OpenSSH method, it will fail with an <code>OSSH_ENCODING_ERROR</code> error.</p>
+
+<p>The supported encoding options are as follows:</p>
+
+<dl>
+
+<dt id="stream_encoding-encoding">stream_encoding =&gt; $encoding</dt>
+<dd>
+
+<p>sets the encoding of the data send and received on capture methods.</p>
+
+</dd>
+<dt id="argument_encoding-encoding1">argument_encoding =&gt; $encoding</dt>
+<dd>
+
+<p>sets the encoding of the command line arguments</p>
+
+</dd>
+<dt id="encoding-encoding1">encoding =&gt; $encoding</dt>
+<dd>
+
+<p>sets both <code>argument_encoding</code> and <code>stream_encoding</code>.</p>
+
+</dd>
+</dl>
+
+<p>The constructor also accepts <code>default_encoding</code>, <code>default_stream_encoding</code> and <code>default_argument_encoding</code> that set the defaults.</p>
+
+<h2 id="Diverting-new">Diverting <code>new</code></h2>
+
+<p>When a code ref is installed at <code>$Net::OpenSSH::FACTORY</code>, calls to new will be diverted through it.</p>
+
+<p>That feature can be used to transparently implement connection caching, for instance:</p>
+
+<pre><code>  my $old_factory = $Net::OpenSSH::FACTORY;
+  my %cache;
+
+  sub factory {
+    my ($class, %opts) = @_;
+    my $signature = join(&quot;\0&quot;, $class, map { $_ =&gt; $opts{$_} }, sort keys %opts);
+    my $old = $cache{signature};
+    return $old if ($old and $old-&gt;error != OSSH_MASTER_FAILED);
+    local $Net::OpenSSH::FACTORY = $old_factory;
+    $cache{$signature} = $class-&gt;new(%opts);
+  }
+
+  $Net::OpenSSH::FACTORY = \&amp;factory;</code></pre>
+
+<p>... and I am sure it can be abused in several other ways!</p>
+
+<h1 id="rd-PARTY-MODULE-INTEGRATION">3rd PARTY MODULE INTEGRATION</h1>
+
+<h2 id="Expect">Expect</h2>
+
+<p>Sometimes you would like to use <a>Expect</a> to control some program running in the remote host. You can do it as follows:</p>
+
+<pre><code>  my ($pty, $pid) = $ssh-&gt;open2pty(@cmd)
+      or die &quot;unable to run remote command @cmd&quot;;
+  my $expect = Expect-&gt;init($pty);</code></pre>
+
+<p>Then, you will be able to use the new Expect object in <code>$expect</code> as usual.</p>
+
+<h2 id="Net::Telnet">Net::Telnet</h2>
+
+<p>This example is adapted from <a href="../../../lib/perl5/5.26.3/Net/Telnet.html">Net::Telnet</a> documentation:</p>
+
+<pre><code>  my ($pty, $pid) = $ssh-&gt;open2pty({stderr_to_stdout =&gt; 1})
+    or die &quot;unable to start remote shell: &quot; . $ssh-&gt;error;
+  my $telnet = Net::Telnet-&gt;new(-fhopen =&gt; $pty,
+                                -prompt =&gt; &#39;/.*\$ $/&#39;,
+                                -telnetmode =&gt; 0,
+                                -cmd_remove_mode =&gt; 1,
+                                -output_record_separator =&gt; &quot;\r&quot;);
+
+  $telnet-&gt;waitfor(-match =&gt; $telnet-&gt;prompt,
+                   -errmode =&gt; &quot;return&quot;)
+    or die &quot;login failed: &quot; . $telnet-&gt;lastline;
+
+  my @lines = $telnet-&gt;cmd(&quot;who&quot;);
+
+  ...
+
+  $telnet-&gt;close;
+  waitpid($pid, 0);</code></pre>
+
+<h2 id="mod_perl-and-mod_perl2">mod_perl and mod_perl2</h2>
+
+<p><a>mod_perl</a> and <a>mod_perl2</a> tie STDIN and STDOUT to objects that are not backed up by real file descriptors at the operating system level. Net::OpenSSH will fail if any of these handles is used explicitly or implicitly when calling some remote command.</p>
+
+<p>The work-around is to redirect them to <code>/dev/null</code> or to some file:</p>
+
+<pre><code>  open my $def_in, &#39;&lt;&#39;, &#39;/dev/null&#39; or die &quot;unable to open /dev/null&quot;;
+  my $ssh = Net::OpenSSH-&gt;new($host,
+                              default_stdin_fh =&gt; $def_in);
+
+  my $out = $ssh-&gt;capture($cmd1);
+  $ssh-&gt;system({stdout_discard =&gt; 1}, $cmd2);
+  $ssh-&gt;system({stdout_to_file =&gt; &#39;/tmp/output&#39;}, $cmd3);</code></pre>
+
+<p>Also, note that from a security stand point, running <code>ssh</code> from inside the web server process is not a great idea. An attacker exploiting some Apache bug would be able to access the SSH keys and passwords and gain unlimited access to the remote systems.</p>
+
+<p>If you can, use a queue (as <a>TheSchwartz</a>) or any other mechanism to execute the ssh commands from another process running under a different user account.</p>
+
+<p>At a minimum, ensure that <code>~www-data/.ssh</code> (or similar) is not accessible through the web server!</p>
+
+<h2 id="Net::SFTP::Foreign">Net::SFTP::Foreign</h2>
+
+<p>See <a href="#Net_SFTP_Foreign">method <code>sftp</code></a>.</p>
+
+<h2 id="Net::SSH::Any">Net::SSH::Any</h2>
+
+<p>See <a href="#Net_SSH_Any">method <code>any</code></a>.</p>
+
+<h2 id="Object::Remote">Object::Remote</h2>
+
+<p>See <a href="#Object_Remote">method <code>object_remote</code></a>.</p>
+
+<h2 id="AnyEvent-and-similar-frameworks">AnyEvent (and similar frameworks)</h2>
+
+<p>Net::OpenSSH provides all the functionality required to be integrated inside event oriented programming framework such as <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/AnyEvent.html">AnyEvent</a> or <a>IO::Async</a> in the following way:</p>
+
+<dl>
+
+<dt id="Create-a-disconnected-Net::OpenSSH-object">1. Create a disconnected Net::OpenSSH object:</dt>
+<dd>
+
+<pre><code>    my $ssh = Net::OpenSSH-&gt;new($host, async =&gt; 1, ...);</code></pre>
+
+</dd>
+<dt id="Let-the-object-connect-to-the-remote-host">2. Let the object connect to the remote host:</dt>
+<dd>
+
+<p>Use a timer to call the <code>wait_for_master</code> method in async mode repeatedly until it returns a true value indicating success.</p>
+
+<p>Also, the object error state needs to be checked after every call in order to detect failed connections. For instance:</p>
+
+<pre><code>  my $ssh = Net::OpenSSH-&gt;new(..., async =&gt; 1);
+  my $w;
+  $w = AE::timer 0.1, 0.1, sub {
+    if ($ssh-&gt;wait_for_master(1)) {
+      # the connection has been established!
+      # remote commands can be run now
+      undef $w;
+      on_ssh_success(...);
+    }
+    elsif ($ssh-&gt;error) {
+      # connection can not be established
+      undef $w;
+      on_ssh_failure(...);
+    }
+  }</code></pre>
+
+</dd>
+<dt id="Use-the-event-framework-to-launch-the-remote-processes">3. Use the event framework to launch the remote processes:</dt>
+<dd>
+
+<p>Call Net::OpenSSH <code>make_remote_command</code> to construct commands which can be run using the framework regular facilities for launching external commands.</p>
+
+<p>Error checking should also be performed at this point because the SSH connection could be broken.</p>
+
+<p>For instance:</p>
+
+<pre><code>  if (defined(my $cmd = $ssh-&gt;make_remote_command(echo =&gt; &#39;hello!&#39;)) {
+    AnyEvent::Util::run_cmd($cmd, %run_cmd_opts);
+  }
+  else {
+    # something went wrong!
+  }</code></pre>
+
+<p>Alternatively, any of the <code>open*</code> methods provided by Net::OpenSSH could also be used to launch remote commands.</p>
+
+</dd>
+<dt id="When-finished-disconnect-asynchronously">4. When finished, disconnect asynchronously</dt>
+<dd>
+
+<p>After initiating an asynchronous disconnect with <code>disconnect(1)</code>, repeatedly call <code>wait_for_master</code> until you get a defined but false value:</p>
+
+<pre><code>  $ssh-&gt;disconnect(1);
+
+  my $w; $w = AE::timer 0.1, 0.1, sub {
+    my $res = $ssh-&gt;wait_for_master(1);
+
+    if (defined $res &amp;&amp; !$res) {
+      undef $w;
+      undef $ssh;
+    }
+  };</code></pre>
+
+<p>Be careful not to let the <code>$ssh</code> object go out of scope until the disconnection has finished, otherwise its destructor will wait and block your program until the disconnection has completed.</p>
+
+</dd>
+</dl>
+
+<h2 id="Other-modules">Other modules</h2>
+
+<p>CPAN contains several modules that rely on SSH to perform their duties as for example <a>IPC::PerlSSH</a> or <a>GRID::Machine</a>.</p>
+
+<p>Often, it is possible to instruct them to go through a Net::OpenSSH multiplexed connection employing some available constructor option. For instance:</p>
+
+<pre><code>  use Net::OpenSSH;
+  use IPC::PerlIPC;
+  my $ssh = Net::OpenSSH-&gt;new(...);
+  $ssh-&gt;error and die &quot;unable to connect to remote host: &quot; . $ssh-&gt;error;
+  my @cmd = $ssh-&gt;make_remote_command(&#39;/usr/bin/perl&#39;);
+  my $ipc = IPC::PerlSSH-&gt;new(Command =&gt; \@cmd);
+  my @r = $ipc-&gt;eval(&#39;...&#39;);</code></pre>
+
+<p>or...</p>
+
+<pre><code>  use GRID::Machine;
+  ...
+  my @cmd = $ssh-&gt;make_remote_command(&#39;/usr/bin/perl&#39;);
+  my $grid = GRID::Machine-&gt;new(command =&gt; \@cmd);
+  my $r = $grid-&gt;eval(&#39;print &quot;hello world!\n&quot;&#39;);</code></pre>
+
+<p>In other cases, some kind of plugin mechanism is provided by the 3rd party modules to allow for different transports. The method <code>open2</code> may be used to create a pair of pipes for transport in these cases.</p>
+
+<h1 id="TROUBLESHOOTING">TROUBLESHOOTING</h1>
+
+<p>Usually, Net::OpenSSH works out of the box, but when it fails, some users have a hard time finding the cause of the problem. This mini troubleshooting guide should help you to find and solve it.</p>
+
+<dl>
+
+<dt id="check-the-error-message">1 - check the error message</dt>
+<dd>
+
+<p>Add in your script, after the Net::OpenSSH constructor call, an error check:</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new(...);
+  $ssh-&gt;error and die &quot;SSH connection failed: &quot; . $ssh-&gt;error;</code></pre>
+
+<p>The error message will tell what has gone wrong.</p>
+
+</dd>
+<dt id="Check-the-connection-parameters">2 - Check the connection parameters</dt>
+<dd>
+
+<p>Believe it or not, passing bad parameters to Net::OpenSSH turns to be one of the top causes of failures so check that you are using the right parameters.</p>
+
+<p>Specifically, if you are obtaining them from the outside, ensure that they don&#39;t have extra spaces or new lines attached (do you need to <code>chomp</code>?).</p>
+
+<p>Passwords and URIs may contain <code>$</code> or <code>@</code> characters. If you have then hardcoded in your script, check that those are quoted properly (and BTW, use <code>strict</code>).</p>
+
+</dd>
+<dt id="OpenSSH-version">3 - OpenSSH version</dt>
+<dd>
+
+<p>Ensure that you have a version of <code>ssh</code> recent enough:</p>
+
+<pre><code>  $ ssh -V
+  OpenSSH_5.1p1 Debian-5, OpenSSL 0.9.8g 19 Oct 2007</code></pre>
+
+<p>OpenSSH version 4.1 was the first to support the multiplexing feature and is the minimal required by the module to work. I advise you to use the latest OpenSSH (currently 7.5).</p>
+
+<p>The <code>ssh_cmd</code> constructor option lets you select the <code>ssh</code> binary to use. For instance:</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new($host,
+                           ssh_cmd =&gt; &quot;/opt/OpenSSH/5.8/bin/ssh&quot;)</code></pre>
+
+<p>Some hardware vendors (e.g. Sun, err... Oracle) include custom versions of OpenSSH bundled with the operating system. In principle, Net::OpenSSH should work with these SSH clients as long as they are derived from some version of OpenSSH recent enough. Anyway, my advise is to use the real OpenSSH software if you can!</p>
+
+</dd>
+<dt id="run-ssh-from-the-command-line">4 - run ssh from the command line</dt>
+<dd>
+
+<p>Check you can connect to the remote host using the same parameters you are passing to Net::OpenSSH. In particular, ensure that you are running <code>ssh</code> as the same local user.</p>
+
+<p>If you are running your script from a web server, the user would probably be <code>www</code>, <code>apache</code> or something alike.</p>
+
+<p>Common problems are:</p>
+
+<ul>
+
+<li><p>Remote host public key not present in known_hosts file.</p>
+
+<p>The SSH protocol uses public keys to identify the remote hosts so that they can not be supplanted by some malicious third parties.</p>
+
+<p>For OpenSSH, usually the server public key is stored in <code>/etc/ssh/ssh_host_dsa_key.pub</code> or in <code>/etc/ssh/ssh_host_rsa_key.pub</code> and that key should be copied into the <code>~/.ssh/known_hosts</code> file in the local machine (other SSH implementations may use other file locations).</p>
+
+<p>Maintaining the server keys when several hosts and clients are involved may be somewhat inconvenient, so most SSH clients, by default, when a new connection is established to a host whose key is not in the <code>known_hosts</code> file, show the key and ask the user if he wants the key copied there.</p>
+
+</li>
+<li><p>Wrong remote host public key in known_hosts file.</p>
+
+<p>This is another common problem that happens when some server is replaced or reinstalled from scratch and its public key changes becoming different to that installed on the <code>known_hosts</code> file.</p>
+
+<p>The easiest way to solve that problem is to remove the old key from the <code>known_hosts</code> file by hand using any editor and then to connect to the server replying <code>yes</code> when asked to save the new key.</p>
+
+</li>
+<li><p>Wrong permissions for the <code>~/.ssh</code> directory or its contents.</p>
+
+<p>OpenSSH client performs several checks on the access permissions of the <code>~/.ssh</code> directory and its contents and refuses to use them when misconfigured. See the FILES section from the <a href="http://man.he.net/man1/ssh">ssh(1)</a> man page.</p>
+
+</li>
+<li><p>Incorrect settings for password or public key authentication.</p>
+
+<p>Check that you are using the right password or that the user public key is correctly installed on the server.</p>
+
+</li>
+</ul>
+
+</dd>
+<dt id="security-checks-on-the-multiplexing-socket">5 - security checks on the multiplexing socket</dt>
+<dd>
+
+<p>Net::OpenSSH performs some security checks on the directory where the multiplexing socket is going to be placed to ensure that it can not be accessed by other users.</p>
+
+<p>The default location for the multiplexing socket is under <code>~/.libnet-openssh-perl</code>. It can be changed using the <code>ctl_dir</code> and <code>ctl_path</code> constructor arguments.</p>
+
+<p>The requirements for that directory and all its parents are:</p>
+
+<ul>
+
+<li><p>They have to be owned by the user executing the script or by root</p>
+
+</li>
+<li><p>Their permission masks must be 0755 or more restrictive, so nobody else has permissions to perform write operations on them.</p>
+
+</li>
+</ul>
+
+<p>The constructor option <code>strict_mode</code> disables these security checks, but you should not use it unless you understand its implications.</p>
+
+</dd>
+<dt id="file-system-must-support-sockets">6 - file system must support sockets</dt>
+<dd>
+
+<p>Some file systems (as for instance FAT or AFS) do not support placing sockets inside them.</p>
+
+<p>Ensure that the <code>ctl_dir</code> path does not lay into one of those file systems.</p>
+
+</dd>
+</dl>
+
+<h1 id="DEBUGGING">DEBUGGING</h1>
+
+<p>Debugging of Net::OpenSSH internals is controlled through the variable <code>$Net::OpenSSH::debug</code>. Every bit of this variable activates debugging of some subsystem as follows:</p>
+
+<dl>
+
+<dt id="bit-1---errors">bit 1 - errors</dt>
+<dd>
+
+<p>Dumps changes on the internal object attribute where errors are stored.</p>
+
+</dd>
+<dt id="bit-2---ctl_path">bit 2 - ctl_path</dt>
+<dd>
+
+<p>Dumps information about ctl_path calculation and the tests performed on that directory in order to decide if it is secure to place the multiplexing socket inside.</p>
+
+</dd>
+<dt id="bit-4---connecting">bit 4 - connecting</dt>
+<dd>
+
+<p>Dumps information about the establishment of new master connections.</p>
+
+</dd>
+<dt id="bit-8---commands-and-arguments">bit 8 - commands and arguments</dt>
+<dd>
+
+<p>Dumps the command and arguments for every system/exec call.</p>
+
+</dd>
+<dt id="bit-16---command-execution">bit 16 - command execution</dt>
+<dd>
+
+<p>Dumps information about the progress of command execution.</p>
+
+</dd>
+<dt id="bit-32---destruction">bit 32 - destruction</dt>
+<dd>
+
+<p>Dumps information about the destruction of Net::OpenSSH objects and the termination of the SSH master processes.</p>
+
+</dd>
+<dt id="bit-64---IO-loop">bit 64 - IO loop</dt>
+<dd>
+
+<p>Dumps information about the progress of the IO loop on capture operations.</p>
+
+</dd>
+<dt id="bit-128---IO-hexdumps">bit 128 - IO hexdumps</dt>
+<dd>
+
+<p>Generates hexdumps of the information that travels through the SSH streams inside capture operations.</p>
+
+</dd>
+<dt id="bit-512---OS-tracing-of-the-master-process">bit 512 - OS tracing of the master process</dt>
+<dd>
+
+<p>Use the module <a href="../../../../../root/.cpanm/work/1586740826.24889/Net-OpenSSH-0.78/blib/lib/Net/OpenSSH/OSTracer.html">Net::OpenSSH::OSTracer</a> to trace the SSH master process at the OS level.</p>
+
+</dd>
+</dl>
+
+<p>For instance, in order to activate all the debugging flags, you can use:</p>
+
+<pre><code>  $Net::OpenSSH::debug = ~0;</code></pre>
+
+<p>Note that the meaning of the flags and the information generated is only intended for debugging of the module and may change without notice between releases.</p>
+
+<p>If you are using password authentication, enabling debugging for <a>IO::Tty</a> may also show interesting information:</p>
+
+<pre><code>    IO::Tty::DEBUG = 1;</code></pre>
+
+<p>Finally, by default debugging output is sent to <code>STDERR</code>. You can override it pointing <code>$Net::OpenSSH::debug_fh</code> to a different file handle. For instance:</p>
+
+<pre><code>  BEGIN {
+    open my $out, &#39;&gt;&#39;, &#39;/tmp/debug.txt&#39; or warn $!;
+    $Net::OpenSSH::debug_fh = $out;
+    $Net::OpenSSH::debug = -1;
+  }</code></pre>
+
+<h1 id="SECURITY">SECURITY</h1>
+
+<p><b>Q</b>: Is this module secure?</p>
+
+<p><b>A</b>: Well, it tries to be!</p>
+
+<p>From a security standpoint the aim of this module is to be as secure as OpenSSH, your operating system, your shell and in general your environment allow it to be.</p>
+
+<p>It does not take any shortcut just to make your life easier if that means lowering the security level (for instance, disabling <code>StrictHostKeyChecking</code> by default).</p>
+
+<p>In code supporting features that are not just proxied to OpenSSH, the module tries to keep the same standards of security as OpenSSH (for instance, checking directory and file permissions when placing the multiplexing socket).</p>
+
+<p>On the other hand, and keeping with OpenSSH philosophy, the module lets you disable most (all?) of those security measures. But just because it lets you do it it doesn&#39;t mean it is a good idea to do so!!!</p>
+
+<p>If you are a novice programmer or SSH user, and googling you have just found some flag that you don&#39;t understand but that seems to magically solve your connection problems... well, believe me, it is probably a bad idea to use it. Ask somebody how really knows first!</p>
+
+<p>Just to make thinks clear, if your code contains any of the keywords from the (non-exclusive) list below and you don&#39;t know why, you are probably wrecking the security of the SSH protocol:</p>
+
+<pre><code>  strict_mode
+  StrictHostKeyChecking
+  UserKnownHostsFile</code></pre>
+
+<p>Other considerations related to security you may like to know are as follows:</p>
+
+<dl>
+
+<dt id="Taint-mode">Taint mode</dt>
+<dd>
+
+<p>The module supports working in taint mode.</p>
+
+<p>If you are in an exposed environment, you should probably enable it for your script in order to catch any unchecked command for being executed in the remote side.</p>
+
+</dd>
+<dt id="Web-environments">Web environments</dt>
+<dd>
+
+<p>It is a bad idea to establish SSH connections from your webserver because if it becomes compromised in any way, the attacker would be able to use the credentials from your script to connect to the remote host and do anything he wishes there.</p>
+
+</dd>
+<dt id="Command-quoting">Command quoting</dt>
+<dd>
+
+<p>The module can quote commands and arguments for you in a flexible and powerful way.</p>
+
+<p>This is a feature you should use as it reduces the possibility of some attacker being able to inject and run arbitrary commands on the remote machine (and even for scripts that are not exposed it is always advisable to enable argument quoting).</p>
+
+<p>Having said that, take into consideration that argument-quoting is just a hack to emulate the invoke-without-a-shell feature of Perl builtins such as <code>system</code> and alike. There may be bugs(*) on the quoting code, your particular shell may have different quoting rules with unhandled corner cases or whatever. If your script is exposed to the outside, you should check your inputs and restrict what you accept as valid.</p>
+
+<p>[* even if this is one of the parts of the module more intensively tested!]</p>
+
+</dd>
+<dt id="Shellshock">Shellshock</dt>
+<dd>
+
+<p>(see <a href="http://en.wikipedia.org/wiki/Shellshock_%28software_bug%29">Shellshock</a>)</p>
+
+<p>When executing local commands, the module always avoids calling the shell so in this way it is not affected by Shellshock.</p>
+
+<p>Unfortunately, some commands (<code>scp</code>, <code>rsync</code> and <code>ssh</code> when the <code>ProxyCommand</code> option is used) invoke other commands under the hood using the user shell. That opens the door to local Shellshock exploitation.</p>
+
+<p>On the remote side invocation of the shell is unavoidable due to the protocol design.</p>
+
+<p>By default, SSH does not forward environment variables but some Linux distributions explicitly change the default OpenSSH configuration to enable forwarding and acceptance of some specific ones (for instance <code>LANG</code> and <code>LC_*</code> on Debian and derivatives, Fedora does alike) and this also opens the door to Shellshock exploitation.</p>
+
+<p>Note that the shell used to invoke commands is not <code>/bin/sh</code> but the user shell as configured in <code>/etc/passwd</code>, PAM or whatever authentication subsystem is used by the local or remote operating system. Debian users, don&#39;t think you are not affected because your <code>/bin/sh</code> points to <code>dash</code>!</p>
+
+</dd>
+</dl>
+
+<h1 id="FAQ">FAQ</h1>
+
+<p>Frequent questions about the module:</p>
+
+<dl>
+
+<dt id="Connecting-to-switches-routers-etc">Connecting to switches, routers, etc.</dt>
+<dd>
+
+<p><b>Q</b>: I can not get the method <code>system</code>, <code>capture</code>, etc., to work when connecting to some router, switch, etc. What I am doing wrong?</p>
+
+<p><b>A</b>: Roughly, the SSH protocol allows for two modes of operation: command mode and interactive mode.</p>
+
+<p>Command mode is designed to run single commands on the remote host. It opens a SSH channel between both hosts, asks the remote computer to run some given command and when it finishes, the channel is closed. It is what you get, for instance, when you run something as...</p>
+
+<pre><code>  $ ssh my.unix.box cat foo.txt</code></pre>
+
+<p>... and it is also the way Net::OpenSSH runs commands on the remote host.</p>
+
+<p>Interactive mode launches a shell on the remote hosts with its stdio streams redirected to the local ones so that the user can transparently interact with it.</p>
+
+<p>Some devices (as probably the one you are using) do not run an standard, general purpose shell (e.g. <code>bash</code>, <code>csh</code> or <code>ksh</code>) but some custom program specially targeted and limited to the task of configuring the device.</p>
+
+<p>Usually, the SSH server running on these devices does not support command mode. It unconditionally attaches the restricted shell to any incoming SSH connection and waits for the user to enter commands through the redirected stdin stream.</p>
+
+<p>The only way to work-around this limitation is to make your script talk to the restricted shell (1-open a new SSH session, 2-wait for the shell prompt, 3-send a command, 4-read the output until you get to the shell prompt again, repeat from 3). The best tool for this task is probably <a>Expect</a>, used alone or combined with Net::OpenSSH (see <a href="#Expect">&quot;Expect&quot;</a>).</p>
+
+<p>There are some devices that support command mode but that only accept one command per connection. In that cases, using <a>Expect</a> is also probably the best option.</p>
+
+<p>Nowadays, there is a new player, <a>Net::CLI::Interact</a> that may be more suitable than Expect, and <a>Net::Appliance::Session</a> for working specifically with network devices.</p>
+
+</dd>
+<dt id="Connection-fails">Connection fails</dt>
+<dd>
+
+<p><b>Q</b>: I am unable to make the module connect to the remote host...</p>
+
+<p><b>A</b>: Have you read the troubleshooting section? (see <a href="#TROUBLESHOOTING">&quot;TROUBLESHOOTING&quot;</a>).</p>
+
+</dd>
+<dt id="Disable-StrictHostKeyChecking">Disable StrictHostKeyChecking</dt>
+<dd>
+
+<p><b>Q</b>: Why is <code>ssh</code> not run with <code>StrictHostKeyChecking=no</code>?</p>
+
+<p><b>A</b>: Using <code>StrictHostKeyChecking=no</code> relaxes the default security level of SSH and it will be relatively easy to end with a misconfigured SSH (for instance, when <code>known_hosts</code> is unwritable) that could be forged to connect to a bad host in order to perform man-in-the-middle attacks, etc.</p>
+
+<p>I advice you to do not use that option unless you fully understand its implications from a security point of view.</p>
+
+<p>If you want to use it anyway, past it to the constructor:</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new($host,
+           master_opts =&gt; [-o =&gt; &quot;StrictHostKeyChecking=no&quot;],
+           ...);</code></pre>
+
+</dd>
+<dt id="child-process-STDIN-STDOUT-STDERR-is-not-a-real-system-file-handle">child process STDIN/STDOUT/STDERR is not a real system file handle</dt>
+<dd>
+
+<p><b>Q</b>: Calls to <code>system</code>, <code>capture</code>, etc. fail with the previous error, what&#39;s happening?</p>
+
+<p><b>A</b>: The reported stdio stream is closed or is not attached to a real file handle (e.g. it is a tied handle). Redirect it to <code>/dev/null</code> or to a real file:</p>
+
+<pre><code>  my $out = $ssh-&gt;capture({stdin_discard =&gt; 1, stderr_to_stdout =&gt; 1},
+                          $cmd);</code></pre>
+
+<p>See also the <a>mod_perl</a> entry above.</p>
+
+</dd>
+<dt id="Solaris-and-AIX-and-probably-others">Solaris (and AIX and probably others)</dt>
+<dd>
+
+<p><b>Q</b>: I was trying Net::OpenSSH on Solaris and seem to be running into an issue...</p>
+
+<p><b>A</b>: The SSH client bundled with Solaris is an early fork of OpenSSH that does not provide the multiplexing functionality required by Net::OpenSSH. You will have to install the OpenSSH client.</p>
+
+<p>Precompiled packages are available from Sun Freeware (<a href="http://www.sunfreeware.com">http://www.sunfreeware.com</a>). There, select your OS version an CPU architecture, download the OpenSSH package and its dependencies and install them. Note that you do <b>not</b> need to configure Solaris to use the OpenSSH server <code>sshd</code>.</p>
+
+<p>Ensure that OpenSSH client is in your path before the system <code>ssh</code> or alternatively, you can hardcode the full path into your scripts as follows:</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new($host,
+                           ssh_cmd =&gt; &#39;/usr/local/bin/ssh&#39;);</code></pre>
+
+<p>AIX and probably some other unixen, also bundle SSH clients lacking the multiplexing functionality and require installation of the real OpenSSH.</p>
+
+</dd>
+<dt id="Can-not-change-working-directory">Can not change working directory</dt>
+<dd>
+
+<p><b>Q</b>: I want to run some command inside a given remote directory but I am unable to change the working directory. For instance:</p>
+
+<pre><code>  $ssh-&gt;system(&#39;cd /home/foo/bin&#39;);
+  $ssh-&gt;systen(&#39;ls&#39;);</code></pre>
+
+<p>does not list the contents of <code>/home/foo/bin</code>.</p>
+
+<p>What am I doing wrong?</p>
+
+<p><b>A</b>: Net::OpenSSH (and, for that matter, all the SSH modules available from CPAN but <a>Net::SSH::Expect</a>) run every command in a new session so most shell builtins that are run for its side effects become useless (e.g. <code>cd</code>, <code>export</code>, <code>ulimit</code>, <code>umask</code>, etc., usually, you can list them running <code>help</code> from the shell).</p>
+
+<p>A work around is to combine several commands in one, for instance:</p>
+
+<pre><code>  $ssh-&gt;system(&#39;cd /home/foo/bin &amp;&amp; ls&#39;);</code></pre>
+
+<p>Note the use of the shell <code>&amp;&amp;</code> operator instead of <code>;</code> in order to abort the command as soon as any of the subcommands fail.</p>
+
+<p>Also, several commands can be combined into one while still using the multi-argument quoting feature as follows:</p>
+
+<pre><code>  $ssh-&gt;system(@cmd1, \\&#39;&amp;&amp;&#39;, @cmd2, \\&#39;&amp;&amp;&#39;, @cmd3, ...);</code></pre>
+
+</dd>
+<dt id="Running-detached-remote-processes">Running detached remote processes</dt>
+<dd>
+
+<p><b>Q</b>: I need to be able to ssh into several machines from my script, launch a process to run in the background there, and then return immediately while the remote programs keep running...</p>
+
+<p><b>A</b>: If the remote systems run some Unix/Linux variant, the right approach is to use <a href="http://man.he.net/man1/nohup">nohup(1)</a> that will disconnect the remote process from the stdio streams and to ask the shell to run the command on the background. For instance:</p>
+
+<pre><code>  $ssh-&gt;system(&quot;nohup $long_running_command &amp;&quot;);</code></pre>
+
+<p>Also, it may be possible to demonize the remote program. If it is written in Perl you can use <a>App::Daemon</a> for that (actually, there are several CPAN modules that provided that kind of functionality).</p>
+
+<p>In any case, note that you should not use <a href="#spawn">&quot;spawn&quot;</a> for that.</p>
+
+</dd>
+<dt id="MaxSessions-server-limit-reached">MaxSessions server limit reached</dt>
+<dd>
+
+<p><b>Q</b>: I created an <code>$ssh</code> object and then fork a lot children processes which use this object. When the children number is bigger than <code>MaxSessions</code> as defined in sshd configuration (defaults to 10), trying to fork new remote commands will prompt the user for the password.</p>
+
+<p><b>A</b>: When the slave SSH client gets a response from the remote servers saying that the maximum number of sessions for the current connection has been reached, it fall backs to open a new direct connection without going through the multiplexing socket.</p>
+
+<p>To stop that for happening, the following hack can be used:</p>
+
+<pre><code>  $ssh = Net::OpenSSH-&gt;new(host,
+      default_ssh_opts =&gt; [&#39;-oConnectionAttempts=0&#39;],
+      ...);</code></pre>
+
+</dd>
+<dt id="Running-remote-commands-with-sudo">Running remote commands with sudo</dt>
+<dd>
+
+<p><b>Q</b>: How can I run remote commands using <code>sudo</code> to become root first?</p>
+
+<p><b>A</b>: The simplest way is to tell <code>sudo</code> to read the password from stdin with the <code>-S</code> flag and to do not use cached credentials with the <code>-k</code> flag. You may also like to use the <code>-p</code> flag to tell <code>sudo</code> to print an empty prompt. For instance:</p>
+
+<pre><code>  my @out = $ssh-&gt;capture({ stdin_data =&gt; &quot;$sudo_passwd\n&quot; },
+                          &#39;sudo&#39;, &#39;-Sk&#39;,
+                          &#39;-p&#39;, &#39;&#39;,
+                          &#39;--&#39;,
+                          @cmd);</code></pre>
+
+<p>If the version of sudo installed on the remote host does not support the <code>-S</code> flag (it tells sudo to read the password from its STDIN stream), you can do it as follows:</p>
+
+<pre><code>  my @out = $ssh-&gt;capture({ tty =&gt; 1,
+                            stdin_data =&gt; &quot;$sudo_passwd\n&quot; },
+                          &#39;sudo&#39;, &#39;-k&#39;,
+                          &#39;-p&#39;, &#39;&#39;,
+                          &#39;--&#39;,
+                          @cmd);</code></pre>
+
+<p>This may generate an spurious and harmless warning from the SSH master connection (because we are requesting allocation of a tty on the remote side and locally we are attaching it to a regular pair of pipes).</p>
+
+<p>If for whatever reason the methods described above fail, you can always revert to using Expect to talk to the remote <code>sudo</code>. See the <code>examples/expect.pl</code> script from this module distribution.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>OpenSSH client documentation <a href="http://man.he.net/man1/ssh">ssh(1)</a>, <a href="http://man.he.net/man5/ssh_config">ssh_config(5)</a>, the project web <a href="http://www.openssh.org">http://www.openssh.org</a> and its FAQ <a href="http://www.openbsd.org/openssh/faq.html">http://www.openbsd.org/openssh/faq.html</a>. <a href="http://man.he.net/man1/scp">scp(1)</a> and <a href="http://man.he.net/man1/rsync">rsync(1)</a>. The OpenSSH Wikibook <a href="http://en.wikibooks.org/wiki/OpenSSH">http://en.wikibooks.org/wiki/OpenSSH</a>.</p>
+
+<p><a>Net::OpenSSH::Gateway</a> for detailed instruction about how to get this module to connect to hosts through proxies and other SSH gateway servers.</p>
+
+<p>Core perl documentation <a href="../../../lib/perl5/5.26.3/pod/perlipc.html">perlipc</a>, <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#open">&quot;open&quot; in perlfunc</a>, <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#waitpid">&quot;waitpid&quot; in perlfunc</a>.</p>
+
+<p><a>IO::Pty</a> to known how to use the pseudo tty objects returned by several methods on this package.</p>
+
+<p><a>Net::SFTP::Foreign</a> provides a compatible SFTP implementation.</p>
+
+<p><a>Expect</a> can be used to interact with commands run through this module on the remote machine (see also the <code>expect.pl</code> and &lt;autosudo.pl&gt; scripts in the examples directory).</p>
+
+<p><a>SSH::OpenSSH::Parallel</a> is an advanced scheduler that allows one to run commands in remote hosts in parallel. It is obviously based on Net::OpenSSH.</p>
+
+<p><a>SSH::Batch</a> allows one to run remote commands in parallel in a cluster. It is build on top on <code>Net::OpenSSH</code> also.</p>
+
+<p>Other Perl SSH clients: <a href="../../../lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/Net/SSH/Perl.html">Net::SSH::Perl</a>, <a>Net::SSH2</a>, <a href="../../../lib/perl5/site_perl/5.26.3/Net/SSH.html">Net::SSH</a>, <a>Net::SSH::Expect</a>, <a href="../../../lib/perl5/site_perl/5.26.3/Net/SCP.html">Net::SCP</a>, <a>Net::SSH::Mechanize</a>.</p>
+
+<p><a>Net::OpenSSH::Compat</a> is a package offering a set of compatibility layers for other SSH modules on top of Net::OpenSSH.</p>
+
+<p><a>IPC::PerlSSH</a>, <a>GRID::Machine</a> allow execution of Perl code in remote machines through SSH.</p>
+
+<p><a>SSH::RPC</a> implements an RPC mechanism on top of SSH using Net::OpenSSH to handle the connections.</p>
+
+<p><a>Net::CLI::Interact</a> allows one to interact with remote shells and other services. It is specially suited for interaction with network equipment. The phrasebook approach it uses is very clever. You may also like to check the <a href="https://metacpan.org/author/OLIVER">other modules</a> from its author, Oliver Gorwits.</p>
+
+<h1 id="BUGS-AND-SUPPORT">BUGS AND SUPPORT</h1>
+
+<h2 id="Experimental-features">Experimental features</h2>
+
+<p><a>Object::Remote</a> integration is highly experimental.</p>
+
+<p>Support for tunnels targeting Unix sockets is highly experimental.</p>
+
+<p>Support for the setpgrp feature is highly experimental.</p>
+
+<p>Support for the gateway feature is highly experimental and mostly stalled.</p>
+
+<p>Support for taint mode is experimental.</p>
+
+<h2 id="Known-issues">Known issues</h2>
+
+<p>Net::OpenSSH does not work on Windows. OpenSSH multiplexing feature requires passing file handles through sockets, something that is not supported by any version of Windows.</p>
+
+<p>It does not work on VMS either... well, probably, it does not work on anything not resembling a modern Linux/Unix OS.</p>
+
+<p>Old versions of OpenSSH <code>ssh</code> may leave stdio streams in non-blocking mode. That can result on failures when writing to <code>STDOUT</code> or <code>STDERR</code> after using the module. In order to work-around this issue, Perl <a href="../../../lib/perl5/5.26.3/pod/perlfunc.html#fcntl">&quot;fcntl&quot; in perlfunc</a> can be used to unset the non-blocking flag:</p>
+
+<pre><code>  use Fcntl qw(F_GETFL F_SETFL O_NONBLOCK);
+  my $flags = fcntl(STDOUT, F_GETFL, 0);
+  fcntl(STDOUT, F_SETFL, $flags &amp; ~O_NONBLOCK);</code></pre>
+
+<h2 id="Reporting-bugs-and-asking-for-help">Reporting bugs and asking for help</h2>
+
+<p>To report bugs send an email to the address that appear below or use the CPAN bug tracking system at <a href="http://rt.cpan.org">http://rt.cpan.org</a>.</p>
+
+<p><b>Post questions related to how to use the module in PerlMonks</b> <a href="http://perlmonks.org/">http://perlmonks.org/</a>, you will probably get faster responses than if you address me directly and I visit PerlMonks quite often, so I will see your question anyway.</p>
+
+<h2 id="Commercial-support">Commercial support</h2>
+
+<p>Commercial support, professional services and custom software development around this module are available through my current company. Drop me an email with a rough description of your requirements and we will get back to you ASAP.</p>
+
+<h2 id="My-wishlist">My wishlist</h2>
+
+<p>If you like this module and you are feeling generous, take a look at my Amazon Wish List: <a href="http://amzn.com/w/1WU1P6IR5QZ42">http://amzn.com/w/1WU1P6IR5QZ42</a>.</p>
+
+<p>Also consider contributing to the OpenSSH project this module builds upon: <a href="http://www.openssh.org/donations.html">http://www.openssh.org/donations.html</a>.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<p>- Tests for <code>scp_*</code>, <code>rsync_*</code> and <code>sftp</code> methods</p>
+
+<p>- Make <a href="#pipe_in">&quot;pipe_in&quot;</a> and <a href="#pipe_out">&quot;pipe_out&quot;</a> methods <a href="#open_ex">&quot;open_ex&quot;</a> based</p>
+
+<p>- <code>auto_discard_streams</code> feature for mod_perl2 and similar environments</p>
+
+<p>- Refactor open_ex support for multiple commands, maybe just keeping tunnel, ssh and raw</p>
+
+<p>Send your feature requests, ideas or any feedback, please!</p>
+
+<h1 id="CONTRIBUTING-CODE">CONTRIBUTING CODE</h1>
+
+<p>The source code of this module is hosted at GitHub: <a href="http://github.com/salva/p5-Net-OpenSSH">http://github.com/salva/p5-Net-OpenSSH</a>.</p>
+
+<p>Code contributions to the module are welcome but you should obey the following rules:</p>
+
+<dl>
+
+<dt id="Only-Perl-5.8.4-required">Only Perl 5.8.4 required</dt>
+<dd>
+
+<p>Yes, that&#39;s pretty old, but Net::OpenSSH is intended to be also used by system administrators that sometimes have to struggle with old systems. The reason to pick 5.8.4 is that it has been the default perl on Solaris for a long time.</p>
+
+</dd>
+<dt id="Avoid-the-All-the-worlds-a-Linux-PC-syndrome">Avoid the &quot;All the world&#39;s a Linux PC&quot; syndrome</dt>
+<dd>
+
+<p>The module should work on any (barely) sane Unix or Linux operating system. Specially, it should not be assumed that the over-featured GNU utilities and toolchain are available.</p>
+
+</dd>
+<dt id="Dependencies-are-optional">Dependencies are optional</dt>
+<dd>
+
+<p>In order to make the module very easy to install, no mandatory dependencies on other CPAN modules are allowed.</p>
+
+<p>Optional modules, that are loaded only on demand, are acceptable when they are used for adding new functionality (as it is done, for instance, with <a>IO::Pty</a>).</p>
+
+<p>Glue code for integration with 3rd party modules is also allowed (as it is done with <a>Expect</a>).</p>
+
+<p>Usage of language extension modules and alike is not acceptable.</p>
+
+</dd>
+<dt id="Tests-should-be-lax">Tests should be lax</dt>
+<dd>
+
+<p>We don&#39;t want false negatives when testing. In case of doubt tests should succeed.</p>
+
+<p>Also, in case of tests invoking some external program, it should be checked that the external program is available and that it works as expected or otherwise skip those tests.</p>
+
+</dd>
+<dt id="Backward-compatibility">Backward compatibility</dt>
+<dd>
+
+<p>Nowadays Net::OpenSSH is quite stable and there are lots of scripts out there using it that we don&#39;t want to break, so, keeping the API backward compatible is a top priority.</p>
+
+<p>Probably only security issues could now justify a backward incompatible change.</p>
+
+</dd>
+<dt id="Follow-my-coding-style">Follow my coding style</dt>
+<dd>
+
+<p>Look at the rest of the code.</p>
+
+<p>I let Emacs do the formatting for me using cperl-mode PerlStyle.</p>
+
+</dd>
+<dt id="Talk-to-me">Talk to me</dt>
+<dd>
+
+<p>Before making a large change or implementing a new feature get in touch with me.</p>
+
+<p>I may have my own ideas about how things should be done. It is better if you know them before hand, otherwise, you risk getting your patch rejected.</p>
+
+</dd>
+</dl>
+
+<p>Well, actually you should know that I am quite good at rejecting patches but it is not my fault!</p>
+
+<p>Most of the patches I get are broken in some way: they don&#39;t follow the main module principles, sometimes the author didn&#39;t get the full picture and solved the issue in a short-sighted way, etc.</p>
+
+<p>In any case, you should not be discouraged to contribute. Even if your patch is not applied directly, seeing how it solves your requirements or, in the case of bugs, the underlying problem analysis may be very useful and help me to do it... my way.</p>
+
+<p>I always welcome documentation corrections and improvements.</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>Copyright (C) 2008-2018 by Salvador Fandi&ntilde;o (sfandino@yahoo.com)</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself, either Perl version 5.10.0 or, at your option, any later version of Perl 5 you may have available.</p>
+
+
+</body>
+
+</html>
+
+

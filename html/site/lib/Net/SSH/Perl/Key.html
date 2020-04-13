@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#Net::SSH::Perl::Key-new-key_type-blob-compat_flag_ref">Net::SSH::Perl::Key-&gt;new($key_type [, $blob [, $compat_flag_ref ]])</a></li>
+      <li><a href="#Net::SSH::Perl::Key-read_private-key_type-file-pass">Net::SSH::Perl::Key-&gt;read_private($key_type, $file [, $pass])</a></li>
+      <li><a href="#Net::SSH::Perl::Key-keygen-key_type-bits">Net::SSH::Perl::Key-&gt;keygen($key_type, $bits)</a></li>
+      <li><a href="#Net::SSH::Perl::Key-keygen-Ed25519">Net::SSH::Perl::Key-&gt;keygen(&#39;Ed25519&#39;)</a></li>
+      <li><a href="#Net::SSH::Perl::Key-extract_public-key_type-key_string">Net::SSH::Perl::Key-&gt;extract_public($key_type, $key_string)</a></li>
+      <li><a href="#key-write_private-file-pass-ciphername-rounds">$key-&gt;write_private([ $file [, $pass, $ciphername, $rounds] ])</a></li>
+      <li><a href="#key-dump_public">$key-&gt;dump_public</a></li>
+      <li><a href="#key-as_blob">$key-&gt;as_blob</a></li>
+      <li><a href="#key-equal-key2">$key-&gt;equal($key2)</a></li>
+      <li><a href="#key-size">$key-&gt;size</a></li>
+      <li><a href="#key-fingerprint-type">$key-&gt;fingerprint([ $type ])</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Key - Public or private key abstraction</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Key;
+    my $key = Net::SSH::Perl::Key-&gt;new;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Key</i> implements an abstract base class interface to key objects (either DSA, RSA, ECDSA, or Ed25519 keys, currently). The underlying implementation for RSA, DSA, an ECDSA keys is the CryptX module. The Ed25519 implementation uses bundled XS and C code from the SUPERCOP ref10 implementation.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<h2 id="Net::SSH::Perl::Key-new-key_type-blob-compat_flag_ref">Net::SSH::Perl::Key-&gt;new($key_type [, $blob [, $compat_flag_ref ]])</h2>
+
+<p>Creates a new object of type <i>Net::SSH::Perl::Key::$key_type</i>, after loading the class implementing <i>$key_type</i>. should be <code>DSA</code>, <code>RSA1</code>, <code>RSA</code>, <code>ECDSA256</code>, <code>ECDSA384</code>, <code>ECDSA521</code>, or <code>Ed25519</code>.</p>
+
+<p><i>$blob</i>, if present, should be a string representation of the key, from which the key object can be initialized. In fact, it should be the representation that is returned from the <i>as_blob</i> method, below.</p>
+
+<p><i>$compat_flag_ref</i> should be a reference to the SSH compatibility flag, which is generally stored inside of the <i>Net::SSH::Perl</i> object. This flag is used by certain key implementations (<code>DSA</code>) to work around differences between SSH2 protocol implementations.</p>
+
+<p>Returns the new key object, which is blessed into the subclass.</p>
+
+<h2 id="Net::SSH::Perl::Key-read_private-key_type-file-pass">Net::SSH::Perl::Key-&gt;read_private($key_type, $file [, $pass])</h2>
+
+<p>Reads a private key of type <i>$key_type</i> out of the key file <i>$file</i>. If the private key is encrypted, an attempt will be made to decrypt it using the passphrase <i>$pass</i>; if <i>$pass</i> is not provided, the empty string will be used. An empty passphrase can be a handy way of providing password-less access using publickey authentication.</p>
+
+<p>If for any reason loading the key fails, returns <i>undef</i>; most of the time, if loading the key fails, it&#39;s because the passphrase is incorrect. If you first tried to read the key using an empty passphrase, this might be a good time to ask the user for the actual passphrase. :)</p>
+
+<p>Returns the new key object, which is blessed into the subclass denoted by <i>$key_type</i> (<code>DSA</code>, <code>RSA1</code>, <code>ECDSA</code> or <code>Ed25519</code>).</p>
+
+<h2 id="Net::SSH::Perl::Key-keygen-key_type-bits">Net::SSH::Perl::Key-&gt;keygen($key_type, $bits)</h2>
+
+<p>$key_type is one of RSA, DSA, or ECDSA256/ECDSA384/ECDSA521. Generates a new key and returns that key. The key returned is the private key, which (presumably) contains all of the public key data, as well. <i>$bits</i> is the number of bits in the key.</p>
+
+<p>Your <i>$key_type</i> implementation may not support key generation; if not, calling this method is a fatal error.</p>
+
+<p>Returns the new key object, which is blessed into the subclass denoted by <i>$key_type</i></p>
+
+<h2 id="Net::SSH::Perl::Key-keygen-Ed25519">Net::SSH::Perl::Key-&gt;keygen(&#39;Ed25519&#39;)</h2>
+
+<p>Generates a new Ed25519 key. Ed25519 keys have fixed key length.</p>
+
+<p>Returns the new key object, which is bless into the Ed25519 subclass.</p>
+
+<h2 id="Net::SSH::Perl::Key-extract_public-key_type-key_string">Net::SSH::Perl::Key-&gt;extract_public($key_type, $key_string)</h2>
+
+<p>Given a key string <i>$key_string</i>, which should be a textual representation of the public portion of a key of <i>$key_type</i>, extracts the key attributes out of that string. This is used to extract public keys out of entries in <i>known_hosts</i> and public identity files.</p>
+
+<p>Returns the new key object, which is blessed into the subclass denoted by <i>$key_type</i></p>
+
+<h2 id="key-write_private-file-pass-ciphername-rounds">$key-&gt;write_private([ $file [, $pass, $ciphername, $rounds] ])</h2>
+
+<p>Writes out the private key <i>$key</i> to <i>$file</i>, and encrypts it using the passphrase <i>$pass</i>. If <i>$pass</i> is not provided, the key is unencrypted, and the only security protection is through filesystem protections. For Ed25519 keys, optional parameters ciphername and rounds can be passed to specify the desired cipher to encrypt the key with and how many rounds of encryption to employ, respectively.</p>
+
+<p>If <i>$file</i> is not provided, returns the content that would have been written to the key file.</p>
+
+<h2 id="key-dump_public">$key-&gt;dump_public</h2>
+
+<p>Performs the inverse of <i>extract_public</i>: takes a key <i>$key</i> and dumps out a textual representation of the public portion of the key. This is used when writing public key entries to <i>known_hosts</i> and public identity files.</p>
+
+<p>Returns the textual representation.</p>
+
+<h2 id="key-as_blob">$key-&gt;as_blob</h2>
+
+<p>Returns a string representation of the public portion of the key; this is <i>not</i> the same as <i>dump_public</i>, which is intended to match the format used in <i>known_hosts</i>, etc. The return value of <i>as_blob</i> is used as an intermediary in computing other values: the key fingerprint, the known hosts representation, etc.</p>
+
+<h2 id="key-equal-key2">$key-&gt;equal($key2)</h2>
+
+<p>Returns true if the public portions of <i>$key</i> are equal to those of <i>$key2</i>, and false otherwise. This is used when comparing server host keys to keys in <i>known_hosts</i>.</p>
+
+<h2 id="key-size">$key-&gt;size</h2>
+
+<p>Returns the size (in bits) of the key <i>$key</i>.</p>
+
+<h2 id="key-fingerprint-type">$key-&gt;fingerprint([ <i>$type</i> ])</h2>
+
+<p>Returns a fingerprint of <i>$key</i>. The default fingerprint is a SHA256 representation. If <i>$type</i> is equal to <code>bubblebabble</code>, the Bubble Babble representation of the fingerprint is used. If <i>$type</i> is equal to <code>hex</code>, a traditional hex representation is returned.</p>
+
+<p>The hex representation uses an <i>MD5</i> digest of the public key, and the bubblebabble uses a <i>SHA-1</i> digest.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

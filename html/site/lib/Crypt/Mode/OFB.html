@@ -1,0 +1,122 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#encrypt">encrypt</a></li>
+      <li><a href="#decrypt">decrypt</a></li>
+      <li><a href="#start_encrypt">start_encrypt</a></li>
+      <li><a href="#start_decrypt">start_decrypt</a></li>
+      <li><a href="#add">add</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Mode::OFB - Block cipher mode OFB [Output feedback]</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use Crypt::Mode::OFB;
+   my $m = Crypt::Mode::OFB-&gt;new(&#39;AES&#39;);
+
+   #(en|de)crypt at once
+   my $ciphertext = $m-&gt;encrypt($plaintext, $key, $iv);
+   my $plaintext = $m-&gt;decrypt($ciphertext, $key, $iv);
+
+   #encrypt more chunks
+   $m-&gt;start_encrypt($key, $iv);
+   my $ciphertext = $m-&gt;add(&#39;some data&#39;);
+   $ciphertext .= $m-&gt;add(&#39;more data&#39;);
+
+   #decrypt more chunks
+   $m-&gt;start_decrypt($key, $iv);
+   my $plaintext = $m-&gt;add($some_ciphertext);
+   $plaintext .= $m-&gt;add($more_ciphertext);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements OFB cipher mode. <b>NOTE:</b> it works only with ciphers from <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a> (Crypt::Cipher::NNNN).</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $m = Crypt::Mode::OFB-&gt;new($name);
+ #or
+ my $m = Crypt::Mode::OFB-&gt;new($name, $cipher_rounds);
+
+ # $name ............ one of &#39;AES&#39;, &#39;Anubis&#39;, &#39;Blowfish&#39;, &#39;CAST5&#39;, &#39;Camellia&#39;, &#39;DES&#39;, &#39;DES_EDE&#39;,
+ #                    &#39;KASUMI&#39;, &#39;Khazad&#39;, &#39;MULTI2&#39;, &#39;Noekeon&#39;, &#39;RC2&#39;, &#39;RC5&#39;, &#39;RC6&#39;,
+ #                    &#39;SAFERP&#39;, &#39;SAFER_K128&#39;, &#39;SAFER_K64&#39;, &#39;SAFER_SK128&#39;, &#39;SAFER_SK64&#39;,
+ #                    &#39;SEED&#39;, &#39;Skipjack&#39;, &#39;Twofish&#39;, &#39;XTEA&#39;, &#39;IDEA&#39;, &#39;Serpent&#39;
+ #                    simply any &lt;NAME&gt; for which there exists Crypt::Cipher::&lt;NAME&gt;
+ # $cipher_rounds ... optional num of rounds for given cipher</code></pre>
+
+<h2 id="encrypt">encrypt</h2>
+
+<pre><code>   my $ciphertext = $m-&gt;encrypt($plaintext, $key, $iv);</code></pre>
+
+<h2 id="decrypt">decrypt</h2>
+
+<pre><code>   my $plaintext = $m-&gt;decrypt($ciphertext, $key, $iv);</code></pre>
+
+<h2 id="start_encrypt">start_encrypt</h2>
+
+<pre><code>   $m-&gt;start_encrypt($key, $iv);</code></pre>
+
+<h2 id="start_decrypt">start_decrypt</h2>
+
+<pre><code>   $m-&gt;start_decrypt($key, $iv);</code></pre>
+
+<h2 id="add">add</h2>
+
+<pre><code>   # in encrypt mode
+   my $plaintext = $m-&gt;add($ciphertext);
+
+   # in decrypt mode
+   my $ciphertext = $m-&gt;add($plaintext);</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Cipher.html">Crypt::Cipher</a></p>
+
+</li>
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Cipher/AES.html">Crypt::Cipher::AES</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Cipher/Blowfish.html">Crypt::Cipher::Blowfish</a>, ...</p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Output_feedback_.28OFB.29">https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Output_feedback_.28OFB.29</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

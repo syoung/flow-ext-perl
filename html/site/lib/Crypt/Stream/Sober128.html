@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#crypt">crypt</a></li>
+      <li><a href="#keystream">keystream</a></li>
+      <li><a href="#clone">clone</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Stream::Sober128 - Stream cipher Sober128</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use Crypt::Stream::Sober128;
+
+   # encrypt
+   $key = &quot;1234567890123456&quot;;
+   $iv  = &quot;123456789012&quot;;
+   $stream = Crypt::Stream::Sober128-&gt;new($key, $iv);
+   $ct = $stream-&gt;crypt(&quot;plain message&quot;);
+
+   # decrypt
+   $key = &quot;1234567890123456&quot;;
+   $iv  = &quot;123456789012&quot;;
+   $stream = Crypt::Stream::Sober128-&gt;new($key, $iv);
+   $pt = $stream-&gt;crypt($ct);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to the Sober128 stream cipher.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> $stream = Crypt::Stream::Sober128-&gt;new($key, $iv);
+ # $key .. keylen must be multiple of 4 bytes
+ # $iv  .. ivlen must be multiple of 4 bytes</code></pre>
+
+<h2 id="crypt">crypt</h2>
+
+<pre><code> $ciphertext = $stream-&gt;crypt($plaintext);
+ #or
+ $plaintext = $stream-&gt;crypt($ciphertext);</code></pre>
+
+<h2 id="keystream">keystream</h2>
+
+<pre><code> $random_key = $stream-&gt;keystream($length);</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> $stream-&gt;clone();</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Stream/RC4.html">Crypt::Stream::RC4</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Stream/ChaCha.html">Crypt::Stream::ChaCha</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Stream/Salsa20.html">Crypt::Stream::Salsa20</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Stream/Sosemanuk.html">Crypt::Stream::Sosemanuk</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/SOBER-128">https://en.wikipedia.org/wiki/SOBER-128</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

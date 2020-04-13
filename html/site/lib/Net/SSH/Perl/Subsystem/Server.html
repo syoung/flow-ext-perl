@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#ss-init-args">$ss-&gt;init(%args)</a></li>
+      <li><a href="#ss-register_handler-type-code">$ss-&gt;register_handler($type, $code)</a></li>
+      <li><a href="#ss-send_msg-msg">$ss-&gt;send_msg($msg)</a></li>
+      <li><a href="#ss-serve">$ss-&gt;serve</a></li>
+      <li><a href="#ss-log-message">$ss-&gt;log($message)</a></li>
+      <li><a href="#ss-buffer_class">$ss-&gt;buffer_class</a></li>
+    </ul>
+  </li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Subsystem::Server - Server infrastructure for SSH subsystems</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Subsystem::Server;
+    use base qw( Net::SSH::Perl::Subsystem::Server );
+
+    use constant MSG_FOO =&gt; 1;
+
+    sub init {
+        my $ss = shift;
+        $ss-&gt;SUPER::init(@_);
+
+        $ss-&gt;register_handler(MSG_FOO, \&amp;handle_foo);
+    }
+
+    sub handle_foo {
+        my $ss = shift;
+        my($msg) = @_;
+        print &quot;Got MSG_FOO message!\n&quot;;
+    }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Subsystem::Server</i> is a generic subclass that can be used to build servers for SSH-2 subsystems. A subsystem is a network protocol that runs on top of a secure, encrypted SSH connection between two machines: it allows the user and developer to build a secure network protocol without worrying about the details of that security, because it inherits the secure tunnel from SSH.</p>
+
+<p><i>Subsystem::Server</i> provides basic functionality needed by all subsystem servers. A subsystem daemon is started up by the sshd when a request comes in for that subsystem; sshd and the subsystem daemon then talk to each other through pipes, and data that the daemon wishes to send to the subsystem client is sent over the network through the SSH secure tunnel. <i>Subsystem::Server</i> handles the talking to the sshd, and lets the application developer focus on designing the network protocol and handling requests from the subsystem client.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p><i>Net::SSH::Perl::Subsystem::Server</i> is meant to be used as a base class for subsystem servers. With that in mind, general usage should follow the example above in the <i>SYNOPSIS</i>:</p>
+
+<ul>
+
+<li><p>Initialization</p>
+
+<p>If you want your subclass to do anything, you&#39;ll want to override the <i>init</i> method so that you can set up handlers for specific types of messages from the subsystem client. For each message type, you need to associate the type with a subroutine reference that will be invoked when a message of that type is received by the core server. You do this by calling the <i>register_handler</i> method (see below).</p>
+
+</li>
+<li><p>Message Handling</p>
+
+<p>When the core server receives new messages from the client, it grabs the first byte from the incoming stream; the first byte is a packed 8-bit integer representing the type of the message. This identifier is used to look up the message handler to handle this particular type of message.</p>
+
+</li>
+</ul>
+
+<p>These are the public methods in which your subclass will be most interested:</p>
+
+<h2 id="ss-init-args">$ss-&gt;init(%args)</h2>
+
+<p>Initializes the subsystem server object. This is where you&#39;ll want to set up your message handlers (using <i>register_handler</i>) and perhaps perform any other protocol-specific initialization.</p>
+
+<p>Make sure that your <i>init</i> method returns the <i>$ss</i> object on success; failure to return <i>init</i> should be an indication of failure to calling code.</p>
+
+<p><i>%args</i> can contain whatever you like it to contain. The base class <i>Net::SSH::Perl::Subsystem::Server</i> takes these parameters in <i>%args</i>:</p>
+
+<ul>
+
+<li><p>Log</p>
+
+<p>The location of a file on disk where you can write messages to be logged. This is the file to which messages sent to the <i>log</i> method (below) will be written.</p>
+
+<p>This is an optional argument; if not specified, no log file will be used, and calls to <i>log</i> will be silently ignored.</p>
+
+</li>
+</ul>
+
+<h2 id="ss-register_handler-type-code">$ss-&gt;register_handler($type, $code)</h2>
+
+<p>Configures the subsystem server <i>$ss</i> such that any message sent from the client whose type is <i>$type</i> will automatically invoke the subroutine reference <i>$code</i>. This is how you build protocol-specific functionality into your subsystem: you associate message types with methods.</p>
+
+<p>The subroutine reference <i>$code</i> will be invoked and given two arguments: <i>$ss</i>, the instance of the subsystem server that is blessed into your subclass, and <i>$msg</i>, a buffer in the class <i>Net::SSH::Perl::Buffer</i> (although you can choose a different buffer class--see <i>buffer_class</i>, below).</p>
+
+<h2 id="ss-send_msg-msg">$ss-&gt;send_msg($msg)</h2>
+
+<p>Sends the message <i>$msg</i> to the client. Or, in more technical terms, adds the message <i>$msg</i> to the server&#39;s output queue, to be written back to the client the next time through the select loop.</p>
+
+<p><i>$msg</i> should be a buffer in the class <i>Net::SSH::Perl::Buffer</i> (although you can choose a different buffer class--see <i>buffer_class</i>, below).</p>
+
+<h2 id="ss-serve">$ss-&gt;serve</h2>
+
+<p>Enters the select loop, waiting for requests from the client. Users of your class should call this method when they&#39;re ready to start serving clients.</p>
+
+<h2 id="ss-log-message">$ss-&gt;log($message)</h2>
+
+<p>Writes the log message <i>$message</i> to the log file, if one was specified as the <i>Log</i> argument to <i>init</i> (or, rather, to the constructor).</p>
+
+<p>If a log file was not specified, returns silently.</p>
+
+<h2 id="ss-buffer_class">$ss-&gt;buffer_class</h2>
+
+<p>By default, messages are represented by <i>Net::SSH::Perl::Buffer</i> objects. You can alter this by overriding the <i>buffer_class</i> method; it should return the name of an alternate class. Be aware that this alternate class <i>must</i> conform to the interface used by <i>Net::SSH::Perl::Buffer</i>, so you may be best off subclassing that class and adding in your own functionality.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>It should be noted that the external interface (API) to this module is alpha, and could change.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

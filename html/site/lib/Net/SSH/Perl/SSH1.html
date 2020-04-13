@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#ssh-set_cipher-cipher_name">$ssh-&gt;set_cipher($cipher_name)</a></li>
+      <li><a href="#ssh-send_cipher">$ssh-&gt;send_cipher</a></li>
+      <li><a href="#ssh-receive_cipher">$ssh-&gt;receive_cipher</a></li>
+      <li><a href="#ssh-compression-level">$ssh-&gt;compression([ $level ])</a></li>
+      <li><a href="#ssh-session_key">$ssh-&gt;session_key</a></li>
+      <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::SSH1 - SSH1 implementation</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl;
+    my $ssh = Net::SSH::Perl-&gt;new($host, protocol =&gt; 1);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::SSH1</i> implements the SSH1 protocol. It is a subclass of <i>Net::SSH::Perl</i>, and implements the interface described in the documentation for that module. In fact, your usage of this module should be completely transparent; simply specify the proper <i>protocol</i> value (<code>1</code>) when creating your <i>Net::SSH::Perl</i> object, and the SSH1 implementation will be loaded automatically.</p>
+
+<p>NOTE: Of course, this is still subject to protocol negotiation with the server; if the server doesn&#39;t support SSH1, there&#39;s not much the client can do, and you&#39;ll get a fatal error if you use the above <i>protocol</i> specification (<code>1</code>).</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p><i>Net::SSH::Perl::SSH1</i> shares the interface described by <i>Net::SSH::Perl</i>. In addition, you can call the following &quot;advanced&quot; methods on a <i>Net::SSH::Perl::SSH1</i> object, that <i>do not</i> apply to a regular <i>Net::SSH::Perl</i> object.</p>
+
+<h2 id="ssh-set_cipher-cipher_name">$ssh-&gt;set_cipher($cipher_name)</h2>
+
+<p>Sets the cipher for the SSH session <i>$ssh</i> to <i>$cipher_name</i> (which must be a valid cipher name), and turns on encryption for that session.</p>
+
+<h2 id="ssh-send_cipher">$ssh-&gt;send_cipher</h2>
+
+<p>Returns the &quot;send&quot; cipher object. This is the object that encrypts outgoing data.</p>
+
+<p>If it&#39;s not defined, encryption is not turned on for the session.</p>
+
+<h2 id="ssh-receive_cipher">$ssh-&gt;receive_cipher</h2>
+
+<p>Returns the &quot;receive&quot; cipher object. This is the object that decrypts incoming data.</p>
+
+<p>If it&#39;s not defined, encryption is not turned on for the session.</p>
+
+<p>NOTE: the send and receive ciphers and two <i>different</i> objects, each with its own internal state (initialization vector, in particular). Thus they cannot be interchanged.</p>
+
+<h2 id="ssh-compression-level">$ssh-&gt;compression([ $level ])</h2>
+
+<p>Without arguments, returns the current compression level for the session. If given an argument <i>$level</i>, sets the compression level and turns on compression for the session.</p>
+
+<p>Note that this should <i>not</i> be used to turn compression off. In fact, I don&#39;t think there&#39;s a way to turn compression off. But in other words, don&#39;t try giving this method a value of 0 and expect that to turn off compression. It won&#39;t.</p>
+
+<p>If the return value of this method is undefined or 0, compression is turned off.</p>
+
+<h2 id="ssh-session_key">$ssh-&gt;session_key</h2>
+
+<p>Returns the session key, which is simply 32 bytes of random data and is used as the encryption/decryption key.</p>
+
+<h2 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h2>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

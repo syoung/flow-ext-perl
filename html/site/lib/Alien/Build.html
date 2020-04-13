@@ -1,0 +1,1044 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CONSTRUCTORS">CONSTRUCTORS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#load">load</a></li>
+      <li><a href="#resume">resume</a></li>
+    </ul>
+  </li>
+  <li><a href="#PROPERTIES">PROPERTIES</a>
+    <ul>
+      <li><a href="#meta_prop">meta_prop</a></li>
+      <li><a href="#install_prop">install_prop</a></li>
+      <li><a href="#runtime_prop">runtime_prop</a></li>
+      <li><a href="#hook_prop">hook_prop</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#checkpoint">checkpoint</a></li>
+      <li><a href="#root1">root</a></li>
+      <li><a href="#install_type1">install_type</a></li>
+      <li><a href="#set_prefix">set_prefix</a></li>
+      <li><a href="#set_stage">set_stage</a></li>
+      <li><a href="#requires">requires</a></li>
+      <li><a href="#load_requires">load_requires</a></li>
+      <li><a href="#probe">probe</a></li>
+      <li><a href="#download1">download</a></li>
+      <li><a href="#fetch">fetch</a></li>
+      <li><a href="#decode">decode</a></li>
+      <li><a href="#prefer">prefer</a></li>
+      <li><a href="#extract1">extract</a></li>
+      <li><a href="#build">build</a></li>
+      <li><a href="#test">test</a></li>
+      <li><a href="#clean_install">clean_install</a></li>
+      <li><a href="#system4">system</a></li>
+      <li><a href="#log">log</a></li>
+      <li><a href="#meta">meta</a></li>
+    </ul>
+  </li>
+  <li><a href="#META-METHODS">META METHODS</a>
+    <ul>
+      <li><a href="#prop">prop</a></li>
+      <li><a href="#add_requires">add_requires</a></li>
+      <li><a href="#interpolator">interpolator</a></li>
+      <li><a href="#has_hook">has_hook</a></li>
+      <li><a href="#register_hook">register_hook</a></li>
+      <li><a href="#default_hook">default_hook</a></li>
+      <li><a href="#around_hook">around_hook</a></li>
+      <li><a href="#apply_plugin">apply_plugin</a></li>
+    </ul>
+  </li>
+  <li><a href="#ENVIRONMENT">ENVIRONMENT</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#THANKS">THANKS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build - Build external dependencies for use in CPAN</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> my $build = Alien::Build-&gt;load(&#39;./alienfile&#39;);
+ $build-&gt;load_requires(&#39;configure&#39;);
+ $build-&gt;set_prefix(&#39;/usr/local&#39;);
+ $build-&gt;set_stage(&#39;/foo/mystage&#39;);  # needs to be absolute
+ $build-&gt;load_requires($build-&gt;install_type);
+ $build-&gt;download;
+ $build-&gt;build;
+ # files are now in /foo/mystage, it is your job (or
+ # ExtUtils::MakeMaker, Module::Build, etc) to copy
+ # those files into /usr/local</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides tools for building external (non-CPAN) dependencies for CPAN. It is mainly designed to be used at install time of a CPAN client, and work closely with <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> which is used at runtime.</p>
+
+<p>This is the detailed documentation for the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> class. If you are starting out you probably want to do so from one of these documents:</p>
+
+<dl>
+
+<dt id="Alien::Build::Manual::Alien"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien::Build::Manual::Alien</a></dt>
+<dd>
+
+<p>A broad overview of <code>Alien-Build</code> and its ecosystem.</p>
+
+</dd>
+<dt id="Alien::Build::Manual::AlienUser"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienUser.html">Alien::Build::Manual::AlienUser</a></dt>
+<dd>
+
+<p>For users of an <code>Alien::libfoo</code> that is implemented using <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>. (The developer of <code>Alien::libfoo</code> <i>should</i> provide the documentation necessary, but if not, this is the place to start).</p>
+
+</dd>
+<dt id="Alien::Build::Manual::AlienAuthor"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienAuthor.html">Alien::Build::Manual::AlienAuthor</a></dt>
+<dd>
+
+<p>If you are writing your own <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> based on <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> and <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>.</p>
+
+</dd>
+<dt id="Alien::Build::Manual::FAQ"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/FAQ.html">Alien::Build::Manual::FAQ</a></dt>
+<dd>
+
+<p>If you have a common question that has already been answered, like &quot;How do I use <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> with some build system&quot;.</p>
+
+</dd>
+<dt id="Alien::Build::Manual::PluginAuthor"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/PluginAuthor.html">Alien::Build::Manual::PluginAuthor</a></dt>
+<dd>
+
+<p>This is for the brave souls who want to write plugins that will work with <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> + <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+</dd>
+</dl>
+
+<p>Note that you will not usually create a <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> instance directly, but rather be using a thin installer layer, such as <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a> (for use with <a href="../../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a>) or <a>Alien::Build::MB</a> (for use with <a href="../../../lib/perl5/site_perl/5.26.3/Module/Build.html">Module::Build</a>). One of the goals of this project is to remain installer agnostic.</p>
+
+<h1 id="CONSTRUCTORS">CONSTRUCTORS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $build = Alien::Build-&gt;new;</code></pre>
+
+<p>This creates a new empty instance of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>. Normally you will want to use <code>load</code> below to create an instance of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> from an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe.</p>
+
+<h2 id="load">load</h2>
+
+<pre><code> my $build = Alien::Build-&gt;load($alienfile);</code></pre>
+
+<p>This creates an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> instance with the given <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe.</p>
+
+<h2 id="resume">resume</h2>
+
+<pre><code> my $build = Alien::Build-&gt;resume($alienfile, $root);</code></pre>
+
+<p>Load a checkpointed <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> instance. You will need the original <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> and the build root (usually <code>_alien</code>), and a build that had been properly checkpointed using the <code>checkpoint</code> method below.</p>
+
+<h1 id="PROPERTIES">PROPERTIES</h1>
+
+<p>There are three main properties for <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>. There are a number of properties documented here with a specific usage. Note that these properties may need to be serialized into something primitive like JSON that does not support: regular expressions, code references of blessed objects.</p>
+
+<p>If you are writing a plugin (<a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin.html">Alien::Build::Plugin</a>) you should use a prefix like &quot;plugin_<i>name</i>&quot; (where <i>name</i> is the name of your plugin) so that it does not interfere with other plugin or future versions of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>. For example, if you were writing <code>Alien::Build::Plugin::Fetch::NewProtocol</code>, please use the prefix <code>plugin_fetch_newprotocol</code>:</p>
+
+<pre><code> sub init
+ {
+   my($self, $meta) = @_;
+ 
+   $meta-&gt;prop( plugin_fetch_newprotocol_foo =&gt; &#39;some value&#39; );
+ 
+   $meta-&gt;register_hook(
+     some_hook =&gt; sub {
+       my($build) = @_;
+       $build-&gt;install_prop-&gt;{plugin_fetch_newprotocol_bar} = &#39;some other value&#39;;
+       $build-&gt;runtime_prop-&gt;{plugin_fetch_newprotocol_baz} = &#39;and another value&#39;;
+     }
+   );
+ }</code></pre>
+
+<p>If you are writing a <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe please use the prefix <code>my_</code>:</p>
+
+<pre><code> use alienfile;
+ 
+ meta_prop-&gt;{my_foo} = &#39;some value&#39;;
+ 
+ probe sub {
+   my($build) = @_;
+   $build-&gt;install_prop-&gt;{my_bar} = &#39;some other value&#39;;
+   $build-&gt;install_prop-&gt;{my_baz} = &#39;and another value&#39;;
+ };</code></pre>
+
+<p>Any property may be used from a command:</p>
+
+<pre><code> probe [ &#39;some command %{.meta.plugin_fetch_newprotocol_foo}&#39; ];
+ probe [ &#39;some command %{.install.plugin_fetch_newprotocol_bar}&#39; ];
+ probe [ &#39;some command %{.runtime.plugin_fetch_newprotocol_baz}&#39; ];
+ probe [ &#39;some command %{.meta.my_foo}&#39; ];
+ probe [ &#39;some command %{.install.my_bar}&#39; ];
+ probe [ &#39;some command %{.runtime.my_baz}&#39; ];</code></pre>
+
+<h2 id="meta_prop">meta_prop</h2>
+
+<pre><code> my $href = $build-&gt;meta_prop;
+ my $href = Alien::Build-&gt;meta_prop;</code></pre>
+
+<p>Meta properties have to do with the recipe itself, and not any particular instance that probes or builds that recipe. Meta properties can be changed from within an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> using the <code>meta_prop</code> directive, or from a plugin from its <code>init</code> method (though should NOT be modified from any hooks registered within that <code>init</code> method). This is not strictly enforced, but if you do not follow this rule your recipe will likely be broken.</p>
+
+<dl>
+
+<dt id="arch">arch</dt>
+<dd>
+
+<p>This is a hint to an installer like <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a> or <a>Alien::Build::MB</a>, that the library or tool contains architecture dependent files and so should be stored in an architecture dependent location. If not specified by your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> then it will be set to true.</p>
+
+</dd>
+<dt id="destdir">destdir</dt>
+<dd>
+
+<p>Use the <code>DESTDIR</code> environment variable to stage your install before copying the files into <code>blib</code>. This is the preferred method of installing libraries because it improves reliability. This technique is supported by <code>autoconf</code> and others.</p>
+
+</dd>
+<dt id="destdir_filter">destdir_filter</dt>
+<dd>
+
+<p>Regular expression for the files that should be copied from the <code>DESTDIR</code> into the stage directory. If not defined, then all files will be copied.</p>
+
+</dd>
+<dt id="destdir_ffi_filter">destdir_ffi_filter</dt>
+<dd>
+
+<p>Same as <code>destdir_filter</code> except applies to <code>build_ffi</code> instead of <code>build</code>.</p>
+
+</dd>
+<dt id="env">env</dt>
+<dd>
+
+<p>Environment variables to override during the build stage.</p>
+
+</dd>
+<dt id="env_interpolate">env_interpolate</dt>
+<dd>
+
+<p>Environment variable values will be interpolated with helpers. Example:</p>
+
+<pre><code> meta-&gt;prop-&gt;{env_interpolate} = 1;
+ meta-&gt;prop-&gt;{env}-&gt;{PERL} = &#39;%{perl}&#39;;</code></pre>
+
+</dd>
+<dt id="local_source">local_source</dt>
+<dd>
+
+<p>Set to true if source code package is available locally. (that is not fetched over the internet). This is computed by default based on the <code>start_url</code> property. Can be set by an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> or plugin.</p>
+
+</dd>
+<dt id="platform">platform</dt>
+<dd>
+
+<p>Hash reference. Contains information about the platform beyond just <code>$^O</code>.</p>
+
+<dl>
+
+<dt id="compiler_type">compiler_type</dt>
+<dd>
+
+<p>Refers to the type of flags that the compiler accepts. May be expanded in the future, but for now, will be one of:</p>
+
+<dl>
+
+<dt id="microsoft">microsoft</dt>
+<dd>
+
+<p>On Windows when using Microsoft Visual C++</p>
+
+</dd>
+<dt id="unix">unix</dt>
+<dd>
+
+<p>Virtually everything else, including gcc on windows.</p>
+
+</dd>
+</dl>
+
+<p>The main difference is that with Visual C++ <code>-LIBPATH</code> should be used instead of <code>-L</code>, and static libraries should have the <code>.LIB</code> suffix instead of <code>.a</code>.</p>
+
+</dd>
+<dt id="system_type">system_type</dt>
+<dd>
+
+<p><code>$^O</code> is frequently good enough to make platform specific logic in your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>, this handles the case when $^O can cover platforms that provide multiple environments that Perl might run under. The main example is windows, but others may be added in the future.</p>
+
+<dl>
+
+<dt id="unix1">unix</dt>
+<dd>
+
+</dd>
+<dt id="vms">vms</dt>
+<dd>
+
+</dd>
+<dt id="windows-activestate">windows-activestate</dt>
+<dd>
+
+</dd>
+<dt id="windows-microsoft">windows-microsoft</dt>
+<dd>
+
+</dd>
+<dt id="windows-mingw">windows-mingw</dt>
+<dd>
+
+</dd>
+<dt id="windows-strawberry">windows-strawberry</dt>
+<dd>
+
+</dd>
+<dt id="windows-unknown">windows-unknown</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>Note that <code>cygwin</code> and <code>msys</code> are considered <code>unix</code> even though they run on windows!</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="out_of_source">out_of_source</dt>
+<dd>
+
+<p>Build in a different directory from the where the source code is stored. In autoconf this is referred to as a &quot;VPATH&quot; build. Everyone else calls this an &quot;out-of-source&quot; build. When this property is true, instead of extracting to the source build root, the downloaded source will be extracted to an source extraction directory and the source build root will be empty. You can use the <code>extract</code> install property to get the location of the extracted source.</p>
+
+</dd>
+<dt id="network">network</dt>
+<dd>
+
+<p>True if a network fetch is available. This should NOT be set by an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> or plugin. This is computed based on the <code>ALIEN_INSTALL_NETWORK</code> environment variables.</p>
+
+</dd>
+<dt id="start_url">start_url</dt>
+<dd>
+
+<p>The default or start URL used by fetch plugins.</p>
+
+</dd>
+</dl>
+
+<h2 id="install_prop">install_prop</h2>
+
+<pre><code> my $href = $build-&gt;install_prop;</code></pre>
+
+<p>Install properties are used during the install phase (either under <code>share</code> or <code>system</code> install). They are remembered for the entire install phase, but not kept around during the runtime phase. Thus they cannot be accessed from your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> based module.</p>
+
+<dl>
+
+<dt id="autoconf_prefix">autoconf_prefix</dt>
+<dd>
+
+<p>The prefix as understood by autoconf. This is only different on Windows Where MSYS is used and paths like <code>C:/foo</code> are represented as <code>/C/foo</code> which are understood by the MSYS tools, but not by Perl. You should only use this if you are using <a>Alien::Build::Plugin::Autoconf</a> in your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+</dd>
+<dt id="download">download</dt>
+<dd>
+
+<p>The location of the downloaded archive (tar.gz, or similar) or directory.</p>
+
+</dd>
+<dt id="env1">env</dt>
+<dd>
+
+<p>Environment variables to override during the build stage.</p>
+
+</dd>
+<dt id="extract">extract</dt>
+<dd>
+
+<p>The location of the last source extraction. For a &quot;out-of-source&quot; build (see the <code>out_of_source</code> meta property above), this will only be set once. For other types of builds, the source code may be extracted multiple times, and thus this property may change.</p>
+
+</dd>
+<dt id="old">old</dt>
+<dd>
+
+<p>Hash containing information on a previously installed Alien of the same name, if available. This may be useful in cases where you want to reuse the previous install if it is still sufficient.</p>
+
+<dl>
+
+<dt id="prefix">prefix</dt>
+<dd>
+
+<p>The prefix for the previous install. Versions prior to 1.42 unfortunately had this in typo form of <code>preifx</code>.</p>
+
+</dd>
+<dt id="runtime">runtime</dt>
+<dd>
+
+<p>The runtime properties from the previous install.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="patch">patch</dt>
+<dd>
+
+<p>Directory with patches.</p>
+
+</dd>
+<dt id="prefix1">prefix</dt>
+<dd>
+
+<p>The install time prefix. Under a <code>destdir</code> install this is the same as the runtime or final install location. Under a non-<code>destdir</code> install this is the <code>stage</code> directory (usually the appropriate share directory under <code>blib</code>).</p>
+
+</dd>
+<dt id="root">root</dt>
+<dd>
+
+<p>The build root directory. This will be an absolute path. It is the absolute form of <code>./_alien</code> by default.</p>
+
+</dd>
+<dt id="stage">stage</dt>
+<dd>
+
+<p>The stage directory where files will be copied. This is usually the root of the blib share directory.</p>
+
+</dd>
+</dl>
+
+<h2 id="runtime_prop">runtime_prop</h2>
+
+<pre><code> my $href = $build-&gt;runtime_prop;</code></pre>
+
+<p>Runtime properties are used during the install and runtime phases (either under <code>share</code> or <code>system</code> install). This should include anything that you will need to know to use the library or tool during runtime, and shouldn&#39;t include anything that is no longer relevant once the install process is complete.</p>
+
+<dl>
+
+<dt id="alien_build_version">alien_build_version</dt>
+<dd>
+
+<p>The version of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> used to install the library or tool.</p>
+
+</dd>
+<dt id="alt">alt</dt>
+<dd>
+
+<p>Alternate configurations. If the alienized package has multiple libraries this could be used to store the different compiler or linker flags for each library.</p>
+
+</dd>
+<dt id="cflags">cflags</dt>
+<dd>
+
+<p>The compiler flags</p>
+
+</dd>
+<dt id="cflags_static">cflags_static</dt>
+<dd>
+
+<p>The static compiler flags</p>
+
+</dd>
+<dt id="command">command</dt>
+<dd>
+
+<p>The command name for tools where the name my differ from platform to platform. For example, the GNU version of make is usually <code>make</code> in Linux and <code>gmake</code> on FreeBSD.</p>
+
+</dd>
+<dt id="ffi_name">ffi_name</dt>
+<dd>
+
+<p>The name DLL or shared object &quot;name&quot; to use when searching for dynamic libraries at runtime. This is passed into <a href="../../../lib/perl5/site_perl/5.26.3/FFI/CheckLib.html">FFI::CheckLib</a>, so if your library is something like <code>libarchive.so</code> or <code>archive.dll</code> you would set this to <code>archive</code>. This may be a string or an array of strings.</p>
+
+</dd>
+<dt id="ffi_checklib">ffi_checklib</dt>
+<dd>
+
+<p>This property contains two sub properties:</p>
+
+<dl>
+
+<dt id="share">share</dt>
+<dd>
+
+<pre><code> $build-&gt;runtime_prop-&gt;{ffi_checklib}-&gt;{share} = [ ... ];</code></pre>
+
+<p>Array of additional <a href="../../../lib/perl5/site_perl/5.26.3/FFI/CheckLib.html">FFI::CheckLib</a> flags to pass in to <code>find_lib</code> for a <code>share</code> install.</p>
+
+</dd>
+<dt id="system">system</dt>
+<dd>
+
+<p>Array of additional <a href="../../../lib/perl5/site_perl/5.26.3/FFI/CheckLib.html">FFI::CheckLib</a> flags to pass in to <code>find_lib</code> for a <code>system</code> install.</p>
+
+<p>Among other things, useful for specifying the <code>try_linker_script</code> flag:</p>
+
+<pre><code> $build-&gt;runtime_prop-&gt;{ffi_checklib}-&gt;{system} = [ try_linker_script =&gt; 1 ];</code></pre>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="install_type">install_type</dt>
+<dd>
+
+<p>The install type. Is one of:</p>
+
+<dl>
+
+<dt id="system1">system</dt>
+<dd>
+
+<p>For when the library or tool is provided by the operating system, can be detected by <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, and is considered satisfactory by the <code>alienfile</code> recipe.</p>
+
+</dd>
+<dt id="share1">share</dt>
+<dd>
+
+<p>For when a system install is not possible, the library source will be downloaded from the internet or retrieved in another appropriate fashion and built.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="libs">libs</dt>
+<dd>
+
+<p>The library flags</p>
+
+</dd>
+<dt id="libs_static">libs_static</dt>
+<dd>
+
+<p>The static library flags</p>
+
+</dd>
+<dt id="perl_module_version">perl_module_version</dt>
+<dd>
+
+<p>The version of the Perl module used to install the alien (if available). For example if <a>Alien::curl</a> is installing <code>libcurl</code> this would be the version of <a>Alien::curl</a> used during the install step.</p>
+
+</dd>
+<dt id="prefix2">prefix</dt>
+<dd>
+
+<p>The final install root. This is usually they share directory.</p>
+
+</dd>
+<dt id="version">version</dt>
+<dd>
+
+<p>The version of the library or tool</p>
+
+</dd>
+</dl>
+
+<h2 id="hook_prop">hook_prop</h2>
+
+<pre><code> my $href = $build-&gt;hook_prop;</code></pre>
+
+<p>Hook properties are for the currently running (if any) hook. They are used only during the execution of each hook and are discarded after. If no hook is currently running then <code>hook_prop</code> will return <code>undef</code>.</p>
+
+<dl>
+
+<dt id="name">name</dt>
+<dd>
+
+<p>The name of the currently running hook.</p>
+
+</dd>
+<dt id="version-probe">version (probe)</dt>
+<dd>
+
+<p>Probe and PkgConfig plugins <i>may</i> set this property indicating the version of the alienized package. Not all plugins and configurations may be able to provide this.</p>
+
+</dd>
+</dl>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="checkpoint">checkpoint</h2>
+
+<pre><code> $build-&gt;checkpoint;</code></pre>
+
+<p>Save any install or runtime properties so that they can be reloaded on a subsequent run in a separate process. This is useful if your build needs to be done in multiple stages from a <code>Makefile</code>, such as with <a href="../../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a>. Once checkpointed you can use the <code>resume</code> constructor (documented above) to resume the probe/build/install] process.</p>
+
+<h2 id="root1">root</h2>
+
+<pre><code> my $dir = $build-&gt;root;</code></pre>
+
+<p>This is just a shortcut for:</p>
+
+<pre><code> my $root = $build-&gt;install_prop-&gt;{root};</code></pre>
+
+<p>Except that it will be created if it does not already exist.</p>
+
+<h2 id="install_type1">install_type</h2>
+
+<pre><code> my $type = $build-&gt;install_type;</code></pre>
+
+<p>This will return the install type. (See the like named install property above for details). This method will call <code>probe</code> if it has not already been called.</p>
+
+<h2 id="set_prefix">set_prefix</h2>
+
+<pre><code> $build-&gt;set_prefix($prefix);</code></pre>
+
+<p>Set the final (unstaged) prefix. This is normally only called by <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a> and similar modules. It is not intended for use from plugins or from an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+<h2 id="set_stage">set_stage</h2>
+
+<pre><code> $build-&gt;set_stage($dir);</code></pre>
+
+<p>Sets the stage directory. This is normally only called by <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a> and similar modules. It is not intended for use from plugins or from an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+<h2 id="requires">requires</h2>
+
+<pre><code> my $hash = $build-&gt;requires($phase);</code></pre>
+
+<p>Returns a hash reference of the modules required for the given phase. Phases include:</p>
+
+<dl>
+
+<dt id="configure">configure</dt>
+<dd>
+
+<p>These modules must already be available when the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> is read.</p>
+
+</dd>
+<dt id="any">any</dt>
+<dd>
+
+<p>These modules are used during either a <code>system</code> or <code>share</code> install.</p>
+
+</dd>
+<dt id="share2">share</dt>
+<dd>
+
+<p>These modules are used during the build phase of a <code>share</code> install.</p>
+
+</dd>
+<dt id="system2">system</dt>
+<dd>
+
+<p>These modules are used during the build phase of a <code>system</code> install.</p>
+
+</dd>
+</dl>
+
+<h2 id="load_requires">load_requires</h2>
+
+<pre><code> $build-&gt;load_requires($phase);</code></pre>
+
+<p>This loads the appropriate modules for the given phase (see <code>requires</code> above for a description of the phases).</p>
+
+<h2 id="probe">probe</h2>
+
+<pre><code> my $install_type = $build-&gt;probe;</code></pre>
+
+<p>Attempts to determine if the operating system has the library or tool already installed. If so, then the string <code>system</code> will be returned and a system install will be performed. If not, then the string <code>share</code> will be installed and the tool or library will be downloaded and built from source.</p>
+
+<p>If the environment variable <code>ALIEN_INSTALL_TYPE</code> is set, then that will force a specific type of install. If the detection logic cannot accommodate the install type requested then it will fail with an exception.</p>
+
+<h2 id="download1">download</h2>
+
+<pre><code> $build-&gt;download;</code></pre>
+
+<p>Download the source, usually as a tarball, usually from the internet.</p>
+
+<p>Under a <code>system</code> install this does not do anything.</p>
+
+<h2 id="fetch">fetch</h2>
+
+<pre><code> my $res = $build-&gt;fetch;
+ my $res = $build-&gt;fetch($url);</code></pre>
+
+<p>Fetch a resource using the fetch hook. Returns the same hash structure described below in the hook documentation.</p>
+
+<h2 id="decode">decode</h2>
+
+<pre><code> my $decoded_res = $build-&gt;decode($res);</code></pre>
+
+<p>Decode the HTML or file listing returned by <code>fetch</code>. Returns the same hash structure described below in the hook documentation.</p>
+
+<h2 id="prefer">prefer</h2>
+
+<pre><code> my $sorted_res = $build-&gt;prefer($res);</code></pre>
+
+<p>Filter and sort candidates. The preferred candidate will be returned first in the list. The worst candidate will be returned last. Returns the same hash structure described below in the hook documentation.</p>
+
+<h2 id="extract1">extract</h2>
+
+<pre><code> my $dir = $build-&gt;extract;
+ my $dir = $build-&gt;extract($archive);</code></pre>
+
+<p>Extracts the given archive into a fresh directory. This is normally called internally to <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, and for normal usage is not needed from a plugin or <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+<h2 id="build">build</h2>
+
+<pre><code> $build-&gt;build;</code></pre>
+
+<p>Run the build step. It is expected that <code>probe</code> and <code>download</code> have already been performed. What it actually does depends on the type of install:</p>
+
+<dl>
+
+<dt id="share3">share</dt>
+<dd>
+
+<p>The source is extracted, and built as determined by the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe. If there is a <code>gather_share</code> that will be executed last.</p>
+
+</dd>
+<dt id="system3">system</dt>
+<dd>
+
+<p>The <code>gather_system</code> hook will be executed.</p>
+
+</dd>
+</dl>
+
+<h2 id="test">test</h2>
+
+<pre><code> $build-&gt;test;</code></pre>
+
+<p>Run the test phase</p>
+
+<h2 id="clean_install">clean_install</h2>
+
+<pre><code> $build-&gt;clean_install</code></pre>
+
+<p>Clean files from the final install location. The default implementation removes all files recursively except for the <code>_alien</code> directory. This is helpful when you have an old install with files that may break the new build.</p>
+
+<p>For a non-share install this doesn&#39;t do anything.</p>
+
+<h2 id="system4">system</h2>
+
+<pre><code> $build-&gt;system($command);
+ $build-&gt;system($command, @args);</code></pre>
+
+<p>Interpolates the command and arguments and run the results using the Perl <code>system</code> command.</p>
+
+<h2 id="log">log</h2>
+
+<pre><code> $build-&gt;log($message);</code></pre>
+
+<p>Send a message to the log. By default this prints to <code>STDOUT</code>.</p>
+
+<h2 id="meta">meta</h2>
+
+<pre><code> my $meta = Alien::Build-&gt;meta;
+ my $meta = $build-&gt;meta;</code></pre>
+
+<p>Returns the meta object for your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> class or instance. The meta object is a way to manipulate the recipe, and so any changes to the meta object should be made before the <code>probe</code>, <code>download</code> or <code>build</code> steps.</p>
+
+<h1 id="META-METHODS">META METHODS</h1>
+
+<h2 id="prop">prop</h2>
+
+<pre><code> my $href = $build-&gt;meta-&gt;prop;</code></pre>
+
+<p>Meta properties. This is the same as calling <code>meta_prop</code> on the class or <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> instance.</p>
+
+<h2 id="add_requires">add_requires</h2>
+
+<pre><code> Alien::Build-&gt;meta-&gt;add_requires($phase, $module =&gt; $version, ...);</code></pre>
+
+<p>Add the requirement to the given phase. Phase should be one of:</p>
+
+<dl>
+
+<dt id="configure1">configure</dt>
+<dd>
+
+</dd>
+<dt id="any1">any</dt>
+<dd>
+
+</dd>
+<dt id="share4">share</dt>
+<dd>
+
+</dd>
+<dt id="system5">system</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h2 id="interpolator">interpolator</h2>
+
+<pre><code> my $interpolator = $build-&gt;meta-&gt;interpolator;
+ my $interpolator = Alien::Build-&gt;interpolator;</code></pre>
+
+<p>Returns the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Interpolate.html">Alien::Build::Interpolate</a> instance for the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> class.</p>
+
+<h2 id="has_hook">has_hook</h2>
+
+<pre><code> my $bool = $build-&gt;meta-&gt;has_hook($name);
+ my $bool = Alien::Build-&gt;has_hook($name);</code></pre>
+
+<p>Returns if there is a usable hook registered with the given name.</p>
+
+<h2 id="register_hook">register_hook</h2>
+
+<pre><code> $build-&gt;meta-&gt;register_hook($name, $instructions);
+ Alien::Build-&gt;meta-&gt;register_hook($name, $instructions);</code></pre>
+
+<p>Register a hook with the given name. <code>$instruction</code> should be either a code reference, or a command sequence, which is an array reference.</p>
+
+<h2 id="default_hook">default_hook</h2>
+
+<pre><code> $build-&gt;meta-&gt;default_hook($name, $instructions);
+ Alien::Build-&gt;meta-&gt;default_hook($name, $instructions);</code></pre>
+
+<p>Register a default hook, which will be used if the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> does not register its own hook with that name.</p>
+
+<h2 id="around_hook">around_hook</h2>
+
+<pre><code> $build-&gt;meta-&gt;around_hook($hook, $code);
+ Alien::Build-&gt;meta-&gt;around_hook($name, $code);</code></pre>
+
+<p>Wrap the given hook with a code reference. This is similar to a <a href="../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Moose.html">Moose</a> method modifier, except that it wraps around the given hook instead of a method. For example, this will add a probe system requirement:</p>
+
+<pre><code> $build-&gt;meta-&gt;around_hook(
+   probe =&gt; sub {
+     my $orig = shift;
+     my $build = shift;
+     my $type = $orig-&gt;($build, @_);
+     return $type unless $type eq &#39;system&#39;;
+     # also require a configuration file
+     if(-f &#39;/etc/foo.conf&#39;)
+     {
+       return &#39;system&#39;;
+     }
+     else
+     {
+       return &#39;share&#39;;
+     }
+   },
+ );</code></pre>
+
+<h2 id="apply_plugin">apply_plugin</h2>
+
+<pre><code> Alien::Build-&gt;meta-&gt;apply_plugin($name);
+ Alien::Build-&gt;meta-&gt;apply_plugin($name, @args);</code></pre>
+
+<p>Apply the given plugin with the given arguments.</p>
+
+<h1 id="ENVIRONMENT">ENVIRONMENT</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> responds to these environment variables:</p>
+
+<dl>
+
+<dt id="ALIEN_INSTALL_NETWORK">ALIEN_INSTALL_NETWORK</dt>
+<dd>
+
+<p>If set to true (the default), then network fetch will be allowed. If set to false, then network fetch will not be allowed.</p>
+
+<p>What constitutes a local vs. network fetch is determined based on the <code>start_url</code> and <code>local_source</code> meta properties. An <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> or plugin <code>could</code> override this detection (possibly inappropriately), so this variable is not a substitute for properly auditing of Perl modules for environments that require that.</p>
+
+</dd>
+<dt id="ALIEN_INSTALL_TYPE">ALIEN_INSTALL_TYPE</dt>
+<dd>
+
+<p>If set to <code>share</code> or <code>system</code>, it will override the system detection logic. If set to <code>default</code>, it will use the default setting for the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>. The behavior of other values is undefined.</p>
+
+<p>Although the recommended way for a consumer to use an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> based <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> is to declare it as a static configure and build-time dependency, some consumers may prefer to fallback on using an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> only when the consumer itself cannot detect the necessary package. In some cases the consumer may want the user to opt-in to using an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> before requiring it.</p>
+
+<p>To keep the interface consistent among Aliens, the consumer of the fallback opt-in <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> may fallback on the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> if the environment variable <code>ALIEN_INSTALL_TYPE</code> is set to any value. The rationale is that by setting this environment variable the user is aware that <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules may be installed and have indicated consent. The actual implementation of this, by its nature would have to be in the consuming CPAN module.</p>
+
+</dd>
+<dt id="ALIEN_BUILD_LOG">ALIEN_BUILD_LOG</dt>
+<dd>
+
+<p>The default log class used. See <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Log.html">Alien::Build::Log</a> and <a href="Alien:Build::Log::Default">Alien:Build::Log::Default</a>.</p>
+
+</dd>
+<dt id="ALIEN_BUILD_RC">ALIEN_BUILD_RC</dt>
+<dd>
+
+<p>Perl source file which can override some global defaults for <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, by, for example, setting preload and postload plugins.</p>
+
+</dd>
+<dt id="ALIEN_BUILD_PKG_CONFIG">ALIEN_BUILD_PKG_CONFIG</dt>
+<dd>
+
+<p>Override the logic in <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/PkgConfig/Negotiate.html">Alien::Build::Plugin::PkgConfig::Negotiate</a> which chooses the best <code>pkg-config</code> plugin.</p>
+
+</dd>
+<dt id="ALIEN_BUILD_PRELOAD">ALIEN_BUILD_PRELOAD</dt>
+<dd>
+
+<p>semicolon separated list of plugins to automatically load before parsing your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+</dd>
+<dt id="ALIEN_BUILD_POSTLOAD">ALIEN_BUILD_POSTLOAD</dt>
+<dd>
+
+<p>semicolon separated list of plugins to automatically load after parsing your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+</dd>
+<dt id="DESTDIR">DESTDIR</dt>
+<dd>
+
+<p>This environment variable will be manipulated during a destdir install.</p>
+
+</dd>
+<dt id="PKG_CONFIG">PKG_CONFIG</dt>
+<dd>
+
+<p>This environment variable can be used to override the program name for <code>pkg-config</code> when using the command line plugin: <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/PkgConfig/CommandLine.html">Alien::Build::Plugin::PkgConfig::CommandLine</a>.</p>
+
+</dd>
+<dt id="ftp_proxy-all_proxy">ftp_proxy, all_proxy</dt>
+<dd>
+
+<p>If these environment variables are set, it may influence the Download negotiation plugin <a>Alien::Build::Plugin::Downaload::Negotiate</a>. Other proxy variables may be used by some Fetch plugins, if they support it.</p>
+
+</dd>
+</dl>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>The intent of the <code>Alien-Build</code> team is to support as best as possible all Perls from 5.8.1 to the latest production version. So long as they are also supported by the Perl toolchain.</p>
+
+<p>Please feel encouraged to report issues that you encounter to the project GitHub Issue tracker:</p>
+
+<dl>
+
+<dt id="https:-github.com-Perl5-Alien-Alien-Build-issues"><a href="https://github.com/Perl5-Alien/Alien-Build/issues">https://github.com/Perl5-Alien/Alien-Build/issues</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>Better if you can fix the issue yourself, please feel encouraged to open pull-request on the project GitHub:</p>
+
+<dl>
+
+<dt id="https:-github.com-Perl5-Alien-Alien-Build-pulls"><a href="https://github.com/Perl5-Alien/Alien-Build/pulls">https://github.com/Perl5-Alien/Alien-Build/pulls</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>If you are confounded and have questions, join us on the <code>#native</code> channel on irc.perl.org. The <code>Alien-Build</code> developers frequent this channel and can probably help point you in the right direction. If you don&#39;t have an IRC client handy, you can use this web interface:</p>
+
+<dl>
+
+<dt id="https:-chat.mibbit.com-channel-23nativeserver-irc.perl.org"><a href="https://chat.mibbit.com/?channel=%23native&amp;server=irc.perl.org">https://chat.mibbit.com/?channel=%23native&amp;server=irc.perl.org</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienAuthor.html">Alien::Build::Manual::AlienAuthor</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienUser.html">Alien::Build::Manual::AlienUser</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Contributing.html">Alien::Build::Manual::Contributing</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/FAQ.html">Alien::Build::Manual::FAQ</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/PluginAuthor.html">Alien::Build::Manual::PluginAuthor</a></p>
+
+<p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin.html">Alien::Build::Plugin</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a></p>
+
+<h1 id="THANKS">THANKS</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> was originally written by Joel Berger, the rest of this project would not have been possible without him getting the project started. Thanks to his support I have been able to augment the original <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> system with a reliable set of tools (<a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien.html">Test::Alien</a>), which make up this toolset.</p>
+
+<p>The original <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> is still copyright (c) 2012-2020 Joel Berger. It has the same license as the rest of the Alien::Build and related tools distributed as <code>Alien-Build</code>. Joel Berger thanked a number of people who helped in in the development of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>, in the documentation for that module.</p>
+
+<p>I would also like to acknowledge the other members of the Perl5-Alien github organization, Zakariyya Mughal (sivoais, ZMUGHAL) and mohawk (ETJ). Also important in the early development of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> were the early adopters Chase Whitener (genio, CAPOEIRAB, author of <a>Alien::libuv</a>), William N. Braswell, Jr (willthechill, WBRASWELL, author of <a>Alien::JPCRE2</a> and <a>Alien::PCRE2</a>) and Ahmad Fatoum (a3f, ATHREEF, author of <a>Alien::libudev</a> and <a>Alien::LibUSB</a>).</p>
+
+<p>The Alien ecosystem owes a debt to Dan Book, who goes by Grinnz on IRC, for answering question about how to use <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> and friends.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

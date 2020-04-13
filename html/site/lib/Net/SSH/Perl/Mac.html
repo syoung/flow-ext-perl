@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#mac-Net::SSH::Perl::Mac-new-name">$mac = Net::SSH::Perl::Mac-&gt;new( $name )</a></li>
+      <li><a href="#mac-init-key">$mac-&gt;init( $key )</a></li>
+      <li><a href="#mac-hmac-data">$mac-&gt;hmac( $data )</a></li>
+      <li><a href="#mac-len">$mac-&gt;len</a></li>
+      <li><a href="#mac-key_len-len">$mac-&gt;key_len( $len )</a></li>
+      <li><a href="#mac-enable">$mac-&gt;enable</a></li>
+      <li><a href="#mac-enabled">$mac-&gt;enabled</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+  <li><a href="#POD-ERRORS">POD ERRORS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Mac - MAC support for SSH2</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Mac;
+    my $mac = Net::SSH::Perl::Mac-&gt;new(&#39;hmac-sha1&#39;, $key);
+    $mac-&gt;hmac(&quot;foo bar&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Mac</i> (and its subclasses) provides MAC support for the SSH2 implementation in <i>Net::SSH::Perl</i>. In the SSH2 protocol, each packet sent between client and server (after the key exchange and algorithm negotiation phase) contains a MAC to protect its integrity. The sending party computes the MAC over the length, padding, and (encrypted) payload fields of the packet, then appends the MAC; and the receiving party recomputes the MAC against the data that it receives.</p>
+
+<p>The MAC is computed using part of the key that is negotiated during the key exchange phase. During negotiation, packets do not contain MAC; after the <i>SSH_MSG_NEWKEYS</i> message is sent, each side turns on its respective encryption, MAC, and compression code, for each packet that is sent after that point.</p>
+
+<p><i>Net::SSH::Perl</i> supports two MAC algorithms: <i>hmac-sha1</i> and <i>hmac-md5</i>. These algorithms are implemented, respectively, by <i>Digest::HMAC_SHA1</i> and <i>Digest::HMAC_MD5</i>.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p>Each MAC object supports the following methods:</p>
+
+<h2 id="mac-Net::SSH::Perl::Mac-new-name">$mac = Net::SSH::Perl::Mac-&gt;new( $name )</h2>
+
+<p>Constructs a new MAC object and returns that object.</p>
+
+<h2 id="mac-init-key">$mac-&gt;init( $key )</h2>
+
+<p>Initializes <i>$mac</i> and sets its key to <i>$key</i> (or rather, to a substring of key, <i>key_len</i> bytes long). As this implies, the <i>key_len</i> method should be called before <i>init</i> to set the intended length of the key.</p>
+
+<h2 id="mac-hmac-data">$mac-&gt;hmac( $data )</h2>
+
+<p>Computes the MAC over <i>$data</i>, using the key set in the initialization phase, and returns the MAC.</p>
+
+<h2 id="mac-len">$mac-&gt;len</h2>
+
+<p>Returns the length of the MAC (eg. <code>20</code> for HMAC_SHA1).</p>
+
+<h2 id="mac-key_len-len">$mac-&gt;key_len( $len )</h2>
+
+<p>Given <i>$len</i> sets the key length of <i>$mac</i> to <i>$len</i>. This should be called <i>before</i> the <i>init</i> method, because <i>init</i> uses this value to take a substring of the provided key value.</p>
+
+<p>Most of the time this should just be set to the MAC length (the <i>len</i> method); certain SSH implementations have a bug, however, wherein they always use only the first 16 bytes of the provided key.</p>
+
+<h2 id="mac-enable">$mac-&gt;enable</h2>
+
+<p>Enables the MAC object. This is used by <i>Net::SSH::Perl::Kex</i> to &quot;turn on&quot; the MAC after key negotiation.</p>
+
+<h2 id="mac-enabled">$mac-&gt;enabled</h2>
+
+<p>Tests the <i>enabled</i> flag (set with the <i>enable</i> method). This is used by <i>Net::SSH::Perl::Packet</i> to determine whether or not to compute a MAC on an outgoing packet.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+<p>hmac-sha2-256 and hmac-sha2-512 support added by: Lance Kinley E&lt;lkinley@loyaltymethods.com&gt;</p>
+
+<p>Copyright (c) 2015 Loyalty Methods, Inc.</p>
+
+<h1 id="POD-ERRORS">POD ERRORS</h1>
+
+<p>Hey! <b>The above document had some coding errors, which are explained below:</b></p>
+
+<dl>
+
+<dt id="Around-line-182">Around line 182:</dt>
+<dd>
+
+<p>Unknown E content in E&lt;lkinley@loyaltymethods.com&gt;</p>
+
+</dd>
+</dl>
+
+
+</body>
+
+</html>
+
+

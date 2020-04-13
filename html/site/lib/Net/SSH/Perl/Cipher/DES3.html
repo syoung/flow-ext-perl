@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Cipher::DES3 - Wrapper for SSH 3DES support</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Cipher;
+    my $cipher = Net::SSH::Perl::Cipher-&gt;new(&#39;DES3&#39;, $key);
+    print $cipher-&gt;encrypt($plaintext);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Cipher::DES3</i> provides 3DES encryption support for <i>Net::SSH::Perl</i>. To do so it wraps around <i>Crypt::Cipher::DES</i>, the CryptX implementation of the DES algorithm.</p>
+
+<p>The 3DES (three-key triple-DES) algorithm used here differs based on the SSH protocol being used. SSH1 uses 3DES in inner CBC mode, meaning that there are three CBC objects, and each CBC object is paired with a DES object and key.</p>
+
+<p>SSH2 uses 3DES in outer CBC mode; this uses one CBC object wrapped around a DES-EDE3 object (also included in this library); that object contains three DES ciphers with three different keys. Each encrypt operation is actually encrypt-decrypt-encrypt with the three DES keys; decrypt is actually decrypt-encrypt-decrypt with the DES keys.</p>
+
+<p>The key length for both implementations is 24 bytes. The first 8 bytes of the key are used as the first DES key, the second 8 bytes for the second key, etc. If the key <i>$key</i> that you pass to <i>new</i> is only 16 bytes, the first 8 bytes of <i>$key</i> will be used as the key for both the first and third DES ciphers.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

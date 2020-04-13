@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#sc-init-args">$sc-&gt;init(%args)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Subsystem::Client - Subsystem client base class</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    package My::Subsystem;
+
+    use Net::SSH::Perl::Subsystem::Client;
+    @ISA = qw( Net::SSH::Perl::Subsystem::Client );
+
+    use constant MSG_HELLO =&gt; 1;
+
+    sub init {
+        my $system = shift;
+        $system-&gt;SUPER::init(@_);
+
+        my $msg = $system-&gt;new_msg(MSG_HELLO);
+        $msg-&gt;put_str(&quot;Hello, subsystem server.&quot;);
+        $msg-&gt;send;
+    }
+
+    sub subsystem { &quot;mysubsystem&quot; }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Subsystem::Client</i> simplifies the process of writing a client for an SSH-2 subsystem. A subsystem is generally a networking protocol that is built on top of an SSH channel--the channel provides transport, connection, encryption, authentication, message integrity, etc. The subsystem client and server communicate over this encrypted, secure channel (a channel built over an insecure network). SSH provides the encrypted transport, and the subsystem is then free to act like a standard networking protocol.</p>
+
+<p><i>Subsystem::Client</i> is built on top of <i>Net::SSH::Perl</i>, which provides the client end of the services described above (encryption, message integrity checking, authentication, etc.). It is designed to be used with a subsystem server, working with respect to an agreed-upon networking protocol.</p>
+
+<p>SFTP is an example of a subsystem: the underlying transport is set up by <i>Net::SSH::Perl</i>, and on top of that layer, files can be transferred and filesystems managed without knowledge of the secure tunnel.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p><i>Net::SSH::Perl::Subsystem::Client</i> is intended to be used as a base class for your protocol-specific client. It handles all interaction with <i>Net::SSH::Perl</i> so that your focus can be on sending commands to the subsystem server, etc.</p>
+
+<p>Your subclass will probably be most interested in using and/or overriding the following methods:</p>
+
+<h2 id="sc-init-args">$sc-&gt;init(%args)</h2>
+
+<p>Initializes a new <i>Subsystem::Client</i> object: builds the SSH tunnel using <i>Net::SSH::Perl</i>, then opens up a channel along which the subsystem traffic will be sent. It then opens a connection to the subsystem server.</p>
+
+<p>You can override this method to provide any additional functionality that your client might need; for example, you might wish to use it to send an &#39;init&#39; message to the subsystem server.</p>
+
+
+</body>
+
+</html>
+
+

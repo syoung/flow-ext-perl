@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Auth::KeyboardInt - Keyboard-interactive auth plugin</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Auth;
+    my $auth = Net::SSH::Perl::Auth-&gt;new(&#39;KeyboardInt&#39;, $ssh);
+    $auth-&gt;authenticate;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Auth::KeyboardInt</i> performs keyboard-interactive authentication with a remote sshd server. This plugin is only usable when using the SSH2 protocol, and you generally never need to use it manually; the client and server will perform authentication negotiation in order to log in the user, a step which happens automatically.</p>
+
+<p>When you create a new authentication object, you give it a <i>Net::SSH::Perl::SSH2</i> object <i>$ssh</i>, which should contain an open connection to an ssh daemon, as well as the data that the authentication module needs to proceed.</p>
+
+<p>The <i>authenticate</i> method will enter into a dialog with the server. For keyboard-interactive authentication, this entails sending a request to authenticate the user using this form of authentication, then waiting for any number of prompts for authentication. These prompts are then presented to the user, who enters his/her responses; the responses are then sent back to the server, which either allows or denies the user&#39;s credentials.</p>
+
+<p>The fact that this authentication method requires responses to interactive prompts requires that you only use this method in an interactive SSH connection.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

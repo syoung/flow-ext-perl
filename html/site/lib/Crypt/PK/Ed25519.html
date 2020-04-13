@@ -1,0 +1,347 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#generate_key">generate_key</a></li>
+      <li><a href="#import_key">import_key</a></li>
+      <li><a href="#import_key_raw">import_key_raw</a></li>
+      <li><a href="#export_key_der">export_key_der</a></li>
+      <li><a href="#export_key_pem">export_key_pem</a></li>
+      <li><a href="#export_key_jwk">export_key_jwk</a></li>
+      <li><a href="#export_key_raw">export_key_raw</a></li>
+      <li><a href="#sign_message">sign_message</a></li>
+      <li><a href="#verify_message">verify_message</a></li>
+      <li><a href="#is_private">is_private</a></li>
+      <li><a href="#key2hash">key2hash</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::PK::Ed25519 - Digital signature based on Ed25519</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use Crypt::PK::Ed25519;
+
+ #Signature: Alice
+ my $priv = Crypt::PK::Ed25519-&gt;new(&#39;Alice_priv_ed25519.der&#39;);
+ my $sig = $priv-&gt;sign_message($message);
+
+ #Signature: Bob (received $message + $sig)
+ my $pub = Crypt::PK::Ed25519-&gt;new(&#39;Alice_pub_ed25519.der&#39;);
+ $pub-&gt;verify_message($sig, $message) or die &quot;ERROR&quot;;
+
+ #Load key
+ my $pk = Crypt::PK::Ed25519-&gt;new;
+ my $pk_hex = &quot;A05D1AEA5830AC9A65CDFB384660D497E3697C46B419CF2CEC85DE8BD245459D&quot;;
+ $pk-&gt;import_key_raw(pack(&quot;H*&quot;, $pk_hex), &quot;public&quot;);
+ my $sk = Crypt::PK::Ed25519-&gt;new;
+ my $sk_hex = &quot;45C109BA6FD24E8B67D23EFB6B92D99CD457E2137172C0D749FE2B5A0C142DAD&quot;;
+ $sk-&gt;import_key_raw(pack(&quot;H*&quot;, $sk_hex), &quot;private&quot;);
+
+ #Key generation
+ my $pk = Crypt::PK::Ed25519-&gt;new-&gt;generate_key;
+ my $private_der = $pk-&gt;export_key_der(&#39;private&#39;);
+ my $public_der  = $pk-&gt;export_key_der(&#39;public&#39;);
+ my $private_pem = $pk-&gt;export_key_pem(&#39;private&#39;);
+ my $public_pem  = $pk-&gt;export_key_pem(&#39;public&#39;);
+ my $private_raw = $pk-&gt;export_key_raw(&#39;private&#39;);
+ my $public_raw  = $pk-&gt;export_key_raw(&#39;public&#39;);
+ my $private_jwk = $pk-&gt;export_key_jwk(&#39;private&#39;);
+ my $public_jwk  = $pk-&gt;export_key_jwk(&#39;public&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Since: CryptX-0.067</i></p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $pk = Crypt::PK::Ed25519-&gt;new();
+ #or
+ my $pk = Crypt::PK::Ed25519-&gt;new($priv_or_pub_key_filename);
+ #or
+ my $pk = Crypt::PK::Ed25519-&gt;new(\$buffer_containing_priv_or_pub_key);</code></pre>
+
+<p>Support for password protected PEM keys</p>
+
+<pre><code> my $pk = Crypt::PK::Ed25519-&gt;new($priv_pem_key_filename, $password);
+ #or
+ my $pk = Crypt::PK::Ed25519-&gt;new(\$buffer_containing_priv_pem_key, $password);</code></pre>
+
+<h2 id="generate_key">generate_key</h2>
+
+<p>Uses Yarrow-based cryptographically strong random number generator seeded with random data taken from <code>/dev/random</code> (UNIX) or <code>CryptGenRandom</code> (Win32).</p>
+
+<pre><code> $pk-&gt;generate_key;</code></pre>
+
+<h2 id="import_key">import_key</h2>
+
+<p>Loads private or public key in DER or PEM format.</p>
+
+<pre><code> $pk-&gt;import_key($filename);
+ #or
+ $pk-&gt;import_key(\$buffer_containing_key);</code></pre>
+
+<p>Support for password protected PEM keys:</p>
+
+<pre><code> $pk-&gt;import_key($filename, $password);
+ #or
+ $pk-&gt;import_key(\$buffer_containing_key, $password);</code></pre>
+
+<p>Loading private or public keys form perl hash:</p>
+
+<pre><code> $pk-&gt;import_key($hashref);
+
+ # the $hashref is either a key exported via key2hash
+ $pk-&gt;import_key({
+      curve =&gt; &quot;ed25519&quot;,
+      pub   =&gt; &quot;A05D1AEA5830AC9A65CDFB384660D497E3697C46B419CF2CEC85DE8BD245459D&quot;,
+      priv  =&gt; &quot;45C109BA6FD24E8B67D23EFB6B92D99CD457E2137172C0D749FE2B5A0C142DAD&quot;,
+ });
+
+ # or a hash with items corresponding to JWK (JSON Web Key)
+ $pk-&gt;import_key({
+       kty =&gt; &quot;OKP&quot;,
+       crv =&gt; &quot;Ed25519&quot;,
+       d   =&gt; &quot;RcEJum_STotn0j77a5LZnNRX4hNxcsDXSf4rWgwULa0&quot;,
+       x   =&gt; &quot;oF0a6lgwrJplzfs4RmDUl-NpfEa0Gc8s7IXei9JFRZ0&quot;,
+ });</code></pre>
+
+<p>Supported key formats:</p>
+
+<pre><code> # all formats can be loaded from a file
+ my $pk = Crypt::PK::Ed25519-&gt;new($filename);
+
+ # or from a buffer containing the key
+ my $pk = Crypt::PK::Ed25519-&gt;new(\$buffer_with_key);</code></pre>
+
+<ul>
+
+<li><p>Ed25519 private keys in PEM format</p>
+
+<pre><code> -----BEGIN ED25519 PRIVATE KEY-----
+ MC4CAQAwBQYDK2VwBCIEIEXBCbpv0k6LZ9I++2uS2ZzUV+ITcXLA10n+K1oMFC2t
+ -----END ED25519 PRIVATE KEY-----</code></pre>
+
+</li>
+<li><p>Ed25519 private keys in password protected PEM format</p>
+
+<pre><code> -----BEGIN ED25519 PRIVATE KEY-----
+ Proc-Type: 4,ENCRYPTED
+ DEK-Info: DES-CBC,6A64D756D49C1EFF
+
+ 8xQ7OyfQ10IITNEKcJGZA53Z1yk+NJQU7hrKqXwChZtgWNInhMBJRl9pozLKDSkH
+ v7u6EOve8NY=
+ -----END ED25519 PRIVATE KEY-----</code></pre>
+
+</li>
+<li><p>PKCS#8 private keys</p>
+
+<pre><code> -----BEGIN PRIVATE KEY-----
+ MC4CAQAwBQYDK2VwBCIEIEXBCbpv0k6LZ9I++2uS2ZzUV+ITcXLA10n+K1oMFC2t
+ -----END PRIVATE KEY-----</code></pre>
+
+</li>
+<li><p>PKCS#8 encrypted private keys</p>
+
+<pre><code> -----BEGIN ENCRYPTED PRIVATE KEY-----
+ MIGHMEsGCSqGSIb3DQEFDTA+MCkGCSqGSIb3DQEFDDAcBAjPx9JkdpRH2QICCAAw
+ DAYIKoZIhvcNAgkFADARBgUrDgMCBwQIWWieQojaWTcEOGj43SxqHUys4Eb2M27N
+ AkhqpmhosOxKrpGi0L3h8m8ipHE8EwI94NeOMsjfVw60aJuCrssY5vKN
+ -----END ENCRYPTED PRIVATE KEY-----</code></pre>
+
+</li>
+<li><p>Ed25519 public keys in PEM format</p>
+
+<pre><code> -----BEGIN PUBLIC KEY-----
+ MCowBQYDK2VwAyEAoF0a6lgwrJplzfs4RmDUl+NpfEa0Gc8s7IXei9JFRZ0=
+ -----END PUBLIC KEY-----</code></pre>
+
+</li>
+<li><p>Ed25519 public key from X509 certificate</p>
+
+<pre><code> -----BEGIN CERTIFICATE-----
+ MIIBODCB66ADAgECAhRWDU9FZBBUZ7KTdX8f7Bco8jsoaTAFBgMrZXAwETEPMA0G
+ A1UEAwwGQ3J5cHRYMCAXDTIwMDExOTEzMDIwMloYDzIyOTMxMTAyMTMwMjAyWjAR
+ MQ8wDQYDVQQDDAZDcnlwdFgwKjAFBgMrZXADIQCgXRrqWDCsmmXN+zhGYNSX42l8
+ RrQZzyzshd6L0kVFnaNTMFEwHQYDVR0OBBYEFHCGFtVibAxxWYyRt5wazMpqSZDV
+ MB8GA1UdIwQYMBaAFHCGFtVibAxxWYyRt5wazMpqSZDVMA8GA1UdEwEB/wQFMAMB
+ Af8wBQYDK2VwA0EAqG/+98smzqF/wmFX3zHXSaA67as202HnBJod1Tiurw1f+lr3
+ BX6OMtsDpgRq9O77IF1Qyx/MdJEwwErczOIbAA==
+ -----END CERTIFICATE-----</code></pre>
+
+</li>
+<li><p>SSH public Ed25519 keys</p>
+
+<pre><code> ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL0XsiFcRDp6Hpsoak8OdiiBMJhM2UKszNTxoGS7dJ++</code></pre>
+
+</li>
+<li><p>SSH public Ed25519 keys (RFC-4716 format)</p>
+
+<pre><code> ---- BEGIN SSH2 PUBLIC KEY ----
+ Comment: &quot;256-bit ED25519, converted from OpenSSH&quot;
+ AAAAC3NzaC1lZDI1NTE5AAAAIL0XsiFcRDp6Hpsoak8OdiiBMJhM2UKszNTxoGS7dJ++
+ ---- END SSH2 PUBLIC KEY ----</code></pre>
+
+</li>
+<li><p>Ed25519 private keys in JSON Web Key (JWK) format</p>
+
+<p>See <a href="https://tools.ietf.org/html/rfc8037">https://tools.ietf.org/html/rfc8037</a></p>
+
+<pre><code> {
+  &quot;kty&quot;:&quot;OKP&quot;,
+  &quot;crv&quot;:&quot;Ed25519&quot;,
+  &quot;x&quot;:&quot;oF0a6lgwrJplzfs4RmDUl-NpfEa0Gc8s7IXei9JFRZ0&quot;,
+  &quot;d&quot;:&quot;RcEJum_STotn0j77a5LZnNRX4hNxcsDXSf4rWgwULa0&quot;,
+ }</code></pre>
+
+<p><b>BEWARE:</b> For JWK support you need to have <a href="../../../../lib/perl5/5.26.3/JSON/PP.html">JSON::PP</a>, <a>JSON::XS</a> or <a>Cpanel::JSON::XS</a> module.</p>
+
+</li>
+<li><p>Ed25519 public keys in JSON Web Key (JWK) format</p>
+
+<pre><code> {
+  &quot;kty&quot;:&quot;OKP&quot;,
+  &quot;crv&quot;:&quot;Ed25519&quot;,
+  &quot;x&quot;:&quot;oF0a6lgwrJplzfs4RmDUl-NpfEa0Gc8s7IXei9JFRZ0&quot;,
+ }</code></pre>
+
+<p><b>BEWARE:</b> For JWK support you need to have <a href="../../../../lib/perl5/5.26.3/JSON/PP.html">JSON::PP</a>, <a>JSON::XS</a> or <a>Cpanel::JSON::XS</a> module.</p>
+
+</li>
+</ul>
+
+<h2 id="import_key_raw">import_key_raw</h2>
+
+<p>Import raw public/private key - can load raw key data exported by <a href="#export_key_raw">&quot;export_key_raw&quot;</a>.</p>
+
+<pre><code> $pk-&gt;import_key_raw($key, &#39;public&#39;);
+ $pk-&gt;import_key_raw($key, &#39;private&#39;);</code></pre>
+
+<h2 id="export_key_der">export_key_der</h2>
+
+<pre><code> my $private_der = $pk-&gt;export_key_der(&#39;private&#39;);
+ #or
+ my $public_der = $pk-&gt;export_key_der(&#39;public&#39;);</code></pre>
+
+<h2 id="export_key_pem">export_key_pem</h2>
+
+<pre><code> my $private_pem = $pk-&gt;export_key_pem(&#39;private&#39;);
+ #or
+ my $public_pem = $pk-&gt;export_key_pem(&#39;public&#39;);</code></pre>
+
+<p>Support for password protected PEM keys</p>
+
+<pre><code> my $private_pem = $pk-&gt;export_key_pem(&#39;private&#39;, $password);
+ #or
+ my $private_pem = $pk-&gt;export_key_pem(&#39;private&#39;, $password, $cipher);
+
+ # supported ciphers: &#39;DES-CBC&#39;
+ #                    &#39;DES-EDE3-CBC&#39;
+ #                    &#39;SEED-CBC&#39;
+ #                    &#39;CAMELLIA-128-CBC&#39;
+ #                    &#39;CAMELLIA-192-CBC&#39;
+ #                    &#39;CAMELLIA-256-CBC&#39;
+ #                    &#39;AES-128-CBC&#39;
+ #                    &#39;AES-192-CBC&#39;
+ #                    &#39;AES-256-CBC&#39; (DEFAULT)</code></pre>
+
+<h2 id="export_key_jwk">export_key_jwk</h2>
+
+<p>Exports public/private keys as a JSON Web Key (JWK).</p>
+
+<pre><code> my $private_json_text = $pk-&gt;export_key_jwk(&#39;private&#39;);
+ #or
+ my $public_json_text = $pk-&gt;export_key_jwk(&#39;public&#39;);</code></pre>
+
+<p>Also exports public/private keys as a perl HASH with JWK structure.</p>
+
+<pre><code> my $jwk_hash = $pk-&gt;export_key_jwk(&#39;private&#39;, 1);
+ #or
+ my $jwk_hash = $pk-&gt;export_key_jwk(&#39;public&#39;, 1);</code></pre>
+
+<p><b>BEWARE:</b> For JWK support you need to have <a href="../../../../lib/perl5/5.26.3/JSON/PP.html">JSON::PP</a>, <a>JSON::XS</a> or <a>Cpanel::JSON::XS</a> module.</p>
+
+<h2 id="export_key_raw">export_key_raw</h2>
+
+<p>Export raw public/private key</p>
+
+<pre><code> my $private_bytes = $pk-&gt;export_key_raw(&#39;private&#39;);
+ #or
+ my $public_bytes = $pk-&gt;export_key_raw(&#39;public&#39;);</code></pre>
+
+<h2 id="sign_message">sign_message</h2>
+
+<pre><code> my $signature = $priv-&gt;sign_message($message);</code></pre>
+
+<h2 id="verify_message">verify_message</h2>
+
+<pre><code> my $valid = $pub-&gt;verify_message($signature, $message)</code></pre>
+
+<h2 id="is_private">is_private</h2>
+
+<pre><code> my $rv = $pk-&gt;is_private;
+ # 1 .. private key loaded
+ # 0 .. public key loaded
+ # undef .. no key loaded</code></pre>
+
+<h2 id="key2hash">key2hash</h2>
+
+<pre><code> my $hash = $pk-&gt;key2hash;
+
+ # returns hash like this (or undef if no key loaded):
+ {
+   curve =&gt; &quot;ed25519&quot;,
+   # raw public key as a hexadecimal string
+   pub   =&gt; &quot;A05D1AEA5830AC9A65CDFB384660D497E3697C46B419CF2CEC85DE8BD245459D&quot;,
+   # raw private key as a hexadecimal string. undef if key is public only
+   priv  =&gt; &quot;45C109BA6FD24E8B67D23EFB6B92D99CD457E2137172C0D749FE2B5A0C142DAD&quot;,
+ }</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">https://en.wikipedia.org/wiki/EdDSA#Ed25519</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Curve25519">https://en.wikipedia.org/wiki/Curve25519</a></p>
+
+</li>
+<li><p><a href="https://tools.ietf.org/html/rfc8032">https://tools.ietf.org/html/rfc8032</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

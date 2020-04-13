@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#UTILITY-METHODS">UTILITY METHODS</a>
+    <ul>
+      <li><a href="#supported-auth_id-server_supports">supported( [ $auth_id [, $server_supports ] ])</a></li>
+      <li><a href="#id-auth_name">id( [ $auth_name ] )</a></li>
+      <li><a href="#name-auth_id">name( [ $auth_id ] )</a></li>
+      <li><a href="#auth_order">auth_order()</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTH-USAGE">AUTH USAGE</a>
+    <ul>
+      <li><a href="#Net::SSH::Perl::Auth-new-auth_name-ssh">Net::SSH::Perl::Auth-&gt;new($auth_name, $ssh)</a></li>
+      <li><a href="#valid-auth-authenticate">$valid = $auth-&gt;authenticate()</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTH-DEVELOPMENT">AUTH DEVELOPMENT</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Auth - Base authentication class, plus utility methods</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use Net::SSH::Perl::Cipher;
+
+   # Get list of supported authentication IDs.
+   my $supported = Net::SSH::Perl::Auth::supported();
+
+   # Translate an auth name into an ID.
+   my $id = Net::SSH::Perl::Auth::id($name);
+
+   # Translate an auth ID into a name.
+   my $name = Net::SSH::Perl::Auth::name($id);
+
+   # Get the order in which auth methods are tested.
+   my $order = Net::SSH::Perl::Auth::order();</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Auth</i> provides a base class for each of the authentication method classes. In addition, it defines a set of utility methods that can be called either as functions or object methods.</p>
+
+<h1 id="UTILITY-METHODS">UTILITY METHODS</h1>
+
+<h2 id="supported-auth_id-server_supports">supported( [ $auth_id [, $server_supports ] ])</h2>
+
+<p>Without arguments, returns a reference to an array of auth methods supported by <i>Net::SSH::Perl</i>. These are methods that have working Net::SSH::Perl::Auth:: implementations, essentially.</p>
+
+<p>With one argument <i>$auth_id</i>, returns a true value if that auth method is supported by <i>Net::SSH::Perl</i>, and false otherwise.</p>
+
+<p>With two arguments, <i>$auth_id</i> and <i>$server_supports</i>, returns true if the auth represented by <i>$auth_id</i> is supported both by <i>Net::SSH::Perl</i> and by the sshd server. The list of methods supported by the server should be in <i>$server_supports</i>, a bit mask sent from the server during the session identification phase.</p>
+
+<p>Can be called either as a non-exported function, i.e.</p>
+
+<pre><code>    my $i_support = Net::SSH::Perl::Auth::supported();</code></pre>
+
+<p>or as an object method of a <i>Net::SSH::Perl::Auth</i> object, or an object of a subclass (in which case the first argument should be <i>$server_supports</i>, not the <i>$auth_id</i>):</p>
+
+<pre><code>    if ($auth-&gt;supported($server_supports)) {
+        print &quot;Server supports auth method $auth&quot;;
+    }</code></pre>
+
+<h2 id="id-auth_name">id( [ $auth_name ] )</h2>
+
+<p>Translates an auth method name into an ID (suitable for sending to the sshd server, for example).</p>
+
+<p>If given <i>$auth_name</i> translates that name into the corresponding ID. If called as an object method, translates the object&#39;s auth class name into the ID.</p>
+
+<h2 id="name-auth_id">name( [ $auth_id ] )</h2>
+
+<p>Translates an auth method ID into a name.</p>
+
+<p>If given <i>$auth_id</i> translates that ID into the corresponding name. If called as an object method, returns the (stripped) object&#39;s auth class name; for example, if the object were of type <i>Net::SSH::Perl::Auth::Rhosts</i>, <i>name</i> would return <i>Rhosts</i>.</p>
+
+<h2 id="auth_order">auth_order()</h2>
+
+<p>Returns a reference to an array containing auth method IDs. These IDs describe the order in which authentication should be tested against the server. So, for example, if the array listed (2, 4, 3), then the client should test: RSA, then Rhosts-RSA, then Password authentication.</p>
+
+<h1 id="AUTH-USAGE">AUTH USAGE</h1>
+
+<h2 id="Net::SSH::Perl::Auth-new-auth_name-ssh">Net::SSH::Perl::Auth-&gt;new($auth_name, $ssh)</h2>
+
+<p>Instantiates a new auth object of the type <i>$auth_name</i>, and gives it the <i>Net::SSH::Perl</i> object <i>$ssh</i>, which should contain an open connection to an sshd server.</p>
+
+<p>Returns the auth object, which will be blessed into the actual auth subclass.</p>
+
+<h2 id="valid-auth-authenticate">$valid = $auth-&gt;authenticate()</h2>
+
+<p>Talks to the sshd server to authenticate the user; if valid, returns true, and if invalid, returns false.</p>
+
+<h1 id="AUTH-DEVELOPMENT">AUTH DEVELOPMENT</h1>
+
+<p>Classes implementing an authentication method must implement the following two methods:</p>
+
+<ul>
+
+<li><p>$class-&gt;new($ssh)</p>
+
+<p>Given a <i>Net::SSH::Perl</i> object <i>$ssh</i>, should construct a new auth object and bless it into <i>$class</i>, presumably.</p>
+
+</li>
+<li><p>$class-&gt;authenticate()</p>
+
+<p>Authenticate the current user with the remote daemon. This requires following the messaging protocol defined for your authentication method. All of the data you need--user name, password (if required), etc.--should be in the <i>$ssh</i> object.</p>
+
+<p>Returns 1 if the authentication is successful, 0 otherwise.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

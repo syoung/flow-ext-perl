@@ -1,0 +1,1 @@
+{"version":"1.10","dist":"Crypt-IDEA-1.10","name":"Crypt::IDEA","pathname":"D/DP/DPARIS/Crypt-IDEA-1.10.tar.gz","provides":{"IDEA":{"version":"1.10","file":"IDEA.pm"},"Crypt::IDEA":{"file":"IDEA.pm","version":"1.10"}},"target":"Crypt::IDEA"}

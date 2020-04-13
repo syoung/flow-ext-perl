@@ -1,0 +1,105 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#clone">clone</a></li>
+      <li><a href="#reset">reset</a></li>
+      <li><a href="#add">add</a></li>
+      <li><a href="#addfile">addfile</a></li>
+      <li><a href="#done">done</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Digest::SHAKE - Hash functions SHAKE128, SHAKE256 from SHA3 family</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   use Crypt::Digest::SHAKE
+
+   $d = Crypt::Digest::SHAKE-&gt;new(128);
+   $d-&gt;add(&#39;any data&#39;);
+   $d-&gt;addfile(&#39;filename.dat&#39;);
+   $d-&gt;addfile(*FILEHANDLE);
+   $part1 = $d-&gt;done(100); # 100 raw bytes
+   $part2 = $d-&gt;done(100); # another 100 raw bytes
+   #...</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to the SHA3&#39;s sponge function SHAKE.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> $d = Crypt::Digest::SHA3-SHAKE-&gt;new($num);
+ # $num ... 128 or 256</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<pre><code> $d-&gt;clone();</code></pre>
+
+<h2 id="reset">reset</h2>
+
+<pre><code> $d-&gt;reset();</code></pre>
+
+<h2 id="add">add</h2>
+
+<pre><code> $d-&gt;add(&#39;any data&#39;);
+ #or
+ $d-&gt;add(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="addfile">addfile</h2>
+
+<pre><code> $d-&gt;addfile(&#39;filename.dat&#39;);
+ #or
+ $d-&gt;addfile(*FILEHANDLE);</code></pre>
+
+<h2 id="done">done</h2>
+
+<pre><code> $result_raw = $d-&gt;done($len);
+ # can be called multiple times</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Digest.html">Crypt::Digest</a></p>
+
+</li>
+<li><p><a href="http://en.wikipedia.org/wiki/SHA-3">http://en.wikipedia.org/wiki/SHA-3</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

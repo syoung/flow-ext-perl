@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::OpenSSH::ShellQuoter::MSCmd - Quoter for Windows cmd.exe</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This quoter is intended for interaction with SSH servers running on Windows which invoke the requested commands through the <code>cmd.exe</code> shell.</p>
+
+<p>Because of <code>cmd.exe</code> not doing wildcard expansion (on Windows this task is left to the final command), glob quoting just quotes everything.</p>
+
+<p>Some Windows servers use <code>Win32::CreateProcess</code> to run the <code>cmd.exe</code> shell which runs the requested command. In that case, both the <code>MSCmd</code> and <code>MSWin</code> quoters have to be chained (and BTW, order matters):</p>
+
+<pre><code>   $ssh = Net::OpenSSH-&gt;new(...,
+                            remote_shell =&gt; &#39;MSCmd,MSWin&#39;);</code></pre>
+
+<p>Actually, <code>cmd.exe</code> may require not quoting at all when the requested command is a builtin (for instance, <code>echo</code>).</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>Copyright (C) 2008-2014 by Salvador Fandi&ntilde;o (sfandino@yahoo.com)</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself, either Perl version 5.10.0 or, at your option, any later version of Perl 5 you may have available.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,210 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#crc32-data">_crc32($data)</a></li>
+      <li><a href="#compute_session_id-check_bytes-host_key-public_key">_compute_session_id($check_bytes, $host_key, $public_key)</a></li>
+      <li><a href="#mp_linearize-int">_mp_linearize($int)</a></li>
+      <li><a href="#check_host_in_hostfile-host-host_file-host_key">_check_host_in_hostfile($host, $host_file, $host_key)</a></li>
+      <li><a href="#add_host_to_hostfile-host-host_file-host_key">_add_host_to_hostfile($host, $host_file, $host_key)</a></li>
+      <li><a href="#load_public_key-key_file">_load_public_key($key_file)</a></li>
+      <li><a href="#load_private_key-key_file-passphrase">_load_private_key($key_file [, $passphrase ])</a></li>
+      <li><a href="#save_private_key-key_file-key-passphrase-comment">_save_private_key($key_file, $key, [ $passphrase [, $comment ]])</a></li>
+      <li><a href="#prompt-prompt-default-echo">_prompt($prompt [, $default [, $echo ]])</a></li>
+      <li><a href="#read_passphrase-prompt">_read_passphrase($prompt)</a></li>
+      <li><a href="#read_yes_or_no-prompt">_read_yes_or_no($prompt)</a></li>
+      <li><a href="#respond_to_rsa_challenge-ssh-challenge-key">_respond_to_rsa_challenge($ssh, $challenge, $key)</a></li>
+      <li><a href="#rsa_public_encrypt-data-key">_rsa_public_encrypt($data, $key)</a></li>
+      <li><a href="#rsa_private_decrypt-data-key">_rsa_private_decrypt($data, $key)</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Util - Shared utility functions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Util qw( ... );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Util</i> contains a variety of exportable utility functions used by the various <i>Net::SSH::Perl</i> modules. These range from hostfile routines, to RSA encryption routines, etc.</p>
+
+<p>None of the routines are actually stored in the <i>Util</i> module itself; they are contained within sub-modules that are loaded on demand by the parent <i>Util</i> module, which contains a table mapping function names to sub-module names. The &quot;on demand&quot; is done by including either a function name, or a tag name (see below), in your <i>use</i> line. <i>Net::SSH::Perl::Util</i> will take care of loading the sub-module and importing the requested function(s) into your namespace.</p>
+
+<p>The routines are exportable by themselves, ie.</p>
+
+<pre><code>    use Net::SSH::Perl::Util qw( routine_name );</code></pre>
+
+<p>In addition, some of the routines are grouped into bundles that you can pull in by export tag, ie.</p>
+
+<pre><code>    use Net::SSH::Perl::Util qw( :bundle );</code></pre>
+
+<p>The groups are:</p>
+
+<ul>
+
+<li><p>hosts</p>
+
+<p>Routines associated with hostfile-checking, addition, etc. Contains <code>_check_host_in_hostfile</code> and <code>_add_host_to_hosfile</code>.</p>
+
+</li>
+<li><p>rsa</p>
+
+<p>Routines associated with RSA encryption, decryption, and authentication. Contains <code>_rsa_public_encrypt</code>, <code>_rsa_private_decrypt</code>, and <code>_respond_to_rsa_challenge</code>.</p>
+
+</li>
+<li><p>ssh1mp</p>
+
+<p>Routines associated with multiple-precision integers and the generation and manipulation of same. Contains <code>_mp_linearize</code> and <code>_compute_session_id</code>.</p>
+
+<p>Because the SSH1 implementation uses <i>Math::GMP</i> for its big integers, the functions in <i>ssh1mp</i> all deal with <i>Math::GMP</i> objects.</p>
+
+</li>
+<li><p>authfile</p>
+
+<p>Routines associated with loading of RSA SSH1 keys (both public and private) from keyfiles. Contains <code>_load_public_key</code>, <code>_load_private_key</code>, and <code>_save_private_key</code>.</p>
+
+<p>Note that this interface is deprecated in favor of the <i>Net::SSH::Perl::Key</i> interface to loading keys.</p>
+
+</li>
+<li><p>all</p>
+
+<p>All routines. Contains all of the routines listed below.</p>
+
+</li>
+</ul>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="crc32-data">_crc32($data)</h2>
+
+<p>Returns a CRC32 checksum of <i>$data</i>. This uses <i>String::CRC32</i> internally to do its magic, with the caveat that the &quot;init state&quot; of the checksum is <code>0xFFFFFFFF</code>, and the result is xor-ed with <code>0xFFFFFFFF</code>.</p>
+
+<p>This is used in SSH1.</p>
+
+<h2 id="compute_session_id-check_bytes-host_key-public_key">_compute_session_id($check_bytes, $host_key, $public_key)</h2>
+
+<p>Given the check bytes (<i>$check_bytes</i>) and the server host and public keys (<i>$host_key</i> and <i>$public_key</i>, respectively), computes the session ID that is then used to uniquely identify the session between the server and client.</p>
+
+<p><i>$host_key</i> and <i>$public_key</i> should be <i>Net::SSH::Perl::Key::RSA1</i> objects; <i>$check_bytes</i> is an 8-byte string.</p>
+
+<p>Returns the session ID.</p>
+
+<h2 id="mp_linearize-int">_mp_linearize($int)</h2>
+
+<p>Converts a multiple-precision integer <i>$int</i> into a byte string. <i>$int</i> should be a <i>Math::GMP</i> object.</p>
+
+<p>Returns the byte string.</p>
+
+<h2 id="check_host_in_hostfile-host-host_file-host_key">_check_host_in_hostfile($host, $host_file, $host_key)</h2>
+
+<p>Looks up <i>$host</i> in <i>$host_file</i> and checks the stored host key against <i>$host_key</i> to determine the status of the host.</p>
+
+<p><i>$host_key</i> should be an object of some subclass of <i>Net::SSH::Perl::Key</i>; in particular, it must support the <i>extract_public</i> class method and the <i>equal</i> object method.</p>
+
+<p>If the host is not found, returns HOST_NEW.</p>
+
+<p>If the host is found, and the keys match, returns HOST_OK.</p>
+
+<p>If the host is found, and the keys don&#39;t match, returns HOST_CHANGED, which generally indicates a security problem (ie. man-in-the-middle attack).</p>
+
+<h2 id="add_host_to_hostfile-host-host_file-host_key">_add_host_to_hostfile($host, $host_file, $host_key)</h2>
+
+<p>Opens up the known hosts file <i>$host_file</i> and adds an entry for <i>$host</i> with host key <i>$host_key</i>. Dies if <i>$host_file</i> can&#39;t be opened for writing.</p>
+
+<p><i>$host_key</i> should be an object of some subclass of <i>Net::SSH::Perl::Key</i>; in particular, it must support the <i>dump_public</i> object method.</p>
+
+<h2 id="load_public_key-key_file">_load_public_key($key_file)</h2>
+
+<p>Given the location of a public key file <i>$key_file</i>, reads the RSA public key from that file.</p>
+
+<p>If called in list context, returns the key and the comment associated with the key. If called in scalar context, returns only the key.</p>
+
+<p>Dies if: the key file <i>$key_file</i> can&#39;t be opened for reading; or the key file is &quot;bad&quot; (the ID string in the file doesn&#39;t match the PRIVATE_KEY_ID_STRING constant).</p>
+
+<p>Returns the RSA key (a <i>Net::SSH::Perl::Key::RSA1</i> object).</p>
+
+<h2 id="load_private_key-key_file-passphrase">_load_private_key($key_file [, $passphrase ])</h2>
+
+<p>Given the location of a private key file <i>$key_file</i>, and an optional passphrase to decrypt the key, reads the private key from that file. If <i>$passphrase</i> is not supplied, an empty passphrase (the empty string) is tried instead.</p>
+
+<p>If called in list context, returns the key and the comment associated with the key. If called in scalar context, returns only the key.</p>
+
+<p>Dies if: the key file <i>$key_file</i> can&#39;t be opened for reading; the key file is &quot;bad&quot; (the ID string in the file doesn&#39;t match the PRIVATE_KEY_ID_STRING constant); the file is encrypted using an unsupported encryption cipher; or the passphrase <i>$passphrase</i> is incorrect.</p>
+
+<p>Returns the RSA key (a <i>Net::SSH::Perl::Key::RSA1</i> object).</p>
+
+<h2 id="save_private_key-key_file-key-passphrase-comment">_save_private_key($key_file, $key, [ $passphrase [, $comment ]])</h2>
+
+<p>Given a private key <i>$key</i>, and the location of the private key file <i>$key_file</i>, writes out an SSH1 RSA key file to <i>$key_file</i>.</p>
+
+<p>If <i>$passphrase</i> is supplied, the private key portion of the file is encrypted with <i>3DES</i> encryption, using the passphrase <i>$passphrase</i>. If the passphrase is not supplied, an empty passphrase will be used instead. This is useful when using RSA authentication in a non-interactive process, for example.</p>
+
+<p><i>$comment</i> is an optional string that, if supplied, is inserted into the key file and can be used by clients when prompting for the passphrase upon loading the private key, etc. It should be somewhat descriptive of this key file.</p>
+
+<p><i>$key</i> should be a <i>Net::SSH::Perl::Key::RSA1</i> object.</p>
+
+<h2 id="prompt-prompt-default-echo">_prompt($prompt [, $default [, $echo ]])</h2>
+
+<p>Emits an interactive prompt <i>$prompt</i> with an optional default <i>$default</i>. If <i>$echo</i> is true, reads normally from <i>STDIN</i>; if <i>$echo</i> is false, calls <i>_read_passphrase</i> internally to read sensitive information with echo off.</p>
+
+<p>Returns the user&#39;s answer to the prompt, <i>$default</i> if no answer was provided.</p>
+
+<h2 id="read_passphrase-prompt">_read_passphrase($prompt)</h2>
+
+<p>Uses <i>Term::ReadKey</i> with echo off to read a passphrase, after issuing the prompt <i>$prompt</i>. Echo is restored once the passphrase has been read.</p>
+
+<h2 id="read_yes_or_no-prompt">_read_yes_or_no($prompt)</h2>
+
+<p>Issues the prompt <i>$prompt</i>, which should be a yes/no question; then reads the response, and returns true if the response is yes (or rather, anything starting with &#39;y&#39;, case insensitive).</p>
+
+<h2 id="respond_to_rsa_challenge-ssh-challenge-key">_respond_to_rsa_challenge($ssh, $challenge, $key)</h2>
+
+<p>Decrypts the RSA challenge <i>$challenge</i> using <i>$key</i>, then the response (MD5 of decrypted challenge and session ID) to the server, using the <i>$ssh</i> object, in an RSA response packet.</p>
+
+<h2 id="rsa_public_encrypt-data-key">_rsa_public_encrypt($data, $key)</h2>
+
+<p>Encrypts the multiple-precision integer <i>$data</i> (a <i>Math::GMP</i> object) using <i>$key</i>.</p>
+
+<p>Returns the encrypted data, also a <i>Math::GMP</i> object.</p>
+
+<h2 id="rsa_private_decrypt-data-key">_rsa_private_decrypt($data, $key)</h2>
+
+<p>Decrypts the multiple-precision integer <i>$data</i> (a <i>Math::GMP</i> object) using <i>$key</i>.</p>
+
+<p>Returns the decrypted data, also a <i>Math::GMP</i> object.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,571 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#dist_dir">dist_dir</a></li>
+      <li><a href="#new">new</a></li>
+      <li><a href="#cflags">cflags</a></li>
+      <li><a href="#cflags_static">cflags_static</a></li>
+      <li><a href="#libs">libs</a></li>
+      <li><a href="#libs_static">libs_static</a></li>
+      <li><a href="#version">version</a></li>
+      <li><a href="#atleast_version">atleast_version</a></li>
+      <li><a href="#exact_version">exact_version</a></li>
+      <li><a href="#max_version">max_version</a></li>
+      <li><a href="#version_cmp">version_cmp</a></li>
+      <li><a href="#install_type">install_type</a></li>
+      <li><a href="#config">config</a></li>
+      <li><a href="#dynamic_libs">dynamic_libs</a></li>
+      <li><a href="#bin_dir">bin_dir</a></li>
+      <li><a href="#alien_helper">alien_helper</a></li>
+      <li><a href="#inline_auto_include">inline_auto_include</a></li>
+      <li><a href="#runtime_prop">runtime_prop</a></li>
+      <li><a href="#alt">alt</a></li>
+      <li><a href="#alt_names">alt_names</a></li>
+      <li><a href="#alt_exists">alt_exists</a></li>
+    </ul>
+  </li>
+  <li><a href="#SUPPORT-AND-CONTRIBUTING">SUPPORT AND CONTRIBUTING</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#THANKS">THANKS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Base - Base classes for Alien:: modules</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> package Alien::MyLibrary;
+ 
+ use strict;
+ use warnings;
+ 
+ use parent &#39;Alien::Base&#39;;
+ 
+ 1;</code></pre>
+
+<p>(for details on the <code>Makefile.PL</code> or <code>Build.PL</code> and <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> that should be bundled with your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> subclass, please see <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienAuthor.html">Alien::Build::Manual::AlienAuthor</a>).</p>
+
+<p>Then a <code>MyLibrary::XS</code> can use <code>Alien::MyLibrary</code> in its <code>Makefile.PL</code>:</p>
+
+<pre><code> use Alien::MyLibrary
+ use ExtUtils::MakeMaker;
+ use Alien::Base::Wrapper qw( Alien::MyLibrary !export );
+ use Config;
+ 
+ WriteMakefile(
+   ...
+   Alien::Base::Wrapper-&gt;mm_args,
+   ...
+ );</code></pre>
+
+<p>Or if you prefer <a href="../../../lib/perl5/site_perl/5.26.3/Module/Build.html">Module::Build</a>, in its <code>Build.PL</code>:</p>
+
+<pre><code> use Alien::MyLibrary;
+ use Module::Build 0.28; # need at least 0.28
+ use Alien::Base::Wrapper qw( Alien::MyLibrary !export );
+ 
+ my $builder = Module::Build-&gt;new(
+   ...
+   Alien::Base::Wrapper-&gt;mb_args,
+   ...
+ );
+ 
+ $builder-&gt;create_build_script;</code></pre>
+
+<p>Or if you are using <a href="../../../lib/perl5/site_perl/5.26.3/ExtUtils/Depends.html">ExtUtils::Depends</a>:</p>
+
+<pre><code> use ExtUtils::MakeMaker;
+ use ExtUtils::Depends;
+ my $eud = ExtUtils::Depends-&gt;new(qw( MyLibrary::XS Alien::MyLibrary ));
+ WriteMakefile(
+   ...
+   $eud-&gt;get_makefile_vars
+ );</code></pre>
+
+<p>If you are using <a href="Alien:Base::ModuleBuild">Alien:Base::ModuleBuild</a> instead of the recommended <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> and <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>, then in your <code>MyLibrary::XS</code> module, you may need something like this in your main <code>.pm</code> file IF your library uses dynamic libraries:</p>
+
+<pre><code> package MyLibrary::XS;
+ 
+ use Alien::MyLibrary; # may only be needed if you are using Alien::Base::ModuleBuild
+ 
+ ...</code></pre>
+
+<p>Or you can use it from an FFI module:</p>
+
+<pre><code> package MyLibrary::FFI;
+ 
+ use Alien::MyLibrary;
+ use FFI::Platypus;
+ 
+ my $ffi = FFI::Platypus-&gt;new;
+ $ffi-&gt;lib(Alien::MyLibrary-&gt;dynamic_libs);
+ 
+ $ffi-&gt;attach( &#39;my_library_function&#39; =&gt; [] =&gt; &#39;void&#39; );</code></pre>
+
+<p>You can even use it with <a>Inline</a> (C and C++ languages are supported):</p>
+
+<pre><code> package MyLibrary::Inline;
+ 
+ use Alien::MyLibrary;
+ # Inline 0.56 or better is required
+ use Inline 0.56 with =&gt; &#39;Alien::MyLibrary&#39;;
+ ...</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><b>NOTE</b>: <a>Alien::Base::ModuleBuild</a> is no longer bundled with <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> and has been spun off into a separate distribution. <a>Alien::Build::ModuleBuild</a> will be a prerequisite for <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> until October 1, 2017. If you are using <a>Alien::Base::ModuleBuild</a> you need to make sure it is declared as a <code>configure_requires</code> in your <code>Build.PL</code>. You may want to also consider using <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> and <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> as a more modern alternative.</p>
+
+<p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> comprises base classes to help in the construction of <code>Alien::</code> modules. Modules in the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> namespace are used to locate and install (if necessary) external libraries needed by other Perl modules.</p>
+
+<p>This is the documentation for the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> module itself. If you are starting out you probably want to do so from one of these documents:</p>
+
+<dl>
+
+<dt id="Alien::Build::Manual::AlienUser"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienUser.html">Alien::Build::Manual::AlienUser</a></dt>
+<dd>
+
+<p>For users of an <code>Alien::libfoo</code> that is implemented using <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>. (The developer of <code>Alien::libfoo</code> <i>should</i> provide the documentation necessary, but if not, this is the place to start).</p>
+
+</dd>
+<dt id="Alien::Build::Manual::AlienAuthor"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienAuthor.html">Alien::Build::Manual::AlienAuthor</a></dt>
+<dd>
+
+<p>If you are writing your own <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> based on <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> and <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>.</p>
+
+</dd>
+<dt id="Alien::Build::Manual::FAQ"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/FAQ.html">Alien::Build::Manual::FAQ</a></dt>
+<dd>
+
+<p>If you have a common question that has already been answered, like &quot;How do I use <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> with some build system&quot;.</p>
+
+</dd>
+<dt id="Alien::Build::Manual::PluginAuthor"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/PluginAuthor.html">Alien::Build::Manual::PluginAuthor</a></dt>
+<dd>
+
+<p>This is for the brave souls who want to write plugins that will work with <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> + <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+</dd>
+</dl>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>In the example snippets here, <code>Alien::MyLibrary</code> represents any subclass of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>.</p>
+
+<h2 id="dist_dir">dist_dir</h2>
+
+<pre><code> my $dir = Alien::MyLibrary-&gt;dist_dir;</code></pre>
+
+<p>Returns the directory that contains the install root for the packaged software, if it was built from install (i.e., if <code>install_type</code> is <code>share</code>).</p>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $alien = Alien::MyLibrary-&gt;new;</code></pre>
+
+<p>Creates an instance of an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> object. This is typically unnecessary.</p>
+
+<h2 id="cflags">cflags</h2>
+
+<pre><code> my $cflags = Alien::MyLibrary-&gt;cflags;
+ 
+ use Text::ParseWords qw( shellwords );
+ my @cflags = shellwords( Alien::MyLibrary-&gt;cflags );</code></pre>
+
+<p>Returns the C compiler flags necessary to compile an XS module using the alien software. If you need this in list form (for example if you are calling system with a list argument) you can pass this value into <code>shellwords</code> from the Perl core <a href="../../../lib/perl5/5.26.3/Text/ParseWords.html">Text::ParseWords</a> module.</p>
+
+<h2 id="cflags_static">cflags_static</h2>
+
+<pre><code> my $cflags = Alien::MyLibrary-&gt;cflags_static;</code></pre>
+
+<p>Same as <code>cflags</code> above, but gets the static compiler flags, if they are different.</p>
+
+<h2 id="libs">libs</h2>
+
+<pre><code> my $libs = Alien::MyLibrary-&gt;libs;
+ 
+ use Text::ParseWords qw( shellwords );
+ my @cflags = shellwords( Alien::MyLibrary-&gt;libs );</code></pre>
+
+<p>Returns the library linker flags necessary to link an XS module against the alien software. If you need this in list form (for example if you are calling system with a list argument) you can pass this value into <code>shellwords</code> from the Perl core <a href="../../../lib/perl5/5.26.3/Text/ParseWords.html">Text::ParseWords</a> module.</p>
+
+<h2 id="libs_static">libs_static</h2>
+
+<pre><code> my $libs = Alien::MyLibrary-&gt;libs_static;</code></pre>
+
+<p>Same as <code>libs</code> above, but gets the static linker flags, if they are different.</p>
+
+<h2 id="version">version</h2>
+
+<pre><code> my $version = Alien::MyLibrary-&gt;version;</code></pre>
+
+<p>Returns the version of the alienized library or tool that was determined at install time.</p>
+
+<h2 id="atleast_version">atleast_version</h2>
+
+<h2 id="exact_version">exact_version</h2>
+
+<h2 id="max_version">max_version</h2>
+
+<pre><code> my $ok = Alien::MyLibrary-&gt;atleast_version($wanted_version);
+ my $ok = Alien::MyLibrary-&gt;exact_version($wanted_version);
+ my $ok = Alien::MyLibrary-&gt;max_version($wanted_version);</code></pre>
+
+<p>Returns true if the version of the alienized library or tool is at least, exactly, or at most the version specified, respectively.</p>
+
+<h2 id="version_cmp">version_cmp</h2>
+
+<pre><code>  $cmp = Alien::MyLibrary-&gt;version_cmp($x, $y)</code></pre>
+
+<p>Comparison method used by <a>atleast_version</a>, <a>exact_version</a> and <a>max_version</a>. May be useful to implement custom comparisons, or for subclasses to overload to get different version comparison semantics than the default rules, for packages that have some other rules than the <i>pkg-config</i> behaviour.</p>
+
+<p>Should return a number less than, equal to, or greater than zero; similar in behaviour to the <code>&lt;=&gt;</code> and <code>cmp</code> operators.</p>
+
+<h2 id="install_type">install_type</h2>
+
+<pre><code> my $install_type = Alien::MyLibrary-&gt;install_type;
+ my $bool = Alien::MyLibrary-&gt;install_type($install_type);</code></pre>
+
+<p>Returns the install type that was used when <code>Alien::MyLibrary</code> was installed. If a type is provided (the second form in the synopsis) returns true if the actual install type matches. Types include:</p>
+
+<dl>
+
+<dt id="system">system</dt>
+<dd>
+
+<p>The library was provided by the operating system</p>
+
+</dd>
+<dt id="share">share</dt>
+<dd>
+
+<p>The library was not available when <code>Alien::MyLibrary</code> was installed, so it was built from source code, either downloaded from the Internet or bundled with <code>Alien::MyLibrary</code>.</p>
+
+</dd>
+</dl>
+
+<h2 id="config">config</h2>
+
+<pre><code> my $value = Alien::MyLibrary-&gt;config($key);</code></pre>
+
+<p>Returns the configuration data as determined during the install of <a>Alien::MyLibrary</a>. For the appropriate config keys, see <a>Alien::Base::ModuleBuild::API#CONFIG-DATA</a>.</p>
+
+<p>This is not typically used by <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> and <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>, but a compatible interface will be provided.</p>
+
+<h2 id="dynamic_libs">dynamic_libs</h2>
+
+<pre><code> my @dlls = Alien::MyLibrary-&gt;dynamic_libs;
+ my($dll) = Alien::MyLibrary-&gt;dynamic_libs;</code></pre>
+
+<p>Returns a list of the dynamic library or shared object files for the alien software.</p>
+
+<h2 id="bin_dir">bin_dir</h2>
+
+<pre><code> my(@dir) = Alien::MyLibrary-&gt;bin_dir</code></pre>
+
+<p>Returns a list of directories with executables in them. For a <code>system</code> install this will be an empty list. For a <code>share</code> install this will be a directory under <code>dist_dir</code> named <code>bin</code> if it exists. You may wish to override the default behavior if you have executables or scripts that get installed into non-standard locations.</p>
+
+<p>Example usage:</p>
+
+<pre><code> use Env qw( @PATH );
+ 
+ unshft @PATH, Alien::MyLibrary-&gt;bin_dir;</code></pre>
+
+<h2 id="alien_helper">alien_helper</h2>
+
+<pre><code> my $helpers = Alien::MyLibrary-&gt;alien_helper;</code></pre>
+
+<p>Returns a hash reference of helpers provided by the Alien module. The keys are helper names and the values are code references. The code references will be executed at command time and the return value will be interpolated into the command before execution. The default implementation returns an empty hash reference, and you are expected to override the method to create your own helpers.</p>
+
+<p>For use with commands specified in and <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> or in your <code>Build.Pl</code> when used with <a>Alien::Base::ModuleBuild</a>.</p>
+
+<p>Helpers allow users of your Alien module to use platform or environment determined logic to compute command names or arguments in your installer logic. Helpers allow you to do this without making your Alien module a requirement when a build from source code is not necessary.</p>
+
+<p>As a concrete example, consider <a>Alien::gmake</a>, which provides the helper <code>gmake</code>:</p>
+
+<pre><code> package Alien::gmake;
+ 
+ ...
+ 
+ sub alien_helper {
+   my($class) = @_;
+   return {
+     gmake =&gt; sub {
+       # return the executable name for GNU make,
+       # usually either make or gmake depending on
+       # the platform and environment
+       $class-&gt;exe;
+     }
+   },
+ }</code></pre>
+
+<p>Now consider <a>Alien::nasm</a>. <code>nasm</code> requires GNU Make to build from source code, but if the system <code>nasm</code> package is installed we don&#39;t need it. From the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> of <code>Alien::nasm</code>:</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;Probe::CommandLine&#39; =&gt; (
+   command =&gt; &#39;nasm&#39;,
+   args    =&gt; [&#39;-v&#39;],
+   match   =&gt; qr/NASM version/,
+ );
+ 
+ share {
+   ...
+   plugin &#39;Extract&#39; =&gt; &#39;tar.gz&#39;;
+   plugin &#39;Build::MSYS&#39;;
+ 
+   build [
+     &#39;sh configure --prefix=%{alien.install.prefix}&#39;,
+     &#39;%{gmake}&#39;,
+     &#39;%{gmake} install&#39;,
+   ];
+ };
+ 
+ ...</code></pre>
+
+<h2 id="inline_auto_include">inline_auto_include</h2>
+
+<pre><code> my(@headers) = Alien::MyLibrary-&gt;inline_auto_include;</code></pre>
+
+<p>List of header files to automatically include in inline C and C++ code when using <a>Inline::C</a> or <a>Inline::CPP</a>. This is provided as a public interface primarily so that it can be overridden at run time. This can also be specified in your <code>Build.PL</code> with <a>Alien::Base::ModuleBuild</a> using the <code>alien_inline_auto_include</code> property.</p>
+
+<h2 id="runtime_prop">runtime_prop</h2>
+
+<pre><code> my $hashref = Alien::MyLibrary-&gt;runtime_prop;</code></pre>
+
+<p>Returns a hash reference of the runtime properties computed by <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> during its install process. If the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> based <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> was not built using <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, then this will return undef.</p>
+
+<h2 id="alt">alt</h2>
+
+<pre><code> my $new_alien = Alien::MyLibrary-&gt;alt($alt_name);
+ my $new_alien = $old_alien-&gt;alt($alt_name);</code></pre>
+
+<p>Returns an <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> instance with the alternate configuration.</p>
+
+<p>Some packages come with multiple libraries, and multiple <code>.pc</code> files to use with them. This method can be used with <code>pkg-config</code> plugins to access different configurations. (It could also be used with non-pkg-config based packages too, though there are not as of this writing any build time plugins that take advantage of this feature).</p>
+
+<p>From your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a></p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;PkgConfig&#39; =&gt; (
+   pkg_name =&gt; [ &#39;libfoo&#39;, &#39;libbar&#39;, ],
+ );</code></pre>
+
+<p>Then in your base class:</p>
+
+<pre><code> package Alien::MyLibrary;
+ 
+ use base qw( Alien::Base );
+ use Role::Tiny::With qw( with );
+ 
+ with &#39;Alien::Role::Alt&#39;;
+ 
+ 1;</code></pre>
+
+<p>Then you can use it:</p>
+
+<pre><code> use Alien::MyLibrary;
+ 
+ my $cflags = Alien::MyLibrary-&gt;alt(&#39;foo1&#39;)-&gt;cflags;
+ my $libs   = Alien::MyLibrary-&gt;alt(&#39;foo1&#39;)-&gt;libs;</code></pre>
+
+<h2 id="alt_names">alt_names</h2>
+
+<pre><code> my @alt_names = Alien::MyLibrary-&gt;alt_names</code></pre>
+
+<p>Returns the list of all available alternative configuration names.</p>
+
+<h2 id="alt_exists">alt_exists</h2>
+
+<pre><code> my $bool = Alien::MyLibrary-&gt;alt_exists($alt_name)</code></pre>
+
+<p>Returns true if the given alternative configuration exists.</p>
+
+<h1 id="SUPPORT-AND-CONTRIBUTING">SUPPORT AND CONTRIBUTING</h1>
+
+<p>First check the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/FAQ.html">Alien::Build::Manual::FAQ</a> for questions that have already been answered.</p>
+
+<p>IRC: #native on irc.perl.org</p>
+
+<p><a href="http://chat.mibbit.com/#native@irc.perl.org">(click for instant chatroom login)</a></p>
+
+<p>If you find a bug, please report it on the projects issue tracker on GitHub:</p>
+
+<dl>
+
+<dt id="https:-github.com-Perl5-Alien-Alien-Base-issues"><a href="https://github.com/Perl5-Alien/Alien-Base/issues">https://github.com/Perl5-Alien/Alien-Base/issues</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>Development is discussed on the projects google groups. This is also a reasonable place to post a question if you don&#39;t want to open an issue in GitHub.</p>
+
+<dl>
+
+<dt id="https:-groups.google.com-forum-forum-perl5-alien"><a href="https://groups.google.com/forum/#!forum/perl5-alien">https://groups.google.com/forum/#!forum/perl5-alien</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>If you have implemented a new feature or fixed a bug, please open a pull request.</p>
+
+<dl>
+
+<dt id="https:-github.com-Perl5-Alien-Alien-Base-pulls"><a href="https://github.com/Perl5-Alien/Alien-Base/pulls">https://github.com/Perl5-Alien/Alien-Base/pulls</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a></p>
+
+</li>
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a></p>
+
+</li>
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a></p>
+
+</li>
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/FAQ.html">Alien::Build::Manual::FAQ</a></p>
+
+</li>
+</ul>
+
+<h1 id="THANKS">THANKS</h1>
+
+<p><code>Alien::Base</code> was originally written by Joel Berger, and that code is still Copyright (C) 2012-2017 Joel Berger. It has the same license as the rest of the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>.</p>
+
+<p>Special thanks for the early development of <code>Alien::Base</code> go to:</p>
+
+<dl>
+
+<dt id="Christian-Walde-Mithaldu">Christian Walde (Mithaldu)</dt>
+<dd>
+
+<p>For productive conversations about component interoperability.</p>
+
+</dd>
+<dt id="kmx">kmx</dt>
+<dd>
+
+<p>For writing Alien::Tidyp from which I drew many of my initial ideas.</p>
+
+</dd>
+<dt id="David-Mertens-run4flat">David Mertens (run4flat)</dt>
+<dd>
+
+<p>For productive conversations about implementation.</p>
+
+</dd>
+<dt id="Mark-Nunberg-mordy-mnunberg">Mark Nunberg (mordy, mnunberg)</dt>
+<dd>
+
+<p>For graciously teaching me about rpath and dynamic loading,</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

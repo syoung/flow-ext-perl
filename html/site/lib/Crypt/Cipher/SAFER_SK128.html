@@ -1,0 +1,140 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#encrypt">encrypt</a></li>
+      <li><a href="#decrypt">decrypt</a></li>
+      <li><a href="#keysize">keysize</a></li>
+      <li><a href="#blocksize">blocksize</a></li>
+      <li><a href="#max_keysize">max_keysize</a></li>
+      <li><a href="#min_keysize">min_keysize</a></li>
+      <li><a href="#default_rounds">default_rounds</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Cipher::SAFER_SK128 - Symmetric cipher SAFER_SK128, key size: 128 bits (Crypt::CBC compliant)</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  ### example 1
+  use Crypt::Mode::CBC;
+
+  my $key = &#39;...&#39;; # length has to be valid key size for this cipher
+  my $iv = &#39;...&#39;;  # 16 bytes
+  my $cbc = Crypt::Mode::CBC-&gt;new(&#39;SAFER_SK128&#39;);
+  my $ciphertext = $cbc-&gt;encrypt(&quot;secret data&quot;, $key, $iv);
+
+  ### example 2 (slower)
+  use Crypt::CBC;
+  use Crypt::Cipher::SAFER_SK128;
+
+  my $key = &#39;...&#39;; # length has to be valid key size for this cipher
+  my $iv = &#39;...&#39;;  # 16 bytes
+  my $cbc = Crypt::CBC-&gt;new( -cipher=&gt;&#39;Cipher::SAFER_SK128&#39;, -key=&gt;$key, -iv=&gt;$iv );
+  my $ciphertext = $cbc-&gt;encrypt(&quot;secret data&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements the SAFER_SK128 cipher. Provided interface is compliant with <a>Crypt::CBC</a> module.</p>
+
+<p><b>BEWARE:</b> This module implements just elementary &quot;one-block-(en|de)cryption&quot; operation - if you want to encrypt/decrypt generic data you have to use some of the cipher block modes - check for example <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Mode/CBC.html">Crypt::Mode::CBC</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Mode/CTR.html">Crypt::Mode::CTR</a> or <a>Crypt::CBC</a> (which will be slower).</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> $c = Crypt::Cipher::SAFER_SK128-&gt;new($key);
+ #or
+ $c = Crypt::Cipher::SAFER_SK128-&gt;new($key, $rounds);</code></pre>
+
+<h2 id="encrypt">encrypt</h2>
+
+<pre><code> $ciphertext = $c-&gt;encrypt($plaintext);</code></pre>
+
+<h2 id="decrypt">decrypt</h2>
+
+<pre><code> $plaintext = $c-&gt;decrypt($ciphertext);</code></pre>
+
+<h2 id="keysize">keysize</h2>
+
+<pre><code>  $c-&gt;keysize;
+  #or
+  Crypt::Cipher::SAFER_SK128-&gt;keysize;
+  #or
+  Crypt::Cipher::SAFER_SK128::keysize;</code></pre>
+
+<h2 id="blocksize">blocksize</h2>
+
+<pre><code>  $c-&gt;blocksize;
+  #or
+  Crypt::Cipher::SAFER_SK128-&gt;blocksize;
+  #or
+  Crypt::Cipher::SAFER_SK128::blocksize;</code></pre>
+
+<h2 id="max_keysize">max_keysize</h2>
+
+<pre><code>  $c-&gt;max_keysize;
+  #or
+  Crypt::Cipher::SAFER_SK128-&gt;max_keysize;
+  #or
+  Crypt::Cipher::SAFER_SK128::max_keysize;</code></pre>
+
+<h2 id="min_keysize">min_keysize</h2>
+
+<pre><code>  $c-&gt;min_keysize;
+  #or
+  Crypt::Cipher::SAFER_SK128-&gt;min_keysize;
+  #or
+  Crypt::Cipher::SAFER_SK128::min_keysize;</code></pre>
+
+<h2 id="default_rounds">default_rounds</h2>
+
+<pre><code>  $c-&gt;default_rounds;
+  #or
+  Crypt::Cipher::SAFER_SK128-&gt;default_rounds;
+  #or
+  Crypt::Cipher::SAFER_SK128::default_rounds;</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Cipher.html">Crypt::Cipher</a></p>
+
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/SAFER">https://en.wikipedia.org/wiki/SAFER</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

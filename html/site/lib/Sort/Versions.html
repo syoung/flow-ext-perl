@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#REPOSITORY">REPOSITORY</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Sort::Versions - a perl 5 module for sorting of revision-like numbers</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>        use Sort::Versions;
+        @l = sort { versioncmp($a, $b) } qw( 1.2 1.2.0 1.2a.0 1.2.a 1.a 02.a );
+
+        ...
+
+        use Sort::Versions;
+        print &#39;lower&#39; if versioncmp(&#39;1.2&#39;, &#39;1.2a&#39;) == -1;
+
+        ...
+
+        use Sort::Versions;
+        %h = (1 =&gt; &#39;d&#39;, 2 =&gt; &#39;c&#39;, 3 =&gt; &#39;b&#39;, 4 =&gt; &#39;a&#39;);
+        @h = sort { versioncmp($h{$a}, $h{$b}) } keys %h;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Sort::Versions allows easy sorting of mixed non-numeric and numeric strings, like the &#39;version numbers&#39; that many shared library systems and revision control packages use. This is quite useful if you are trying to deal with shared libraries. It can also be applied to applications that intersperse variable-width numeric fields within text. Other applications can undoubtedly be found.</p>
+
+<p>For an explanation of the algorithm, it&#39;s simplest to look at these examples:</p>
+
+<pre><code>  1.1   &lt;  1.2
+  1.1a  &lt;  1.2
+  1.1   &lt;  1.1.1
+  1.1   &lt;  1.1a
+  1.1.a &lt;  1.1a
+  1     &lt;  a
+  a     &lt;  b
+  1     &lt;  2
+  1.1-3 &lt;  1.1-4
+  1.1-5 &lt;  1.1.6</code></pre>
+
+<p>More precisely (but less comprehensibly), the two strings are treated as subunits delimited by periods or hyphens. Each subunit can contain any number of groups of digits or non-digits. If digit groups are being compared on both sides, a numeric comparison is used, otherwise a ASCII ordering is used. A group or subgroup with more units will win if all comparisons are equal. A period binds digit groups together more tightly than a hyphen.</p>
+
+<p>Some packages use a different style of version numbering: a simple real number written as a decimal. Sort::Versions has limited support for this style: when comparing two subunits which are both digit groups, if either subunit has a leading zero, then both are treated like digits after a decimal point. So for example:</p>
+
+<pre><code>  0002  &lt;  1
+  1.06  &lt;  1.5</code></pre>
+
+<p>This won&#39;t always work, because there won&#39;t always be a leading zero in real-number style version numbers. There is no way for Sort::Versions to know which style was intended. But a lot of the time it will do the right thing. If you are making up version numbers, the style with (possibly) more than one dot is the style to use.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p>The function <code>versioncmp()</code> takes two arguments and compares them like <code>cmp</code>. With perl 5.6 or later, you can also use this function directly in sorting:</p>
+
+<pre><code>    @l = sort versioncmp qw(1.1 1.2 1.0.3);</code></pre>
+
+<p>The function <code>versions()</code> can be used directly as a sort function even on perl 5.005 and earlier, but its use is deprecated.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../lib/perl5/5.26.3/version.html">version</a>, <a href="../../../lib/perl5/5.26.3/CPAN/Version.html">CPAN::Version</a> which is part of the <a href="../../../lib/perl5/5.26.3/CPAN.html">CPAN</a> distribution.</p>
+
+<h1 id="REPOSITORY">REPOSITORY</h1>
+
+<p><a href="https://github.com/neilb/Sort-Versions">https://github.com/neilb/Sort-Versions</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ed Avis &lt;ed@membled.com&gt; and Matt Johnson &lt;mwj99@doc.ic.ac.uk&gt; for recent releases; the original author is Kenneth J. Albanowski &lt;kjahds@kjahds.com&gt;. Thanks to Hack Kampbj&oslash;rn and Slaven Rezic for patches and bug reports.</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 1996 by Kenneth J. Albanowski.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

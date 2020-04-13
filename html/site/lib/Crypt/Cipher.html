@@ -1,0 +1,169 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#encrypt">encrypt</a></li>
+      <li><a href="#decrypt">decrypt</a></li>
+      <li><a href="#keysize">keysize</a></li>
+      <li><a href="#max_keysize">max_keysize</a></li>
+      <li><a href="#min_keysize">min_keysize</a></li>
+      <li><a href="#blocksize">blocksize</a></li>
+      <li><a href="#default_rounds">default_rounds</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Cipher - Generic interface to cipher functions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   #### example 1 (encrypting single block)
+   use Crypt::Cipher;
+
+   my $key = &#39;...&#39;; # length has to be valid key size for this cipher
+   my $c = Crypt::Cipher-&gt;new(&#39;AES&#39;, $key);
+   my $blocksize  = $c-&gt;blocksize;
+   my $ciphertext = $c-&gt;encrypt(&#39;plain text block&#39;); #encrypt 1 block
+   my $plaintext  = $c-&gt;decrypt($ciphertext);         #decrypt 1 block
+
+   ### example 2 (using CBC mode)
+   use Crypt::Mode::CBC;
+
+   my $key = &#39;...&#39;; # length has to be valid key size for this cipher
+   my $iv = &#39;...&#39;;  # 16 bytes
+   my $cbc = Crypt::Mode::CBC-&gt;new(&#39;AES&#39;);
+   my $ciphertext = $cbc-&gt;encrypt(&quot;secret data&quot;, $key, $iv);
+
+   #### example 3 (compatibility with Crypt::CBC)
+   use Crypt::CBC;
+   use Crypt::Cipher;
+
+   my $key = &#39;...&#39;; # length has to be valid key size for this cipher
+   my $iv = &#39;...&#39;;  # 16 bytes
+   my $cipher = Crypt::Cipher(&#39;AES&#39;, $key);
+   my $cbc = Crypt::CBC-&gt;new( -cipher=&gt;$cipher, -iv=&gt;$iv );
+   my $ciphertext = $cbc-&gt;encrypt(&quot;secret data&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to various symmetric cipher algorithms.</p>
+
+<p><b>BEWARE:</b> This module implements just elementary &quot;one-block-(en|de)cryption&quot; operation - if you want to encrypt/decrypt generic data you have to use some of the cipher block modes - check for example <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Mode/CBC.html">Crypt::Mode::CBC</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Mode/CTR.html">Crypt::Mode::CTR</a> or <a>Crypt::CBC</a> (which will be slower).</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<p>Constructor, returns a reference to the cipher object.</p>
+
+<pre><code> ## basic scenario
+ $d = Crypt::Cipher-&gt;new($name, $key);
+ # $name = one of &#39;AES&#39;, &#39;Anubis&#39;, &#39;Blowfish&#39;, &#39;CAST5&#39;, &#39;Camellia&#39;, &#39;DES&#39;, &#39;DES_EDE&#39;,
+ #                &#39;KASUMI&#39;, &#39;Khazad&#39;, &#39;MULTI2&#39;, &#39;Noekeon&#39;, &#39;RC2&#39;, &#39;RC5&#39;, &#39;RC6&#39;,
+ #                &#39;SAFERP&#39;, &#39;SAFER_K128&#39;, &#39;SAFER_K64&#39;, &#39;SAFER_SK128&#39;, &#39;SAFER_SK64&#39;,
+ #                &#39;SEED&#39;, &#39;Skipjack&#39;, &#39;Twofish&#39;, &#39;XTEA&#39;, &#39;IDEA&#39;, &#39;Serpent&#39;
+ #                simply any &lt;NAME&gt; for which there exists Crypt::Cipher::&lt;NAME&gt;
+ # $key = binary key (keysize should comply with selected cipher requirements)
+
+ ## some of the ciphers (e.g. MULTI2, RC5, SAFER) allow one to set number of rounds
+ $d = Crypt::Cipher-&gt;new(&#39;MULTI2&#39;, $key, $rounds);
+ # $rounds = positive integer (should comply with selected cipher requirements)</code></pre>
+
+<h2 id="encrypt">encrypt</h2>
+
+<p>Encrypts $plaintext and returns the $ciphertext where $plaintext and $ciphertext should be of <b>blocksize</b> bytes.</p>
+
+<pre><code> $ciphertext = $d-&gt;encrypt($plaintext);</code></pre>
+
+<h2 id="decrypt">decrypt</h2>
+
+<p>Decrypts $ciphertext and returns the $plaintext where $plaintext and $ciphertext should be of <b>blocksize</b> bytes.</p>
+
+<pre><code> $plaintext = $d-&gt;encrypt($ciphertext);</code></pre>
+
+<h2 id="keysize">keysize</h2>
+
+<p>Just an alias for <b>max_keysize</b> (needed for <a>Crypt::CBC</a> compatibility).</p>
+
+<h2 id="max_keysize">max_keysize</h2>
+
+<p>Returns the maximal allowed key size (in bytes) for given cipher.</p>
+
+<pre><code> $d-&gt;max_keysize;
+ #or
+ Crypt::Cipher-&gt;max_keysize(&#39;AES&#39;);
+ #or
+ Crypt::Cipher::max_keysize(&#39;AES&#39;);</code></pre>
+
+<h2 id="min_keysize">min_keysize</h2>
+
+<p>Returns the minimal allowed key size (in bytes) for given cipher.</p>
+
+<pre><code> $d-&gt;min_keysize;
+ #or
+ Crypt::Cipher-&gt;min_keysize(&#39;AES&#39;);
+ #or
+ Crypt::Cipher::min_keysize(&#39;AES&#39;);</code></pre>
+
+<h2 id="blocksize">blocksize</h2>
+
+<p>Returns block size (in bytes) for given cipher.</p>
+
+<pre><code> $d-&gt;blocksize;
+ #or
+ Crypt::Cipher-&gt;blocksize(&#39;AES&#39;);
+ #or
+ Crypt::Cipher::blocksize(&#39;AES&#39;);</code></pre>
+
+<h2 id="default_rounds">default_rounds</h2>
+
+<p>Returns default number of rounds for given cipher. NOTE: only some ciphers (e.g. MULTI2, RC5, SAFER) allow one to set number of rounds via new().</p>
+
+<pre><code> $d-&gt;default_rounds;
+ #or
+ Crypt::Cipher-&gt;default_rounds(&#39;AES&#39;);
+ #or
+ Crypt::Cipher::default_rounds(&#39;AES&#39;);</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a></p>
+
+</li>
+<li><p>Check subclasses like <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Cipher/AES.html">Crypt::Cipher::AES</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Cipher/Blowfish.html">Crypt::Cipher::Blowfish</a>, ...</p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

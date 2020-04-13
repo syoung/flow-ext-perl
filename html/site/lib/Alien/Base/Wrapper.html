@@ -1,0 +1,278 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CONSTRUCTOR">CONSTRUCTOR</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+    </ul>
+  </li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#cc">cc</a></li>
+      <li><a href="#ld">ld</a></li>
+      <li><a href="#mm_args">mm_args</a></li>
+      <li><a href="#mm_args2">mm_args2</a></li>
+      <li><a href="#mb_args">mb_args</a></li>
+      <li><a href="#WriteMakefile">WriteMakefile</a></li>
+    </ul>
+  </li>
+  <li><a href="#ENVIRONMENT">ENVIRONMENT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Base::Wrapper - Compiler and linker wrapper for Alien</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>From the command line:</p>
+
+<pre><code> % perl -MAlien::Base::Wrapper=Alien::Foo,Alien::Bar -e cc -- -o foo.o -c foo.c
+ % perl -MAlien::Base::Wrapper=Alien::Foo,Alien::Bar -e ld -- -o foo foo.o</code></pre>
+
+<p>From Makefile.PL (static):</p>
+
+<pre><code> use ExtUtils::MakeMaker;
+ use Alien::Base::Wrapper ();
+ 
+ WriteMakefile(
+   Alien::Base::Wrapper-&gt;new( &#39;Alien::Foo&#39;, &#39;Alien::Bar&#39;)-&gt;mm_args2(
+     &#39;NAME&#39;              =&gt; &#39;Foo::XS&#39;,
+     &#39;VERSION_FROM&#39;      =&gt; &#39;lib/Foo/XS.pm&#39;,
+   ),
+ );</code></pre>
+
+<p>From Makefile.PL (static with wrapper)</p>
+
+<pre><code> use Alien::Base::Wrapper qw( WriteMakefile);
+ 
+ WriteMakefile(
+   &#39;NAME&#39;              =&gt; &#39;Foo::XS&#39;,
+   &#39;VERSION_FROM&#39;      =&gt; &#39;lib/Foo/XS.pm&#39;,
+   &#39;alien_requires&#39;    =&gt; {
+     &#39;Alien::Foo&#39; =&gt; 0,
+     &#39;Alien::Bar&#39; =&gt; 0,
+   },
+ );</code></pre>
+
+<p>From Makefile.PL (dynamic):</p>
+
+<pre><code> use Devel::CheckLib qw( check_lib );
+ use ExtUtils::MakeMaker 6.52;
+ 
+ my @mm_args;
+ my @libs;
+ 
+ if(check_lib( lib =&gt; [ &#39;foo&#39; ] )
+ {
+   push @mm_args, LIBS =&gt; [ &#39;-lfoo&#39; ];
+ }
+ else
+ {
+   push @mm_args,
+     CC =&gt; &#39;$(FULLPERL) -MAlien::Base::Wrapper=Alien::Foo -e cc --&#39;,
+     LD =&gt; &#39;$(FULLPERL) -MAlien::Base::Wrapper=Alien::Foo -e ld --&#39;,
+     BUILD_REQUIRES =&gt; {
+       &#39;Alien::Foo&#39;           =&gt; 0,
+       &#39;Alien::Base::Wrapper&#39; =&gt; 0,
+     }
+   ;
+ }
+ 
+ WriteMakefile(
+   &#39;NAME&#39;         =&gt; &#39;Foo::XS&#39;,
+   &#39;VERSION_FROM&#39; =&gt; &#39;lib/Foo/XS.pm&#39;,
+   &#39;CONFIGURE_REQUIRES =&gt; {
+     &#39;ExtUtils::MakeMaker&#39; =&gt; 6.52,
+   },
+   @mm_args,
+ );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module acts as a wrapper around one or more <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules. It is designed to work with <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> based aliens, but it should work with any <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> which uses the same essential API.</p>
+
+<p>In the first example (from the command line), this class acts as a wrapper around the compiler and linker that Perl is configured to use. It takes the normal compiler and linker flags and adds the flags provided by the Aliens specified, and then executes the command. It will print the command to the console so that you can see exactly what is happening.</p>
+
+<p>In the second example (from Makefile.PL non-dynamic), this class is used to generate the appropriate <a href="../../../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a> (EUMM) arguments needed to <code>WriteMakefile</code>.</p>
+
+<p>In the third example (from Makefile.PL dynamic), we do a quick check to see if the simple linker flag <code>-lfoo</code> will work, if so we use that. If not, we use a wrapper around the compiler and linker that will use the alien flags that are known at build time. The problem that this form attempts to solve is that compiler and linker flags typically need to be determined at <i>configure</i> time, when a distribution is installed, meaning if you are going to use an <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> module then it needs to be a configure prerequisite, even if the library is already installed and easily detected on the operating system.</p>
+
+<p>The author of this module believes that the third (from Makefile.PL dynamic) form is somewhat unnecessary. <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules based on <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> have a few prerequisites, but they are well maintained and reliable, so while there is a small cost in terms of extra dependencies, the overall reliability thanks to reduced overall complexity.</p>
+
+<h1 id="CONSTRUCTOR">CONSTRUCTOR</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $abw = Alien::Base::Wrapper-&gt;new(@aliens);</code></pre>
+
+<p>Instead of passing the aliens you want to use into this modules import you can create a non-global instance of <code>Alien::Base::Wrapper</code> using the OO interface.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="cc">cc</h2>
+
+<pre><code> % perl -MAlien::Base::Wrapper=Alien::Foo -e cc -- cflags</code></pre>
+
+<p>Invoke the C compiler with the appropriate flags from <code>Alien::Foo</code> and what is provided on the command line.</p>
+
+<h2 id="ld">ld</h2>
+
+<pre><code> % perl -MAlien::Base::Wrapper=Alien::Foo -e ld -- ldflags</code></pre>
+
+<p>Invoke the linker with the appropriate flags from <code>Alien::Foo</code> and what is provided on the command line.</p>
+
+<h2 id="mm_args">mm_args</h2>
+
+<pre><code> my %args = $abw-&gt;mm_args;
+ my %args = Alien::Base::Wrapper-&gt;mm_args;</code></pre>
+
+<p>Returns arguments that you can pass into <code>WriteMakefile</code> to compile/link against the specified Aliens. Note that this does not set <code>CONFIGURE_REQUIRES</code>. You probably want to use <code>mm_args2</code> below instead for that reason.</p>
+
+<h2 id="mm_args2">mm_args2</h2>
+
+<pre><code> my %args = $abw-&gt;mm_args2(%args);
+ my %args = Alien::Base::Wrapper-&gt;mm_args2(%args);</code></pre>
+
+<p>Returns arguments that you can pass into <code>WriteMakefile</code> to compile/link against. It works a little differently from <code>mm_args</code> above in that you can pass in arguments. It also adds the appropriate <code>CONFIGURE_REQUIRES</code> for you so you do not have to do that explicitly.</p>
+
+<h2 id="mb_args">mb_args</h2>
+
+<pre><code> my %args = $abw-&gt;mb_args;
+ my %args = Alien::Base::Wrapper-&gt;mb_args;</code></pre>
+
+<p>Returns arguments that you can pass into the constructor to <a href="../../../../lib/perl5/site_perl/5.26.3/Module/Build.html">Module::Build</a>.</p>
+
+<h2 id="WriteMakefile">WriteMakefile</h2>
+
+<pre><code> use Alien::Base::Wrapper qw( WriteMakefile );
+ WriteMakefile(%args, alien_requires =&gt; %aliens);
+ WriteMakefile(%args, alien_requires =&gt; @aliens);</code></pre>
+
+<p>This is a thin wrapper around <code>WriteMakefile</code> from <a href="../../../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a>, which adds the given aliens to the configure requirements and sets the appropriate compiler and linker flags.</p>
+
+<p>If the aliens are specified as a hash reference, then the keys are the module names and the values are the versions. For a list it is just the name of the aliens.</p>
+
+<p>For the list form you can specify a version by appending <code>=version</code> to the name of the Aliens, that is:</p>
+
+<pre><code> WriteMakefile(
+   alien_requires =&gt; [ &#39;Alien::libfoo=1.23&#39;, &#39;Alien::libbar=4.56&#39; ],
+ );</code></pre>
+
+<p>The list form is recommended if the ordering of the aliens matter. The aliens are sorted in the hash form to make it consistent, but it may not be the order that you want.</p>
+
+<h1 id="ENVIRONMENT">ENVIRONMENT</h1>
+
+<p>Alien::Base::Wrapper responds to these environment variables:</p>
+
+<dl>
+
+<dt id="ALIEN_BASE_WRAPPER_QUIET">ALIEN_BASE_WRAPPER_QUIET</dt>
+<dd>
+
+<p>If set to true, do not print the command before executing</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

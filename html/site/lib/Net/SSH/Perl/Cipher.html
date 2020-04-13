@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#UTILITY-METHODS">UTILITY METHODS</a>
+    <ul>
+      <li><a href="#supported-protocol-protocol-ciph_id-server_supports">supported( [ protocol =&gt; $protocol, ] [ $ciph_id [, $server_supports ] ])</a></li>
+      <li><a href="#id-cipher_name">id( [ $cipher_name ] )</a></li>
+      <li><a href="#name-cipher_id">name( [ $cipher_id ] )</a></li>
+    </ul>
+  </li>
+  <li><a href="#CIPHER-USAGE">CIPHER USAGE</a>
+    <ul>
+      <li><a href="#Net::SSH::Perl::Cipher-new-cipher_name-key">Net::SSH::Perl::Cipher-&gt;new($cipher_name, $key)</a></li>
+      <li><a href="#cipher-encrypt-text">$cipher-&gt;encrypt($text)</a></li>
+      <li><a href="#cipher-decrypt-text">$cipher-&gt;decrypt($text)</a></li>
+    </ul>
+  </li>
+  <li><a href="#CIPHER-DEVELOPMENT">CIPHER DEVELOPMENT</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Cipher - Base cipher class, plus utility methods</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Cipher;
+
+    # Get list of supported cipher IDs.
+    my $supported = Net::SSH::Perl::Cipher::supported();
+
+    # Translate a cipher name into an ID.
+    my $id = Net::SSH::Perl::Cipher::id($name);
+
+    # Translate a cipher ID into a name.
+    my $name = Net::SSH::Perl::Cipher::name($id);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Cipher</i> provides a base class for each of the encryption cipher classes. In addition, it defines a set of utility methods that can be called either as functions or object methods.</p>
+
+<h1 id="UTILITY-METHODS">UTILITY METHODS</h1>
+
+<h2 id="supported-protocol-protocol-ciph_id-server_supports">supported( [ protocol =&gt; $protocol, ] [ $ciph_id [, $server_supports ] ])</h2>
+
+<p>Without arguments returns a reference to an array of ciphers supported by <i>Net::SSH::Perl</i>. These are ciphers that have working Net::SSH::Perl::Cipher:: implementations, essentially. Pass &#39;protocol =&gt; 2&#39; to get a list of SSH2 ciphers.</p>
+
+<p>With one argument <i>$ciph_id</i>, returns a true value if that cipher is supported by <i>Net::SSH::Perl</i>, and false otherwise.</p>
+
+<p>With two arguments, <i>$ciph_id</i> and <i>$server_supports</i>, returns true if the cipher represented by <i>$ciph_id</i> is supported both by <i>Net::SSH::Perl</i> and by the sshd server. The list of ciphers supported by the server should be in <i>$server_supports</i>, a bit mask sent from the server during the session identification phase.</p>
+
+<p>Can be called either as a non-exported function, i.e.</p>
+
+<pre><code>    my $i_support = Net::SSH::Perl::Cipher::supported();</code></pre>
+
+<p>or as an object method of a <i>Net::SSH::Perl::Cipher</i> object, or an object of a subclass:</p>
+
+<pre><code>    if ($ciph-&gt;supported($server_supports)) {
+        print &quot;Server supports cipher $ciph&quot;;
+    }</code></pre>
+
+<h2 id="id-cipher_name">id( [ $cipher_name ] )</h2>
+
+<p>Translates a cipher name into a cipher ID.</p>
+
+<p>If given <i>$cipher_name</i> translates that name into the corresponding ID. If called as an object method, translates the object&#39;s cipher class name into the ID.</p>
+
+<h2 id="name-cipher_id">name( [ $cipher_id ] )</h2>
+
+<p>Translates a cipher ID into a cipher name.</p>
+
+<p>If given <i>$cipher_id</i> translates that ID into the corresponding name. If called as an object method, returns the (stripped) object&#39;s cipher class name; for example, if the object were of type <i>Net::SSH::Perl::Cipher::IDEA</i>, <i>name</i> would return <i>IDEA</i>.</p>
+
+<h1 id="CIPHER-USAGE">CIPHER USAGE</h1>
+
+<h2 id="Net::SSH::Perl::Cipher-new-cipher_name-key">Net::SSH::Perl::Cipher-&gt;new($cipher_name, $key)</h2>
+
+<p>Instantiates a new cipher object of the type <i>$cipher_name</i> with the key <i>$key</i>; returns the cipher object, which will be blessed into the actual cipher subclass.</p>
+
+<p>If <i>$cipher_name</i> is the special type <i>&#39;None&#39;</i> (no encryption cipher), the object will actually be blessed directly into the base class, and text to be encrypted and decrypted will be passed through without change.</p>
+
+<h2 id="cipher-encrypt-text">$cipher-&gt;encrypt($text)</h2>
+
+<p>Encrypts <i>$text</i> and returns the encrypted string.</p>
+
+<h2 id="cipher-decrypt-text">$cipher-&gt;decrypt($text)</h2>
+
+<p>Decrypts <i>$text</i> and returns the decrypted string.</p>
+
+<h1 id="CIPHER-DEVELOPMENT">CIPHER DEVELOPMENT</h1>
+
+<p>Classes implementing an encryption cipher must implement the following three methods:</p>
+
+<ul>
+
+<li><p>$class-&gt;new($key)</p>
+
+<p>Given a key <i>$key</i>, should construct a new cipher object and bless it into <i>$class</i>, presumably.</p>
+
+</li>
+<li><p>$cipher-&gt;encrypt($text)</p>
+
+<p>Given plain text <i>$text</i>, should encrypt the text and return the encrypted string.</p>
+
+</li>
+<li><p>$cipher-&gt;decrypt($text)</p>
+
+<p>Given encrypted text <i>$text</i>, should decrypt the text and return the decrypted string.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

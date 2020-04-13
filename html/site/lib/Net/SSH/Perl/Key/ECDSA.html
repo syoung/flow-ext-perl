@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#key-read_private-file-passphrase">$key-&gt;read_private($file [, $passphrase])</a></li>
+      <li><a href="#key-sign-data">$key-&gt;sign($data)</a></li>
+      <li><a href="#key-verify-signature-data">$key-&gt;verify($signature, $data)</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+  <li><a href="#POD-ERRORS">POD ERRORS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Key::ECDSA - Elliptical Curve DSA key object base class</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Key;
+    my $key = Net::SSH::Perl::Key-&gt;new(&#39;ECDSA521&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Key::ECDSA</i> subclasses <i>Net::SSH::Perl::Key</i> to implement the base class of an elliptical curve DSA key object. The underlying implementation is provided by <i>Crypt::PK::ECC</i>, and this class wraps around that module to provide SSH-specific functionality (eg. taking in a <i>Net::SSH::Perl::Buffer</i> blob and transforming it into a key object).</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p><i>Net::SSH::Perl::Key::ECDSA</i> implements the interface described in the documentation for <i>Net::SSH::Perl::Key</i>. Any differences or additions are described here.</p>
+
+<h2 id="key-read_private-file-passphrase">$key-&gt;read_private($file [, $passphrase])</h2>
+
+<p>Since this class is a base class, the read_private method reblesses to the subclass based on the key type loaded.</p>
+
+<h2 id="key-sign-data">$key-&gt;sign($data)</h2>
+
+<p>Wraps around <i>Crypt::PK::ECC::sign_message</i> to sign <i>$data</i> using the key <i>$key</i>, then encodes that signature into an SSH-compatible signature blob.</p>
+
+<p>Returns the signature blob.</p>
+
+<h2 id="key-verify-signature-data">$key-&gt;verify($signature, $data)</h2>
+
+<p>Given a signature blob <i>$signature</i> and the original signed data <i>$data</i>, attempts to verify the signature using the key <i>$key</i>. This wraps around <i>Crypt::PK::ECC::verify_message</i> to perform the core verification.</p>
+
+<p><i>$signature</i> should be an SSH-compatible signature blob, as returned from <i>sign</i>; <i>$data</i> should be a string of data, as passed to <i>sign</i>.</p>
+
+<p>Returns true if the verification succeeds, false otherwise.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Lance Kinley E&lt;lkinley@loyaltymethods.com&gt;</p>
+
+<p>Copyright (c) 2016 Loyalty Methods, Inc.</p>
+
+<h1 id="POD-ERRORS">POD ERRORS</h1>
+
+<p>Hey! <b>The above document had some coding errors, which are explained below:</b></p>
+
+<dl>
+
+<dt id="Around-line-191">Around line 191:</dt>
+<dd>
+
+<p>Unknown E content in E&lt;lkinley@loyaltymethods.com&gt;</p>
+
+</dd>
+</dl>
+
+
+</body>
+
+</html>
+
+

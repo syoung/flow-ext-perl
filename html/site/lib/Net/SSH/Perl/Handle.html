@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<p>sub DESTROY { my $h = shift; unless ($h-&gt;{incoming}) { my $c = $h-&gt;{channel}; my $ssh = $c-&gt;{ssh}; $c-&gt;{istate} = CHAN_INPUT_WAIT_DRAIN; $c-&gt;send_eof; $c-&gt;{istate} = CHAN_INPUT_CLOSED; $ssh-&gt;client_loop; } }</p>
+
+
+</body>
+
+</html>
+
+

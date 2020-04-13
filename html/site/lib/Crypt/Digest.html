@@ -1,0 +1,311 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXPORT">EXPORT</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#digest_data">digest_data</a></li>
+      <li><a href="#digest_data_hex">digest_data_hex</a></li>
+      <li><a href="#digest_data_b64">digest_data_b64</a></li>
+      <li><a href="#digest_data_b64u">digest_data_b64u</a></li>
+      <li><a href="#digest_file">digest_file</a></li>
+      <li><a href="#digest_file_hex">digest_file_hex</a></li>
+      <li><a href="#digest_file_b64">digest_file_b64</a></li>
+      <li><a href="#digest_file_b64u">digest_file_b64u</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#clone">clone</a></li>
+      <li><a href="#reset">reset</a></li>
+      <li><a href="#add">add</a></li>
+      <li><a href="#addfile">addfile</a></li>
+      <li><a href="#add_bits">add_bits</a></li>
+      <li><a href="#hashsize">hashsize</a></li>
+      <li><a href="#digest">digest</a></li>
+      <li><a href="#hexdigest">hexdigest</a></li>
+      <li><a href="#b64digest">b64digest</a></li>
+      <li><a href="#b64udigest">b64udigest</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Crypt::Digest - Generic interface to hash/digest functions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>   ### Functional interface:
+   use Crypt::Digest qw( digest_data digest_data_hex digest_data_b64 digest_data_b64u
+                         digest_file digest_file_hex digest_file_b64 digest_file_b64u );
+
+   # calculate digest from string/buffer
+   $digest_raw  = digest_data(&#39;SHA1&#39;, &#39;data string&#39;);
+   $digest_hex  = digest_data_hex(&#39;SHA1&#39;, &#39;data string&#39;);
+   $digest_b64  = digest_data_b64(&#39;SHA1&#39;, &#39;data string&#39;);
+   $digest_b64u = digest_data_b64u(&#39;SHA1&#39;, &#39;data string&#39;);
+   # calculate digest from file
+   $digest_raw  = digest_file(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+   $digest_hex  = digest_file_hex(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+   $digest_b64  = digest_file_b64(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+   $digest_b64u = digest_file_b64u(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+   # calculate digest from filehandle
+   $digest_raw  = digest_file(&#39;SHA1&#39;, *FILEHANDLE);
+   $digest_hex  = digest_file_hex(&#39;SHA1&#39;, *FILEHANDLE);
+   $digest_b64  = digest_file_b64(&#39;SHA1&#39;, *FILEHANDLE);
+   $digest_b64u = digest_file_b64u(&#39;SHA1&#39;, *FILEHANDLE);
+
+   ### OO interface:
+   use Crypt::Digest;
+
+   $d = Crypt::Digest-&gt;new(&#39;SHA1&#39;);
+   $d-&gt;add(&#39;any data&#39;);
+   $d-&gt;addfile(&#39;filename.dat&#39;);
+   $d-&gt;addfile(*FILEHANDLE);
+   $result_raw  = $d-&gt;digest;     # raw bytes
+   $result_hex  = $d-&gt;hexdigest;  # hexadecimal form
+   $result_b64  = $d-&gt;b64digest;  # Base64 form
+   $result_b64u = $d-&gt;b64udigest; # Base64 URL Safe form</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Provides an interface to various hash/digest algorithms.</p>
+
+<h1 id="EXPORT">EXPORT</h1>
+
+<p>Nothing is exported by default.</p>
+
+<p>You can export selected functions:</p>
+
+<pre><code>  use Crypt::Digest qw( digest_data digest_data_hex digest_data_b64 digest_data_b64u
+                        digest_file digest_file_hex digest_file_b64 digest_file_b64u );</code></pre>
+
+<p>Or all of them at once:</p>
+
+<pre><code>  use Crypt::Digest &#39;:all&#39;;</code></pre>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<p>Please note that all functions take as its first argument the algorithm name, supported values are:</p>
+
+<pre><code> &#39;CHAES&#39;, &#39;MD2&#39;, &#39;MD4&#39;, &#39;MD5&#39;, &#39;RIPEMD128&#39;, &#39;RIPEMD160&#39;,
+ &#39;RIPEMD256&#39;, &#39;RIPEMD320&#39;, &#39;SHA1&#39;, &#39;SHA224&#39;, &#39;SHA256&#39;,
+ &#39;SHA384&#39;, &#39;SHA512&#39;, &#39;SHA512_224&#39;, &#39;SHA512_256&#39;, &#39;Tiger192&#39;, &#39;Whirlpool&#39;,
+ &#39;SHA3_224&#39;, &#39;SHA3_256&#39;, &#39;SHA3_384&#39;, &#39;SHA3_512&#39;,
+ &#39;BLAKE2b_160&#39;, &#39;BLAKE2b_256&#39;, &#39;BLAKE2b_384&#39;, &#39;BLAKE2b_512&#39;,
+ &#39;BLAKE2s_128&#39;, &#39;BLAKE2s_160&#39;, &#39;BLAKE2s_224&#39;, &#39;BLAKE2s_256&#39;
+
+ (simply any &lt;NAME&gt; for which there is Crypt::Digest::&lt;NAME&gt; module)</code></pre>
+
+<h2 id="digest_data">digest_data</h2>
+
+<p>Logically joins all arguments into a single string, and returns its SHA1 digest encoded as a binary string.</p>
+
+<pre><code> $digest_raw = digest_data(&#39;SHA1&#39;, &#39;data string&#39;);
+ #or
+ $digest_raw = digest_data(&#39;SHA1&#39;, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="digest_data_hex">digest_data_hex</h2>
+
+<p>Logically joins all arguments into a single string, and returns its SHA1 digest encoded as a hexadecimal string.</p>
+
+<pre><code> $digest_hex = digest_data_hex(&#39;SHA1&#39;, &#39;data string&#39;);
+ #or
+ $digest_hex = digest_data_hex(&#39;SHA1&#39;, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="digest_data_b64">digest_data_b64</h2>
+
+<p>Logically joins all arguments into a single string, and returns its SHA1 digest encoded as a Base64 string, <b>with</b> trailing &#39;=&#39; padding.</p>
+
+<pre><code> $digest_b64 = digest_data_b64(&#39;SHA1&#39;, &#39;data string&#39;);
+ #or
+ $digest_b64 = digest_data_b64(&#39;SHA1&#39;, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="digest_data_b64u">digest_data_b64u</h2>
+
+<p>Logically joins all arguments into a single string, and returns its SHA1 digest encoded as a Base64 URL Safe string (see RFC 4648 section 5).</p>
+
+<pre><code> $digest_b64url = digest_data_b64u(&#39;SHA1&#39;, &#39;data string&#39;);
+ #or
+ $digest_b64url = digest_data_b64u(&#39;SHA1&#39;, &#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<h2 id="digest_file">digest_file</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its digest encoded as a binary string.</p>
+
+<pre><code> $digest_raw = digest_file(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+ #or
+ $digest_raw = digest_file(&#39;SHA1&#39;, *FILEHANDLE);</code></pre>
+
+<h2 id="digest_file_hex">digest_file_hex</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its digest encoded as a hexadecimal string.</p>
+
+<pre><code> $digest_hex = digest_file_hex(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+ #or
+ $digest_hex = digest_file_hex(&#39;SHA1&#39;, *FILEHANDLE);</code></pre>
+
+<p><b>BEWARE:</b> You have to make sure that the filehandle is in binary mode before you pass it as argument to the addfile() method.</p>
+
+<h2 id="digest_file_b64">digest_file_b64</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its digest encoded as a Base64 string, <b>with</b> trailing &#39;=&#39; padding.</p>
+
+<pre><code> $digest_b64 = digest_file_b64(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+ #or
+ $digest_b64 = digest_file_b64(&#39;SHA1&#39;, *FILEHANDLE);</code></pre>
+
+<h2 id="digest_file_b64u">digest_file_b64u</h2>
+
+<p>Reads file (defined by filename or filehandle) content, and returns its digest encoded as a Base64 URL Safe string (see RFC 4648 section 5).</p>
+
+<pre><code> $digest_b64url = digest_file_b64u(&#39;SHA1&#39;, &#39;filename.dat&#39;);
+ #or
+ $digest_b64url = digest_file_b64u(&#39;SHA1&#39;, *FILEHANDLE);</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<p>Constructor, returns a reference to the digest object.</p>
+
+<pre><code> $d = Crypt::Digest-&gt;new($name);
+ # $name could be: &#39;CHAES&#39;, &#39;MD2&#39;, &#39;MD4&#39;, &#39;MD5&#39;, &#39;RIPEMD128&#39;, &#39;RIPEMD160&#39;,
+ #                 &#39;RIPEMD256&#39;, &#39;RIPEMD320&#39;, &#39;SHA1&#39;, &#39;SHA224&#39;, &#39;SHA256&#39;, &#39;SHA384&#39;,
+ #                 &#39;SHA512&#39;, &#39;SHA512_224&#39;, &#39;SHA512_256&#39;, &#39;Tiger192&#39;, &#39;Whirlpool&#39;
+ #
+ # simply any &lt;FUNCNAME&gt; for which there is Crypt::Digest::&lt;FUNCNAME&gt; module</code></pre>
+
+<h2 id="clone">clone</h2>
+
+<p>Creates a copy of the digest object state and returns a reference to the copy.</p>
+
+<pre><code> $d-&gt;clone();</code></pre>
+
+<h2 id="reset">reset</h2>
+
+<p>Reinitialize the digest object state and returns a reference to the digest object.</p>
+
+<pre><code> $d-&gt;reset();</code></pre>
+
+<h2 id="add">add</h2>
+
+<p>All arguments are appended to the message we calculate digest for. The return value is the digest object itself.</p>
+
+<pre><code> $d-&gt;add(&#39;any data&#39;);
+ #or
+ $d-&gt;add(&#39;any data&#39;, &#39;more data&#39;, &#39;even more data&#39;);</code></pre>
+
+<p>Note that all the following cases are equivalent:</p>
+
+<pre><code> # case 1
+ $d-&gt;add(&#39;aa&#39;, &#39;bb&#39;, &#39;cc&#39;);
+
+ # case 2
+ $d-&gt;add(&#39;aa&#39;);
+ $d-&gt;add(&#39;bb&#39;);
+ $d-&gt;add(&#39;cc&#39;);
+
+ # case 3
+ $d-&gt;add(&#39;aabbcc&#39;);
+
+ # case 4
+ $d-&gt;add(&#39;aa&#39;)-&gt;add(&#39;bb&#39;)-&gt;add(&#39;cc&#39;);</code></pre>
+
+<h2 id="addfile">addfile</h2>
+
+<p>The content of the file (or filehandle) is appended to the message we calculate digest for. The return value is the digest object itself.</p>
+
+<pre><code> $d-&gt;addfile(&#39;filename.dat&#39;);
+ #or
+ $d-&gt;addfile(*FILEHANDLE);</code></pre>
+
+<p><b>BEWARE:</b> You have to make sure that the filehandle is in binary mode before you pass it as argument to the addfile() method.</p>
+
+<h2 id="add_bits">add_bits</h2>
+
+<p>This method is available mostly for compatibility with other Digest::SOMETHING modules on CPAN, you are very unlikely to need it. The return value is the digest object itself.</p>
+
+<pre><code> $d-&gt;add_bits($bit_string);   # e.g. $d-&gt;add_bits(&quot;111100001010&quot;);
+ #or
+ $d-&gt;add_bits($data, $nbits); # e.g. $d-&gt;add_bits(&quot;\xF0\xA0&quot;, 16);</code></pre>
+
+<p><b>BEWARE:</b> It is not possible to add bits that are not a multiple of 8.</p>
+
+<h2 id="hashsize">hashsize</h2>
+
+<p>Returns the length of calculated digest in bytes (e.g. 32 for SHA-256).</p>
+
+<pre><code> $d-&gt;hashsize;
+ #or
+ Crypt::Digest-&gt;hashsize(&#39;SHA1&#39;);
+ #or
+ Crypt::Digest::hashsize(&#39;SHA1&#39;);</code></pre>
+
+<h2 id="digest">digest</h2>
+
+<p>Returns the binary digest (raw bytes).</p>
+
+<pre><code> $result_raw = $d-&gt;digest();</code></pre>
+
+<h2 id="hexdigest">hexdigest</h2>
+
+<p>Returns the digest encoded as a hexadecimal string.</p>
+
+<pre><code> $result_hex = $d-&gt;hexdigest();</code></pre>
+
+<h2 id="b64digest">b64digest</h2>
+
+<p>Returns the digest encoded as a Base64 string, <b>with</b> trailing &#39;=&#39; padding (<b>BEWARE:</b> this padding style might differ from other Digest::&lt;SOMETHING&gt; modules on CPAN).</p>
+
+<pre><code> $result_b64 = $d-&gt;b64digest();</code></pre>
+
+<h2 id="b64udigest">b64udigest</h2>
+
+<p>Returns the digest encoded as a Base64 URL Safe string (see RFC 4648 section 5).</p>
+
+<pre><code> $result_b64url = $d-&gt;b64udigest();</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/CryptX.html">CryptX</a></p>
+
+</li>
+<li><p><a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Digest.html">Crypt::Digest</a> tries to be compatible with <a href="../../../lib/perl5/5.26.3/Digest.html">Digest</a> interface.</p>
+
+</li>
+<li><p>Check subclasses like <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Digest/SHA1.html">Crypt::Digest::SHA1</a>, <a href="../../../../../root/.cpanm/work/1586740115.5251/CryptX-0.068/blib/lib/Crypt/Digest/MD5.html">Crypt::Digest::MD5</a>, ...</p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

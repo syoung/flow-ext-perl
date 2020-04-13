@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a>
+    <ul>
+      <li><a href="#comp-Net::SSH::Perl::Comp-new-comp_type-args">$comp = Net::SSH::Perl::Comp-&gt;new( $comp_type [, @args ] )</a></li>
+      <li><a href="#comp-init-level">$comp-&gt;init($level)</a></li>
+      <li><a href="#comp-compress-data">$comp-&gt;compress( $data )</a></li>
+      <li><a href="#comp-decompress-data">$comp-&gt;decompress( $data )</a></li>
+      <li><a href="#comp-enable">$comp-&gt;enable</a></li>
+      <li><a href="#comp-enabled">$comp-&gt;enabled</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Comp - Compression/Decompression base class</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Comp;
+    my $comp = Net::SSH::Perl::Comp-&gt;new( $comp_type );
+    $comp-&gt;compress($data);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Comp</i> is a base class for compression/decompression classes. Currently the only such class is the Zlib implementation (using <i>Compress::Zlib</i>), which is the class <i>Net::SSH::Perl::Comp::Zlib</i>.</p>
+
+<p>Each compression object generally has its own internal &quot;state&quot;; this state changes when you compress or decompress data. The SSH protocol dictates that you must have two <i>separate</i> objects to compress and decompress data: one for compression, one for decompression. So, for example, you would create two <i>Net::SSH::Perl::Comp</i> objects:</p>
+
+<pre><code>    my $in = Net::SSH::Perl::Comp-&gt;new(&#39;Zlib&#39;);
+    my $inflated = $in-&gt;decompress($data);
+
+    my $out = Net::SSH::Perl::Comp-&gt;new(&#39;Zlib&#39;);
+    my $deflated = $out-&gt;compress($data);</code></pre>
+
+<h1 id="USAGE">USAGE</h1>
+
+<h2 id="comp-Net::SSH::Perl::Comp-new-comp_type-args">$comp = Net::SSH::Perl::Comp-&gt;new( $comp_type [, @args ] )</h2>
+
+<p>Constructs a new compression object of compression type <i>$comp_type</i> and returns that object.</p>
+
+<p>If <i>@args</i> are provided, the class&#39;s <i>init</i> method is called with those arguments, for any post-creation initialization.</p>
+
+<h2 id="comp-init-level">$comp-&gt;init($level)</h2>
+
+<p>Initializes <i>$comp</i> and sets the compression level to <i>$level</i>. This method will be called automatically from <i>new</i> if you&#39;ve provided <i>@args</i> to <i>new</i>. So, for example, you could write:</p>
+
+<pre><code>    my $comp = Net::SSH::Perl::Comp-&gt;new(&#39;Zlib&#39;, 5);</code></pre>
+
+<p>To create a new <i>Zlib</i> compression object and initialize its compression level to 5.</p>
+
+<h2 id="comp-compress-data">$comp-&gt;compress( $data )</h2>
+
+<p>Compresses <i>$data</i> using the underlying compression mechanism; returns the compressed data.</p>
+
+<h2 id="comp-decompress-data">$comp-&gt;decompress( $data )</h2>
+
+<p>Decompresses <i>$data</i> using the underlying decompression mechanism; returns the decompressed data.</p>
+
+<h2 id="comp-enable">$comp-&gt;enable</h2>
+
+<p>&quot;Enables&quot; the compression object. This is useful in the context of the key exchange (<i>Kex</i>) classes, which create a new compression object during key negotiation, but don&#39;t actually turn it on (&quot;enable&quot; it) until receiving/sending the <i>SSH2_MSG_NEWKEYS</i> message.</p>
+
+<p><i>Net::SSH::Perl::Comp</i> objects (and subclasses) are disabled by default.</p>
+
+<h2 id="comp-enabled">$comp-&gt;enabled</h2>
+
+<p>Returns the state of the &quot;enabled&quot; flag, ie. whether the compression object is &quot;turned on&quot;.</p>
+
+<p>This is used by <i>Net::SSH::Perl::Packet</i> when determining whether data it receives/sends to the server should be decompressed/compressed, respectively.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

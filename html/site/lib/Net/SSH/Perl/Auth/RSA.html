@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::SSH::Perl::Auth::RSA - Perform RSA authentication</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Net::SSH::Perl::Auth;
+    my $auth = Net::SSH::Perl::Auth-&gt;new(&#39;RSA&#39;, $ssh);
+    print &quot;Valid auth&quot; if $auth-&gt;authenticate;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><i>Net::SSH::Perl::Auth::RSA</i> performs RSA authentication with a remote sshd server. When you create a new RSA auth object, you give it an <i>$ssh</i> object, which should contain an open connection to an ssh daemon, as well as any data that the authentication module needs to proceed. In this case, for example, the <i>$ssh</i> object might contain a list of RSA identity files (see the docs for <i>Net::SSH::Perl</i>).</p>
+
+<p>The <i>authenticate</i> method first tries to establish a connection to an authentication agent. If the connection attempt is successful, the client loops through the identities returned from the agent, and tries each identity/key against the server. The client enters into a dialog with the server. The client sends the public portion of the key returned from the agent. The server responds, telling the client whether the key is authorized for authentication; if the key is authorized, the server sends an RSA challenge encrypted with the user&#39;s public key. The client then asks the agent to decrypt the challenge using the private portion of the key, and sends back its response. If the response is correct, the client is authenticated successfully.</p>
+
+<p>If the client cannot connect to the authentication agent, or if none of the identities returned from the agent successfully authenticate the user, <i>authenticate</i> then loops through each of the files listed as identity files (see the <i>Net::SSH::Perl</i> constructor). If no identity files are explicitly listed, <i>$ENV{HOME}/.ssh/identity</i> is used as a default. For each identity, the client enters into a dialog with the sshd server.</p>
+
+<p>The client sends the public key to the server, then waits for a challenge. Once this challenge is received, the client must decrypt the challenge using the private key (loaded from the identity file). When loading the private key, you may need to enter a passphrase to decrypt the private key itself; first <i>authenticate</i> tries to decrypt the key using an empty passphrase (which requires no user intervention). If this fails, the client checks to see if it&#39;s running in an interactive session. If so, it queries the user for a passphrase, which is then used to decrypt the private key. If the session is non-interactive and the private key cannot be loaded, the client simply sends a dummy response to the RSA challenge, to comply with the SSH protocol.</p>
+
+<p>Otherwise, if the private key has been loaded, and the challenge decrypted, the client sends its response to the server, then waits for success or failure.</p>
+
+<h1 id="AUTHOR-COPYRIGHTS">AUTHOR &amp; COPYRIGHTS</h1>
+
+<p>Please see the Net::SSH::Perl manpage for author, copyright, and license information.</p>
+
+
+</body>
+
+</html>
+
+

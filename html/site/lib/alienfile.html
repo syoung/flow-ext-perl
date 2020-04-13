@@ -1,0 +1,531 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#DIRECTIVES">DIRECTIVES</a>
+    <ul>
+      <li><a href="#requires">requires</a></li>
+      <li><a href="#plugin">plugin</a></li>
+      <li><a href="#probe">probe</a></li>
+      <li><a href="#configure1">configure</a></li>
+      <li><a href="#sys">sys</a></li>
+      <li><a href="#share1">share</a></li>
+      <li><a href="#start_url">start_url</a></li>
+      <li><a href="#download">download</a></li>
+      <li><a href="#fetch">fetch</a></li>
+      <li><a href="#decode">decode</a></li>
+      <li><a href="#prefer">prefer</a></li>
+      <li><a href="#extract">extract</a></li>
+      <li><a href="#patch">patch</a></li>
+      <li><a href="#patch_ffi">patch_ffi</a></li>
+      <li><a href="#build">build</a></li>
+      <li><a href="#build_ffi">build_ffi</a></li>
+      <li><a href="#gather">gather</a></li>
+      <li><a href="#gather_ffi">gather_ffi</a></li>
+      <li><a href="#ffi">ffi</a></li>
+      <li><a href="#meta_prop">meta_prop</a></li>
+      <li><a href="#meta">meta</a></li>
+      <li><a href="#log">log</a></li>
+      <li><a href="#test">test</a></li>
+      <li><a href="#before">before</a></li>
+      <li><a href="#after">after</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>alienfile - Specification for defining an external dependency for CPAN</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>Do-it-yourself approach:</p>
+
+<pre><code> use alienfile;
+ 
+ probe [ &#39;pkg-config --exists libarchive&#39; ];
+ 
+ share {
+ 
+   start_url &#39;http://libarchive.org/downloads/libarchive-3.2.2.tar.gz&#39;;
+ 
+   # the first one which succeeds will be used
+   download [ &#39;wget %{.meta.start_url}&#39; ];
+   download [ &#39;curl -o %{.meta.start_url}&#39; ];
+ 
+   extract [ &#39;tar xf %{.install.download}&#39; ];
+ 
+   build [
+     # Note: will not work on Windows, better to use Build::Autoconf plugin
+     # if you need windows support
+     &#39;./configure --prefix=%{.install.prefix} --disable-shared&#39;,
+     &#39;%{make}&#39;,
+     &#39;%{make} install&#39;,
+   ];
+ }
+ 
+ gather [
+   [ &#39;pkg-config&#39;, &#39;--modversion&#39;, &#39;libarchive&#39;, \&#39;%{.runtime.version}&#39; ],
+   [ &#39;pkg-config&#39;, &#39;--cflags&#39;,     &#39;libarchive&#39;, \&#39;%{.runtime.cflags}&#39;  ],
+   [ &#39;pkg-config&#39;, &#39;--libs&#39;,       &#39;libarchive&#39;, \&#39;%{.runtime.libs}&#39;    ],
+ ];</code></pre>
+
+<p>With plugins (better):</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;PkgConfig&#39; =&gt; &#39;libarchive&#39;;
+ 
+ share {
+   start_url &#39;http://libarchive.org/downloads/&#39;;
+   plugin Download =&gt; (
+     filter =&gt; qr/^libarchive-.*\.tar\.gz$/,
+     version =&gt; qr/([0-9\.]+)/,
+   );
+   plugin Extract =&gt; &#39;tar.gz&#39;;
+   plugin &#39;Build::Autoconf&#39;;
+   plugin &#39;Gather::IsolateDynamic&#39;;
+   build [
+     &#39;%{configure}&#39;,
+     &#39;%{make}&#39;,
+     &#39;%{make} install&#39;,
+   ];
+ };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>An alienfile is a recipe used by <a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> to, probe for system libraries or download from the internet, and build source for those libraries. This document acts as reference for the alienfile system, but if you are starting out writing your own Alien you should read <a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienAuthor.html">Alien::Build::Manual::AlienAuthor</a>, which will teach you how to write your own complete Alien using alienfile + <a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> + <a href="../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a>. Special attention should be taken to the section &quot;a note about dynamic vs. static libraries&quot;.</p>
+
+<h1 id="DIRECTIVES">DIRECTIVES</h1>
+
+<h2 id="requires">requires</h2>
+
+<p>&quot;any&quot; requirement (either share or system):</p>
+
+<pre><code> requires $module;
+ requires $module =&gt; $version;</code></pre>
+
+<p>configure time requirement:</p>
+
+<pre><code> configure {
+   requires $module;
+   requires $module =&gt; $version;
+ };</code></pre>
+
+<p>system requirement:</p>
+
+<pre><code> sys {
+   requires $module;
+   requires $module =&gt; $version;
+ };</code></pre>
+
+<p>share requirement:</p>
+
+<pre><code> share {
+   requires $module;
+   requires $module =&gt; $version;
+ };</code></pre>
+
+<p>specifies a requirement. <a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> takes advantage of dynamic requirements, so only modules that are needed for the specific type of install need to be loaded. Here are the different types of requirements:</p>
+
+<dl>
+
+<dt id="configure">configure</dt>
+<dd>
+
+<p>Configure requirements should already be installed before the alienfile is loaded.</p>
+
+</dd>
+<dt id="any">any</dt>
+<dd>
+
+<p>&quot;Any&quot; requirements are those that are needed either for the probe stage, or in either the system or share installs.</p>
+
+</dd>
+<dt id="share">share</dt>
+<dd>
+
+<p>Share requirements are those modules needed when downloading and building from source.</p>
+
+</dd>
+<dt id="system">system</dt>
+<dd>
+
+<p>System requirements are those modules needed when the system provides the library or tool.</p>
+
+</dd>
+</dl>
+
+<h2 id="plugin">plugin</h2>
+
+<pre><code> plugin $name =&gt; (%args);
+ plugin $name =&gt; $arg;</code></pre>
+
+<p>Load the given plugin. If you prefix the plugin name with an <code>=</code> sign, then it will be assumed to be a fully qualified path name. Otherwise the plugin will be assumed to live in the <code>Alien::Build::Plugin</code> namespace. If there is an appropriate negotiate plugin, that one will be loaded. Examples:</p>
+
+<pre><code> # Loads Alien::Build::Plugin::Fetch::Negotiate
+ # which will pick the best Alien::Build::Plugin::Fetch
+ # plugin based on the URL, and system configuration
+ plugin &#39;Fetch&#39; =&gt; &#39;http://ftp.gnu.org/gnu/gcc&#39;;
+ 
+ # loads the plugin with the badly named class!
+ plugin &#39;=Badly::Named::Plugin::Not::In::Alien::Build::Namespace&#39;;
+ 
+ # explicitly loads Alien::Build::Plugin::Prefer::SortVersions
+ plugin &#39;Prefer::SortVersions =&gt; (
+   filter =&gt; qr/^gcc-.*\.tar\.gz$/,
+   version =&gt; qr/([0-9\.]+)/,
+ );</code></pre>
+
+<h2 id="probe">probe</h2>
+
+<pre><code> probe \&amp;code;
+ probe \@commandlist;</code></pre>
+
+<p>Instructions for the probe stage. May be either a code reference, or a command list.</p>
+
+<h2 id="configure1">configure</h2>
+
+<pre><code> configure {
+   ...
+ };</code></pre>
+
+<p>Configure block. The only directive allowed in a configure block is requires.</p>
+
+<h2 id="sys">sys</h2>
+
+<pre><code> sys {
+   ...
+ };</code></pre>
+
+<p>System block. Allowed directives are: requires and gather.</p>
+
+<h2 id="share1">share</h2>
+
+<pre><code> share {
+   ...
+ };</code></pre>
+
+<p>System block. Allowed directives are: download, fetch, decode, prefer, extract, build, gather.</p>
+
+<h2 id="start_url">start_url</h2>
+
+<pre><code> share {
+   start_url $url;
+ };</code></pre>
+
+<p>Set the start URL for download. This should be the URL to an index page, or the actual tarball of the source.</p>
+
+<h2 id="download">download</h2>
+
+<pre><code> share {
+   download \&amp;code;
+   download \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the download stage. May be either a code reference, or a command list.</p>
+
+<h2 id="fetch">fetch</h2>
+
+<pre><code> share {
+   fetch \&amp;code;
+   fetch \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the fetch stage. May be either a code reference, or a command list.</p>
+
+<h2 id="decode">decode</h2>
+
+<pre><code> share {
+   decode \&amp;code;
+   decode \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the decode stage. May be either a code reference, or a command list.</p>
+
+<h2 id="prefer">prefer</h2>
+
+<pre><code> share {
+   prefer \&amp;code;
+   prefer \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the prefer stage. May be either a code reference, or a command list.</p>
+
+<h2 id="extract">extract</h2>
+
+<pre><code> share {
+   extract \&amp;code;
+   extract \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the extract stage. May be either a code reference, or a command list.</p>
+
+<h2 id="patch">patch</h2>
+
+<pre><code> share {
+   patch \&amp;code;
+   patch \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the patch stage. May be either a code reference, or a command list.</p>
+
+<h2 id="patch_ffi">patch_ffi</h2>
+
+<pre><code> share {
+   patch_ffi \&amp;code;
+   patch_ffi \@commandlist;
+ };</code></pre>
+
+<p>[DEPRECATED]</p>
+
+<p>Instructions for the patch_ffi stage. May be either a code reference, or a command list.</p>
+
+<h2 id="build">build</h2>
+
+<pre><code> share {
+   build \&amp;code;
+   build \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the build stage. May be either a code reference, or a command list.</p>
+
+<h2 id="build_ffi">build_ffi</h2>
+
+<pre><code> share {
+   build \&amp;code;
+   build \@commandlist;
+ };</code></pre>
+
+<p>[DEPRECATED]</p>
+
+<p>Instructions for the build FFI stage. Builds shared libraries instead of static. This is optional, and is only necessary if a fresh and separate build needs to be done for FFI.</p>
+
+<h2 id="gather">gather</h2>
+
+<pre><code> gather \&amp;code;
+ gather \@commandlist;
+ 
+ share {
+   gather \&amp;code;
+   gather \@commandlist;
+ };
+ 
+ sys {
+   gather \&amp;code;
+   gather \@commandlist;
+ };</code></pre>
+
+<p>Instructions for the gather stage. May be either a code reference, or a command list. In the root block of the alienfile it will trigger in both share and system build. In the share or sys block it will only trigger in the corresponding build.</p>
+
+<h2 id="gather_ffi">gather_ffi</h2>
+
+<pre><code> share {
+   gather_ffi \&amp;code;
+   gather_ffi \@commandlist;
+ }</code></pre>
+
+<p>[DEPRECATED]</p>
+
+<p>Gather specific to <code>build_ffi</code>. Not usually necessary.</p>
+
+<h2 id="ffi">ffi</h2>
+
+<pre><code> share {
+   ffi {
+     patch \&amp;code;
+     patch \@commandlist;
+     build \&amp;code;
+     build \@commandlist;
+     gather \&amp;code;
+     gather \@commandlist;
+   }
+ }</code></pre>
+
+<p>Specify patch, build or gather stages related to FFI.</p>
+
+<h2 id="meta_prop">meta_prop</h2>
+
+<pre><code> my $hash = meta_prop;</code></pre>
+
+<p>Get the meta_prop hash reference.</p>
+
+<h2 id="meta">meta</h2>
+
+<pre><code> my $meta = meta;</code></pre>
+
+<p>Returns the meta object for your <a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>.</p>
+
+<h2 id="log">log</h2>
+
+<pre><code> log($message);</code></pre>
+
+<p>Prints the given log to stdout.</p>
+
+<h2 id="test">test</h2>
+
+<pre><code> share {
+   test \&amp;code;
+   test \@commandlist;
+ };
+ sys {
+   test \&amp;code;
+   test \@commandlist;
+ };</code></pre>
+
+<p>Run the tests</p>
+
+<h2 id="before">before</h2>
+
+<pre><code> before $stage =&gt; \&amp;code;</code></pre>
+
+<p>Execute the given code before the given stage. Stage should be one of <code>probe</code>, <code>download</code>, <code>fetch</code>, <code>decode</code>, <code>prefer</code>, <code>extract</code>, <code>patch</code>, <code>build</code>, <code>test</code>, and <code>gather</code>.</p>
+
+<p>The before directive is only legal in the same blocks as the stage would normally be legal in. For example, you can&#39;t do this:</p>
+
+<pre><code> use alienfile;
+ 
+ sys {
+   before &#39;build&#39; =&gt; sub {
+     ...
+   };
+ };</code></pre>
+
+<p>Because a <code>build</code> wouldn&#39;t be legal inside a <code>sys</code> block.</p>
+
+<h2 id="after">after</h2>
+
+<pre><code> after $stage =&gt; \&amp;code;</code></pre>
+
+<p>Execute the given code after the given stage. Stage should be one of <code>probe</code>, <code>download</code>, <code>fetch</code>, <code>decode</code>, <code>prefer</code>, <code>extract</code>, <code>patch</code>, <code>build</code>, <code>test</code>, and <code>gather</code>.</p>
+
+<p>The after directive is only legal in the same blocks as the stage would normally be legal in. For example, you can&#39;t do this:</p>
+
+<pre><code> use alienfile;
+ 
+ sys {
+   after &#39;build&#39; =&gt; sub {
+     ...
+   };
+ };</code></pre>
+
+<p>Because a <code>build</code> wouldn&#39;t be legal inside a <code>sys</code> block.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Alien"><a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a></dt>
+<dd>
+
+</dd>
+<dt id="Alien::Build"><a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a></dt>
+<dd>
+
+</dd>
+<dt id="Alien::Build::MM"><a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a></dt>
+<dd>
+
+</dd>
+<dt id="Alien::Base"><a href="../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

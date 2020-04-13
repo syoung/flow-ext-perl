@@ -1,0 +1,290 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CONSTRUCTOR">CONSTRUCTOR</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+    </ul>
+  </li>
+  <li><a href="#PROPERTIES">PROPERTIES</a>
+    <ul>
+      <li><a href="#build">build</a></li>
+      <li><a href="#alienfile_meta">alienfile_meta</a></li>
+      <li><a href="#clean_install">clean_install</a></li>
+    </ul>
+  </li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#mm_args">mm_args</a></li>
+      <li><a href="#mm_postamble">mm_postamble</a></li>
+      <li><a href="#mm_install">mm_install</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::MM - Alien::Build installer code for ExtUtils::MakeMaker</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>In your <code>Makefile.PL</code>:</p>
+
+<pre><code> use ExtUtils::MakeMaker;
+ use Alien::Build::MM;
+ 
+ my $abmm = Alien::Build::MM-&gt;new;
+ 
+ WriteMakefile($abmm-&gt;mm_args(
+   ABSTRACT     =&gt; &#39;Discover or download and install libfoo&#39;,
+   DISTNAME     =&gt; &#39;Alien-Libfoo&#39;,
+   NAME         =&gt; &#39;Alien::Libfoo&#39;,
+   VERSION_FROM =&gt; &#39;lib/Alien/Libfoo.pm&#39;,
+   ...
+ ));
+ 
+ sub MY::postamble {
+   $abmm-&gt;mm_postamble(@_);
+ }
+ 
+ sub MY::install {
+   $abmm-&gt;mm_install(@_);
+ }</code></pre>
+
+<p>In your <code>lib/Alien/Libfoo.pm</code>:</p>
+
+<pre><code> package Alien::Libfoo;
+ use base qw( Alien::Base );
+ 1;</code></pre>
+
+<p>In your alienfile (needs to be named <code>alienfile</code> and should be in the root of your dist):</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;PkgConfig&#39; =&gt; &#39;libfoo&#39;;
+ 
+ share {
+   start_url &#39;http://libfoo.org&#39;;
+   ...
+ };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This class allows you to use Alien::Build and Alien::Base with <a href="../../../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a>. It load the <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe in the root of your <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> dist, updates the prereqs passed into <code>WriteMakefile</code> if any are specified by your <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> or its plugins, and adds a postamble to the <code>Makefile</code> that will download/build/test the alienized package as appropriate.</p>
+
+<p>The <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> must be named <code>alienfile</code>.</p>
+
+<p>If you are using <a>Dist::Zilla</a> to author your <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> dist, you should consider using the <a>Dist::Zilla::Plugin::AlienBuild</a> plugin.</p>
+
+<p>I personally don&#39;t recommend it, but if you want to use <a href="../../../../lib/perl5/site_perl/5.26.3/Module/Build.html">Module::Build</a> instead, you can use <a>Alien::Build::MB</a>.</p>
+
+<h1 id="CONSTRUCTOR">CONSTRUCTOR</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code> my $abmm = Alien::Build::MM-&gt;new;</code></pre>
+
+<p>Create a new instance of <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a>.</p>
+
+<h1 id="PROPERTIES">PROPERTIES</h1>
+
+<h2 id="build">build</h2>
+
+<pre><code> my $build = $abmm-&gt;build;</code></pre>
+
+<p>The <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> instance.</p>
+
+<h2 id="alienfile_meta">alienfile_meta</h2>
+
+<pre><code> my $bool = $abmm-&gt;alienfile_meta</code></pre>
+
+<p>Set to a false value, in order to turn off the x_alienfile meta</p>
+
+<h2 id="clean_install">clean_install</h2>
+
+<pre><code> my $bool = $abmm-&gt;clean_install;</code></pre>
+
+<p>Set to a true value, in order to clean the share directory prior to installing. If you use this you have to make sure that you install the install handler in your <code>Makefile.PL</code>:</p>
+
+<pre><code> $abmm = Alien::Build::MM-&gt;new(
+   clean_install =&gt; 1,
+ );
+ 
+ ...
+ 
+ sub MY::install {
+   $abmm-&gt;mm_install(@_);
+ }</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="mm_args">mm_args</h2>
+
+<pre><code> my %args = $abmm-&gt;mm_args(%args);</code></pre>
+
+<p>Adjust the arguments passed into <code>WriteMakefile</code> as needed by <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>.</p>
+
+<h2 id="mm_postamble">mm_postamble</h2>
+
+<pre><code> my $postamble $abmm-&gt;mm_postamble;
+ my $postamble $abmm-&gt;mm_postamble($mm);</code></pre>
+
+<p>Returns the postamble for the <code>Makefile</code> needed for <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>. This adds the following <code>make</code> targets which are normally called when you run <code>make all</code>, but can be run individually if needed for debugging.</p>
+
+<dl>
+
+<dt id="alien_prefix">alien_prefix</dt>
+<dd>
+
+<p>Determines the final install prefix (<code>%{.install.prefix}</code>).</p>
+
+</dd>
+<dt id="alien_version">alien_version</dt>
+<dd>
+
+<p>Determine the perl_module_version (<code>%{.runtime.perl_module_version}</code>)</p>
+
+</dd>
+<dt id="alien_download">alien_download</dt>
+<dd>
+
+<p>Downloads the source from the internet. Does nothing for a system install.</p>
+
+</dd>
+<dt id="alien_build">alien_build</dt>
+<dd>
+
+<p>Build from source (if a share install). Gather configuration (for either system or share install).</p>
+
+</dd>
+<dt id="alien_prop-alien_prop_meta-alien_prop_install-alien_prop_runtime">alien_prop, alien_prop_meta, alien_prop_install, alien_prop_runtime</dt>
+<dd>
+
+<p>Prints the meta, install and runtime properties for the Alien.</p>
+
+</dd>
+<dt id="alien_realclean-alien_clean">alien_realclean, alien_clean</dt>
+<dd>
+
+<p>Removes the alien specific files. These targets are executed when you call the <code>realclean</code> and <code>clean</code> targets respectively.</p>
+
+</dd>
+<dt id="alien_clean_install">alien_clean_install</dt>
+<dd>
+
+<p>Cleans out the Alien&#39;s share directory. Caution should be used in invoking this target directly, as if you do not understand what you are doing you are likely to break your already installed Alien.</p>
+
+</dd>
+</dl>
+
+<h2 id="mm_install">mm_install</h2>
+
+<pre><code> sub MY::install {
+   $abmm-&gt;mm_install(@_);
+ }</code></pre>
+
+<p><b>EXPERIMENTAL</b></p>
+
+<p>Adds an install rule to clean the final install dist directory prior to installing.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>, <a href="../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a>, <a>Dist::Zilla::Plugin::AlienBuild</a>, <a>Alien::Build::MB</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

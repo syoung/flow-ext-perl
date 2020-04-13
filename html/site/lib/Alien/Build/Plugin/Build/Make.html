@@ -1,0 +1,171 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#PROPERTIES">PROPERTIES</a>
+    <ul>
+      <li><a href="#make_type">make_type</a></li>
+    </ul>
+  </li>
+  <li><a href="#HELPERS">HELPERS</a>
+    <ul>
+      <li><a href="#make">make</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Plugin::Build::Make - Make plugin for Alien::Build</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> use alienfile;
+ # For a recipe that requires GNU Make
+ plugin &#39;Build::Make&#39; =&gt; &#39;gmake&#39;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>By default <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> provides a helper for the <code>make</code> that is used by Perl and <a href="../../../../../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a> itself. This is handy, because it is the one make that you can mostly guarantee that you will have. Unfortunately it may be a <code>make</code> that isn&#39;t supported by the library or tool that you are trying to alienize. This is mostly a problem on Windows, where the supported <code>make</code>s for years were Microsoft&#39;s <code>nmake</code> and Sun&#39;s <code>dmake</code>, which many open source projects do not use. This plugin will alter the <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe to use a different <code>make</code>. It may (as in the case of <code>gmake</code> / <a>Alien::gmake</a>) automatically download and install an alienized version of that <code>make</code> if it is not already installed.</p>
+
+<p>This plugin should NOT be used with other plugins that replace the <code>make</code> helper, like <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/CMake.html">Alien::Build::Plugin::Build::CMake</a>, <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/Autoconf.html">Alien::Build::Plugin::Build::Autoconf</a>, <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/MSYS.html">Alien::Build::Plugin::Build::MSYS</a>. This plugin is intended instead for projects that use vanilla makefiles of a specific type.</p>
+
+<p>This plugin is for now distributed separately from <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, but the intention is for it to soon become a core plugin for <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>.</p>
+
+<h1 id="PROPERTIES">PROPERTIES</h1>
+
+<h2 id="make_type">make_type</h2>
+
+<p>The make type needed by the <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe:</p>
+
+<dl>
+
+<dt id="dmake">dmake</dt>
+<dd>
+
+<p>Sun&#39;s dmake.</p>
+
+</dd>
+<dt id="gmake">gmake</dt>
+<dd>
+
+<p>GNU Make.</p>
+
+</dd>
+<dt id="nmake">nmake</dt>
+<dd>
+
+<p>Microsoft&#39;s nmake. It comes with Visual C++.</p>
+
+</dd>
+<dt id="umake">umake</dt>
+<dd>
+
+<p>Any UNIX <code>make</code> Usually either BSD or GNU Make.</p>
+
+</dd>
+</dl>
+
+<h1 id="HELPERS">HELPERS</h1>
+
+<h2 id="make">make</h2>
+
+<pre><code> %{make}</code></pre>
+
+<p>This plugin may change the make helper used by your <a href="../../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> recipe.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

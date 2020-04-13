@@ -1,0 +1,528 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#QUESTIONS">QUESTIONS</a>
+    <ul>
+      <li><a href="#What-is-Alien-Alien::Base-and-Alien::Build">What is Alien, Alien::Base and Alien::Build?</a></li>
+      <li><a href="#How-do-I-build-a-package-that-uses-build-system">How do I build a package that uses build system</a>
+        <ul>
+          <li><a href="#autoconf">autoconf</a></li>
+          <li><a href="#autoconf-like">autoconf-like</a></li>
+          <li><a href="#CMake">CMake</a></li>
+          <li><a href="#vanilla-Makefiles">vanilla Makefiles</a></li>
+        </ul>
+      </li>
+      <li><a href="#How-do-I-probe-for-a-package-that-uses-pkg-config">How do I probe for a package that uses pkg-config</a></li>
+      <li><a href="#How-do-I-specify-a-minimum-or-exact-version-requirement-for-packages-that-use-pkg-config">How do I specify a minimum or exact version requirement for packages that use pkg-config?</a></li>
+      <li><a href="#How-to-create-an-Alien-module-for-a-packages-that-do-not-support-pkg-config">How to create an Alien module for a packages that do not support pkg-config?</a>
+        <ul>
+          <li><a href="#Packages-that-provide-a-configuration-script">Packages that provide a configuration script</a></li>
+          <li><a href="#Packages-that-require-a-compile-test">Packages that require a compile test</a></li>
+        </ul>
+      </li>
+      <li><a href="#Can-Should-I-write-a-tool-oriented-Alien-module">Can/Should I write a tool oriented Alien module?</a></li>
+      <li><a href="#How-do-I-test-my-package-once-it-is-built-before-it-is-installed">How do I test my package once it is built (before it is installed)?</a></li>
+      <li><a href="#How-do-I-patch-packages-that-need-alterations">How do I patch packages that need alterations?</a></li>
+      <li><a href="#The-flags-that-a-plugin-produces-are-wrong">The flags that a plugin produces are wrong!</a></li>
+      <li><a href="#cannot-open-shared-object-file-trying-to-load-XS">&quot;cannot open shared object file&quot; trying to load XS</a></li>
+      <li><a href="#Internal-Exception-errors-downloading-packages-from-the-internet">599 Internal Exception errors downloading packages from the internet</a></li>
+      <li><a href="#Network-fetch-is-turned-off">Network fetch is turned off</a></li>
+      <li><a href="#I-would-really-prefer-you-not-download-stuff-off-the-internet">I would really prefer you not download stuff off the internet</a></li>
+      <li><a href="#For-testing-I-would-like-to-test-both-system-and-share-installs">For testing I would like to test both system and share installs!</a></li>
+      <li><a href="#How-do-I-use-Alien::Build-from-Dist::Zilla">How do I use Alien::Build from Dist::Zilla?</a></li>
+      <li><a href="#Cannot-find-either-a-share-directory-or-a-ConfigData-module">Cannot find either a share directory or a ConfigData module</a></li>
+      <li><a href="#I-have-a-question-not-listed-here">I have a question not listed here!</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Build::Manual::FAQ - Frequently Asked Questions about Alien::Build</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code> perldoc Alien::Build::Manual::FAQ</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This document serves to answer the most frequently asked questions made by developers creating <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules using <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>.</p>
+
+<h1 id="QUESTIONS">QUESTIONS</h1>
+
+<h2 id="What-is-Alien-Alien::Base-and-Alien::Build">What is Alien, Alien::Base and Alien::Build?</h2>
+
+<p>Alien in a Perl namespace for defining dependencies in CPAN for libraries and tools which are not &quot;native&quot; to CPAN. For a manifesto style description of the Why, and How see <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a>. <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> is a base class for the <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> runtime. <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> is a tool for probing the operating system for existing libraries and tools, and downloading, building and installing packages. <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> is a recipe format for describing how to probe, download, build and install a package.</p>
+
+<h2 id="How-do-I-build-a-package-that-uses-build-system">How do I build a package that uses <i>build system</i></h2>
+
+<h3 id="autoconf">autoconf</h3>
+
+<p>Use the autoconf plugin (<a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/Autoconf.html">Alien::Build::Plugin::Build::Autoconf</a>). If your package provides a pkg-config <code>.pc</code> file, then you can also use the PkgConfig plugin (<a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/PkgConfig/Negotiate.html">Alien::Build::Plugin::PkgConfig::Negotiate</a>).</p>
+
+<pre><code> use alienfile
+ plugin PkgConfig =&gt; &#39;libfoo&#39;;
+ share {
+   start_url =&gt; &#39;http://example.org/dist&#39;;
+   plugin Download =&gt; (
+     version =&gt; qr/libfoo-([0-9\.])\.tar\.gz$/,
+   );
+   plugin Extract =&gt; &#39;tar.gz&#39;;
+   plugin &#39;Build::Autoconf&#39;;
+ };</code></pre>
+
+<p>If you need to provide custom flags to configure, you can do that too:</p>
+
+<pre><code> share {
+   plugin &#39;Build::Autoconf&#39;;
+   build [
+     &#39;%{configure} --disable-shared --enable-foo&#39;,
+     &#39;%{make}&#39;,
+     &#39;%{make} install&#39;,
+   ];
+ };</code></pre>
+
+<p>If your package requires GNU Make, use <code>%{gmake}</code> instead of <code>%{make}</code>.</p>
+
+<h3 id="autoconf-like">autoconf-like</h3>
+
+<p>If you see an error like this:</p>
+
+<pre><code> Unknown option &quot;--with-pic&quot;.</code></pre>
+
+<p>It is because the autoconf plugin uses the <code>--with-pic</code> option by default, since it makes sense most of the time, and autoconf usually ignores options that it does not recognize. Some autoconf style build systems fail when they see an option that they do not recognize. You can turn this behavior off for these packages:</p>
+
+<pre><code> plugin &#39;Build::Autoconf&#39; =&gt; (
+   with_pic =&gt; 0,
+ );</code></pre>
+
+<p>Another thing about the autoconf plugin is that it uses <code>DESTDIR</code> to do a double staged install. If you see an error like &quot;nothing was installed into destdir&quot;, that means that your package does not support <code>DESTDIR</code>. You should instead use the MSYS plugin and use a command sequence to do the build like this:</p>
+
+<pre><code> share {
+   plugin &#39;Build::MSYS&#39;;
+   build [
+     # explicitly running configure with &quot;sh&quot; will make sure that
+     # it works on windows as well as UNIX.
+     &#39;sh configure --prefix=%{.install.prefix} --disable-shared&#39;,
+     &#39;%{make}&#39;,
+     &#39;%{make} install&#39;,
+   ];
+ };</code></pre>
+
+<h3 id="CMake">CMake</h3>
+
+<p>There is an alien <a>Alien::cmake3</a> that provides <code>cmake</code> 3.x or better (It is preferred to the older <a>Alien::CMake</a>). Though it is recommended that you use the <code>cmake</code> (<a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/CMake.html">Alien::Build::Plugin::Build::CMake</a>) plugin instead of using <a>Alien::cmake3</a>.</p>
+
+<pre><code> use alienfile;
+ 
+ share {
+   plugin &#39;Build::CMake&#39;;
+   build [
+     # this is the default build step, if you do not specify one.
+     [ &#39;%{cmake}&#39;,
+         @{ meta-&gt;prop-&gt;{plugin_build_cmake}-&gt;{args} },
+         # ... put extra cmake args here ...
+         &#39;.&#39;
+     ],
+     &#39;%{make}&#39;,
+     &#39;%{make} install&#39;,
+   ];
+ };</code></pre>
+
+<h3 id="vanilla-Makefiles">vanilla Makefiles</h3>
+
+<p><a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> provides a helper (<code>%{make}</code>) for the <code>make</code> that is used by Perl and <a href="../../../../../lib/perl5/5.26.3/ExtUtils/MakeMaker.html">ExtUtils::MakeMaker</a> (EUMM). Unfortunately the <code>make</code> supported by Perl and EUMM on Windows (<code>nmake</code> and <code>dmake</code>) are not widely supported by most open source projects. (Thankfully recent perls and EUMM support GNU Make on windows now).</p>
+
+<p>You can use the <code>make</code> plugin (<a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Build/Make.html">Alien::Build::Plugin::Build::Make</a>) to tell the <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> system know which make the project that you are alienizing requires.</p>
+
+<pre><code> plugin &#39;Build::Make&#39; =&gt; &#39;umake&#39;;
+ # umake makes %{make} either GNU Make or BSD Make on Unix and GNU Make on Windows.
+ build {
+   build [
+     # You can use the Perl config compiler and cflags using the %{perl.config...} helper
+     [ &#39;%{make}&#39;, &#39;CC=%{perl.config.cc}&#39;, &#39;CFLAGS=%{perl.config.cccdlflags} %{perl.config.optimize}&#39; ],
+     [ &#39;%{make}&#39;, &#39;install&#39;, &#39;PREFIX=%{.install.prefix}&#39; ],
+   ],
+ };</code></pre>
+
+<p>Some open source projects require GNU Make, and you can specify that, and <a>Alien::gmake</a> will be pulled in on platforms that do not already have it.</p>
+
+<pre><code> plugin &#39;Build::Make&#39; =&gt; &#39;gmake&#39;;
+ ...</code></pre>
+
+<h2 id="How-do-I-probe-for-a-package-that-uses-pkg-config">How do I probe for a package that uses pkg-config</h2>
+
+<p>Use the <code>pkg-config</code> plugin (<a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/PkgConfig/Negotiate.html">Alien::Build::Plugin::PkgConfig::Negotiate</a>):</p>
+
+<pre><code> use alienfile;
+ plugin &#39;PkgConfig&#39; =&gt; (
+   pkg_name =&gt; &#39;libfoo&#39;,
+ );</code></pre>
+
+<p>It will probe for a system version of the library. It will also add the appropriate <code>version</code> <code>cflags</code> and <code>libs</code> properties on either a <code>system</code> or <code>share</code> install.</p>
+
+<h2 id="How-do-I-specify-a-minimum-or-exact-version-requirement-for-packages-that-use-pkg-config">How do I specify a minimum or exact version requirement for packages that use pkg-config?</h2>
+
+<p>The various pkg-config plugins all support atleast_version, exact_version and maximum_version fields, which have the same meaning as the <code>pkg-config</code> command line interface:</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;PkgConfig&#39;, pkg_name =&gt; foo, atleast_version =&gt; &#39;1.2.3&#39;;</code></pre>
+
+<p>or</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;PkgConfig&#39;, pkg_name =&gt; foo, exact_version =&gt; &#39;1.2.3&#39;;</code></pre>
+
+<h2 id="How-to-create-an-Alien-module-for-a-packages-that-do-not-support-pkg-config">How to create an Alien module for a packages that do not support pkg-config?</h2>
+
+<h3 id="Packages-that-provide-a-configuration-script">Packages that provide a configuration script</h3>
+
+<p>Many packages provide a command that you can use to get the appropriate version, compiler and linker flags. For those packages you can just use the commands in your <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a>. Something like this:</p>
+
+<pre><code> use alienfile;
+ 
+ probe [ &#39;foo-config --version&#39; ];
+ 
+ share {
+   ...
+ 
+   build [
+     &#39;%{make} PREFIX=%{.runtime.prefix}&#39;,
+     &#39;%{amek} install PREFIX=%{.runtime.prefix}&#39;,
+   ];
+ };
+ 
+ gather [
+   [ &#39;foo-config&#39;, &#39;--version&#39;, \&#39;%{.runtime.version}&#39; ],
+   [ &#39;foo-config&#39;, &#39;--cflags&#39;,  \&#39;%{.runtime.cflags}&#39;  ],
+   [ &#39;foo-config&#39;, &#39;--libs&#39;,    \&#39;%{.runtime.libs}&#39;    ],
+ ];</code></pre>
+
+<h3 id="Packages-that-require-a-compile-test">Packages that require a compile test</h3>
+
+<p>Some packages just expect you do know that <code>-lfoo</code> will work. For those you can use the <code>cbuilder</code> plugin (<a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Probe/CBuilder.html">Alien::Build::Plugin::Probe::CBuilder</a>.</p>
+
+<pre><code> use alienfile;
+ plugin &#39;Probe::CBuilder&#39; =&gt; (
+   cflags =&gt; &#39;-I/opt/libfoo/include&#39;,
+   libs   =&gt; &#39;-L/opt/libfoo/lib -lfoo&#39;,
+ );
+ 
+ share {
+   ...
+   gather sub {
+     my($build) = @_;
+     my $prefix = $build-&gt;runtime_prop-&gt;{prefix};
+     $build-&gt;runtime_prop-&gt;{cflags} = &quot;-I$prefix/include &quot;;
+     $build-&gt;runtime_prop-&gt;{libs}   = &quot;-L$prefix/lib -lfoo &quot;;
+   };
+ }</code></pre>
+
+<p>This plugin will build a small program with these flags and test that it works. (There are also options to provide a program that can make simple tests to ensure the library works). If the probe works, it will set the compiler and linker flags. (There are also options for extracting the version from the test program). If you do a share install you will need to set the compiler and linker flags yourself in the gather step, if you aren&#39;t using a build plugin that will do that for you.</p>
+
+<h2 id="Can-Should-I-write-a-tool-oriented-Alien-module">Can/Should I write a tool oriented Alien module?</h2>
+
+<p>Certainly. The original intent was to provide libraries, but tools are also quite doable using the <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> toolset. A good example of how to do this is <a>Alien::nasm</a>. You will want to use the &#39;Probe::CommandLine&#39;:</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;Probe::CommandLine&#39; =&gt; (
+   command =&gt; &#39;gzip&#39;,
+ );</code></pre>
+
+<h2 id="How-do-I-test-my-package-once-it-is-built-before-it-is-installed">How do I test my package once it is built (before it is installed)?</h2>
+
+<p>Use <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien.html">Test::Alien</a>. It has extensive documentation, and integrates nicely with <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>.</p>
+
+<h2 id="How-do-I-patch-packages-that-need-alterations">How do I patch packages that need alterations?</h2>
+
+<p>If you have a diff file you can use patch:</p>
+
+<pre><code> use alienfile;
+ 
+ probe sub { &#39;share&#39; }; # replace with appropriate probe
+ 
+ share {
+   ...
+   patch [ &#39;%{patch} -p1 &lt; %{.install.patch}/mypatch.diff&#39; ];
+   build [ ... ] ;
+ }
+ 
+ ...</code></pre>
+
+<p>You can also patch using Perl if that is easier:</p>
+
+<pre><code> use alienfile;
+ 
+ probe sub { &#39;share&#39; };
+ 
+ share {
+   ...
+   patch sub {
+     my($build) = @_;
+     # make changes to source prior to build
+   };
+   build [ ... ];
+ };</code></pre>
+
+<h2 id="The-flags-that-a-plugin-produces-are-wrong">The flags that a plugin produces are wrong!</h2>
+
+<p>Sometimes, the compiler or linker flags that the PkgConfig plugin comes up with are not quite right. (Frequently this is actually because a package maintainer is providing a broken <code>.pc</code> file). (Other plugins may also have problems). You could replace the plugin&#39;s <code>gather</code> step but a better way is to provide a subroutine callback to be called after the gather stage is complete. You can do this with the <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a> <code>after</code> directive:</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;PlgConfig&#39; =&gt; &#39;libfoo&#39;;
+ 
+ share {
+   ...
+   after &#39;gather&#39; =&gt; sub {
+     my($build) = @_;
+     $build-&gt;runtime_prop-&gt;{libs}        .= &quot; -lbar&quot;;        # libfoo also requires libbar
+     $build-&gt;runtime_prop-&gt;{libs_static} .= &quot; -lbar -lbaz&quot;;  # libfoo also requires libbaz under static linkage
+   };
+ };</code></pre>
+
+<p>Sometimes you only need to do this on certain platforms. You can adjust the logic based on <code>$^O</code> appropriately.</p>
+
+<pre><code> use alienfile;
+ 
+ plugin &#39;PlgConfig&#39; =&gt; &#39;libfoo&#39;;
+ 
+ share {
+   ...
+   after &#39;gather&#39; =&gt; sub {
+     my($build) = @_;
+     if($^O eq &#39;MSWin32&#39;) {
+       $build-&gt;runtime_prop-&gt;{libs} .= &quot; -lpsapi&quot;;
+     }
+   };
+ };</code></pre>
+
+<h2 id="cannot-open-shared-object-file-trying-to-load-XS">&quot;cannot open shared object file&quot; trying to load XS</h2>
+
+<p>The error looks something like this:</p>
+
+<pre><code> t/acme_alien_dontpanic2.t ....... 1/? 
+ # Failed test &#39;xs&#39;
+ # at t/acme_alien_dontpanic2.t line 13.
+ #   XSLoader failed
+ #     Can&#39;t load &#39;/home/cip/.cpanm/work/1581635869.456/Acme-Alien-DontPanic2-2.0401/_alien/tmp/test-alien-lyiQNX/auto/Test/Alien/XS/ Mod0/Mod0.so&#39; for module Test::Alien::XS::Mod0: libdontpanic.so.0: cannot open shared object file: No such file or directory at /opt /perl/5.30.1/lib/5.30.1/x86_64-linux/DynaLoader.pm line 193.
+ #  at /home/cip/perl5/lib/perl5/Test/Alien.pm line 414.
+ # Compilation failed in require at /home/cip/perl5/lib/perl5/Test/Alien.pm line 414.
+ # BEGIN failed--compilation aborted at /home/cip/perl5/lib/perl5/Test/Alien.pm line 414.
+ t/acme_alien_dontpanic2.t ....... Dubious, test returned 1 (wstat 256, 0x100)
+ Failed 1/6 subtests 
+ t/acme_alien_dontpanic2__ffi.t .. ok   </code></pre>
+
+<p>This error happened at test time for the Alien, but depending on your environment and Alien it might happen later and the actual diagnostic wording might vary.</p>
+
+<p>This is usually because your XS or Alien tries to use dynamic libraries instead of dynamic libraries. Please consult the section about dynamic vs. static libraries in <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/AlienAuthor.html">Alien::Build::Manual::AlienAuthor</a>. The TL;DR is that <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Gather/IsolateDynamic.html">Alien::Build::Plugin::Gather::IsolateDynamic</a> might help. If you are the Alien author and the package you are alienizing doesn&#39;t have a static option you can use <a>Alien::Role::Dino</a>, but please note the extended set of caveats!</p>
+
+<h2 id="Internal-Exception-errors-downloading-packages-from-the-internet">599 Internal Exception errors downloading packages from the internet</h2>
+
+<pre><code> Alien::Build::Plugin::Fetch::HTTPTiny&gt; 599 Internal Exception fetching http://dist.libuv.org/dist/v1.15.0
+ Alien::Build::Plugin::Fetch::HTTPTiny&gt; exception: IO::Socket::SSL 1.42 must be installed for https support
+ Alien::Build::Plugin::Fetch::HTTPTiny&gt; exception: Net::SSLeay 1.49 must be installed for https support
+ Alien::Build::Plugin::Fetch::HTTPTiny&gt; An attempt at a SSL URL https was made, but your HTTP::Tiny does not appear to be able to use https.
+ Alien::Build::Plugin::Fetch::HTTPTiny&gt; Please see: https://metacpan.org/pod/Alien::Build::Manual::FAQ#599-Internal-Exception-errors-downloading-packages-from-the-internet
+ error fetching http://dist.libuv.org/dist/v1.15.0: 599 Internal Exception at /Users/ollisg/.perlbrew/libs/perl-5.26.0@test1/lib/perl5/Alien/Build/Plugin/Fetch/HTTPTiny.pm line 68.</code></pre>
+
+<p>(Older versions of <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> produced a less verbose more confusing version of this diagnostic).</p>
+
+<p>TL;DR, instead of this:</p>
+
+<pre><code> share {
+   start_url =&gt; &#39;http://example.org/dist&#39;;
+   ...
+ };</code></pre>
+
+<p>do this:</p>
+
+<pre><code> share {
+   start_url =&gt; &#39;https://example.org/dist&#39;;
+ };</code></pre>
+
+<p>If the website is going to redirect to a secure URL anyway.</p>
+
+<p>The &quot;599 Internal Exception&quot; indicates an &quot;internal&quot; exception from <a href="../../../../../lib/perl5/5.26.3/HTTP/Tiny.html">HTTP::Tiny</a> and is not a real HTTP status code or error. This could mean a number of different problems, but most frequently indicates that a SSL request was made without the required modules (<a href="../../../../../lib/perl5/5.26.3/x86_64-linux-thread-multi/Net/SSLeay.html">Net::SSLeay</a> and <a href="../../../../../lib/perl5/5.26.3/IO/Socket/SSL.html">IO::Socket::SSL</a>). Normally the <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Download/Negotiate.html">Alien::Build::Plugin::Download::Negotiate</a> and <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin/Fetch/HTTPTiny.html">Alien::Build::Plugin::Fetch::HTTPTiny</a> will make sure that the appropriate modules are added to your prerequisites for you if you specify a <code>https</code> URL. Some websites allow an initial request from <code>http</code> but then redirect to <code>https</code>. If you can it is better to specify <code>https</code>, if you cannot, then you can instead use the <code>ssl</code> property on either of those two plugins.</p>
+
+<h2 id="Network-fetch-is-turned-off">Network fetch is turned off</h2>
+
+<p>If you get an error like this:</p>
+
+<pre><code> Alien::Build&gt; install type share requested or detected, but network fetch is turned off
+ Alien::Build&gt; see see https://metacpan.org/pod/Alien::Build::Manual::FAQ#Network-fetch-is-turned-off</code></pre>
+
+<p>This is because your environment is setup not to install aliens that require the network. You can turn network fetch back on by setting <code>ALIEN_INSTALL_NETWORK</code> to true, or by unsetting it. This environment variable is designed for environments that don&#39;t ever want to install aliens that require downloading source packages over the internet.</p>
+
+<h2 id="I-would-really-prefer-you-not-download-stuff-off-the-internet">I would really prefer you not download stuff off the internet</h2>
+
+<p>The idea of <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> is to download missing packages and build them automatically to make installing easier. Some people may not like this, or may even have security requirements that they not download random package over the internet (caveat, downloading random stuff off of CPAN may not be any safer, so make sure you audit all of the open source software that you use appropriately). Another reason you may not want to download from the internet is if you are packaging up an alien for an operating system vendor, which will always want to use the system version of a library. In that situation you don&#39;t want <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> to go off and download something from the internet because the probe failed for some reason.</p>
+
+<p>This is easy to take care of, simply set <code>ALIEN_INSTALL_TYPE</code> to <code>system</code> and a build from source code will never be attempted. On systems that do not provide system versions of the library or tool you will get an error, allowing you to install the library, and retry the alien install. You can also set the environment variable on just some aliens.</p>
+
+<pre><code> % export ALIEN_INSTALL_TYPE=system  # for everyone
+ 
+ % env ALIEN_INSTALL_TYPE=system cpanm -v Alien::libfoo</code></pre>
+
+<h2 id="For-testing-I-would-like-to-test-both-system-and-share-installs">For testing I would like to test both system and share installs!</h2>
+
+<p>You can use the <code>ALIEN_INSTALL_TYPE</code> environment variable. It will force either a <code>share</code> or <code>system</code> install depending on how it is set. For travis you can do something like this:</p>
+
+<pre><code> env:
+   matrix:
+     - ALIEN_INSTALL_TYPE=share
+     - ALIEN_INSTALL_TYPE=system</code></pre>
+
+<h2 id="How-do-I-use-Alien::Build-from-Dist::Zilla">How do I use Alien::Build from Dist::Zilla?</h2>
+
+<p>For creating <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> and <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> based dist from <a>Dist::Zilla</a> you can use the dzil plugin <a>Dist::Zilla::Plugin::AlienBuild</a>.</p>
+
+<h2 id="Cannot-find-either-a-share-directory-or-a-ConfigData-module">Cannot find either a share directory or a ConfigData module</h2>
+
+<p>If you see an error like this:</p>
+
+<pre><code> Cannot find either a share directory or a ConfigData module for Alien::libfoo.
+ (Alien::libfoo loaded from lib/Alien/libfoo.pm)
+ Please see https://metacpan.org/pod/distribution/Alien-Build/lib/Alien/Build/Manual/FAQ.pod#Cannot-find-either-a-share-directory-or-a-ConfigData-module
+ Can&#39;t locate Alien/libfoo/ConfigData.pm in @INC (you may need to install the Alien::libfoo::ConfigData module) (@INC contains: ...)</code></pre>
+
+<p>it means you are trying to use an Alien that hasn&#39;t been properly installed. An <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> based Alien needs to have either the share directory build during the install process or for older legacy <a>Alien::Base::ModuleBuild</a> based Aliens, a ConfigData module generated by <a href="../../../../../lib/perl5/site_perl/5.26.3/Module/Build.html">Module::Build</a>.</p>
+
+<p>This usually happens if you try to use an Alien module from the lib directory as part of the Alien&#39;s distribution. You need to build the alien and use <code>blib/lib</code> instead of <code>lib</code> or install the alien and use the installed path.</p>
+
+<p>It is also possible that your Alien installer is not set up correctly. Make sure your <code>Makefile.PL</code> is using <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a> correctly.</p>
+
+<h2 id="I-have-a-question-not-listed-here">I have a question not listed here!</h2>
+
+<p>There are a number of forums available to people working on <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a>, <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> and <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> modules:</p>
+
+<dl>
+
+<dt id="native-on-irc.perl.org"><code>#native</code> on irc.perl.org</dt>
+<dd>
+
+<p>This is intended for native interfaces in general so is a good place for questions about <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> generally or <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> and <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a> specifically.</p>
+
+</dd>
+<dt id="mailing-list">mailing list</dt>
+<dd>
+
+<p>The <code>perl5-alien</code> google group is intended for <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> issues generally, including <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> and <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>.</p>
+
+<p><a href="https://groups.google.com/forum/#!forum/perl5-alien">https://groups.google.com/forum/#!forum/perl5-alien</a></p>
+
+</dd>
+<dt id="Open-a-support-ticket">Open a support ticket</dt>
+<dd>
+
+<p>If you have an issue with <a>Alie::Build</a> itself, then please open a support ticket on the project&#39;s GitHub issue tracker.</p>
+
+<p><a href="https://github.com/plicease/Alien-Build/issues">https://github.com/plicease/Alien-Build/issues</a></p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a>, <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/MM.html">Alien::Build::MM</a>, <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Plugin.html">Alien::Build::Plugin</a>, <a href="../../../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

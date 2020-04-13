@@ -1,0 +1,479 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#alien_ok">alien_ok</a></li>
+      <li><a href="#synthetic">synthetic</a></li>
+      <li><a href="#run_ok">run_ok</a></li>
+      <li><a href="#xs_ok">xs_ok</a></li>
+      <li><a href="#ffi_ok">ffi_ok</a></li>
+      <li><a href="#helper_ok">helper_ok</a></li>
+      <li><a href="#interpolate_template_is">interpolate_template_is</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::Alien - Testing tools for Alien modules</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 2.21</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>Test commands that come with your Alien:</p>
+
+<pre><code> use Test2::V0;
+ use Test::Alien;
+ use Alien::patch;
+ 
+ alien_ok &#39;Alien::patch&#39;;
+ run_ok([ &#39;patch&#39;, &#39;--version&#39; ])
+   -&gt;success
+   # we only accept the version written
+   # by Larry ...
+   -&gt;out_like(qr{Larry Wall});
+ 
+ done_testing;</code></pre>
+
+<p>Test that your library works with <code>XS</code>:</p>
+
+<pre><code> use Test2::V0;
+ use Test::Alien;
+ use Alien::Editline;
+ 
+ alien_ok &#39;Alien::Editline&#39;;
+ my $xs = do { local $/; &lt;DATA&gt; };
+ xs_ok $xs, with_subtest {
+   my($module) = @_;
+   ok $module-&gt;version;
+ };
+ 
+ done_testing;
+ 
+ __DATA__
+ 
+ #include &quot;EXTERN.h&quot;
+ #include &quot;perl.h&quot;
+ #include &quot;XSUB.h&quot;
+ #include &lt;editline/readline.h&gt;
+ 
+ const char *
+ version(const char *class)
+ {
+   return rl_library_version;
+ }
+ 
+ MODULE = TA_MODULE PACKAGE = TA_MODULE
+ 
+ const char *version(class);
+     const char *class;</code></pre>
+
+<p>Test that your library works with <a>FFI::Platypus</a>:</p>
+
+<pre><code> use Test2::V0;
+ use Test::Alien;
+ use Alien::LibYAML;
+ 
+ alien_ok &#39;Alien::LibYAML&#39;;
+ ffi_ok { symbols =&gt; [&#39;yaml_get_version&#39;] }, with_subtest {
+   my($ffi) = @_;
+   my $get_version = $ffi-&gt;function(yaml_get_version =&gt; [&#39;int*&#39;,&#39;int*&#39;,&#39;int*&#39;] =&gt; &#39;void&#39;);
+   $get_version-&gt;call(\my $major, \my $minor, \my $patch);
+   like $major, qr{[0-9]+};
+   like $minor, qr{[0-9]+};
+   like $patch, qr{[0-9]+};
+ };
+ 
+ done_testing;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides tools for testing <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules. It has hooks to work easily with <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> based modules, but can also be used via the synthetic interface to test non <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> based <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules. It has very modest prerequisites.</p>
+
+<p>Prior to this module the best way to test a <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> module was via <a>Test::CChecker</a>. The main downside to that module is that it is heavily influenced by and uses <a>ExtUtils::CChecker</a>, which is a tool for checking at install time various things about your compiler. It was also written before <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> became as stable as it is today. In particular, <a>Test::CChecker</a> does its testing by creating an executable and running it. Unfortunately Perl uses extensions by creating dynamic libraries and linking them into the Perl process, which is different in subtle and error prone ways. This module attempts to test the libraries in the way that they will actually be used, via either <code>XS</code> or <a>FFI::Platypus</a>. It also provides a mechanism for testing binaries that are provided by the various <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules (for example <a>Alien::gmake</a> and <a>Alien::patch</a>).</p>
+
+<p><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules can actually be useable without a compiler, or without <a>FFI::Platypus</a> (for example, if the library is provided by the system, and you are using <a>FFI::Platypus</a>, or if you are building from source and you are using <code>XS</code>), so tests with missing prerequisites are automatically skipped. For example, <a href="#xs_ok">&quot;xs_ok&quot;</a> will automatically skip itself if a compiler is not found, and <a href="#ffi_ok">&quot;ffi_ok&quot;</a> will automatically skip itself if <a>FFI::Platypus</a> is not installed.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="alien_ok">alien_ok</h2>
+
+<pre><code> alien_ok $alien, $message;
+ alien_ok $alien;</code></pre>
+
+<p>Load the given <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> instance or class. Checks that the instance or class conforms to the same interface as <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a>. Will be used by subsequent tests. The <code>$alien</code> module only needs to provide these methods in order to conform to the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a> interface:</p>
+
+<dl>
+
+<dt id="cflags">cflags</dt>
+<dd>
+
+<p>String containing the compiler flags</p>
+
+</dd>
+<dt id="libs">libs</dt>
+<dd>
+
+<p>String containing the linker and library flags</p>
+
+</dd>
+<dt id="dynamic_libs">dynamic_libs</dt>
+<dd>
+
+<p>List of dynamic libraries. Returns empty list if the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> module does not provide this.</p>
+
+</dd>
+<dt id="bin_dir">bin_dir</dt>
+<dd>
+
+<p>Directory containing tool binaries. Returns empty list if the <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> module does not provide this.</p>
+
+</dd>
+</dl>
+
+<p>If your <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> module does not conform to this interface then you can create a synthetic <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> module using the <a href="#synthetic">&quot;synthetic&quot;</a> function.</p>
+
+<h2 id="synthetic">synthetic</h2>
+
+<pre><code> my $alien = synthetic \%config;</code></pre>
+
+<p>Create a synthetic <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> module which can be passed into <a href="#alien_ok">&quot;alien_ok&quot;</a>. <code>\%config</code> can contain these keys (all of which are optional):</p>
+
+<dl>
+
+<dt id="cflags1">cflags</dt>
+<dd>
+
+<p>String containing the compiler flags.</p>
+
+</dd>
+<dt id="cflags_static">cflags_static</dt>
+<dd>
+
+<p>String containing the static compiler flags (optional).</p>
+
+</dd>
+<dt id="libs1">libs</dt>
+<dd>
+
+<p>String containing the linker and library flags.</p>
+
+</dd>
+<dt id="libs_static">libs_static</dt>
+<dd>
+
+<p>String containing the static linker flags (optional).</p>
+
+</dd>
+<dt id="dynamic_libs1">dynamic_libs</dt>
+<dd>
+
+<p>List reference containing the dynamic libraries.</p>
+
+</dd>
+<dt id="bin_dir1">bin_dir</dt>
+<dd>
+
+<p>Tool binary directory.</p>
+
+</dd>
+<dt id="runtime_prop">runtime_prop</dt>
+<dd>
+
+<p>Runtime properties.</p>
+
+</dd>
+</dl>
+
+<p>See <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien/Synthetic.html">Test::Alien::Synthetic</a> for more details.</p>
+
+<h2 id="run_ok">run_ok</h2>
+
+<pre><code> my $run = run_ok $command;
+ my $run = run_ok $command, $message;</code></pre>
+
+<p>Runs the given command, falling back on any <code>Alien::Base#bin_dir</code> methods provided by <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a> modules specified with <a href="#alien_ok">&quot;alien_ok&quot;</a>.</p>
+
+<p><code>$command</code> can be either a string or an array reference.</p>
+
+<p>Only fails if the command cannot be found, or if it is killed by a signal! Returns a <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien/Run.html">Test::Alien::Run</a> object, which you can use to test the exit status, output and standard error.</p>
+
+<p>Always returns an instance of <a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien/Run.html">Test::Alien::Run</a>, even if the command could not be found.</p>
+
+<h2 id="xs_ok">xs_ok</h2>
+
+<pre><code> xs_ok $xs;
+ xs_ok $xs, $message;</code></pre>
+
+<p>Compiles, links the given <code>XS</code> code and attaches to Perl.</p>
+
+<p>If you use the special module name <code>TA_MODULE</code> in your <code>XS</code> code, it will be replaced by an automatically generated package name. This can be useful if you want to pass the same <code>XS</code> code to multiple calls to <code>xs_ok</code> without subsequent calls replacing previous ones.</p>
+
+<p><code>$xs</code> may be either a string containing the <code>XS</code> code, or a hash reference with these keys:</p>
+
+<dl>
+
+<dt id="xs">xs</dt>
+<dd>
+
+<p>The XS code. This is the only required element.</p>
+
+</dd>
+<dt id="pxs">pxs</dt>
+<dd>
+
+<p>Extra <a href="../../../lib/perl5/5.26.3/ExtUtils/ParseXS.html">ExtUtils::ParseXS</a> arguments passed in as a hash reference.</p>
+
+</dd>
+<dt id="cbuilder_check">cbuilder_check</dt>
+<dd>
+
+<p>The compile check that should be done prior to attempting to build. Should be one of <code>have_compiler</code> or <code>have_cplusplus</code>. Defaults to <code>have_compiler</code>.</p>
+
+</dd>
+<dt id="cbuilder_config">cbuilder_config</dt>
+<dd>
+
+<p>Hash to override values normally provided by <code>Config</code>.</p>
+
+</dd>
+<dt id="cbuilder_compile">cbuilder_compile</dt>
+<dd>
+
+<p>Extra The <a href="../../../lib/perl5/5.26.3/ExtUtils/CBuilder.html">ExtUtils::CBuilder</a> arguments passed in as a hash reference.</p>
+
+</dd>
+<dt id="cbuilder_link">cbuilder_link</dt>
+<dd>
+
+<p>Extra The <a href="../../../lib/perl5/5.26.3/ExtUtils/CBuilder.html">ExtUtils::CBuilder</a> arguments passed in as a hash reference.</p>
+
+</dd>
+<dt id="verbose">verbose</dt>
+<dd>
+
+<p>Spew copious debug information via test note.</p>
+
+</dd>
+</dl>
+
+<p>You can use the <code>with_subtest</code> keyword to conditionally run a subtest if the <code>xs_ok</code> call succeeds. If <code>xs_ok</code> does not work, then the subtest will automatically be skipped. Example:</p>
+
+<pre><code> xs_ok $xs, with_subtest {
+   # skipped if $xs fails for some reason
+   my($module) = @_;
+   is $module-&gt;foo, 1;
+ };</code></pre>
+
+<p>The module name detected during the XS parsing phase will be passed in to the subtest. This is helpful when you are using a generated module name.</p>
+
+<p>If you need to test XS C++ interfaces, see <a>Test::Alien::CPP</a>.</p>
+
+<h2 id="ffi_ok">ffi_ok</h2>
+
+<pre><code> ffi_ok;
+ ffi_ok \%opt;
+ ffi_ok \%opt, $message;</code></pre>
+
+<p>Test that <a>FFI::Platypus</a> works.</p>
+
+<p><code>\%opt</code> is a hash reference with these keys (all optional):</p>
+
+<dl>
+
+<dt id="symbols">symbols</dt>
+<dd>
+
+<p>List references of symbols that must be found for the test to succeed.</p>
+
+</dd>
+<dt id="ignore_not_found">ignore_not_found</dt>
+<dd>
+
+<p>Ignores symbols that aren&#39;t found. This affects functions accessed via <a>FFI::Platypus#attach</a> and <a>FFI::Platypus#function</a> methods, and does not influence the <code>symbols</code> key above.</p>
+
+</dd>
+<dt id="lang">lang</dt>
+<dd>
+
+<p>Set the language. Used primarily for language specific native types.</p>
+
+</dd>
+<dt id="api">api</dt>
+<dd>
+
+<p>Set the API. <code>api = 1</code> requires FFI::Platypus 0.99 or later. This option was added with Test::Alien version 1.90, so your use line should include this version as a safeguard to make sure it works:</p>
+
+<pre><code> use Test::Alien 1.90;
+ ...
+ ffi_ok ...;</code></pre>
+
+</dd>
+</dl>
+
+<p>As with <a href="#xs_ok">&quot;xs_ok&quot;</a> above, you can use the <code>with_subtest</code> keyword to specify a subtest to be run if <code>ffi_ok</code> succeeds (it will skip otherwise). The <a>FFI::Platypus</a> instance is passed into the subtest as the first argument. For example:</p>
+
+<pre><code> ffi_ok with_subtest {
+   my($ffi) = @_;
+   is $ffi-&gt;function(foo =&gt; [] =&gt; &#39;void&#39;)-&gt;call, 42;
+ };</code></pre>
+
+<h2 id="helper_ok">helper_ok</h2>
+
+<pre><code> helper_ok $name;
+ helper_ok $name, $message;</code></pre>
+
+<p>Tests that the given helper has been defined.</p>
+
+<h2 id="interpolate_template_is">interpolate_template_is</h2>
+
+<pre><code> interpolate_template_is $template, $string;
+ interpolate_template_is $template, $string, $message;
+ interpolate_template_is $template, $regex;
+ interpolate_template_is $template, $regex, $message;</code></pre>
+
+<p>Tests that the given template when evaluated with the appropriate helpers will match either the given string or regular expression.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Alien"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build/Manual/Alien.html">Alien</a></dt>
+<dd>
+
+</dd>
+<dt id="Alien::Base"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Base.html">Alien::Base</a></dt>
+<dd>
+
+</dd>
+<dt id="Alien::Build"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Alien/Build.html">Alien::Build</a></dt>
+<dd>
+
+</dd>
+<dt id="alienfile"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/alienfile.html">alienfile</a></dt>
+<dd>
+
+</dd>
+<dt id="Test2"><a href="../../../lib/perl5/5.26.3/Test2.html">Test2</a></dt>
+<dd>
+
+</dd>
+<dt id="Test::Alien::Run"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien/Run.html">Test::Alien::Run</a></dt>
+<dd>
+
+</dd>
+<dt id="Test::Alien::CanCompile"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien/CanCompile.html">Test::Alien::CanCompile</a></dt>
+<dd>
+
+</dd>
+<dt id="Test::Alien::CanPlatypus"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien/CanPlatypus.html">Test::Alien::CanPlatypus</a></dt>
+<dd>
+
+</dd>
+<dt id="Test::Alien::Synthetic"><a href="../../../../../root/.cpanm/work/1586740115.5251/Alien-Build-2.21/blib/lib/Test/Alien/Synthetic.html">Test::Alien::Synthetic</a></dt>
+<dd>
+
+</dd>
+<dt id="Test::Alien::CPP"><a>Test::Alien::CPP</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Diab Jerius (DJERIUS)</p>
+
+<p>Roy Storey (KIWIROY)</p>
+
+<p>Ilya Pavlov</p>
+
+<p>David Mertens (run4flat)</p>
+
+<p>Mark Nunberg (mordy, mnunberg)</p>
+
+<p>Christian Walde (Mithaldu)</p>
+
+<p>Brian Wightman (MidLifeXis)</p>
+
+<p>Zaki Mughal (zmughal)</p>
+
+<p>mohawk (mohawk2, ETJ)</p>
+
+<p>Vikas N Kumar (vikasnkumar)</p>
+
+<p>Flavio Poletti (polettix)</p>
+
+<p>Salvador Fandi&ntilde;o (salva)</p>
+
+<p>Gianni Ceccarelli (dakkar)</p>
+
+<p>Pavel Shaydo (zwon, trinitum)</p>
+
+<p>Kang-min Liu (&#x5289;&#x5EB7;&#x6C11;, gugod)</p>
+
+<p>Nicholas Shipp (nshp)</p>
+
+<p>Juan Juli&aacute;n Merelo Guerv&oacute;s (JJ)</p>
+
+<p>Joel Berger (JBERGER)</p>
+
+<p>Petr Pisar (ppisar)</p>
+
+<p>Lance Wicks (LANCEW)</p>
+
+<p>Ahmad Fatoum (a3f, ATHREEF)</p>
+
+<p>Jos&eacute; Joaqu&iacute;n Atria (JJATRIA)</p>
+
+<p>Duke Leto (LETO)</p>
+
+<p>Shoichi Kaji (SKAJI)</p>
+
+<p>Shawn Laffan (SLAFFAN)</p>
+
+<p>Paul Evans (leonerd, PEVANS)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2011-2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+
