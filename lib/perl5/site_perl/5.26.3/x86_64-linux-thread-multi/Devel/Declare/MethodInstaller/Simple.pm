@@ -14,6 +14,12 @@ sub install_methodhandler {
   my %args  = @_;
   {
     no strict 'refs';
+
+#    use Data::Dumper;
+#    print "Devel::Declare::MethodInstaller::Simple::install_methodhandler    class: $class args: ";
+#    print Dumper \%args;
+#    print "\n";
+    
     *{$args{into}.'::'.$args{name}}   = sub (&) {};
   }
 
