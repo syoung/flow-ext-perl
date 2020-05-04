@@ -71,7 +71,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DateTime 3"
-.TH DateTime 3 "2017-12-29" "perl v5.26.3" "User Contributed Perl Documentation"
+.TH DateTime 3 "2020-02-29" "perl v5.26.3" "User Contributed Perl Documentation"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -80,7 +80,7 @@
 DateTime \- A date and time object for Perl
 .SH "VERSION"
 .IX Header "VERSION"
-version 1.45
+version 1.52
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 .Vb 1
@@ -796,6 +796,18 @@ datetime object is in a leap year.
 This method returns a true or false value indicating whether or not the
 datetime object is the last day of the month.
 .PP
+\fI\f(CI$dt\fI\->\f(BIis_last_day_of_quarter()\fI\fR
+.IX Subsection "$dt->is_last_day_of_quarter()"
+.PP
+This method returns a true or false value indicating whether or not the
+datetime object is the last day of the quarter.
+.PP
+\fI\f(CI$dt\fI\->\f(BIis_last_day_of_year()\fI\fR
+.IX Subsection "$dt->is_last_day_of_year()"
+.PP
+This method returns a true or false value indicating whether or not the
+datetime object is the last day of the year.
+.PP
 \fI\f(CI$dt\fI\->\f(BImonth_length()\fI\fR
 .IX Subsection "$dt->month_length()"
 .PP
@@ -902,6 +914,9 @@ strftime patterns.
 If you give a pattern that doesn't exist, then it is simply treated as
 text.
 .PP
+Note that any deviation from the \s-1POSIX\s0 standard is probably a bug. DateTime
+should match the output of \f(CW\*(C`POSIX::strftime\*(C'\fR for any given pattern.
+.PP
 \fI\f(CI$dt\fI\->format_cldr( \f(CI$format\fI, ... )\fR
 .IX Subsection "$dt->format_cldr( $format, ... )"
 .PP
@@ -918,10 +933,10 @@ text.
 \fI\f(CI$dt\fI\->\f(BIepoch()\fI\fR
 .IX Subsection "$dt->epoch()"
 .PP
-Return the \s-1UTC\s0 epoch value for the datetime object. Datetimes before the start
-of the epoch will be returned as a negative number.
+Returns the \s-1UTC\s0 epoch value for the datetime object. DateTimes before the
+start of the epoch will be returned as a negative number.
 .PP
-The return value from this method is always an integer.
+The return value from this method is always an integer number of seconds.
 .PP
 Since the epoch does not account for leap seconds, the epoch time for
 1972\-12\-31T23:59:60 (\s-1UTC\s0) is exactly the same as that for
@@ -1154,7 +1169,7 @@ A synonym of \f(CW\*(C`$dt\->add_duration( $duration_object )\*(C'\fR.
 .IX Subsection "$dt->subtract_duration( $duration_object )"
 .PP
 When given a \f(CW\*(C`DateTime::Duration\*(C'\fR object, this method simply calls
-\&\f(CW\*(C`invert()\*(C'\fR on that object and passes that new duration to the
+\&\f(CW\*(C`inverse()\*(C'\fR on that object and passes that new duration to the
 \&\f(CW\*(C`add_duration\*(C'\fR method.
 .PP
 \fI\f(CI$dt\fI\->subtract( DateTime::Duration\->new parameters )\fR
@@ -1228,6 +1243,14 @@ represent a fixed number of seconds.
 .PP
 Note that because of leap seconds, this may not return the same result as
 doing this math based on the value returned by \f(CW\*(C`$dt\->epoch()\*(C'\fR.
+.PP
+\fI\f(CI$dt\fI\->is_between( \f(CI$lower\fI, \f(CI$upper\fI )\fR
+.IX Subsection "$dt->is_between( $lower, $upper )"
+.PP
+Checks whether \f(CW$dt\fR is strictly between two other DateTime objects.
+.PP
+\&\*(L"Strictly\*(R" means that \f(CW$dt\fR must be greater than \f(CW$lower\fR and less than
+\&\f(CW$upper\fR. If it is \fIequal\fR to either object then this method returns false.
 .SS "Class Methods"
 .IX Subsection "Class Methods"
 \fIDateTime\->DefaultLocale( \f(CI$locale\fI )\fR
@@ -1373,7 +1396,7 @@ corner cases involving subtraction of two datetimes across a \s-1DST\s0
 change.
 .Sp
 If you can always use the floating or \s-1UTC\s0 time zones, you can skip
-ahead to Leap Seconds and Date Math
+ahead to \*(L"Leap Seconds and Date Math\*(R"
 .IP "\(bu" 4
 date vs datetime math
 .Sp
@@ -1406,8 +1429,8 @@ is not in the floating time zone. If you try to do math where one object is in
 the floating zone and the other isn't, the results will be confusing and
 wrong.
 .PP
-\fIAdding a Duration to a Datetime\fR
-.IX Subsection "Adding a Duration to a Datetime"
+\fIAdding a Duration to a DateTime\fR
+.IX Subsection "Adding a Duration to a DateTime"
 .PP
 The parts of a duration can be broken down into five parts. These are
 months, days, minutes, seconds, and nanoseconds. Adding one month to
@@ -1511,8 +1534,8 @@ different types of durations. These methods are
 \&\f(CW\*(C`subtract_datetime()\*(C'\fR, \f(CW\*(C`subtract_datetime_absolute()\*(C'\fR,
 \&\f(CW\*(C`delta_md()\*(C'\fR, \f(CW\*(C`delta_days()\*(C'\fR, and \f(CW\*(C`delta_ms()\*(C'\fR.
 .PP
-\fIDatetime Subtraction\fR
-.IX Subsection "Datetime Subtraction"
+\fIDateTime Subtraction\fR
+.IX Subsection "DateTime Subtraction"
 .PP
 Date subtraction is done solely based on the two object's local
 datetimes, with one exception to handle \s-1DST\s0 changes. Also, if the two
@@ -2365,7 +2388,8 @@ RFC822\-conformant dates (using \*(L"%a, \f(CW%d\fR \f(CW%b\fR \f(CW%Y\fR \f(CW%
 .IP "\(bu" 4
 \&\f(CW%Z\fR
 .Sp
-The time zone or name or abbreviation.
+The short name for the time zone, typically an abbreviation like \*(L"\s-1EST\*(R"\s0 or
+\&\*(L"\s-1AEST\*(R".\s0
 .IP "\(bu" 4
 %%
 .Sp
@@ -2492,6 +2516,8 @@ Doug Bell <madcityzen@gmail.com>
 .IP "\(bu" 4
 Flávio Soibelmann Glock <fglock@gmail.com>
 .IP "\(bu" 4
+Gianni Ceccarelli <gianni.ceccarelli@broadbean.com>
+.IP "\(bu" 4
 Gregory Oschwald <oschwald@gmail.com>
 .IP "\(bu" 4
 Hauke D <haukex@zero\-g.net>
@@ -2504,9 +2530,13 @@ Joshua Hoblitt <jhoblitt@cpan.org>
 .IP "\(bu" 4
 Karen Etheridge <ether@cpan.org>
 .IP "\(bu" 4
+Mark Overmeer <mark@overmeer.net>
+.IP "\(bu" 4
 Michael Conrad <mike@nrdvana.net>
 .IP "\(bu" 4
 Michael R. Davis <mrdvt92@users.noreply.github.com>
+.IP "\(bu" 4
+Mohammad S Anwar <mohammad.anwar@yahoo.com>
 .IP "\(bu" 4
 M Somerville <dracos@users.noreply.github.com>
 .IP "\(bu" 4
@@ -2516,7 +2546,11 @@ Olaf Alders <olaf@wundersolutions.com>
 .IP "\(bu" 4
 Ovid <curtis_ovid_poe@yahoo.com>
 .IP "\(bu" 4
+Paul Howarth <paul@city\-fan.org>
+.IP "\(bu" 4
 Philippe Bruhat (BooK) <book@cpan.org>
+.IP "\(bu" 4
+philip r brenan <philiprbrenan@gmail.com>
 .IP "\(bu" 4
 Ricardo Signes <rjbs@cpan.org>
 .IP "\(bu" 4
@@ -2529,7 +2563,7 @@ Sam Kington <github@illuminated.co.uk>
 viviparous <viviparous@prc>
 .SH "COPYRIGHT AND LICENSE"
 .IX Header "COPYRIGHT AND LICENSE"
-This software is Copyright (c) 2003 \- 2017 by Dave Rolsky.
+This software is Copyright (c) 2003 \- 2020 by Dave Rolsky.
 .PP
 This is free software, licensed under:
 .PP

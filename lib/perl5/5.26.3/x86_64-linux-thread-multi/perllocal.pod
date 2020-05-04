@@ -1560,3 +1560,25 @@ C<EXE_FILES: >
 
 =back
 
+=head2 Mon May  4 08:22:00 2020: C<Module> L<DateTime|DateTime>
+
+=over 4
+
+=item *
+
+C<installed into: /flow/perl/lib/perl5/site_perl/5.26.3>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.52>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
