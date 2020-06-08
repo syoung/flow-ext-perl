@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#MAINTAINER">MAINTAINER</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::RabbitMQ - An asynchronous and multi channel Perl AMQP client.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use AnyEvent::RabbitMQ;
+
+  my $cv = AnyEvent-&gt;condvar;
+
+  my $ar = AnyEvent::RabbitMQ-&gt;new-&gt;load_xml_spec()-&gt;connect(
+      host       =&gt; &#39;localhost&#39;,
+      port       =&gt; 5672,
+      user       =&gt; &#39;guest&#39;,
+      pass       =&gt; &#39;guest&#39;,
+      vhost      =&gt; &#39;/&#39;,
+      timeout    =&gt; 1,
+      tls        =&gt; 0, # Or 1 if you&#39;d like SSL
+      tls_ctx    =&gt; $anyevent_tls # or a hash of AnyEvent::TLS options.
+      tune       =&gt; { heartbeat =&gt; 30, channel_max =&gt; $whatever, frame_max = $whatever },
+      on_success =&gt; sub {
+          my $ar = shift;
+          $ar-&gt;open_channel(
+              on_success =&gt; sub {
+                  my $channel = shift;
+                  $channel-&gt;declare_exchange(
+                      exchange   =&gt; &#39;test_exchange&#39;,
+                      on_success =&gt; sub {
+                          $cv-&gt;send(&#39;Declared exchange&#39;);
+                      },
+                      on_failure =&gt; $cv,
+                  );
+              },
+              on_failure =&gt; $cv,
+              on_close   =&gt; sub {
+                  my $method_frame = shift-&gt;method_frame;
+                  die $method_frame-&gt;reply_code, $method_frame-&gt;reply_text;
+              },
+          );
+      },
+      on_failure =&gt; $cv,
+      on_read_failure =&gt; sub { die @_ },
+      on_return  =&gt; sub {
+          my $frame = shift;
+          die &quot;Unable to deliver &quot;, Dumper($frame);
+      },
+      on_close   =&gt; sub {
+          my $why = shift;
+          if (ref($why)) {
+              my $method_frame = $why-&gt;method_frame;
+              die $method_frame-&gt;reply_code, &quot;: &quot;, $method_frame-&gt;reply_text;
+          }
+          else {
+              die $why;
+          }
+      },
+  );
+
+  print $cv-&gt;recv, &quot;\n&quot;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>AnyEvent::RabbitMQ is an AMQP(Advanced Message Queuing Protocol) client library, that is intended to allow you to interact with AMQP-compliant message brokers/servers such as RabbitMQ in an asynchronous fashion.</p>
+
+<p>You can use AnyEvent::RabbitMQ to -</p>
+
+<pre><code>  * Declare and delete exchanges
+  * Declare, delete, bind and unbind queues
+  * Set QoS and confirm mode
+  * Publish, consume, get, ack, recover and reject messages
+  * Select, commit and rollback transactions</code></pre>
+
+<p>Most of these actions can be done through <a href="../../../../../root/.cpanm/work/1591583772.18/AnyEvent-RabbitMQ-1.21/blib/lib/AnyEvent/RabbitMQ/Channel.html">AnyEvent::RabbitMQ::Channel</a>. Please see the documentation there for more details.</p>
+
+<p>AnyEvent::RabbitMQ is known to work with RabbitMQ versions 2.5.1 and versions 0-8 and 0-9-1 of the AMQP specification.</p>
+
+<p>This client is the non-blocking version, for a blocking version with a similar API, see <a>Net::RabbitFoot</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Masahito Ikuta &lt;cooldaemon@gmail.com&gt;</p>
+
+<h1 id="MAINTAINER">MAINTAINER</h1>
+
+<p>Currently maintained by <code>&lt;bobtfish@bobtfish.net&gt;</code> due to the original author being missing in action.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 2010, the above named author(s).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

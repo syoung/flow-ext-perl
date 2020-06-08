@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Tester::CaptureExternal - Extends App::Cmd::Tester to capture from external subprograms</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Test::More tests =&gt; 4;
+  use App::Cmd::Tester::CaptureExternal;
+
+  use YourApp;
+
+  my $result = test_app(YourApp =&gt; [ qw(command --opt value) ]);
+
+  like($result-&gt;stdout, qr/expected output/, &#39;printed what we expected&#39;);
+
+  is($result-&gt;stderr, &#39;&#39;, &#39;nothing sent to sderr&#39;);
+
+  ok($result-&gt;output, &quot;STDOUT concatenated with STDERR&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><a href="../../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Tester.html">App::Cmd::Tester</a> provides a useful scaffold for testing applications, but it is unable to capture output generated from any external subprograms that are invoked from the application.</p>
+
+<p>This subclass uses an alternate mechanism for capturing output (<a href="../../../../../lib/perl5/5.26.3/Capture/Tiny.html">Capture::Tiny</a>) that does capture from external programs, with one major limitation.</p>
+
+<p>It is not possible to capture externally from both STDOUT and STDERR while also having appropriately interleaved combined output. Therefore, the <code>output</code> from this subclass simply concatenates the two.</p>
+
+<p>You can still use <code>output</code> for testing if there is any output at all or for testing if something appeared in either output stream, but you can&#39;t rely on the ordering being correct between lines to STDOUT and lines to STDERR.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

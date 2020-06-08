@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#rewrite">rewrite</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>String::RewritePrefix - rewrite strings based on a set of known prefixes</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.008</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use String::RewritePrefix;
+  my @to_load = String::RewritePrefix-&gt;rewrite(
+    { &#39;&#39; =&gt; &#39;MyApp::&#39;, &#39;+&#39; =&gt; &#39;&#39; },
+    qw(Plugin Mixin Addon +Corporate::Thinger),
+  );
+
+  # now you have:
+  qw(MyApp::Plugin MyApp::Mixin MyApp::Addon Corporate::Thinger)</code></pre>
+
+<p>You can also import a rewrite routine:</p>
+
+<pre><code>  use String::RewritePrefix rewrite =&gt; {
+    -as =&gt; &#39;rewrite_dt_prefix&#39;,
+    prefixes =&gt; { &#39;&#39; =&gt; &#39;MyApp::&#39;, &#39;+&#39; =&gt; &#39;&#39; },
+  };
+
+  my @to_load = rewrite_dt_prefix( qw(Plugin Mixin Addon +Corporate::Thinger));
+
+  # now you have:
+  qw(MyApp::Plugin MyApp::Mixin MyApp::Addon Corporate::Thinger)</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="rewrite">rewrite</h2>
+
+<pre><code>  String::RewritePrefix-&gt;rewrite(\%prefix, @strings);</code></pre>
+
+<p>This rewrites all the given strings using the rules in <code>%prefix</code>. Its keys are known prefixes for which its values will be substituted. This is performed in longest-first order, and only one prefix will be rewritten.</p>
+
+<p>If the prefix value is a coderef, it will be executed with the remaining string as its only argument. The return value will be used as the prefix.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Florian Ragwitz &lt;rafl@debian.org&gt;</p>
+
+</li>
+<li><p>Olivier Mengu&eacute; &lt;dolmen@cpan.org&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2020 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

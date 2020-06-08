@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CAVEATS">CAVEATS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Alien::Libxml2 - Install the C libxml2 library on your system</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.16</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>In your Makefile.PL:</p>
+
+<pre><code> use ExtUtils::MakeMaker;
+ use Alien::Base::Wrapper ();
+
+ WriteMakefile(
+   Alien::Base::Wrapper-&gt;new(&#39;Alien::Libxml2&#39;)-&gt;mm_args2(
+     # MakeMaker args
+     NAME =&gt; &#39;Kafka::Librd&#39;,
+     ...
+   ),
+ );</code></pre>
+
+<p>In your Build.PL:</p>
+
+<pre><code> use Module::Build;
+ use Alien::Base::Wrapper qw( Alien::Libxml2 !export );
+
+ my $builder = Module::Build-&gt;new(
+   ...
+   configure_requires =&gt; {
+     &#39;Alien::Libxml2&#39; =&gt; &#39;0&#39;,
+     ...
+   },
+   Alien::Base::Wrapper-&gt;mb_args,
+   ...
+ );
+
+ $build-&gt;create_build_script;</code></pre>
+
+<p>In your <a>FFI::Platypus</a> script or module:</p>
+
+<pre><code> use FFI::Platypus;
+ use Alien::Libxml2;
+
+ my $ffi = FFI::Platypus-&gt;new(
+   lib =&gt; [ Alien::Libxml2-&gt;dynamic_libs ],
+ );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides <code>libxml2</code> for other modules to use.</p>
+
+<h1 id="CAVEATS">CAVEATS</h1>
+
+<p>There was an older existing <a>Alien::LibXML</a>, but it uses the older <a>Alien::Build::ModuleBuild</a> and the author prefers this version which is based on the more robust <a href="../../../lib/perl5/site_perl/5.26.3/alienfile.html">alienfile</a> system.</p>
+
+<p><code>libxml2</code> has some optional prereqs, including <code>zlib</code> and <code>iconv</code>. For a <code>share</code> install you will want to make sure that these are installed prior to installing <a href="../../../../../root/.cpanm/work/1591583772.18/Alien-Libxml2-0.16/blib/lib/Alien/Libxml2.html">Alien::Libxml2</a> if you want to make use of features relying on them.</p>
+
+<p>For a system install, you want to make sure the development packages for <code>libxml2</code>, <code>zlib</code> and <code>iconv</code> are installed if <code>libxml2</code> has been configured to use them, otherwise <a>XML::LibXML</a> will not install as expected. If the tests for this module fail with a missing <code>iconv.h</code> or <code>zlib.h</code>, then this is likely the reason.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<dl>
+
+<dt id="Alien::LibXML"><a>Alien::LibXML</a></dt>
+<dd>
+
+<p>Older Alien for the same library.</p>
+
+</dd>
+<dt id="XML::LibXML"><a>XML::LibXML</a></dt>
+<dd>
+
+<p>Perl interface to <code>libxml2</code>, which uses this <a href="../../../lib/perl5/site_perl/5.26.3/Test/Alien.html">Alien</a></p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Author: Graham Ollis &lt;plicease@cpan.org&gt;</p>
+
+<p>Contributors:</p>
+
+<p>Shlomi Fish (shlomif)</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2013 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

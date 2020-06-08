@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#API">API</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::SAX::DocumentLocator - Helper class for document locators</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  my $locator = XML::SAX::DocumentLocator-&gt;new(
+      sub { $object-&gt;get_public_id },
+      sub { $object-&gt;get_system_id },
+      sub { $reader-&gt;current_line },
+      sub { $reader-&gt;current_column },
+      sub { $reader-&gt;get_encoding },
+      sub { $reader-&gt;get_xml_version },
+  );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module gives you a tied hash reference that calls the specified closures when asked for PublicId, SystemId, LineNumber and ColumnNumber.</p>
+
+<p>It is useful for writing SAX Parsers so that you don&#39;t have to constantly update the line numbers in a hash reference on the object you pass to set_document_locator(). See the source code for XML::SAX::PurePerl for a usage example.</p>
+
+<h1 id="API">API</h1>
+
+<p>There is only 1 method: <code>new</code>. Simply pass it a list of closures that when called will return the PublicId, the SystemId, the LineNumber, the ColumnNumber, the Encoding and the XMLVersion respectively.</p>
+
+<p>The closures are passed a single parameter, the key being requested. But you&#39;re free to ignore that.</p>
+
+
+</body>
+
+</html>
+
+

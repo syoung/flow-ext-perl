@@ -1,0 +1,137 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#prepare">prepare</a></li>
+      <li><a href="#new">new</a></li>
+      <li><a href="#execute">execute</a></li>
+      <li><a href="#app">app</a></li>
+      <li><a href="#usage">usage</a></li>
+      <li><a href="#command_names">command_names</a></li>
+      <li><a href="#usage_desc">usage_desc</a></li>
+      <li><a href="#opt_spec">opt_spec</a></li>
+      <li><a href="#validate_args">validate_args</a></li>
+      <li><a href="#usage_error">usage_error</a></li>
+      <li><a href="#abstract">abstract</a></li>
+      <li><a href="#description">description</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Command - a base class for App::Cmd commands</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="prepare">prepare</h2>
+
+<pre><code>  my ($cmd, $opt, $args) = $class-&gt;prepare($app, @args);</code></pre>
+
+<p>This method is the primary way in which App::Cmd::Command objects are built. Given the remaining command line arguments meant for the command, it returns the Command object, parsed options (as a hashref), and remaining arguments (as an arrayref).</p>
+
+<p>In the usage above, <code>$app</code> is the App::Cmd object that is invoking the command.</p>
+
+<h2 id="new">new</h2>
+
+<p>This returns a new instance of the command plugin. Probably only <code>prepare</code> should use this.</p>
+
+<h2 id="execute">execute</h2>
+
+<pre><code>  $command_plugin-&gt;execute(\%opt, \@args);</code></pre>
+
+<p>This method does whatever it is the command should do! It is passed a hash reference of the parsed command-line options and an array reference of left over arguments.</p>
+
+<p>If no <code>execute</code> method is defined, it will try to call <code>run</code> -- but it will warn about this behavior during testing, to remind you to fix the method name!</p>
+
+<h2 id="app">app</h2>
+
+<p>This method returns the App::Cmd object into which this command is plugged.</p>
+
+<h2 id="usage">usage</h2>
+
+<p>This method returns the usage object for this command. (See <a href="../../../../lib/perl5/5.26.3/Getopt/Long/Descriptive.html">Getopt::Long::Descriptive</a>).</p>
+
+<h2 id="command_names">command_names</h2>
+
+<p>This method returns a list of command names handled by this plugin. The first item returned is the &#39;canonical&#39; name of the command.</p>
+
+<p>If this method is not overridden by an App::Cmd::Command subclass, it will return the last part of the plugin&#39;s package name, converted to lowercase. For example, YourApp::Cmd::Command::Init will, by default, handle the command &quot;init&quot;.</p>
+
+<p>Subclasses should generally get the superclass value of <code>command_names</code> and then append aliases.</p>
+
+<h2 id="usage_desc">usage_desc</h2>
+
+<p>This method should be overridden to provide a usage string. (This is the first argument passed to <code>describe_options</code> from Getopt::Long::Descriptive.)</p>
+
+<p>If not overridden, it returns &quot;%c COMMAND %o&quot;; COMMAND is the first item in the result of the <code>command_names</code> method.</p>
+
+<h2 id="opt_spec">opt_spec</h2>
+
+<p>This method should be overridden to provide option specifications. (This is list of arguments passed to <code>describe_options</code> from Getopt::Long::Descriptive, after the first.)</p>
+
+<p>If not overridden, it returns an empty list.</p>
+
+<h2 id="validate_args">validate_args</h2>
+
+<pre><code>  $command_plugin-&gt;validate_args(\%opt, \@args);</code></pre>
+
+<p>This method is passed a hashref of command line options (as processed by Getopt::Long::Descriptive) and an arrayref of leftover arguments. It may throw an exception (preferably by calling <code>usage_error</code>, below) if they are invalid, or it may do nothing to allow processing to continue.</p>
+
+<h2 id="usage_error">usage_error</h2>
+
+<pre><code>  $self-&gt;usage_error(&quot;This command must not be run by root!&quot;);</code></pre>
+
+<p>This method should be called to die with human-friendly usage output, during <code>validate_args</code>.</p>
+
+<h2 id="abstract">abstract</h2>
+
+<p>This method returns a short description of the command&#39;s purpose. If this method is not overridden, it will return the abstract from the module&#39;s Pod. If it can&#39;t find the abstract, it will look for a comment starting with &quot;ABSTRACT:&quot; like the ones used by <a>Pod::Weaver::Section::Name</a>.</p>
+
+<h2 id="description">description</h2>
+
+<p>This method can be overridden to provide full option description. It is used by the built-in <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command/help.html">help</a> command.</p>
+
+<p>If not overridden, it uses <a href="../../../../lib/perl5/5.26.3/Pod/Usage.html">Pod::Usage</a> to extract the description from the module&#39;s Pod DESCRIPTION section or the empty string.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

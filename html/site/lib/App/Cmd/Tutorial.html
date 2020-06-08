@@ -1,0 +1,334 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#The-Script">The Script</a></li>
+      <li><a href="#The-Application-Class">The Application Class</a></li>
+      <li><a href="#The-Command-Classes">The Command Classes</a></li>
+      <li><a href="#Default-Commands">Default Commands</a></li>
+      <li><a href="#Arguments-and-Options">Arguments and Options</a></li>
+      <li><a href="#Global-Options">Global Options</a></li>
+    </ul>
+  </li>
+  <li><a href="#TIPS">TIPS</a></li>
+  <li><a href="#IGNORING-THINGS">IGNORING THINGS</a>
+    <ul>
+      <li><a href="#Ignoring-a-Single-Module">Ignoring a Single Module.</a></li>
+      <li><a href="#Ignoring-Multiple-modules-from-the-App-level">Ignoring Multiple modules from the App level.</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Tutorial - getting started with App::Cmd</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>App::Cmd is a set of tools designed to make it simple to write sophisticated command line programs. It handles commands with multiple subcommands, generates usage text, validates options, and lets you write your program as easy-to-test classes.</p>
+
+<p>An App::Cmd-based application is made up of three main parts: the script, the application class, and the command classes.</p>
+
+<h2 id="The-Script">The Script</h2>
+
+<p>The script is the actual executable file run at the command line. It can generally consist of just a few lines:</p>
+
+<pre><code>  #!/usr/bin/perl
+  use YourApp;
+  YourApp-&gt;run;</code></pre>
+
+<h2 id="The-Application-Class">The Application Class</h2>
+
+<p>All the work of argument parsing, validation, and dispatch is taken care of by your application class. The application class can also be pretty simple, and might look like this:</p>
+
+<pre><code>  package YourApp;
+  use App::Cmd::Setup -app;
+  1;</code></pre>
+
+<p>When a new application instance is created, it loads all of the command classes it can find, looking for modules under the Command namespace under its own name. In the above snippet, for example, YourApp will look for any module with a name starting with <code>YourApp::Command::</code>.</p>
+
+<h2 id="The-Command-Classes">The Command Classes</h2>
+
+<p>We can set up a simple command class like this:</p>
+
+<pre><code>  # ABSTRACT: set up YourApp
+  package YourApp::Command::initialize;
+  use YourApp -command;
+  1;</code></pre>
+
+<p>Now, a user can run this command, but he&#39;ll get an error:</p>
+
+<pre><code>  $ yourcmd initialize
+  YourApp::Command::initialize does not implement mandatory method &#39;execute&#39;</code></pre>
+
+<p>Oops! This dies because we haven&#39;t told the command class what it should do when executed. This is easy, we just add some code:</p>
+
+<pre><code>  sub execute {
+    my ($self, $opt, $args) = @_;
+
+    print &quot;Everything has been initialized.  (Not really.)\n&quot;;
+  }</code></pre>
+
+<p>Now it works:</p>
+
+<pre><code>  $ yourcmd initialize
+  Everything has been initialized.  (Not really.)</code></pre>
+
+<h2 id="Default-Commands">Default Commands</h2>
+
+<p>By default applications made with App::Cmd know two commands: <code>commands</code> and <code>help</code>.</p>
+
+<dl>
+
+<dt id="commands">commands</dt>
+<dd>
+
+<p>lists available commands.</p>
+
+<pre><code>  $yourcmd commands
+  Available commands:
+
+    commands: list the application&#39;s commands
+        help: display a command&#39;s help screen
+
+        init: set up YourApp</code></pre>
+
+<p>Note that by default the commands receive a description from the <code># ABSTRACT</code> comment in the respective command&#39;s module, or from the <code>=head1 NAME</code> Pod section.</p>
+
+</dd>
+<dt id="help">help</dt>
+<dd>
+
+<p>allows one to query for details on command&#39;s specifics.</p>
+
+<pre><code>  $yourcmd help initialize
+   yourcmd initialize [-z] [long options...]
+
+          -z --zero        ignore zeros</code></pre>
+
+<p>Of course, it&#39;s possible to disable or change the default commands, see <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd.html">App::Cmd</a>.</p>
+
+</dd>
+</dl>
+
+<h2 id="Arguments-and-Options">Arguments and Options</h2>
+
+<p>In this example</p>
+
+<pre><code>  $ yourcmd reset -zB --new-seed xyzxy foo.db bar.db</code></pre>
+
+<p><code>-zB</code> and <code>--new-seed xyzxy</code> are &quot;options&quot; and <code>foo.db</code> and <code>bar.db</code> are &quot;arguments.&quot;</p>
+
+<p>With a properly configured command class, the above invocation results in nicely formatted data:</p>
+
+<pre><code>  $opt = {
+    zero      =&gt; 1,
+    no_backup =&gt; 1, #default value
+    new_seed  =&gt; &#39;xyzzy&#39;,
+  };
+
+  $args = [ qw(foo.db bar.db) ];</code></pre>
+
+<p>Arguments are processed by <a href="../../../../lib/perl5/5.26.3/Getopt/Long/Descriptive.html">Getopt::Long::Descriptive</a> (GLD). To customize its argument processing, a command class can implement a few methods: <code>usage_desc</code> provides the usage format string; <code>opt_spec</code> provides the option specification list; <code>validate_args</code> is run after Getopt::Long::Descriptive, and is meant to validate the <code>$args</code>, which GLD ignores. See <a href="../../../../lib/perl5/5.26.3/Getopt/Long.html">Getopt::Long</a> for format specifications.</p>
+
+<p>The first two methods provide configuration passed to GLD&#39;s <code>describe_options</code> routine. To improve our command class, we might add the following code:</p>
+
+<pre><code>  sub usage_desc { &quot;yourcmd %o [dbfile ...]&quot; }
+
+  sub opt_spec {
+    return (
+      [ &quot;skip-refs|R&quot;,  &quot;skip reference checks during init&quot;, ],
+      [ &quot;values|v=s@&quot;,  &quot;starting values&quot;, { default =&gt; [ 0, 1, 3 ] } ],
+    );
+  }
+
+  sub validate_args {
+    my ($self, $opt, $args) = @_;
+
+    # we need at least one argument beyond the options; die with that message
+    # and the complete &quot;usage&quot; text describing switches, etc
+    $self-&gt;usage_error(&quot;too few arguments&quot;) unless @$args;
+  }</code></pre>
+
+<h2 id="Global-Options">Global Options</h2>
+
+<p>There are several ways of making options available everywhere (globally). This recipe makes local options accessible in all commands.</p>
+
+<p>To add a <code>--help</code> option to all your commands create a base class like:</p>
+
+<pre><code>  package MyApp::Command;
+  use App::Cmd::Setup -command;
+
+  sub opt_spec {
+    my ( $class, $app ) = @_;
+    return (
+      [ &#39;help&#39; =&gt; &quot;this usage screen&quot; ],
+      $class-&gt;options($app),
+    )
+  }
+
+  sub validate_args {
+    my ( $self, $opt, $args ) = @_;
+    if ( $opt-&gt;{help} ) {
+      my ($command) = $self-&gt;command_names;
+      $self-&gt;app-&gt;execute_command(
+        $self-&gt;app-&gt;prepare_command(&quot;help&quot;, $command)
+      );
+      exit;
+    }
+    $self-&gt;validate( $opt, $args );
+  }</code></pre>
+
+<p>Where <code>options</code> and <code>validate</code> are &quot;inner&quot; methods which your command subclasses implement to provide command-specific options and validation.</p>
+
+<p>Note: this is a new file, previously not mentioned in this tutorial and this tip does not recommend the use of global_opt_spec which offers an alternative way of specifying global options.</p>
+
+<h1 id="TIPS">TIPS</h1>
+
+<ul>
+
+<li><p>Delay using large modules using <a href="../../../../lib/perl5/5.26.3/Class/Load.html">Class::Load</a>, <a href="../../../../lib/perl5/5.26.3/Module/Runtime.html">Module::Runtime</a> or <code>require</code> in your commands to save memory and make startup faster. Since only one of these commands will be run anyway, there&#39;s no need to preload the requirements for all of them.</p>
+
+</li>
+<li><p>Add a <code>description</code> method to your commands for more verbose output from the built-in <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command/help.html">help</a> command.</p>
+
+<pre><code>  sub description {
+    return &quot;The initialize command prepares ...&quot;;
+  }</code></pre>
+
+</li>
+<li><p>To let your users configure default values for options, put a sub like</p>
+
+<pre><code>  sub config {
+    my $app = shift;
+    $app-&gt;{config} ||= TheLovelyConfigModule-&gt;load_config_file();
+  }</code></pre>
+
+<p>in your main app file, and then do something like:</p>
+
+<pre><code>  package YourApp;
+  sub opt_spec {
+    my ( $class, $app ) = @_;
+    my ( $name ) = $class-&gt;command_names;
+    return (
+      [ &#39;blort=s&#39; =&gt; &quot;That special option&quot;,
+        { default =&gt; $app-&gt;config-&gt;{$name}{blort} || $fallback_default },
+      ],
+    );
+  }</code></pre>
+
+<p>Or better yet, put this logic in a superclass and process the return value from an &quot;inner&quot; method:</p>
+
+<pre><code>  package YourApp::Command;
+  sub opt_spec {
+    my ( $class, $app ) = @_;
+    return (
+      [ &#39;help&#39; =&gt; &quot;this usage screen&quot; ],
+      $class-&gt;options($app),
+    )
+  }</code></pre>
+
+</li>
+<li><p>You need to activate <code>strict</code> and <code>warnings</code> as usual if you want them. App::Cmd doesn&#39;t do that for you.</p>
+
+</li>
+</ul>
+
+<h1 id="IGNORING-THINGS">IGNORING THINGS</h1>
+
+<p>Some people find that for whatever reason, they wish to put Modules in their <code>MyApp::Command::</code> namespace which are not commands, or not commands intended for use by <code>MyApp</code>.</p>
+
+<p>Good examples include, but are not limited to, things like <code>MyApp::Command::frobrinate::Plugin::Quietly</code>, where <code>::Quietly</code> is only useful for the <code>frobrinate</code> command.</p>
+
+<p>The default behaviour is to treat such packages as errors, as for the majority of use cases, things in <code>::Command</code> are expected to <i>only</i> be commands, and thus, anything that, by our heuristics, is not a command, is highly likely to be a mistake.</p>
+
+<p>And as all commands are loaded simultaneously, an error in any one of these commands will yield a fatal error.</p>
+
+<p>There are a few ways to specify that you are sure you want to do this, with varying ranges of scope and complexity.</p>
+
+<h2 id="Ignoring-a-Single-Module">Ignoring a Single Module.</h2>
+
+<p>This is the simplest approach, and most useful for one-offs.</p>
+
+<pre><code>  package YourApp::Command::foo::NotACommand;
+
+  use YourApp -ignore;
+
+  &lt;whatever you want here&gt;</code></pre>
+
+<p>This will register this package&#39;s namespace with YourApp to be excluded from its plugin validation magic. It otherwise makes no changes to <code>::NotACommand</code>&#39;s namespace, does nothing magical with <code>@ISA</code>, and doesn&#39;t bolt any hidden functions on.</p>
+
+<p>Its also probably good to notice that it is ignored <i>only</i> by <code>YourApp</code>. If for whatever reason you have two different <code>App::Cmd</code> systems under which <code>::NotACommand</code> is visible, you&#39;ll need to set it ignored to both.</p>
+
+<p>This is probably a big big warning <b>NOT</b> to do that.</p>
+
+<h2 id="Ignoring-Multiple-modules-from-the-App-level">Ignoring Multiple modules from the App level.</h2>
+
+<p>If you really fancy it, you can override the <code>should_ignore</code> method provided by <code>App::Cmd</code> to tweak its ignore logic. The most useful example of this is as follows:</p>
+
+<pre><code>  sub should_ignore {
+    my ( $self, $command_class ) = @_;
+    return 1 if not $command_class-&gt;isa( &#39;App::Cmd::Command&#39; );
+    return;
+  }</code></pre>
+
+<p>This will prematurely mark for ignoring all packages that don&#39;t subclass <code>App::Cmd::Command</code>, which causes non-commands ( or perhaps commands that are coded wrongly / broken ) to be silently skipped.</p>
+
+<p>Note that by overriding this method, you will lose the effect of any of the other ignore mechanisms completely. If you want to combine the original <code>should_ignore</code> method with your own logic, you&#39;ll want to steal <code>Moose</code>&#39;s <code>around</code> method modifier.</p>
+
+<pre><code>  use Moose::Util;
+
+  Moose::Util::add_method_modifier( __PACKAGE__, &#39;around&#39;, [
+    should_ignore =&gt; sub {
+      my $orig = shift;
+      my $self = shift;
+      return 1 if not $command_class-&gt;isa( &#39;App::Cmd::Command&#39; );
+      return $self-&gt;$orig( @_ );
+  }]);</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="http://deps.cpantesters.org/depended-on-by.pl?module=App%3A%3ACmd">CPAN modules using App::Cmd</a></p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

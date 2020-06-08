@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CREATING-NEW-EXCEPTION-CLASSES">CREATING NEW EXCEPTION CLASSES</a></li>
+  <li><a href="#THROWING-EXCEPTIONS">THROWING EXCEPTIONS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::SAX::Exception - Exception classes for XML::SAX</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  throw XML::SAX::Exception::NotSupported(
+          Message =&gt; &quot;The foo feature is not supported&quot;,
+          );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module is the base class for all SAX Exceptions, those defined in the spec as well as those that one may create for one&#39;s own SAX errors.</p>
+
+<p>There are three subclasses included, corresponding to those of the SAX spec:</p>
+
+<pre><code>  XML::SAX::Exception::NotSupported
+  XML::SAX::Exception::NotRecognized
+  XML::SAX::Exception::Parse</code></pre>
+
+<p>Use them wherever you want, and as much as possible when you encounter such errors. SAX is meant to use exceptions as much as possible to flag problems.</p>
+
+<h1 id="CREATING-NEW-EXCEPTION-CLASSES">CREATING NEW EXCEPTION CLASSES</h1>
+
+<p>All you need to do to create a new exception class is:</p>
+
+<pre><code>  @XML::SAX::Exception::MyException::ISA = (&#39;XML::SAX::Exception&#39;)</code></pre>
+
+<p>The given package doesn&#39;t need to exist, it&#39;ll behave correctly this way. If your exception refines an existing exception class, then you may also inherit from that instead of from the base class.</p>
+
+<h1 id="THROWING-EXCEPTIONS">THROWING EXCEPTIONS</h1>
+
+<p>This is as simple as exemplified in the SYNOPSIS. In fact, there&#39;s nothing more to know. All you have to do is:</p>
+
+<pre><code>  throw XML::SAX::Exception::MyException( Message =&gt; &#39;Something went wrong&#39; );</code></pre>
+
+<p>and voila, you&#39;ve thrown an exception which can be caught in an eval block.</p>
+
+
+</body>
+
+</html>
+
+

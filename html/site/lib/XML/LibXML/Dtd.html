@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::Dtd - XML::LibXML DTD Handling</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::LibXML;
+
+  $dtd = XML::LibXML::Dtd-&gt;new($public_id, $system_id);
+  $dtd = XML::LibXML::Dtd-&gt;parse_string($dtd_str);
+  $publicId = $dtd-&gt;getName();
+  $publicId = $dtd-&gt;publicId();
+  $systemId = $dtd-&gt;systemId();</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This class holds a DTD. You may parse a DTD from either a string, or from an external SYSTEM identifier.</p>
+
+<p>No support is available as yet for parsing from a filehandle.</p>
+
+<p>XML::LibXML::Dtd is a sub-class of <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/Node.html">XML::LibXML::Node</a>, so all the methods available to nodes (particularly toString()) are available to Dtd objects.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<dl>
+
+<dt id="new">new</dt>
+<dd>
+
+<pre><code>  $dtd = XML::LibXML::Dtd-&gt;new($public_id, $system_id);</code></pre>
+
+<p>Parse a DTD from the system identifier, and return a DTD object that you can pass to $doc-&gt;is_valid() or $doc-&gt;validate().</p>
+
+<pre><code>  my $dtd = XML::LibXML::Dtd-&gt;new(
+                        &quot;SOME // Public / ID / 1.0&quot;,
+                        &quot;test.dtd&quot;
+                                  );
+   my $doc = XML::LibXML-&gt;new-&gt;parse_file(&quot;test.xml&quot;);
+   $doc-&gt;validate($dtd);</code></pre>
+
+</dd>
+<dt id="parse_string">parse_string</dt>
+<dd>
+
+<pre><code>  $dtd = XML::LibXML::Dtd-&gt;parse_string($dtd_str);</code></pre>
+
+<p>The same as new() above, except you can parse a DTD from a string. Note that parsing from string may fail if the DTD contains external parametric-entity references with relative URLs.</p>
+
+</dd>
+<dt id="getName">getName</dt>
+<dd>
+
+<pre><code>  $publicId = $dtd-&gt;getName();</code></pre>
+
+<p>Returns the name of DTD; i.e., the name immediately following the DOCTYPE keyword.</p>
+
+</dd>
+<dt id="publicId">publicId</dt>
+<dd>
+
+<pre><code>  $publicId = $dtd-&gt;publicId();</code></pre>
+
+<p>Returns the public identifier of the external subset.</p>
+
+</dd>
+<dt id="systemId">systemId</dt>
+<dd>
+
+<pre><code>  $systemId = $dtd-&gt;systemId();</code></pre>
+
+<p>Returns the system identifier of the external subset.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt Sergeant, Christian Glahn, Petr Pajas</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>2.0205</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>2001-2007, AxKit.com Ltd.</p>
+
+<p>2002-2006, Christian Glahn.</p>
+
+<p>2006-2009, Petr Pajas.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

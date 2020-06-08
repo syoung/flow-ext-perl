@@ -1,0 +1,16 @@
+/flow/perl/bin/rabbit_foot
+/flow/perl/html/site/lib/Net/RabbitFoot.html
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Channel.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Command/bind_queue.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Command/declare_exchange.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Command/declare_queue.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Command/delete_exchange.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Command/delete_queue.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Command/purge_queue.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Command/unbind_queue.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Role/Command.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/RabbitFoot/Cmd/Role/Config.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/auto/share/dist/Net-RabbitFoot/fixed_amqp0-8.xml
+/flow/perl/man/man3/Net::RabbitFoot.3

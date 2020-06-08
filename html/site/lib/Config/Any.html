@@ -1,0 +1,185 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#INTERFACE">INTERFACE</a>
+    <ul>
+      <li><a href="#load_files-args">load_files( \%args )</a></li>
+      <li><a href="#load_stems-args">load_stems( \%args )</a></li>
+      <li><a href="#finder">finder( )</a></li>
+      <li><a href="#plugins">plugins( )</a></li>
+      <li><a href="#extensions">extensions( )</a></li>
+    </ul>
+  </li>
+  <li><a href="#DIAGNOSTICS">DIAGNOSTICS</a></li>
+  <li><a href="#CONFIGURATION-AND-ENVIRONMENT">CONFIGURATION AND ENVIRONMENT</a></li>
+  <li><a href="#DEPENDENCIES">DEPENDENCIES</a></li>
+  <li><a href="#INCOMPATIBILITIES">INCOMPATIBILITIES</a></li>
+  <li><a href="#BUGS-AND-LIMITATIONS">BUGS AND LIMITATIONS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#LICENCE-AND-COPYRIGHT">LICENCE AND COPYRIGHT</a></li>
+  <li><a href="#DISCLAIMER-OF-WARRANTY">DISCLAIMER OF WARRANTY</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Config::Any - Load configuration from different file formats, transparently</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Config::Any;
+
+    my $cfg = Config::Any-&gt;load_stems({stems =&gt; \@filepath_stems, ... });
+    # or
+    my $cfg = Config::Any-&gt;load_files({files =&gt; \@filepaths, ... });
+
+    for (@$cfg) {
+        my ($filename, $config) = %$_;
+        $class-&gt;config($config);
+        warn &quot;loaded config from file: $filename&quot;;
+    }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><a href="../../../../../root/.cpanm/work/1591583772.18/Config-Any-0.32/blib/lib/Config/Any.html">Config::Any</a> provides a facility for Perl applications and libraries to load configuration data from multiple different file formats. It supports XML, YAML, JSON, Apache-style configuration, Windows INI files, and even Perl code.</p>
+
+<p>The rationale for this module is as follows: Perl programs are deployed on many different platforms and integrated with many different systems. Systems administrators and end users may prefer different configuration formats than the developers. The flexibility inherent in a multiple format configuration loader allows different users to make different choices, without generating extra work for the developers. As a developer you only need to learn a single interface to be able to use the power of different configuration formats.</p>
+
+<h1 id="INTERFACE">INTERFACE</h1>
+
+<h2 id="load_files-args">load_files( \%args )</h2>
+
+<pre><code>    Config::Any-&gt;load_files( { files =&gt; \@files } );
+    Config::Any-&gt;load_files( { files =&gt; \@files, filter  =&gt; \&amp;filter } );
+    Config::Any-&gt;load_files( { files =&gt; \@files, use_ext =&gt; 1 } );
+    Config::Any-&gt;load_files( { files =&gt; \@files, flatten_to_hash =&gt; 1 } );</code></pre>
+
+<p><code>load_files()</code> attempts to load configuration from the list of files passed in the <code>files</code> parameter, if the file exists.</p>
+
+<p>If the <code>filter</code> parameter is set, it is used as a callback to modify the configuration data before it is returned. It will be passed a single hash-reference parameter which it should modify in-place.</p>
+
+<p>If the <code>use_ext</code> parameter is defined, the loader will attempt to parse the file extension from each filename and will skip the file unless it matches a standard extension for the loading plugins. Only plugins whose standard extensions match the file extension will be used. For efficiency reasons, its use is encouraged, but be aware that you will lose flexibility -- for example, a file called <code>myapp.cfg</code> containing YAML data will not be offered to the YAML plugin, whereas <code>myapp.yml</code> or <code>myapp.yaml</code> would be.</p>
+
+<p>When the <code>flatten_to_hash</code> parameter is defined, the loader will return a hash keyed on the file names, as opposed to the usual list of single-key hashes.</p>
+
+<p><code>load_files()</code> also supports a &#39;force_plugins&#39; parameter, whose value should be an arrayref of plugin names like <code>Config::Any::INI</code>. Its intended use is to allow the use of a non-standard file extension while forcing it to be offered to a particular parser. It is not compatible with &#39;use_ext&#39;.</p>
+
+<p>You can supply a <code>driver_args</code> hashref to pass special options to a particular parser object. Example:</p>
+
+<pre><code>    Config::Any-&gt;load_files( { files =&gt; \@files, driver_args =&gt; {
+        General =&gt; { -LowerCaseNames =&gt; 1 }
+    } )</code></pre>
+
+<h2 id="load_stems-args">load_stems( \%args )</h2>
+
+<pre><code>    Config::Any-&gt;load_stems( { stems =&gt; \@stems } );
+    Config::Any-&gt;load_stems( { stems =&gt; \@stems, filter  =&gt; \&amp;filter } );
+    Config::Any-&gt;load_stems( { stems =&gt; \@stems, use_ext =&gt; 1 } );
+    Config::Any-&gt;load_stems( { stems =&gt; \@stems, flatten_to_hash =&gt; 1 } );</code></pre>
+
+<p><code>load_stems()</code> attempts to load configuration from a list of files which it generates by combining the filename stems list passed in the <code>stems</code> parameter with the potential filename extensions from each loader, which you can check with the <code>extensions()</code> classmethod described below. Once this list of possible filenames is built it is treated exactly as in <code>load_files()</code> above, as which it takes the same parameters. Please read the <code>load_files()</code> documentation before using this method.</p>
+
+<h2 id="finder">finder( )</h2>
+
+<p>The <code>finder()</code> classmethod returns the <a href="../../../lib/perl5/5.26.3/Module/Pluggable/Object.html">Module::Pluggable::Object</a> object which is used to load the plugins. See the documentation for that module for more information.</p>
+
+<h2 id="plugins">plugins( )</h2>
+
+<p>The <code>plugins()</code> classmethod returns the names of configuration loading plugins as found by <a href="../../../lib/perl5/5.26.3/Module/Pluggable/Object.html">Module::Pluggable::Object</a>.</p>
+
+<h2 id="extensions">extensions( )</h2>
+
+<p>The <code>extensions()</code> classmethod returns the possible file extensions which can be loaded by <code>load_stems()</code> and <code>load_files()</code>. This may be useful if you set the <code>use_ext</code> parameter to those methods.</p>
+
+<h1 id="DIAGNOSTICS">DIAGNOSTICS</h1>
+
+<dl>
+
+<dt id="No-files-specified-or-No-stems-specified"><code>No files specified!</code> or <code>No stems specified!</code></dt>
+<dd>
+
+<p>The <code>load_files()</code> and <code>load_stems()</code> methods will issue this warning if called with an empty list of files/stems to load.</p>
+
+</dd>
+<dt id="load-requires-a-arrayref-of-file-paths"><code>_load requires a arrayref of file paths</code></dt>
+<dd>
+
+<p>This fatal error will be thrown by the internal <code>_load</code> method. It should not occur but is specified here for completeness. If your code dies with this error, please email a failing test case to the authors below.</p>
+
+</dd>
+</dl>
+
+<h1 id="CONFIGURATION-AND-ENVIRONMENT">CONFIGURATION AND ENVIRONMENT</h1>
+
+<p>Config::Any requires no configuration files or environment variables.</p>
+
+<h1 id="DEPENDENCIES">DEPENDENCIES</h1>
+
+<p><a href="../../../lib/perl5/5.26.3/Module/Pluggable/Object.html">Module::Pluggable::Object</a></p>
+
+<p>And at least one of the following: <a>Config::General</a> <a href="../../../lib/perl5/5.26.3/Config/Tiny.html">Config::Tiny</a> <a href="../../../lib/perl5/5.26.3/JSON.html">JSON</a> <a href="../../../lib/perl5/site_perl/5.26.3/YAML.html">YAML</a> <a>JSON::Syck</a> <a>YAML::Syck</a> <a href="../../../lib/perl5/5.26.3/XML/Simple.html">XML::Simple</a></p>
+
+<h1 id="INCOMPATIBILITIES">INCOMPATIBILITIES</h1>
+
+<p>None reported.</p>
+
+<h1 id="BUGS-AND-LIMITATIONS">BUGS AND LIMITATIONS</h1>
+
+<p>No bugs have been reported.</p>
+
+<p>Please report any bugs or feature requests to <code>bug-config-any@rt.cpan.org</code>, or through the web interface at <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Config-Any">https://rt.cpan.org/Public/Dist/Display.html?Name=Config-Any</a>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Joel Bernstein &lt;rataxis@cpan.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<p>This module was based on the original <a>Catalyst::Plugin::ConfigLoader</a> module by Brian Cassidy <code>&lt;bricas@cpan.org&gt;</code>.</p>
+
+<p>With ideas and support from Matt S Trout <code>&lt;mst@shadowcatsystems.co.uk&gt;</code>.</p>
+
+<p>Further enhancements suggested by Evan Kaufman <code>&lt;evank@cpan.org&gt;</code>.</p>
+
+<h1 id="LICENCE-AND-COPYRIGHT">LICENCE AND COPYRIGHT</h1>
+
+<p>Copyright (c) 2006, Portugal Telecom <code>http://www.sapo.pt/</code>. All rights reserved. Portions copyright 2007, Joel Bernstein <code>&lt;rataxis@cpan.org&gt;</code>.</p>
+
+<p>This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself. See <a href="../../../lib/perl5/5.26.3/pod/perlartistic.html">perlartistic</a>.</p>
+
+<h1 id="DISCLAIMER-OF-WARRANTY">DISCLAIMER OF WARRANTY</h1>
+
+<p>BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE SOFTWARE &quot;AS IS&quot; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.</p>
+
+<p>IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a>Catalyst::Plugin::ConfigLoader</a> -- now a wrapper around this module.</p>
+
+
+</body>
+
+</html>
+
+

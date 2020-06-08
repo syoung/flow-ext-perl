@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::RelaxNG - RelaxNG Schema Validation</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::LibXML;
+  $doc = XML::LibXML-&gt;new-&gt;parse_file($url);
+
+  $rngschema = XML::LibXML::RelaxNG-&gt;new( location =&gt; $filename_or_url, no_network =&gt; 1 );
+  $rngschema = XML::LibXML::RelaxNG-&gt;new( string =&gt; $xmlschemastring, no_network =&gt; 1 );
+  $rngschema = XML::LibXML::RelaxNG-&gt;new( DOM =&gt; $doc, no_network =&gt; 1 );
+  eval { $rngschema-&gt;validate( $doc ); };</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>The XML::LibXML::RelaxNG class is a tiny frontend to libxml2&#39;s RelaxNG implementation. Currently it supports only schema parsing and document validation.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<dl>
+
+<dt id="new">new</dt>
+<dd>
+
+<pre><code>  $rngschema = XML::LibXML::RelaxNG-&gt;new( location =&gt; $filename_or_url, no_network =&gt; 1 );
+  $rngschema = XML::LibXML::RelaxNG-&gt;new( string =&gt; $xmlschemastring, no_network =&gt; 1 );
+  $rngschema = XML::LibXML::RelaxNG-&gt;new( DOM =&gt; $doc, no_network =&gt; 1 );</code></pre>
+
+<p>The constructor of XML::LibXML::RelaxNG needs to be called with list of parameters. At least location, string or DOM parameter is required to specify source of schema. Optional parameter no_network set to 1 cause that parser would not access network and optional parameter recover set 1 cause that parser would not call die() on errors.</p>
+
+<p>It is important, that each schema only have a single source.</p>
+
+<p>The location parameter allows one to parse a schema from the filesystem or a (non-HTTPS) URL.</p>
+
+<p>The string parameter will parse the schema from the given XML string.</p>
+
+<p>The DOM parameter allows one to parse the schema from a pre-parsed <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/Document.html">XML::LibXML::Document</a>.</p>
+
+<p>Note that the constructor will die() if the schema does not meed the constraints of the RelaxNG specification.</p>
+
+</dd>
+<dt id="validate">validate</dt>
+<dd>
+
+<pre><code>  eval { $rngschema-&gt;validate( $doc ); };</code></pre>
+
+<p>This function allows one to validate a (parsed) document against the given RelaxNG schema. The argument of this function should be an XML::LibXML::Document object. If this function succeeds, it will return 0, otherwise it will die() and report the errors found. Because of this validate() should be always evaluated.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt Sergeant, Christian Glahn, Petr Pajas</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>2.0205</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>2001-2007, AxKit.com Ltd.</p>
+
+<p>2002-2006, Christian Glahn.</p>
+
+<p>2006-2009, Petr Pajas.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

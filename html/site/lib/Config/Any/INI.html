@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#extensions">extensions( )</a></li>
+      <li><a href="#load-file">load( $file )</a></li>
+      <li><a href="#requires_all_of">requires_all_of( )</a></li>
+    </ul>
+  </li>
+  <li><a href="#PACKAGE-VARIABLES">PACKAGE VARIABLES</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Config::Any::INI - Load INI config files</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Loads INI files. Example:</p>
+
+<pre><code>    name=TestApp
+
+    [Controller::Foo]
+    foo=bar
+
+    [Model::Baz]
+    qux=xyzzy</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="extensions">extensions( )</h2>
+
+<p>return an array of valid extensions (<code>ini</code>).</p>
+
+<h2 id="load-file">load( $file )</h2>
+
+<p>Attempts to load <code>$file</code> as an INI file.</p>
+
+<h2 id="requires_all_of">requires_all_of( )</h2>
+
+<p>Specifies that this module requires <a href="../../../../lib/perl5/5.26.3/Config/Tiny.html">Config::Tiny</a> in order to work.</p>
+
+<h1 id="PACKAGE-VARIABLES">PACKAGE VARIABLES</h1>
+
+<dl>
+
+<dt id="MAP_SECTION_SPACE_TO_NESTED_KEY-boolean">$MAP_SECTION_SPACE_TO_NESTED_KEY (boolean)</dt>
+<dd>
+
+<p>This variable controls whether spaces in INI section headings will be expanded into nested hash keys. e.g. it controls whether [Full Power] maps to $config-&gt;{&#39;Full Power&#39;} or $config-&gt;{&#39;Full&#39;}-&gt;{&#39;Power&#39;}</p>
+
+<p>By default it is set to 1 (i.e. true).</p>
+
+<p>Set it to 0 to preserve literal spaces in section headings:</p>
+
+<pre><code>    use Config::Any;
+    use Config::Any::INI;
+    $Config::Any::INI::MAP_SECTION_SPACE_TO_NESTED_KEY = 0;</code></pre>
+
+</dd>
+</dl>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Brian Cassidy &lt;bricas@cpan.org&gt;</p>
+
+<p>Joel Bernstein &lt;rataxis@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>Copyright 2006-2016 by Brian Cassidy, portions copyright 2006, 2007 by Joel Bernstein</p>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<ul>
+
+<li><p><a>Catalyst</a></p>
+
+</li>
+<li><p><a href="../../../../../../root/.cpanm/work/1591583772.18/Config-Any-0.32/blib/lib/Config/Any.html">Config::Any</a></p>
+
+</li>
+<li><p><a href="../../../../lib/perl5/5.26.3/Config/Tiny.html">Config::Tiny</a></p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

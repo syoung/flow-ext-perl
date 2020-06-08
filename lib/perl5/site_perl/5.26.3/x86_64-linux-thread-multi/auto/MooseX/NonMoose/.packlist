@@ -1,0 +1,12 @@
+/flow/perl/html/site/lib/MooseX/NonMoose.html
+/flow/perl/html/site/lib/MooseX/NonMoose/InsideOut.html
+/flow/perl/html/site/lib/MooseX/NonMoose/Meta/Role/Class.html
+/flow/perl/html/site/lib/MooseX/NonMoose/Meta/Role/Constructor.html
+/flow/perl/lib/perl5/site_perl/5.26.3/MooseX/NonMoose.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/MooseX/NonMoose/InsideOut.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/MooseX/NonMoose/Meta/Role/Class.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/MooseX/NonMoose/Meta/Role/Constructor.pm
+/flow/perl/man/man3/MooseX::NonMoose.3
+/flow/perl/man/man3/MooseX::NonMoose::InsideOut.3
+/flow/perl/man/man3/MooseX::NonMoose::Meta::Role::Class.3
+/flow/perl/man/man3/MooseX::NonMoose::Meta::Role::Constructor.3

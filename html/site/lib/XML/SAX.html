@@ -1,0 +1,175 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USING-A-SAX2-PARSER">USING A SAX2 PARSER</a></li>
+  <li><a href="#WRITING-A-SAX2-PARSER">WRITING A SAX2 PARSER</a></li>
+  <li><a href="#EXPORTS">EXPORTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::SAX - Simple API for XML</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::SAX;
+  
+  # get a list of known parsers
+  my $parsers = XML::SAX-&gt;parsers();
+  
+  # add/update a parser
+  XML::SAX-&gt;add_parser(q(XML::SAX::PurePerl));
+
+  # remove parser
+  XML::SAX-&gt;remove_parser(q(XML::SAX::Foodelberry));
+
+  # save parsers
+  XML::SAX-&gt;save_parsers();</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>XML::SAX is a SAX parser access API for Perl. It includes classes and APIs required for implementing SAX drivers, along with a factory class for returning any SAX parser installed on the user&#39;s system.</p>
+
+<h1 id="USING-A-SAX2-PARSER">USING A SAX2 PARSER</h1>
+
+<p>The factory class is XML::SAX::ParserFactory. Please see the documentation of that module for how to instantiate a SAX parser: <a href="../../../../../root/.cpanm/work/1591583772.18/XML-SAX-1.02/blib/lib/XML/SAX/ParserFactory.html">XML::SAX::ParserFactory</a>. However if you don&#39;t want to load up another manual page, here&#39;s a short synopsis:</p>
+
+<pre><code>  use XML::SAX::ParserFactory;
+  use XML::SAX::XYZHandler;
+  my $handler = XML::SAX::XYZHandler-&gt;new();
+  my $p = XML::SAX::ParserFactory-&gt;parser(Handler =&gt; $handler);
+  $p-&gt;parse_uri(&quot;foo.xml&quot;);
+  # or $p-&gt;parse_string(&quot;&lt;foo/&gt;&quot;) or $p-&gt;parse_file($fh);</code></pre>
+
+<p>This will automatically load a SAX2 parser (defaulting to XML::SAX::PurePerl if no others are found) and return it to you.</p>
+
+<p>In order to learn how to use SAX to parse XML, you will need to read <a href="../../../../../root/.cpanm/work/1591583772.18/XML-SAX-1.02/blib/lib/XML/SAX/Intro.html">XML::SAX::Intro</a> and for reference, <a>XML::SAX::Specification</a>.</p>
+
+<h1 id="WRITING-A-SAX2-PARSER">WRITING A SAX2 PARSER</h1>
+
+<p>The first thing to remember in writing a SAX2 parser is to subclass XML::SAX::Base. This will make your life infinitely easier, by providing a number of methods automagically for you. See <a href="../../../lib/perl5/site_perl/5.26.3/XML/SAX/Base.html">XML::SAX::Base</a> for more details.</p>
+
+<p>When writing a SAX2 parser that is compatible with XML::SAX, you need to inform XML::SAX of the presence of that driver when you install it. In order to do that, XML::SAX contains methods for saving the fact that the parser exists on your system to a &quot;INI&quot; file, which is then loaded to determine which parsers are installed.</p>
+
+<p>The best way to do this is to follow these rules:</p>
+
+<ul>
+
+<li><p>Add XML::SAX as a prerequisite in Makefile.PL:</p>
+
+<pre><code>  WriteMakefile(
+      ...
+      PREREQ_PM =&gt; { &#39;XML::SAX&#39; =&gt; 0 },
+      ...
+  );</code></pre>
+
+<p>Alternatively you may wish to check for it in other ways that will cause more than just a warning.</p>
+
+</li>
+<li><p>Add the following code snippet to your Makefile.PL:</p>
+
+<pre><code>  sub MY::install {
+    package MY;
+    my $script = shift-&gt;SUPER::install(@_);
+    if (ExtUtils::MakeMaker::prompt(
+      &quot;Do you want to modify ParserDetails.ini?&quot;, &#39;Y&#39;)
+      =~ /^y/i) {
+      $script =~ s/install :: (.*)$/install :: $1 install_sax_driver/m;
+      $script .= &lt;&lt;&quot;INSTALL&quot;;
+  
+  install_sax_driver :
+  \t\@\$(PERL) -MXML::SAX -e &quot;XML::SAX-&gt;add_parser(q(\$(NAME)))-&gt;save_parsers()&quot;
+  
+  INSTALL
+    }
+    return $script;
+  }</code></pre>
+
+<p>Note that you should check the output of this - \$(NAME) will use the name of your distribution, which may not be exactly what you want. For example XML::LibXML has a driver called XML::LibXML::SAX::Generator, which is used in place of \$(NAME) in the above.</p>
+
+</li>
+<li><p>Add an XML::SAX test:</p>
+
+<p>A test file should be added to your t/ directory containing something like the following:</p>
+
+<pre><code>  use Test;
+  BEGIN { plan tests =&gt; 3 }
+  use XML::SAX;
+  use XML::SAX::PurePerl::DebugHandler;
+  XML::SAX-&gt;add_parser(q(XML::SAX::MyDriver));
+  local $XML::SAX::ParserPackage = &#39;XML::SAX::MyDriver&#39;;
+  eval {
+    my $handler = XML::SAX::PurePerl::DebugHandler-&gt;new();
+    ok($handler);
+    my $parser = XML::SAX::ParserFactory-&gt;parser(Handler =&gt; $handler);
+    ok($parser);
+    ok($parser-&gt;isa(&#39;XML::SAX::MyDriver&#39;);
+    $parser-&gt;parse_string(&quot;&lt;tag/&gt;&quot;);
+    ok($handler-&gt;{seen}{start_element});
+  };</code></pre>
+
+</li>
+</ul>
+
+<h1 id="EXPORTS">EXPORTS</h1>
+
+<p>By default, XML::SAX exports nothing into the caller&#39;s namespace. However you can request the symbols <code>Namespaces</code> and <code>Validation</code> which are the URIs for those features, allowing an easier way to request those features via ParserFactory:</p>
+
+<pre><code>  use XML::SAX qw(Namespaces Validation);
+  my $factory = XML::SAX::ParserFactory-&gt;new();
+  $factory-&gt;require_feature(Namespaces);
+  $factory-&gt;require_feature(Validation);
+  my $parser = $factory-&gt;parser();</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Current maintainer: Grant McLean, grantm@cpan.org</p>
+
+<p>Originally written by:</p>
+
+<p>Matt Sergeant, matt@sergeant.org</p>
+
+<p>Kip Hampton, khampton@totalcinema.com</p>
+
+<p>Robin Berjon, robin@knowscape.com</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This is free software, you may use it and distribute it under the same terms as Perl itself.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../lib/perl5/site_perl/5.26.3/XML/SAX/Base.html">XML::SAX::Base</a> for writing SAX Filters and Parsers</p>
+
+<p><a href="../../../../../root/.cpanm/work/1591583772.18/XML-SAX-1.02/blib/lib/XML/SAX/PurePerl.html">XML::SAX::PurePerl</a> for an XML parser written in 100% pure perl.</p>
+
+<p><a href="../../../lib/perl5/site_perl/5.26.3/XML/SAX/Exception.html">XML::SAX::Exception</a> for details on exception handling</p>
+
+
+</body>
+
+</html>
+
+

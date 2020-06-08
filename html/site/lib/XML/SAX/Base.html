@@ -1,0 +1,293 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#WRITING-SAX-DRIVERS-AND-FILTERS">WRITING SAX DRIVERS AND FILTERS</a></li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::SAX::Base - Base class SAX Drivers and Filters</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  package MyFilter;
+  use XML::SAX::Base;
+  @ISA = (&#39;XML::SAX::Base&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module has a very simple task - to be a base class for PerlSAX drivers and filters. It&#39;s default behaviour is to pass the input directly to the output unchanged. It can be useful to use this module as a base class so you don&#39;t have to, for example, implement the characters() callback.</p>
+
+<p>The main advantages that it provides are easy dispatching of events the right way (ie it takes care for you of checking that the handler has implemented that method, or has defined an AUTOLOAD), and the guarantee that filters will pass along events that they aren&#39;t implementing to handlers downstream that might nevertheless be interested in them.</p>
+
+<h1 id="WRITING-SAX-DRIVERS-AND-FILTERS">WRITING SAX DRIVERS AND FILTERS</h1>
+
+<p>The Perl Sax API Reference is at <a href="http://perl-xml.sourceforge.net/perl-sax/">http://perl-xml.sourceforge.net/perl-sax/</a>.</p>
+
+<p>Writing SAX Filters is tremendously easy: all you need to do is inherit from this module, and define the events you want to handle. A more detailed explanation can be found at http://www.xml.com/pub/a/2001/10/10/sax-filters.html.</p>
+
+<p>Writing Drivers is equally simple. The one thing you need to pay attention to is <b>NOT</b> to call events yourself (this applies to Filters as well). For instance:</p>
+
+<pre><code>  package MyFilter;
+  use base qw(XML::SAX::Base);
+
+  sub start_element {
+    my $self = shift;
+    my $data = shift;
+    # do something
+    $self-&gt;{Handler}-&gt;start_element($data); # BAD
+  }</code></pre>
+
+<p>The above example works well as precisely that: an example. But it has several faults: 1) it doesn&#39;t test to see whether the handler defines start_element. Perhaps it doesn&#39;t want to see that event, in which case you shouldn&#39;t throw it (otherwise it&#39;ll die). 2) it doesn&#39;t check ContentHandler and then Handler (ie it doesn&#39;t look to see that the user hasn&#39;t requested events on a specific handler, and if not on the default one), 3) if it did check all that, not only would the code be cumbersome (see this module&#39;s source to get an idea) but it would also probably have to check for a DocumentHandler (in case this were SAX1) and for AUTOLOADs potentially defined in all these packages. As you can tell, that would be fairly painful. Instead of going through that, simply remember to use code similar to the following instead:</p>
+
+<pre><code>  package MyFilter;
+  use base qw(XML::SAX::Base);
+
+  sub start_element {
+    my $self = shift;
+    my $data = shift;
+    # do something to filter
+    $self-&gt;SUPER::start_element($data); # GOOD (and easy) !
+  }</code></pre>
+
+<p>This way, once you&#39;ve done your job you hand the ball back to XML::SAX::Base and it takes care of all those problems for you!</p>
+
+<p>Note that the above example doesn&#39;t apply to filters only, drivers will benefit from the exact same feature.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>A number of methods are defined within this class for the purpose of inheritance. Some probably don&#39;t need to be overridden (eg parse_file) but some clearly should be (eg parse). Options for these methods are described in the PerlSAX2 specification available from http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/perl-xml/libxml-perl/doc/sax-2.0.html?rev=HEAD&amp;content-type=text/html.</p>
+
+<ul>
+
+<li><p>parse</p>
+
+<p>The parse method is the main entry point to parsing documents. Internally the parse method will detect what type of &quot;thing&quot; you are parsing, and call the appropriate method in your implementation class. Here is the mapping table of what is in the Source options (see the Perl SAX 2.0 specification for the meaning of these values):</p>
+
+<pre><code>  Source Contains           parse() calls
+  ===============           =============
+  CharacterStream (*)       _parse_characterstream($stream, $options)
+  ByteStream                _parse_bytestream($stream, $options)
+  String                    _parse_string($string, $options)
+  SystemId                  _parse_systemid($string, $options)</code></pre>
+
+<p>However note that these methods may not be sensible if your driver class is not for parsing XML. An example might be a DBI driver that generates XML/SAX from a database table. If that is the case, you likely want to write your own parse() method.</p>
+
+<p>Also note that the Source may contain both a PublicId entry, and an Encoding entry. To get at these, examine $options-&gt;{Source} as passed to your method.</p>
+
+<p>(*) A CharacterStream is a filehandle that does not need any encoding translation done on it. This is implemented as a regular filehandle and only works under Perl 5.7.2 or higher using PerlIO. To get a single character, or number of characters from it, use the perl core read() function. To get a single byte from it (or number of bytes), you can use sysread(). The encoding of the stream should be in the Encoding entry for the Source.</p>
+
+</li>
+<li><p>parse_file, parse_uri, parse_string</p>
+
+<p>These are all convenience variations on parse(), and in fact simply set up the options before calling it. You probably don&#39;t need to override these.</p>
+
+</li>
+<li><p>get_options</p>
+
+<p>This is a convenience method to get options in SAX2 style, or more generically either as hashes or as hashrefs (it returns a hashref). You will probably want to use this method in your own implementations of parse() and of new().</p>
+
+</li>
+<li><p>get_feature, set_feature</p>
+
+<p>These simply get and set features, and throw the appropriate exceptions defined in the specification if need be.</p>
+
+<p>If your subclass defines features not defined in this one, then you should override these methods in such a way that they check for your features first, and then call the base class&#39;s methods for features not defined by your class. An example would be:</p>
+
+<pre><code>  sub get_feature {
+      my $self = shift;
+      my $feat = shift;
+      if (exists $MY_FEATURES{$feat}) {
+          # handle the feature in various ways
+      }
+      else {
+          return $self-&gt;SUPER::get_feature($feat);
+      }
+  }</code></pre>
+
+<p>Currently this part is unimplemented.</p>
+
+</li>
+<li><p>set_handler</p>
+
+<p>This method takes a handler type (Handler, ContentHandler, etc.) and a handler object as arguments, and changes the current handler for that handler type, while taking care of resetting the internal state that needs to be reset. This allows one to change a handler during parse without running into problems (changing it on the parser object directly will most likely cause trouble).</p>
+
+</li>
+<li><p>set_document_handler, set_content_handler, set_dtd_handler, set_lexical_handler, set_decl_handler, set_error_handler, set_entity_resolver</p>
+
+<p>These are just simple wrappers around the former method, and take a handler object as their argument. Internally they simply call set_handler with the correct arguments.</p>
+
+</li>
+<li><p>get_handler</p>
+
+<p>The inverse of set_handler, this method takes a an optional string containing a handler type (DTDHandler, ContentHandler, etc. &#39;Handler&#39; is used if no type is passed). It returns a reference to the object that implements that class, or undef if that handler type is not set for the current driver/filter.</p>
+
+</li>
+<li><p>get_document_handler, get_content_handler, get_dtd_handler, get_lexical_handler, get_decl_handler, get_error_handler, get_entity_resolver</p>
+
+<p>These are just simple wrappers around the get_handler() method, and take no arguments. Internally they simply call get_handler with the correct handler type name.</p>
+
+</li>
+</ul>
+
+<p>It would be rather useless to describe all the methods that this module implements here. They are all the methods supported in SAX1 and SAX2. In case your memory is a little short, here is a list. The apparent duplicates are there so that both versions of SAX can be supported.</p>
+
+<ul>
+
+<li><p>start_document</p>
+
+</li>
+<li><p>end_document</p>
+
+</li>
+<li><p>start_element</p>
+
+</li>
+<li><p>start_document</p>
+
+</li>
+<li><p>end_document</p>
+
+</li>
+<li><p>start_element</p>
+
+</li>
+<li><p>end_element</p>
+
+</li>
+<li><p>characters</p>
+
+</li>
+<li><p>processing_instruction</p>
+
+</li>
+<li><p>ignorable_whitespace</p>
+
+</li>
+<li><p>set_document_locator</p>
+
+</li>
+<li><p>start_prefix_mapping</p>
+
+</li>
+<li><p>end_prefix_mapping</p>
+
+</li>
+<li><p>skipped_entity</p>
+
+</li>
+<li><p>start_cdata</p>
+
+</li>
+<li><p>end_cdata</p>
+
+</li>
+<li><p>comment</p>
+
+</li>
+<li><p>entity_reference</p>
+
+</li>
+<li><p>notation_decl</p>
+
+</li>
+<li><p>unparsed_entity_decl</p>
+
+</li>
+<li><p>element_decl</p>
+
+</li>
+<li><p>attlist_decl</p>
+
+</li>
+<li><p>doctype_decl</p>
+
+</li>
+<li><p>xml_decl</p>
+
+</li>
+<li><p>entity_decl</p>
+
+</li>
+<li><p>attribute_decl</p>
+
+</li>
+<li><p>internal_entity_decl</p>
+
+</li>
+<li><p>external_entity_decl</p>
+
+</li>
+<li><p>resolve_entity</p>
+
+</li>
+<li><p>start_dtd</p>
+
+</li>
+<li><p>end_dtd</p>
+
+</li>
+<li><p>start_entity</p>
+
+</li>
+<li><p>end_entity</p>
+
+</li>
+<li><p>warning</p>
+
+</li>
+<li><p>error</p>
+
+</li>
+<li><p>fatal_error</p>
+
+</li>
+</ul>
+
+<h1 id="TODO">TODO</h1>
+
+<pre><code>  - more tests
+  - conform to the &quot;SAX Filters&quot; and &quot;Java and DOM compatibility&quot;
+    sections of the SAX2 document.</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Kip Hampton (khampton@totalcinema.com) did most of the work, after porting it from XML::Filter::Base.</p>
+
+<p>Robin Berjon (robin@knowscape.com) pitched in with patches to make it usable as a base for drivers as well as filters, along with other patches.</p>
+
+<p>Matt Sergeant (matt@sergeant.org) wrote the original XML::Filter::Base, and patched a few things here and there, and imported it into the XML::SAX distribution.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a>XML::SAX</a></p>
+
+
+</body>
+
+</html>
+
+

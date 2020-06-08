@@ -1,0 +1,419 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#run">run</a></li>
+      <li><a href="#prepare_args">prepare_args</a></li>
+      <li><a href="#default_args">default_args</a></li>
+      <li><a href="#abstract">abstract</a></li>
+      <li><a href="#description">description</a></li>
+      <li><a href="#arg0">arg0</a></li>
+      <li><a href="#full_arg0">full_arg0</a></li>
+      <li><a href="#prepare_command">prepare_command</a></li>
+      <li><a href="#default_command">default_command</a></li>
+      <li><a href="#execute_command">execute_command</a></li>
+      <li><a href="#plugin_search_path">plugin_search_path</a></li>
+      <li><a href="#allow_any_unambiguous_abbrev">allow_any_unambiguous_abbrev</a></li>
+      <li><a href="#global_options">global_options</a></li>
+      <li><a href="#set_global_options">set_global_options</a></li>
+      <li><a href="#command_names">command_names</a></li>
+      <li><a href="#command_groups">command_groups</a></li>
+      <li><a href="#command_plugins">command_plugins</a></li>
+      <li><a href="#plugin_for">plugin_for</a></li>
+      <li><a href="#get_command">get_command</a></li>
+      <li><a href="#usage">usage</a></li>
+      <li><a href="#usage_desc">usage_desc</a></li>
+      <li><a href="#global_opt_spec">global_opt_spec</a></li>
+      <li><a href="#usage_error">usage_error</a></li>
+    </ul>
+  </li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd - write command line apps with less suffering</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>in <i>yourcmd</i>:</p>
+
+<pre><code>  use YourApp;
+  YourApp-&gt;run;</code></pre>
+
+<p>in <i>YourApp.pm</i>:</p>
+
+<pre><code>  package YourApp;
+  use App::Cmd::Setup -app;
+  1;</code></pre>
+
+<p>in <i>YourApp/Command/blort.pm</i>:</p>
+
+<pre><code>  package YourApp::Command::blort;
+  use YourApp -command;
+  use strict; use warnings;
+
+  sub abstract { &quot;blortex algorithm&quot; }
+
+  sub description { &quot;Long description on blortex algorithm&quot; }
+
+  sub opt_spec {
+    return (
+      [ &quot;blortex|X&quot;,  &quot;use the blortex algorithm&quot; ],
+      [ &quot;recheck|r&quot;,  &quot;recheck all results&quot;       ],
+    );
+  }
+
+  sub validate_args {
+    my ($self, $opt, $args) = @_;
+
+    # no args allowed but options!
+    $self-&gt;usage_error(&quot;No args allowed&quot;) if @$args;
+  }
+
+  sub execute {
+    my ($self, $opt, $args) = @_;
+
+    my $result = $opt-&gt;{blortex} ? blortex() : blort();
+
+    recheck($result) if $opt-&gt;{recheck};
+
+    print $result;
+  }</code></pre>
+
+<p>and, finally, at the command line:</p>
+
+<pre><code>  knight!rjbs$ yourcmd blort --recheck
+
+  All blorts successful.</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>App::Cmd is intended to make it easy to write complex command-line applications without having to think about most of the annoying things usually involved.</p>
+
+<p>For information on how to start using App::Cmd, see <a href="../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Tutorial.html">App::Cmd::Tutorial</a>.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<pre><code>  my $cmd = App::Cmd-&gt;new(\%arg);</code></pre>
+
+<p>This method returns a new App::Cmd object. During initialization, command plugins will be loaded.</p>
+
+<p>Valid arguments are:</p>
+
+<pre><code>  no_commands_plugin - if true, the command list plugin is not added
+
+  no_help_plugin     - if true, the help plugin is not added
+
+  no_version_plugin  - if true, the version plugin is not added
+
+  show_version_cmd -   if true, the version command will be shown in the
+                       command list
+
+  plugin_search_path - The path to search for commands in. Defaults to
+                       results of plugin_search_path method</code></pre>
+
+<p>If <code>no_commands_plugin</code> is not given, <a href="../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command/commands.html">App::Cmd::Command::commands</a> will be required, and it will be registered to handle all of its command names not handled by other plugins.</p>
+
+<p>If <code>no_help_plugin</code> is not given, <a href="../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command/help.html">App::Cmd::Command::help</a> will be required, and it will be registered to handle all of its command names not handled by other plugins. <b>Note:</b> &quot;help&quot; is the default command, so if you do not load the default help plugin, you should provide your own or override the <code>default_command</code> method.</p>
+
+<p>If <code>no_version_plugin</code> is not given, <a href="../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command/version.html">App::Cmd::Command::version</a> will be required to show the application&#39;s version with command <code>--version</code>. By default, the version command is not included in the command list. Pass <code>show_version_cmd</code> to include the version command in the list.</p>
+
+<h2 id="run">run</h2>
+
+<pre><code>  $cmd-&gt;run;</code></pre>
+
+<p>This method runs the application. If called the class, it will instantiate a new App::Cmd object to run.</p>
+
+<p>It determines the requested command (generally by consuming the first command-line argument), finds the plugin to handle that command, parses the remaining arguments according to that plugin&#39;s rules, and runs the plugin.</p>
+
+<p>It passes the contents of the global argument array (<code>@ARGV</code>) to <a href="#prepare_command">&quot;<code>prepare_command</code>&quot;</a>, but <code>@ARGV</code> is not altered by running an App::Cmd.</p>
+
+<h2 id="prepare_args">prepare_args</h2>
+
+<p>Normally App::Cmd uses <code>@ARGV</code> for its commandline arguments. You can override this method to change that behavior for testing or otherwise.</p>
+
+<h2 id="default_args">default_args</h2>
+
+<p>If <code><a href="#prepare_args">&quot;prepare_args&quot;</a></code> is not changed and there are no arguments in <code>@ARGV</code>, this method is called and should return an arrayref to be used as the arguments to the program. By default, it returns an empty arrayref.</p>
+
+<h2 id="abstract">abstract</h2>
+
+<pre><code>   sub abstract { &quot;command description&quot; }</code></pre>
+
+<p>Defines the command abstract: a short description that will be printed in the main command options list.</p>
+
+<h2 id="description">description</h2>
+
+<pre><code>   sub description { &quot;Long description&quot; }</code></pre>
+
+<p>Defines a longer command description that will be shown when the user asks for help on a specific command.</p>
+
+<h2 id="arg0">arg0</h2>
+
+<h2 id="full_arg0">full_arg0</h2>
+
+<pre><code>  my $program_name = $app-&gt;arg0;
+
+  my $full_program_name = $app-&gt;full_arg0;</code></pre>
+
+<p>These methods return the name of the program invoked to run this application. This is determined by inspecting <code>$0</code> when the App::Cmd object is instantiated, so it&#39;s probably correct, but doing weird things with App::Cmd could lead to weird values from these methods.</p>
+
+<p>If the program was run like this:</p>
+
+<pre><code>  knight!rjbs$ ~/bin/rpg dice 3d6</code></pre>
+
+<p>Then the methods return:</p>
+
+<pre><code>  arg0      - rpg
+  full_arg0 - /Users/rjbs/bin/rpg</code></pre>
+
+<p>These values are captured when the App::Cmd object is created, so it is safe to assign to <code>$0</code> later.</p>
+
+<h2 id="prepare_command">prepare_command</h2>
+
+<pre><code>  my ($cmd, $opt, @args) = $app-&gt;prepare_command(@ARGV);</code></pre>
+
+<p>This method will load the plugin for the requested command, use its options to parse the command line arguments, and eventually return everything necessary to actually execute the command.</p>
+
+<h2 id="default_command">default_command</h2>
+
+<p>This method returns the name of the command to run if none is given on the command line. The default default is &quot;help&quot;</p>
+
+<h2 id="execute_command">execute_command</h2>
+
+<pre><code>  $app-&gt;execute_command($cmd, \%opt, @args);</code></pre>
+
+<p>This method will invoke <code>validate_args</code> and then <code>run</code> on <code>$cmd</code>.</p>
+
+<h2 id="plugin_search_path">plugin_search_path</h2>
+
+<p>This method returns the plugin_search_path as set. The default implementation, if called on &quot;YourApp::Cmd&quot; will return &quot;YourApp::Cmd::Command&quot;</p>
+
+<p>This is a method because it&#39;s fun to override it with, for example:</p>
+
+<pre><code>  use constant plugin_search_path =&gt; __PACKAGE__;</code></pre>
+
+<h2 id="allow_any_unambiguous_abbrev">allow_any_unambiguous_abbrev</h2>
+
+<p>If this method returns true (which, by default, it does <i>not</i>), then any unambiguous abbreviation for a registered command name will be allowed as a means to use that command. For example, given the following commands:</p>
+
+<pre><code>  reticulate
+  reload
+  rasterize</code></pre>
+
+<p>Then the user could use <code>ret</code> for <code>reticulate</code> or <code>ra</code> for <code>rasterize</code> and so on.</p>
+
+<h2 id="global_options">global_options</h2>
+
+<pre><code>  if ($cmd-&gt;app-&gt;global_options-&gt;{verbose}) { ... }</code></pre>
+
+<p>This method returns the running application&#39;s global options as a hashref. If there are no options specified, an empty hashref is returned.</p>
+
+<h2 id="set_global_options">set_global_options</h2>
+
+<pre><code>  $app-&gt;set_global_options(\%opt);</code></pre>
+
+<p>This method sets the global options.</p>
+
+<h2 id="command_names">command_names</h2>
+
+<pre><code>  my @names = $cmd-&gt;command_names;</code></pre>
+
+<p>This returns the commands names which the App::Cmd object will handle.</p>
+
+<h2 id="command_groups">command_groups</h2>
+
+<pre><code>  my @groups = $cmd-&gt;commands_groups;</code></pre>
+
+<p>This method can be implemented to return a grouped list of command names with optional headers. Each group is given as arrayref and each header as string. If an empty list is returned, the commands plugin will show two groups without headers: the first group is for the &quot;help&quot; and &quot;commands&quot; commands, and all other commands are in the second group.</p>
+
+<h2 id="command_plugins">command_plugins</h2>
+
+<pre><code>  my @plugins = $cmd-&gt;command_plugins;</code></pre>
+
+<p>This method returns the package names of the plugins that implement the App::Cmd object&#39;s commands.</p>
+
+<h2 id="plugin_for">plugin_for</h2>
+
+<pre><code>  my $plugin = $cmd-&gt;plugin_for($command);</code></pre>
+
+<p>This method returns the plugin (module) for the given command. If no plugin implements the command, it returns false.</p>
+
+<h2 id="get_command">get_command</h2>
+
+<pre><code>  my ($command_name, $opt, @args) = $app-&gt;get_command(@args);</code></pre>
+
+<p>Process arguments and into a command name and (optional) global options.</p>
+
+<h2 id="usage">usage</h2>
+
+<pre><code>  print $self-&gt;app-&gt;usage-&gt;text;</code></pre>
+
+<p>Returns the usage object for the global options.</p>
+
+<h2 id="usage_desc">usage_desc</h2>
+
+<p>The top level usage line. Looks something like</p>
+
+<pre><code>  &quot;yourapp &lt;command&gt; [options]&quot;</code></pre>
+
+<h2 id="global_opt_spec">global_opt_spec</h2>
+
+<p>Returns a list with help command unless <code>no_help_plugin</code> has been specified or an empty list. Can be overridden for pre-dispatch option processing. This is useful for flags like --verbose.</p>
+
+<h2 id="usage_error">usage_error</h2>
+
+<pre><code>  $self-&gt;usage_error(&quot;Something&#39;s wrong!&quot;);</code></pre>
+
+<p>Used to die with nice usage output, during <code>validate_args</code>.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<ul>
+
+<li><p>publish and bring in Log::Speak (simple quiet/verbose output)</p>
+
+</li>
+<li><p>publish and use our internal enhanced describe_options</p>
+
+</li>
+<li><p>publish and use our improved simple input routines</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Adam Prime &lt;aprime@oanda.com&gt;</p>
+
+</li>
+<li><p>ambs &lt;ambs@cpan.org&gt;</p>
+
+</li>
+<li><p>Andreas Hernitscheck &lt;andreash@lxhe.(none)&gt;</p>
+
+</li>
+<li><p>A. Sinan Unur &lt;nanis@cpan.org&gt;</p>
+
+</li>
+<li><p>Chris &#39;BinGOs&#39; Williams &lt;chris@bingosnet.co.uk&gt;</p>
+
+</li>
+<li><p>David Golden &lt;dagolden@cpan.org&gt;</p>
+
+</li>
+<li><p>David Steinbrunner &lt;dsteinbrunner@pobox.com&gt;</p>
+
+</li>
+<li><p>Davor Cubranic &lt;cubranic@stat.ubc.ca&gt;</p>
+
+</li>
+<li><p>Denis Ibaev &lt;dionys@gmail.com&gt;</p>
+
+</li>
+<li><p>Diab Jerius &lt;djerius@cfa.harvard.edu&gt;</p>
+
+</li>
+<li><p>Glenn Fowler &lt;cebjyre@cpan.org&gt;</p>
+
+</li>
+<li><p>Ingy dot Net &lt;ingy@ingy.net&gt;</p>
+
+</li>
+<li><p>Jakob Voss &lt;jakob@nichtich.de&gt;</p>
+
+</li>
+<li><p>Jakob Voss &lt;voss@gbv.de&gt;</p>
+
+</li>
+<li><p>J&eacute;r&ocirc;me Quelin &lt;jquelin@gmail.com&gt;</p>
+
+</li>
+<li><p>John SJ Anderson &lt;genehack@genehack.org&gt;</p>
+
+</li>
+<li><p>Karen Etheridge &lt;ether@cpan.org&gt;</p>
+
+</li>
+<li><p>Kent Fredric &lt;kentfredric@gmail.com&gt;</p>
+
+</li>
+<li><p>Matthew Astley &lt;mca@sanger.ac.uk&gt;</p>
+
+</li>
+<li><p>mokko &lt;mauricemengel@gmail.com&gt;</p>
+
+</li>
+<li><p>Olivier Mengu&eacute; &lt;dolmen@cpan.org&gt;</p>
+
+</li>
+<li><p>Ricardo SIGNES &lt;rjbs@codesimply.com&gt;</p>
+
+</li>
+<li><p>Ryan C. Thompson &lt;rct@thompsonclan.org&gt;</p>
+
+</li>
+<li><p>Salvatore Bonaccorso &lt;carnil@debian.org&gt;</p>
+
+</li>
+<li><p>Sergey Romanov &lt;sromanov-dev@yandex.ru&gt;</p>
+
+</li>
+<li><p>Stephen Caldwell &lt;steve@campusexplorer.com&gt;</p>
+
+</li>
+<li><p>Yuval Kogman &lt;nuffin@cpan.org&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

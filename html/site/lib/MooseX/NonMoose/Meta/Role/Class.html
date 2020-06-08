@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>MooseX::NonMoose::Meta::Role::Class - metaclass trait for <a href="../../../../../../../../root/.cpanm/work/1591583772.18/MooseX-NonMoose-0.26/blib/lib/MooseX/NonMoose.html">MooseX::NonMoose</a></p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.26</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  package Foo;
+  use Moose -traits =&gt; &#39;MooseX::NonMoose::Meta::Role::Class&#39;;
+
+  # or
+
+  package My::Moose;
+  use Moose ();
+  use Moose::Exporter;
+
+  Moose::Exporter-&gt;setup_import_methods;
+  sub init_meta {
+      shift;
+      my %options = @_;
+      Moose-&gt;init_meta(%options);
+      Moose::Util::MetaRole::apply_metaclass_roles(
+          for_class       =&gt; $options{for_class},
+          metaclass_roles =&gt; [&#39;MooseX::NonMoose::Meta::Role::Class&#39;],
+      );
+      return Moose::Util::find_meta($options{for_class});
+  }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This trait implements everything involved with extending non-Moose classes, other than doing the actual inlining at <code>make_immutable</code> time. See <a href="../../../../../../../../root/.cpanm/work/1591583772.18/MooseX-NonMoose-0.26/blib/lib/MooseX/NonMoose.html">MooseX::NonMoose</a> for more details.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Jesse Luehrs &lt;doy@tozt.net&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2014 by Jesse Luehrs.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

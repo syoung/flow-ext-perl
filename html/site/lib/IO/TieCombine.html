@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#combined_contents">combined_contents</a></li>
+      <li><a href="#slot_contents">slot_contents</a></li>
+      <li><a href="#clear_slot">clear_slot</a></li>
+      <li><a href="#fh">fh</a></li>
+      <li><a href="#scalar_ref">scalar_ref</a></li>
+      <li><a href="#callback">callback</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>IO::TieCombine - produce tied (and other) separate but combined variables</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 1.005</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>First, we set up a bunch of access points:</p>
+
+<pre><code>  my $hub = IO::TieCombine-&gt;new;
+
+  my $str_ref  = $hub-&gt;scalar_ref(&#39;x&#39;);
+  my $fh       = $hub-&gt;fh(&#39;x&#39;);
+  my $callback = $hub-&gt;callback(&#39;x&#39;);
+
+  tie my $scalar, $hub, &#39;x&#39;;
+  tie local *STDOUT, $hub, &#39;x&#39;;
+
+  tie local *STDERR, $hub, &#39;err&#39;;</code></pre>
+
+<p>Then we write to things:</p>
+
+<pre><code>  $$str_ref .= &#39;And &#39;;
+  print $fh &quot;now &quot;;
+  $callback-&gt;(&#39;for &#39;);
+  $scalar .= &#39;something &#39;;
+  print &quot;completely &quot;;
+  warn &quot;different.\n&quot;;</code></pre>
+
+<p>And then:</p>
+
+<pre><code>  $hub-&gt;combined_contents;    # And now for something completely different.
+  $hub-&gt;slot_contents(&#39;x&#39;);   # And now for something completely
+  $hub-&gt;slot_contents(&#39;err&#39;); # different.</code></pre>
+
+<p><b>ACHTUNG!!</b> Because of a serious problem with Perl 5.10.0, output sent to a tied filehandle using <code>say</code> <b>will not have the expected newline</b>. 5.10.1 or later is needed. Since 5.10.0 is broken in so many other ways, you should really upgrade anyway.</p>
+
+<p><b>ACHTUNG!!</b> Because of a different problem with Perls 5.10.1 - 5.16.3, if you send output to a tied filehandle using <code>say</code>, and <code>$\</code> is undefined (which is the default), <b><code>$\</code> will not be restored to <code>undef</code> after the <code>say</code></b>! This means that once you&#39;ve used <code>say</code> to print to <i>any</i> tied filehandle, you have corrupted the global state of your program. Either start your program by setting <code>$\</code> to an empty string, which should be safe, or upgrade to 5.18.0.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<p>The constructor takes no arguments.</p>
+
+<h2 id="combined_contents">combined_contents</h2>
+
+<p>This method returns the contents of all collected data.</p>
+
+<h2 id="slot_contents">slot_contents</h2>
+
+<pre><code>  my $str = $hub-&gt;slot_contents( $slot_name );</code></pre>
+
+<p>This method returns the contents of all collected data for the named slot.</p>
+
+<h2 id="clear_slot">clear_slot</h2>
+
+<pre><code>  $hub-&gt;clear_slot( $slot_name );</code></pre>
+
+<p>This sets the slot back to an empty string.</p>
+
+<h2 id="fh">fh</h2>
+
+<pre><code>  my $fh = $hub-&gt;fh( $slot_name );</code></pre>
+
+<p>This method returns a reference to a tied filehandle. When printed to, output is collected in the named slot.</p>
+
+<h2 id="scalar_ref">scalar_ref</h2>
+
+<pre><code>  my $str_ref = $hub-&gt;scalar_ref( $slot_name );</code></pre>
+
+<p>This method returns a reference to scalar. When appended to, the new content is collected in the named slot. Attempting to alter the string other than by adding new content to its end will result in an exception.</p>
+
+<h2 id="callback">callback</h2>
+
+<pre><code>  my $code = $hub-&gt;callback( $slot_name );</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo SIGNES &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2015 by Ricardo SIGNES.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

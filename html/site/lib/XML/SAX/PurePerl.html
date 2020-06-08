@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::SAX::PurePerl - Pure Perl XML Parser with SAX2 interface</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::Handler::Foo;
+  use XML::SAX::PurePerl;
+  my $handler = XML::Handler::Foo-&gt;new();
+  my $parser = XML::SAX::PurePerl-&gt;new(Handler =&gt; $handler);
+  $parser-&gt;parse_uri(&quot;myfile.xml&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module implements an XML parser in pure perl. It is written around the upcoming perl 5.8&#39;s unicode support and support for multiple document encodings (using the PerlIO layer), however it has been ported to work with ASCII/UTF8 documents under lower perl versions.</p>
+
+<p>The SAX2 API is described in detail at http://sourceforge.net/projects/perl-xml/, in the CVS archive, under libxml-perl/docs. Hopefully those documents will be in a better location soon.</p>
+
+<p>Please refer to the SAX2 documentation for how to use this module - it is merely a front end to SAX2, and implements nothing that is not in that spec (or at least tries not to - please email me if you find errors in this implementation).</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>XML::SAX::PurePerl is <b>slow</b>. Very slow. I suggest you use something else in fact. However it is great as a fallback parser for XML::SAX, where the user might not be able to install an XS based parser or C library.</p>
+
+<p>Currently lots, probably. At the moment the weakest area is parsing DOCTYPE declarations, though the code is in place to start doing this. Also parsing parameter entity references is causing me much confusion, since it&#39;s not exactly what I would call trivial, or well documented in the XML grammar. XML documents with internal subsets are likely to fail.</p>
+
+<p>I am however trying to work towards full conformance using the Oasis test suite.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Matt Sergeant, matt@sergeant.org. Copyright 2001.</p>
+
+<p>Please report all bugs to the Perl-XML mailing list at perl-xml@listserv.activestate.com.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This is free software. You may use it or redistribute it under the same terms as Perl 5.7.2 itself.</p>
+
+
+</body>
+
+</html>
+
+

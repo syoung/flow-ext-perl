@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#execute">execute</a></li>
+      <li><a href="#sort_commands">sort_commands</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Command::commands - list the application&#39;s commands</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This command will list all of the application commands available and their abstracts.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="execute">execute</h2>
+
+<p>This is the command&#39;s primary method and raison d&#39;etre. It prints the application&#39;s usage text (if any) followed by a sorted listing of the application&#39;s commands and their abstracts.</p>
+
+<p>The commands are printed in sorted groups (created by <code>sort_commands</code>); each group is set off by blank lines.</p>
+
+<h2 id="sort_commands"><code>sort_commands</code></h2>
+
+<pre><code>  my @sorted = $cmd-&gt;sort_commands(@unsorted);</code></pre>
+
+<p>This method orders the list of commands into groups which it returns as a list of arrayrefs, and optional group header strings.</p>
+
+<p>By default, the first group is for the &quot;help&quot; and &quot;commands&quot; commands, and all other commands are in the second group.</p>
+
+<p>This method can be overridden by implementing the <code>commands_groups</code> method in your application base clase.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

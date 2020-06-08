@@ -1,0 +1,15 @@
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Common.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Body.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Header.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Heartbeat.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Method.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/OOBBody.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/OOBHeader.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/OOBMethod.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Trace.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Protocol.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Protocol/Base.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Protocol/v0_8.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/Net/AMQP/Value.pm

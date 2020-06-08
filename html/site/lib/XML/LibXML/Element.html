@@ -1,0 +1,367 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#OVERLOADING">OVERLOADING</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::Element - XML::LibXML Class for Element Nodes</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::LibXML;
+  # Only methods specific to Element nodes are listed here,
+  # see the XML::LibXML::Node manpage for other methods
+
+  $node = XML::LibXML::Element-&gt;new( $name );
+  $node-&gt;setAttribute( $aname, $avalue );
+  $node-&gt;setAttributeNS( $nsURI, $aname, $avalue );
+  $avalue = $node-&gt;getAttribute( $aname );
+  $avalue = $node-&gt;getAttributeNS( $nsURI, $aname );
+  $attrnode = $node-&gt;getAttributeNode( $aname );
+  $attrnode = $node-&gt;getAttributeNodeNS( $namespaceURI, $aname );
+  $node-&gt;removeAttribute( $aname );
+  $node-&gt;removeAttributeNS( $nsURI, $aname );
+  $boolean = $node-&gt;hasAttribute( $aname );
+  $boolean = $node-&gt;hasAttributeNS( $nsURI, $aname );
+  @nodes = $node-&gt;getChildrenByTagName($tagname);
+  @nodes = $node-&gt;getChildrenByTagNameNS($nsURI,$tagname);
+  @nodes = $node-&gt;getChildrenByLocalName($localname);
+  @nodes = $node-&gt;getElementsByTagName($tagname);
+  @nodes = $node-&gt;getElementsByTagNameNS($nsURI,$localname);
+  @nodes = $node-&gt;getElementsByLocalName($localname);
+  $node-&gt;appendWellBalancedChunk( $chunk );
+  $node-&gt;appendText( $PCDATA );
+  $node-&gt;appendTextNode( $PCDATA );
+  $node-&gt;appendTextChild( $childname , $PCDATA );
+  $node-&gt;setNamespace( $nsURI , $nsPrefix, $activate );
+  $node-&gt;setNamespaceDeclURI( $nsPrefix, $newURI );
+  $node-&gt;setNamespaceDeclPrefix( $oldPrefix, $newPrefix );</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<p>The class inherits from <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/Node.html">XML::LibXML::Node</a>. The documentation for Inherited methods is not listed here.</p>
+
+<p>Many functions listed here are extensively documented in the DOM Level 3 specification (<a href="http://www.w3.org/TR/DOM-Level-3-Core/">http://www.w3.org/TR/DOM-Level-3-Core/</a>). Please refer to the specification for extensive documentation.</p>
+
+<dl>
+
+<dt id="new">new</dt>
+<dd>
+
+<pre><code>  $node = XML::LibXML::Element-&gt;new( $name );</code></pre>
+
+<p>This function creates a new node unbound to any DOM.</p>
+
+</dd>
+<dt id="setAttribute">setAttribute</dt>
+<dd>
+
+<pre><code>  $node-&gt;setAttribute( $aname, $avalue );</code></pre>
+
+<p>This method sets or replaces the node&#39;s attribute <code>$aname</code> to the value <code>$avalue</code></p>
+
+</dd>
+<dt id="setAttributeNS">setAttributeNS</dt>
+<dd>
+
+<pre><code>  $node-&gt;setAttributeNS( $nsURI, $aname, $avalue );</code></pre>
+
+<p>Namespace-aware version of <code>setAttribute</code>, where <code>$nsURI</code> is a namespace URI, <code>$aname</code> is a qualified name, and <code>$avalue</code> is the value. The namespace URI may be null (empty or undefined) in order to create an attribute which has no namespace.</p>
+
+<p>The current implementation differs from DOM in the following aspects</p>
+
+<p>If an attribute with the same local name and namespace URI already exists on the element, but its prefix differs from the prefix of <code>$aname</code>, then this function is supposed to change the prefix (regardless of namespace declarations and possible collisions). However, the current implementation does rather the opposite. If a prefix is declared for the namespace URI in the scope of the attribute, then the already declared prefix is used, disregarding the prefix specified in <code>$aname</code>. If no prefix is declared for the namespace, the function tries to declare the prefix specified in <code>$aname</code> and dies if the prefix is already taken by some other namespace.</p>
+
+<p>According to DOM Level 2 specification, this method can also be used to create or modify special attributes used for declaring XML namespaces (which belong to the namespace &quot;http://www.w3.org/2000/xmlns/&quot; and have prefix or name &quot;xmlns&quot;). This should work since version 1.61, but again the implementation differs from DOM specification in the following: if a declaration of the same namespace prefix already exists on the element, then changing its value via this method automatically changes the namespace of all elements and attributes in its scope. This is because in libxml2 the namespace URI of an element is not static but is computed from a pointer to a namespace declaration attribute.</p>
+
+</dd>
+<dt id="getAttribute">getAttribute</dt>
+<dd>
+
+<pre><code>  $avalue = $node-&gt;getAttribute( $aname );</code></pre>
+
+<p>If <code>$node</code> has an attribute with the name <code>$aname</code>, the value of this attribute will get returned.</p>
+
+</dd>
+<dt id="getAttributeNS">getAttributeNS</dt>
+<dd>
+
+<pre><code>  $avalue = $node-&gt;getAttributeNS( $nsURI, $aname );</code></pre>
+
+<p>Retrieves an attribute value by local name and namespace URI.</p>
+
+</dd>
+<dt id="getAttributeNode">getAttributeNode</dt>
+<dd>
+
+<pre><code>  $attrnode = $node-&gt;getAttributeNode( $aname );</code></pre>
+
+<p>Retrieve an attribute node by name. If no attribute with a given name exists, <code>undef</code> is returned.</p>
+
+</dd>
+<dt id="getAttributeNodeNS">getAttributeNodeNS</dt>
+<dd>
+
+<pre><code>  $attrnode = $node-&gt;getAttributeNodeNS( $namespaceURI, $aname );</code></pre>
+
+<p>Retrieves an attribute node by local name and namespace URI. If no attribute with a given localname and namespace exists, <code>undef</code> is returned.</p>
+
+</dd>
+<dt id="removeAttribute">removeAttribute</dt>
+<dd>
+
+<pre><code>  $node-&gt;removeAttribute( $aname );</code></pre>
+
+<p>The method removes the attribute <code>$aname</code> from the node&#39;s attribute list, if the attribute can be found.</p>
+
+</dd>
+<dt id="removeAttributeNS">removeAttributeNS</dt>
+<dd>
+
+<pre><code>  $node-&gt;removeAttributeNS( $nsURI, $aname );</code></pre>
+
+<p>Namespace version of <code>removeAttribute</code></p>
+
+</dd>
+<dt id="hasAttribute">hasAttribute</dt>
+<dd>
+
+<pre><code>  $boolean = $node-&gt;hasAttribute( $aname );</code></pre>
+
+<p>This function tests if the named attribute is set for the node. If the attribute is specified, TRUE (1) will be returned, otherwise the return value is FALSE (0).</p>
+
+</dd>
+<dt id="hasAttributeNS">hasAttributeNS</dt>
+<dd>
+
+<pre><code>  $boolean = $node-&gt;hasAttributeNS( $nsURI, $aname );</code></pre>
+
+<p>namespace version of <code>hasAttribute</code></p>
+
+</dd>
+<dt id="getChildrenByTagName">getChildrenByTagName</dt>
+<dd>
+
+<pre><code>  @nodes = $node-&gt;getChildrenByTagName($tagname);</code></pre>
+
+<p>The function gives direct access to all child elements of the current node with a given tagname, where tagname is a qualified name, that is, in case of namespace usage it may consist of a prefix and local name. This function makes things a lot easier if one needs to handle big data sets. A special tagname &#39;*&#39; can be used to match any name.</p>
+
+<p>If this function is called in SCALAR context, it returns the number of elements found.</p>
+
+</dd>
+<dt id="getChildrenByTagNameNS">getChildrenByTagNameNS</dt>
+<dd>
+
+<pre><code>  @nodes = $node-&gt;getChildrenByTagNameNS($nsURI,$tagname);</code></pre>
+
+<p>Namespace version of <code>getChildrenByTagName</code>. A special nsURI &#39;*&#39; matches any namespace URI, in which case the function behaves just like <code>getChildrenByLocalName</code>.</p>
+
+<p>If this function is called in SCALAR context, it returns the number of elements found.</p>
+
+</dd>
+<dt id="getChildrenByLocalName">getChildrenByLocalName</dt>
+<dd>
+
+<pre><code>  @nodes = $node-&gt;getChildrenByLocalName($localname);</code></pre>
+
+<p>The function gives direct access to all child elements of the current node with a given local name. It makes things a lot easier if one needs to handle big data sets. A special <code>localname</code> &#39;*&#39; can be used to match any local name.</p>
+
+<p>If this function is called in SCALAR context, it returns the number of elements found.</p>
+
+</dd>
+<dt id="getElementsByTagName">getElementsByTagName</dt>
+<dd>
+
+<pre><code>  @nodes = $node-&gt;getElementsByTagName($tagname);</code></pre>
+
+<p>This function is part of the spec. It fetches all descendants of a node with a given tagname, where <code>tagname</code> is a qualified name, that is, in case of namespace usage it may consist of a prefix and local name. A special <code>tagname</code> &#39;*&#39; can be used to match any tag name.</p>
+
+<p>In SCALAR context this function returns an <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/NodeList.html">XML::LibXML::NodeList</a> object.</p>
+
+</dd>
+<dt id="getElementsByTagNameNS">getElementsByTagNameNS</dt>
+<dd>
+
+<pre><code>  @nodes = $node-&gt;getElementsByTagNameNS($nsURI,$localname);</code></pre>
+
+<p>Namespace version of <code>getElementsByTagName</code> as found in the DOM spec. A special <code>localname</code> &#39;*&#39; can be used to match any local name and <code>nsURI</code> &#39;*&#39; can be used to match any namespace URI.</p>
+
+<p>In SCALAR context this function returns an <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/NodeList.html">XML::LibXML::NodeList</a> object.</p>
+
+</dd>
+<dt id="getElementsByLocalName">getElementsByLocalName</dt>
+<dd>
+
+<pre><code>  @nodes = $node-&gt;getElementsByLocalName($localname);</code></pre>
+
+<p>This function is not found in the DOM specification. It is a mix of getElementsByTagName and getElementsByTagNameNS. It will fetch all tags matching the given local-name. This allows one to select tags with the same local name across namespace borders.</p>
+
+<p>In SCALAR context this function returns an <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/NodeList.html">XML::LibXML::NodeList</a> object.</p>
+
+</dd>
+<dt id="appendWellBalancedChunk">appendWellBalancedChunk</dt>
+<dd>
+
+<pre><code>  $node-&gt;appendWellBalancedChunk( $chunk );</code></pre>
+
+<p>Sometimes it is necessary to append a string coded XML Tree to a node. <i>appendWellBalancedChunk</i> will do the trick for you. But this is only done if the String is <code>well-balanced</code>.</p>
+
+<p><i>Note that appendWellBalancedChunk() is only left for compatibility reasons</i>. Implicitly it uses</p>
+
+<pre><code>  my $fragment = $parser-&gt;parse_balanced_chunk( $chunk );
+   $node-&gt;appendChild( $fragment );</code></pre>
+
+<p>This form is more explicit and makes it easier to control the flow of a script.</p>
+
+</dd>
+<dt id="appendText">appendText</dt>
+<dd>
+
+<pre><code>  $node-&gt;appendText( $PCDATA );</code></pre>
+
+<p>alias for appendTextNode().</p>
+
+</dd>
+<dt id="appendTextNode">appendTextNode</dt>
+<dd>
+
+<pre><code>  $node-&gt;appendTextNode( $PCDATA );</code></pre>
+
+<p>This wrapper function lets you add a string directly to an element node.</p>
+
+</dd>
+<dt id="appendTextChild">appendTextChild</dt>
+<dd>
+
+<pre><code>  $node-&gt;appendTextChild( $childname , $PCDATA );</code></pre>
+
+<p>Somewhat similar with <code>appendTextNode</code>: It lets you set an Element, that contains only a <code>text node</code> directly by specifying the name and the text content.</p>
+
+</dd>
+<dt id="setNamespace">setNamespace</dt>
+<dd>
+
+<pre><code>  $node-&gt;setNamespace( $nsURI , $nsPrefix, $activate );</code></pre>
+
+<p>setNamespace() allows one to apply a namespace to an element. The function takes three parameters: 1. the namespace URI, which is required and the two optional values prefix, which is the namespace prefix, as it should be used in child elements or attributes as well as the additional activate parameter. If prefix is not given, undefined or empty, this function tries to create a declaration of the default namespace.</p>
+
+<p>The activate parameter is most useful: If this parameter is set to FALSE (0), a new namespace declaration is simply added to the element while the element&#39;s namespace itself is not altered. Nevertheless, activate is set to TRUE (1) on default. In this case the namespace is used as the node&#39;s effective namespace. This means the namespace prefix is added to the node name and if there was a namespace already active for the node, it will be replaced (but its declaration is not removed from the document). A new namespace declaration is only created if necessary (that is, if the element is already in the scope of a namespace declaration associating the prefix with the namespace URI, then this declaration is reused).</p>
+
+<p>The following example may clarify this:</p>
+
+<pre><code>  my $e1 = $doc-&gt;createElement(&quot;bar&quot;);
+   $e1-&gt;setNamespace(&quot;http://foobar.org&quot;, &quot;foo&quot;)</code></pre>
+
+<p>results</p>
+
+<pre><code>  &lt;foo:bar xmlns:foo=&quot;http://foobar.org&quot;/&gt;</code></pre>
+
+<p>while</p>
+
+<pre><code>  my $e2 = $doc-&gt;createElement(&quot;bar&quot;);
+   $e2-&gt;setNamespace(&quot;http://foobar.org&quot;, &quot;foo&quot;,0)</code></pre>
+
+<p>results only</p>
+
+<pre><code>  &lt;bar xmlns:foo=&quot;http://foobar.org&quot;/&gt;</code></pre>
+
+<p>By using $activate == 0 it is possible to create multiple namespace declarations on a single element.</p>
+
+<p>The function fails if it is required to create a declaration associating the prefix with the namespace URI but the element already carries a declaration with the same prefix but different namespace URI.</p>
+
+</dd>
+<dt id="setNamespaceDeclURI">setNamespaceDeclURI</dt>
+<dd>
+
+<pre><code>  $node-&gt;setNamespaceDeclURI( $nsPrefix, $newURI );</code></pre>
+
+<p>EXPERIMENTAL IN 1.61 !</p>
+
+<p>This function manipulates directly with an existing namespace declaration on an element. It takes two parameters: the prefix by which it looks up the namespace declaration and a new namespace URI which replaces its previous value.</p>
+
+<p>It returns 1 if the namespace declaration was found and changed, 0 otherwise.</p>
+
+<p>All elements and attributes (even those previously unbound from the document) for which the namespace declaration determines their namespace belong to the new namespace after the change.</p>
+
+<p>If the new URI is undef or empty, the nodes have no namespace and no prefix after the change. Namespace declarations once nulled in this way do not further appear in the serialized output (but do remain in the document for internal integrity of libxml2 data structures).</p>
+
+<p>This function is NOT part of any DOM API.</p>
+
+</dd>
+<dt id="setNamespaceDeclPrefix">setNamespaceDeclPrefix</dt>
+<dd>
+
+<pre><code>  $node-&gt;setNamespaceDeclPrefix( $oldPrefix, $newPrefix );</code></pre>
+
+<p>EXPERIMENTAL IN 1.61 !</p>
+
+<p>This function manipulates directly with an existing namespace declaration on an element. It takes two parameters: the old prefix by which it looks up the namespace declaration and a new prefix which is to replace the old one.</p>
+
+<p>The function dies with an error if the element is in the scope of another declaration whose prefix equals to the new prefix, or if the change should result in a declaration with a non-empty prefix but empty namespace URI. Otherwise, it returns 1 if the namespace declaration was found and changed and 0 if not found.</p>
+
+<p>All elements and attributes (even those previously unbound from the document) for which the namespace declaration determines their namespace change their prefix to the new value.</p>
+
+<p>If the new prefix is undef or empty, the namespace declaration becomes a declaration of a default namespace. The corresponding nodes drop their namespace prefix (but remain in the, now default, namespace). In this case the function fails, if the containing element is in the scope of another default namespace declaration.</p>
+
+<p>This function is NOT part of any DOM API.</p>
+
+</dd>
+</dl>
+
+<h1 id="OVERLOADING">OVERLOADING</h1>
+
+<p>XML::LibXML::Element overloads hash dereferencing to provide access to the element&#39;s attributes. For non-namespaced attributes, the attribute name is the hash key, and the attribute value is the hash value. For namespaced attributes, the hash key is qualified with the namespace URI, using Clark notation.</p>
+
+<p>Perl&#39;s &quot;tied hash&quot; feature is used, which means that the hash gives you read-write access to the element&#39;s attributes. For more information, see <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/AttributeHash.html">XML::LibXML::AttributeHash</a></p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt Sergeant, Christian Glahn, Petr Pajas</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>2.0205</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>2001-2007, AxKit.com Ltd.</p>
+
+<p>2002-2006, Christian Glahn.</p>
+
+<p>2006-2009, Petr Pajas.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

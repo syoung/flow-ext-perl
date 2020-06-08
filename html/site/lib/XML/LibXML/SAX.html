@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FEATURES">FEATURES</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::SAX - XML::LibXML direct SAX parser</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>XML::LibXML provides an interface to libxml2 direct SAX interface. Through this interface it is possible to generate SAX events directly while parsing a document. While using the SAX parser XML::LibXML will not create a DOM Document tree.</p>
+
+<p>Such an interface is useful if very large XML documents have to be processed and no DOM functions are required. By using this interface it is possible to read data stored within an XML document directly into the application data structures without loading the document into memory.</p>
+
+<p>The SAX interface of XML::LibXML is based on the famous XML::SAX interface. It uses the generic interface as provided by XML::SAX::Base.</p>
+
+<p>Additionally to the generic functions, which are only able to process entire documents, XML::LibXML::SAX provides <i>parse_chunk()</i>. This method generates SAX events from well balanced data such as is often provided by databases.</p>
+
+<h1 id="FEATURES">FEATURES</h1>
+
+<p><i>NOTE:</i> This feature is experimental.</p>
+
+<p>You can enable character data joining which may yield a significant speed boost in your XML processing in lower markup ratio situations by enabling the http://xmlns.perl.org/sax/join-character-data feature of this parser. This is done via the set_feature method like this:</p>
+
+<pre><code>  $p-&gt;set_feature(&#39;http://xmlns.perl.org/sax/join-character-data&#39;, 1);</code></pre>
+
+<p>You can also specify a 0 to disable. The default is to have this feature disabled.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt Sergeant, Christian Glahn, Petr Pajas</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>2.0205</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>2001-2007, AxKit.com Ltd.</p>
+
+<p>2002-2006, Christian Glahn.</p>
+
+<p>2006-2009, Petr Pajas.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

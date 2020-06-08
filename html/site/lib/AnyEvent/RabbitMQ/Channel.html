@@ -1,0 +1,524 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#ARGUMENTS-FOR-open_channel">ARGUMENTS FOR open_channel</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#declare_exchange-args">declare_exchange (%args)</a></li>
+      <li><a href="#bind_exchange">bind_exchange</a></li>
+      <li><a href="#unbind_exchange">unbind_exchange</a></li>
+      <li><a href="#delete_exchange">delete_exchange</a></li>
+      <li><a href="#declare_queue">declare_queue</a></li>
+      <li><a href="#bind_queue">bind_queue</a></li>
+      <li><a href="#unbind_queue">unbind_queue</a></li>
+      <li><a href="#purge_queue">purge_queue</a></li>
+      <li><a href="#delete_queue">delete_queue</a></li>
+      <li><a href="#consume">consume</a></li>
+      <li><a href="#publish">publish</a></li>
+      <li><a href="#cancel">cancel</a></li>
+      <li><a href="#get">get</a></li>
+      <li><a href="#ack">ack</a></li>
+      <li><a href="#qos">qos</a></li>
+      <li><a href="#confirm">confirm</a></li>
+      <li><a href="#recover">recover</a></li>
+      <li><a href="#select_tx">select_tx</a></li>
+      <li><a href="#commit_tx">commit_tx</a></li>
+      <li><a href="#rollback_tx">rollback_tx</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR-COPYRIGHT-AND-LICENSE">AUTHOR, COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>AnyEvent::RabbitMQ::Channel - Abstraction of an AMQP channel.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    my $ch = $rf-&gt;open_channel();
+    $ch-&gt;declare_exchange(exchange =&gt; &#39;test_exchange&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>A RabbitMQ channel.</p>
+
+<p>A channel is a light-weight virtual connection within a TCP connection to a RabbitMQ broker.</p>
+
+<h1 id="ARGUMENTS-FOR-open_channel">ARGUMENTS FOR <code>open_channel</code></h1>
+
+<dl>
+
+<dt id="on_close">on_close</dt>
+<dd>
+
+<p>Callback invoked when the channel closes. Callback will be passed the incoming message that caused the close, if any.</p>
+
+</dd>
+<dt id="on_return">on_return</dt>
+<dd>
+
+<p>Callback invoked when a mandatory or immediate message publish fails. Callback will be passed the incoming message, with accessors <code>method_frame</code>, <code>header_frame</code>, and <code>body_frame</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="declare_exchange-args">declare_exchange (%args)</h2>
+
+<p>Declare an exchange (to publish messages to) on the server.</p>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="on_success">on_success</dt>
+<dd>
+
+</dd>
+<dt id="on_failure">on_failure</dt>
+<dd>
+
+</dd>
+<dt id="type">type</dt>
+<dd>
+
+<p>Default &#39;direct&#39;</p>
+
+</dd>
+<dt id="passive">passive</dt>
+<dd>
+
+<p>Default 0</p>
+
+</dd>
+<dt id="durable">durable</dt>
+<dd>
+
+<p>Default 0</p>
+
+</dd>
+<dt id="auto_delete">auto_delete</dt>
+<dd>
+
+<p>Default 0</p>
+
+</dd>
+<dt id="internal">internal</dt>
+<dd>
+
+<p>Default 0</p>
+
+</dd>
+<dt id="exchange">exchange</dt>
+<dd>
+
+<p>The name of the exchange</p>
+
+</dd>
+</dl>
+
+<h2 id="bind_exchange">bind_exchange</h2>
+
+<p>Binds an exchange to another exchange, with a routing key.</p>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="source">source</dt>
+<dd>
+
+<p>The name of the source exchange to bind</p>
+
+</dd>
+<dt id="destination">destination</dt>
+<dd>
+
+<p>The name of the destination exchange to bind</p>
+
+</dd>
+<dt id="routing_key">routing_key</dt>
+<dd>
+
+<p>The routing key to bind with</p>
+
+</dd>
+</dl>
+
+<h2 id="unbind_exchange">unbind_exchange</h2>
+
+<h2 id="delete_exchange">delete_exchange</h2>
+
+<h2 id="declare_queue">declare_queue</h2>
+
+<p>Declare a queue (create it if it doesn&#39;t exist yet) for publishing messages to on the server.</p>
+
+<pre><code>  my $done    = AnyEvent-&gt;condvar;
+  $channel-&gt;declare_queue(
+     exchange    =&gt; $queue_exchange,
+     queue       =&gt; $queueName,
+     durable     =&gt; 0,
+     auto_delete =&gt; 1,
+     passive     =&gt; 0,
+     arguments   =&gt; { &#39;x-expires&#39; =&gt; 0, },
+     on_success  =&gt; sub { $done-&gt;send; },
+     on_failure  =&gt; sub {
+         say &quot;Unable to create queue $queueName&quot;;
+         $done-&gt;send;
+     },
+  );
+  $done-&gt;recv;</code></pre>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="queue">queue</dt>
+<dd>
+
+<p>Name of the queue to be declared. If the queue name is the empty string, RabbitMQ will create a unique name for the queue. This is useful for temporary/private reply queues.</p>
+
+</dd>
+<dt id="on_success1">on_success</dt>
+<dd>
+
+<p>Callback that is called when the queue was declared successfully. The argument to the callback is of type <a href="../../../../lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Method.html">Net::AMQP::Frame::Method</a>. To get the name of the Queue (if you declared it with an empty name), you can say</p>
+
+<pre><code>    on_success =&gt; sub {
+        my $method = shift;
+        my $name   = $method-&gt;method_frame-&gt;queue;
+    };</code></pre>
+
+</dd>
+<dt id="on_failure1">on_failure</dt>
+<dd>
+
+<p>Callback that is called when the declaration of the queue has failed.</p>
+
+</dd>
+<dt id="auto_delete1">auto_delete</dt>
+<dd>
+
+<p>0 or 1, default 0</p>
+
+</dd>
+<dt id="passive1">passive</dt>
+<dd>
+
+<p>0 or 1, default 0</p>
+
+</dd>
+<dt id="durable1">durable</dt>
+<dd>
+
+<p>0 or 1, default 0</p>
+
+</dd>
+<dt id="exclusive">exclusive</dt>
+<dd>
+
+<p>0 or 1, default 0</p>
+
+</dd>
+<dt id="no_ack">no_ack</dt>
+<dd>
+
+<p>0 or 1, default 1</p>
+
+</dd>
+<dt id="ticket">ticket</dt>
+<dd>
+
+<p>default 0</p>
+
+</dd>
+<dt id="arguments">arguments</dt>
+<dd>
+
+<p><code>arguments</code> is a hashref of additional parameters which RabbitMQ extensions may use. This list is not complete and your RabbitMQ server configuration will determine which arguments are valid and how they act.</p>
+
+<dl>
+
+<dt id="x-expires">x-expires</dt>
+<dd>
+
+<p>The queue will automatically be removed after being idle for this many milliseconds.</p>
+
+<p>Default of 0 disables automatic queue removal.</p>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<h2 id="bind_queue">bind_queue</h2>
+
+<p>Binds a queue to an exchange, with a routing key.</p>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="queue1">queue</dt>
+<dd>
+
+<p>The name of the queue to bind</p>
+
+</dd>
+<dt id="exchange1">exchange</dt>
+<dd>
+
+<p>The name of the exchange to bind</p>
+
+</dd>
+<dt id="routing_key1">routing_key</dt>
+<dd>
+
+<p>The routing key to bind with</p>
+
+</dd>
+</dl>
+
+<h2 id="unbind_queue">unbind_queue</h2>
+
+<h2 id="purge_queue">purge_queue</h2>
+
+<p>Flushes the contents of a queue.</p>
+
+<h2 id="delete_queue">delete_queue</h2>
+
+<p>Deletes a queue. The queue may not have any active consumers.</p>
+
+<h2 id="consume">consume</h2>
+
+<p>Subscribe to consume messages from a queue.</p>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="queue2">queue</dt>
+<dd>
+
+<p>The name of the queue to be consumed from.</p>
+
+</dd>
+<dt id="on_consume">on_consume</dt>
+<dd>
+
+<p>Callback called with an argument of the message which has been consumed.</p>
+
+<p>The message is a hash reference, where the value to key <code>header</code> is an object of type <a>Net::AMQP::Protocol::Basic::ContentHeader</a>, <a>body</a> is a <a href="../../../../lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Body.html">Net::AMQP::Frame::Body</a>, and <code>deliver</code> a <a href="../../../../lib/perl5/site_perl/5.26.3/Net/AMQP/Frame/Method.html">Net::AMQP::Frame::Method</a>.</p>
+
+</dd>
+<dt id="on_cancel">on_cancel</dt>
+<dd>
+
+<p>Callback called if consumption is cancelled. This may be at client request or as a side effect of queue deletion. (Notification of queue deletion is a RabbitMQ extension.)</p>
+
+</dd>
+<dt id="consumer_tag">consumer_tag</dt>
+<dd>
+
+<p>Identifies this consumer, will be auto-generated if you do not provide it, but you must supply a value if you want to be able to later cancel the subscription.</p>
+
+</dd>
+<dt id="on_success2">on_success</dt>
+<dd>
+
+<p>Callback called if the subscription was successful (before the first message is consumed).</p>
+
+</dd>
+<dt id="on_failure2">on_failure</dt>
+<dd>
+
+<p>Callback called if the subscription fails for any reason.</p>
+
+</dd>
+<dt id="no_ack1">no_ack</dt>
+<dd>
+
+<p>Pass through the <code>no_ack</code> flag. Defaults to <code>1</code>. If set to <code>1</code>, the server will not expect messages to be acknowledged.</p>
+
+</dd>
+</dl>
+
+<h2 id="publish">publish</h2>
+
+<p>Publish a message to an exchange.</p>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="exchange2">exchange</dt>
+<dd>
+
+<p>The name of the exchange to send the message to.</p>
+
+</dd>
+<dt id="routing_key2">routing_key</dt>
+<dd>
+
+<p>The routing key with which to publish the message.</p>
+
+</dd>
+<dt id="header">header</dt>
+<dd>
+
+<p>Hash of AMQP message header info, including the confusingly similar element &quot;headers&quot;, which may contain arbitrary string key/value pairs.</p>
+
+</dd>
+<dt id="body">body</dt>
+<dd>
+
+<p>The text body of the message to send.</p>
+
+</dd>
+<dt id="mandatory">mandatory</dt>
+<dd>
+
+<p>Boolean; if true, then if the message doesn&#39;t land in a queue (e.g. the exchange has no bindings), it will be &quot;returned.&quot; (see &quot;on_return&quot;)</p>
+
+</dd>
+<dt id="immediate">immediate</dt>
+<dd>
+
+<p>Boolean; if true, then if the message cannot be delivered directly to a consumer, it will be &quot;returned.&quot; (see &quot;on_return&quot;)</p>
+
+</dd>
+<dt id="on_ack">on_ack</dt>
+<dd>
+
+<p>Callback called with the frame that acknowledges receipt (if channel is in confirm mode), typically <a>Net::AMQP::Protocol::Basic::Ack</a>.</p>
+
+</dd>
+<dt id="on_nack">on_nack</dt>
+<dd>
+
+<p>Callback called with the frame that declines receipt (if the channel is in confirm mode), typically <a>Net::AMQP::Protocol::Basic::Nack</a> or <a>Net::AMQP::Protocol::Channel::Close</a>.</p>
+
+</dd>
+<dt id="on_return1">on_return</dt>
+<dd>
+
+<p>In AMQP, a &quot;returned&quot; message is one that cannot be delivered in compliance with the <code>immediate</code> or <code>mandatory</code> flags.</p>
+
+<p>If in confirm mode, this callback will be called with the frame that reports message return, typically <a>Net::AMQP::Protocol::Basic::Return</a>. If confirm mode is off or this callback is not provided, then the channel or connection objects&#39; on_return callbacks (if any), will be called instead.</p>
+
+<p>NOTE: If confirm mode is on, the on_ack or on_nack callback will be called whether or not on_return is called first.</p>
+
+</dd>
+</dl>
+
+<h2 id="cancel">cancel</h2>
+
+<p>Cancel a queue subscription.</p>
+
+<p>Note that the cancellation <b>will not</b> take place at once, and further messages may be consumed before the subscription is cancelled. No further messages will be consumed after the on_success callback has been called.</p>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="consumer_tag1">consumer_tag</dt>
+<dd>
+
+<p>Identifies this consumer, needs to be the value supplied when the queue is initially consumed from.</p>
+
+</dd>
+<dt id="on_success3">on_success</dt>
+<dd>
+
+<p>Callback called if the subscription was successfully cancelled.</p>
+
+</dd>
+<dt id="on_failure3">on_failure</dt>
+<dd>
+
+<p>Callback called if the subscription could not be cancelled for any reason.</p>
+
+</dd>
+</dl>
+
+<h2 id="get">get</h2>
+
+<p>Try to get a single message from a queue.</p>
+
+<p>Arguments:</p>
+
+<dl>
+
+<dt id="queue3">queue</dt>
+<dd>
+
+<p>Mandatory. Name of the queue to try to receive a message from.</p>
+
+</dd>
+<dt id="on_success4">on_success</dt>
+<dd>
+
+<p>Will be called either with either a message, or, if the queue is empty, a notification that there was nothing to collect from the queue.</p>
+
+</dd>
+<dt id="on_failure4">on_failure</dt>
+<dd>
+
+<p>This callback will be called if an error is signalled on this channel.</p>
+
+</dd>
+<dt id="no_ack2">no_ack</dt>
+<dd>
+
+<p>0 or 1, default 1</p>
+
+</dd>
+</dl>
+
+<h2 id="ack">ack</h2>
+
+<h2 id="qos">qos</h2>
+
+<h2 id="confirm">confirm</h2>
+
+<p>Put channel into confirm mode. In confirm mode, publishes are confirmed by the server, so the on_ack callback of publish works.</p>
+
+<h2 id="recover">recover</h2>
+
+<h2 id="select_tx">select_tx</h2>
+
+<h2 id="commit_tx">commit_tx</h2>
+
+<h2 id="rollback_tx">rollback_tx</h2>
+
+<h1 id="AUTHOR-COPYRIGHT-AND-LICENSE">AUTHOR, COPYRIGHT AND LICENSE</h1>
+
+<p>See <a href="../../../../../../root/.cpanm/work/1591583772.18/AnyEvent-RabbitMQ-1.21/blib/lib/AnyEvent/RabbitMQ.html">AnyEvent::RabbitMQ</a> for author(s), copyright and license.</p>
+
+
+</body>
+
+</html>
+
+

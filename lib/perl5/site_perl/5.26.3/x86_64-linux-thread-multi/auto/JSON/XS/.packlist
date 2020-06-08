@@ -1,0 +1,10 @@
+/flow/perl/bin/json_xs
+/flow/perl/html/bin/json_xs.html
+/flow/perl/html/site/lib/JSON/XS.html
+/flow/perl/html/site/lib/JSON/XS/Boolean.html
+/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/JSON/XS.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/JSON/XS/Boolean.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/x86_64-linux-thread-multi/auto/JSON/XS/XS.so
+/flow/perl/man/man1/json_xs.1
+/flow/perl/man/man3/JSON::XS.3
+/flow/perl/man/man3/JSON::XS::Boolean.3

@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::PI - XML::LibXML Processing Instructions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::LibXML;
+  # Only methods specific to Processing Instruction nodes are listed here,
+  # see the XML::LibXML::Node manpage for other methods
+
+  $pinode-&gt;setData( $data_string );
+  $pinode-&gt;setData( name=&gt;string_value [...] );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Processing instructions are implemented with XML::LibXML with read and write access. The PI data is the PI without the PI target (as specified in XML 1.0 [17]) as a string. This string can be accessed with getData as implemented in <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/Node.html">XML::LibXML::Node</a>.</p>
+
+<p>The write access is aware about the fact, that many processing instructions have attribute like data. Therefore setData() provides besides the DOM spec conform Interface to pass a set of named parameter. So the code segment</p>
+
+<pre><code>  my $pi = $dom-&gt;createProcessingInstruction(&quot;abc&quot;);
+  $pi-&gt;setData(foo=&gt;&#39;bar&#39;, foobar=&gt;&#39;foobar&#39;);
+  $dom-&gt;appendChild( $pi );</code></pre>
+
+<p>will result the following PI in the DOM:</p>
+
+<pre><code>  &lt;?abc foo=&quot;bar&quot; foobar=&quot;foobar&quot;?&gt;</code></pre>
+
+<p>Which is how it is specified in the DOM specification. This three step interface creates temporary a node in perl space. This can be avoided while using the insertProcessingInstruction() method. Instead of the three calls described above, the call</p>
+
+<pre><code>  $dom-&gt;insertProcessingInstruction(&quot;abc&quot;,&#39;foo=&quot;bar&quot; foobar=&quot;foobar&quot;&#39;);</code></pre>
+
+<p>will have the same result as above.</p>
+
+<p><a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/PI.html">XML::LibXML::PI</a>&#39;s implementation of setData() documented below differs a bit from the standard version as available in <a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/Node.html">XML::LibXML::Node</a>:</p>
+
+<dl>
+
+<dt id="setData">setData</dt>
+<dd>
+
+<pre><code>  $pinode-&gt;setData( $data_string );
+  $pinode-&gt;setData( name=&gt;string_value [...] );</code></pre>
+
+<p>This method allows one to change the content data of a PI. Additionally to the interface specified for DOM Level2, the method provides a named parameter interface to set the data. This parameter list is converted into a string before it is appended to the PI.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt Sergeant, Christian Glahn, Petr Pajas</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>2.0205</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>2001-2007, AxKit.com Ltd.</p>
+
+<p>2002-2006, Christian Glahn.</p>
+
+<p>2006-2009, Petr Pajas.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

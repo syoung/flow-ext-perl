@@ -1,0 +1,141 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#SUBCLASSING">SUBCLASSING</a>
+    <ul>
+      <li><a href="#opt_spec">opt_spec</a></li>
+      <li><a href="#usage_desc">usage_desc</a></li>
+      <li><a href="#validate_args">validate_args</a></li>
+      <li><a href="#execute">execute</a></li>
+    </ul>
+  </li>
+  <li><a href="#WARNINGS">WARNINGS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Simple - a helper for building one-command App::Cmd applications</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>in <i>simplecmd</i>:</p>
+
+<pre><code>  use YourApp::Cmd;
+  Your::Cmd-&gt;run;</code></pre>
+
+<p>in <i>YourApp/Cmd.pm</i>:</p>
+
+<pre><code>  package YourApp::Cmd;
+  use base qw(App::Cmd::Simple);
+
+  sub opt_spec {
+    return (
+      [ &quot;blortex|X&quot;,  &quot;use the blortex algorithm&quot; ],
+      [ &quot;recheck|r&quot;,  &quot;recheck all results&quot;       ],
+    );
+  }
+
+  sub validate_args {
+    my ($self, $opt, $args) = @_;
+
+    # no args allowed but options!
+    $self-&gt;usage_error(&quot;No args allowed&quot;) if @$args;
+  }
+
+  sub execute {
+    my ($self, $opt, $args) = @_;
+
+    my $result = $opt-&gt;{blortex} ? blortex() : blort();
+
+    recheck($result) if $opt-&gt;{recheck};
+
+    print $result;
+  }</code></pre>
+
+<p>and, finally, at the command line:</p>
+
+<pre><code>  knight!rjbs$ simplecmd --recheck
+
+  All blorts successful.</code></pre>
+
+<h1 id="SUBCLASSING">SUBCLASSING</h1>
+
+<p>When writing a subclass of App::Cmd:Simple, there are only a few methods that you might want to implement. They behave just like the same-named methods in App::Cmd.</p>
+
+<h2 id="opt_spec">opt_spec</h2>
+
+<p>This method should be overridden to provide option specifications. (This is list of arguments passed to <code>describe_options</code> from Getopt::Long::Descriptive, after the first.)</p>
+
+<p>If not overridden, it returns an empty list.</p>
+
+<h2 id="usage_desc">usage_desc</h2>
+
+<p>This method should be overridden to provide the top level usage line. It&#39;s a one-line summary of how the command is to be invoked, and should be given in the format used for the <code>$usage_desc</code> parameter to <code>describe_options</code> in Getopt::Long::Descriptive.</p>
+
+<p>If not overriden, it returns something that prints out like:</p>
+
+<pre><code>  yourapp [-?h] [long options...]</code></pre>
+
+<h2 id="validate_args">validate_args</h2>
+
+<pre><code>  $cmd-&gt;validate_args(\%opt, \@args);</code></pre>
+
+<p>This method is passed a hashref of command line options (as processed by Getopt::Long::Descriptive) and an arrayref of leftover arguments. It may throw an exception (preferably by calling <code>usage_error</code>) if they are invalid, or it may do nothing to allow processing to continue.</p>
+
+<h2 id="execute">execute</h2>
+
+<pre><code>  Your::App::Cmd::Simple-&gt;execute(\%opt, \@args);</code></pre>
+
+<p>This method does whatever it is the command should do! It is passed a hash reference of the parsed command-line options and an array reference of left over arguments.</p>
+
+<h1 id="WARNINGS">WARNINGS</h1>
+
+<p><b>This should be considered experimental!</b> Although it is probably not going to change much, don&#39;t build your business model around it yet, okay?</p>
+
+<p>App::Cmd::Simple is not rich in black magic, but it does do some somewhat gnarly things to make an App::Cmd::Simple look as much like an App::Cmd::Command as possible. This means that you can&#39;t deviate too much from the sort of thing shown in the synopsis as you might like. If you&#39;re doing something other than writing a fairly simple command, and you want to screw around with the App::Cmd-iness of your program, Simple might not be the best choice.</p>
+
+<p><b>One specific warning...</b> if you are writing a program with the App::Cmd::Simple class embedded in it, you <b>must</b> call import on the class. That&#39;s how things work. You can just do this:</p>
+
+<pre><code>  YourApp::Cmd-&gt;import-&gt;run;</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

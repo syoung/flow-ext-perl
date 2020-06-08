@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#test_app">test_app</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Tester - for capturing the result of running an app</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Test::More tests =&gt; 4;
+  use App::Cmd::Tester;
+
+  use YourApp;
+
+  my $result = test_app(YourApp =&gt; [ qw(command --opt value) ]);
+
+  like($result-&gt;stdout, qr/expected output/, &#39;printed what we expected&#39;);
+
+  is($result-&gt;stderr, &#39;&#39;, &#39;nothing sent to sderr&#39;);
+
+  is($result-&gt;error, undef, &#39;threw no exceptions&#39;);
+
+  my $result = test_app(YourApp =&gt; [ qw(command --opt value --quiet) ]);
+
+  is($result-&gt;output, &#39;&#39;, &#39;absolutely no output with --quiet&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>One of the reasons that user-executed programs are so often poorly tested is that they are hard to test. App::Cmd::Tester is one of the tools App-Cmd provides to help make it easy to test App::Cmd-based programs.</p>
+
+<p>It provides one routine: test_app.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="test_app">test_app</h2>
+
+<p><b>Note</b>: while <code>test_app</code> is a method, it is by default exported as a subroutine into the namespace that uses App::Cmd::Tester. In other words: you probably don&#39;t need to think about this as a method unless you want to subclass App::Cmd::Tester.</p>
+
+<pre><code>  my $result = test_app($app_class =&gt; \@argv_contents);</code></pre>
+
+<p>This will locally set <code>@ARGV</code> to simulate command line arguments, and will then call the <code>run</code> method on the given application class (or application). Output to the standard output and standard error filehandles will be captured.</p>
+
+<p><code>$result</code> is an App::Cmd::Tester::Result object, which has methods to access the following data:</p>
+
+<pre><code>  stdout - the output sent to stdout
+  stderr - the output sent to stderr
+  output - the combined output of stdout and stderr
+  error  - the exception thrown by running the application, or undef
+  run_rv - the return value of the run method (generally irrelevant)
+  exit_code - the numeric exit code that would&#39;ve been issued (0 is &#39;okay&#39;)</code></pre>
+
+<p>The output is captured using <a href="../../../../lib/perl5/site_perl/5.26.3/IO/TieCombine.html">IO::TieCombine</a>, which <i>can</i> ensure that the ordering is preserved in the combined output, but <i>can&#39;t</i> capture the output of external programs. You can reverse these tradeoffs by using <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Tester/CaptureExternal.html">App::Cmd::Tester::CaptureExternal</a> instead.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

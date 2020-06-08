@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#USAGE">USAGE</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Command::help - display a command&#39;s help screen</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This command will either list all of the application commands and their abstracts, or display the usage screen for a subcommand with its description.</p>
+
+<h1 id="USAGE">USAGE</h1>
+
+<p>The help text is generated from three sources:</p>
+
+<ul>
+
+<li><p>The <code>usage_desc</code> method</p>
+
+</li>
+<li><p>The <code>description</code> method</p>
+
+</li>
+<li><p>The <code>opt_spec</code> data structure</p>
+
+</li>
+</ul>
+
+<p>The <code>usage_desc</code> method provides the opening usage line, following the specification described in <a href="../../../../../lib/perl5/5.26.3/Getopt/Long/Descriptive.html">Getopt::Long::Descriptive</a>. In some cases, the default <code>usage_desc</code> in <a href="../../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command.html">App::Cmd::Command</a> may be sufficient and you will only need to override it to provide additional command line usage information.</p>
+
+<p>The <code>opt_spec</code> data structure is used with <a href="../../../../../lib/perl5/5.26.3/Getopt/Long/Descriptive.html">Getopt::Long::Descriptive</a> to generate the description of the options.</p>
+
+<p>Subcommand classes should override the <code>discription</code> method to provide additional information that is prepended before the option descriptions.</p>
+
+<p>For example, consider the following subcommand module:</p>
+
+<pre><code>  package YourApp::Command::initialize;
+
+  # This is the default from App::Cmd::Command
+  sub usage_desc {
+    my ($self) = @_;
+    my $desc = $self-&gt;SUPER::usage_desc; # &quot;%c COMMAND %o&quot;
+    return &quot;$desc [DIRECTORY]&quot;;
+  }
+
+  sub description {
+    return &quot;The initialize command prepares the application...&quot;;
+  }
+
+  sub opt_spec {
+    return (
+      [ &quot;skip-refs|R&quot;,  &quot;skip reference checks during init&quot;, ],
+      [ &quot;values|v=s@&quot;,  &quot;starting values&quot;, { default =&gt; [ 0, 1, 3 ] } ],
+    );
+  }
+
+  ...</code></pre>
+
+<p>That module would generate help output like this:</p>
+
+<pre><code>  $ yourapp help initialize
+  yourapp initialize [-Rv] [long options...] [DIRECTORY]
+
+  The initialize command prepares the application...
+
+        --help            This usage screen
+        -R --skip-refs    skip reference checks during init
+        -v --values       starting values</code></pre>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

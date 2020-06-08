@@ -1,0 +1,125 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::Pattern - XML::LibXML::Pattern - interface to libxml2 XPath patterns</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::LibXML;
+  my $pattern = XML::LibXML::Pattern-&gt;new(&#39;/x:html/x:body//x:div&#39;, { &#39;x&#39; =&gt; &#39;http://www.w3.org/1999/xhtml&#39; });
+  # test a match on an XML::LibXML::Node $node
+
+  if ($pattern-&gt;matchesNode($node)) { ... }
+
+  # or on an XML::LibXML::Reader
+
+  if ($reader-&gt;matchesPattern($pattern)) { ... }
+
+  # or skip reading all nodes that do not match
+
+  print $reader-&gt;nodePath while $reader-&gt;nextPatternMatch($pattern);
+
+  $pattern = XML::LibXML::Pattern-&gt;new( pattern, { prefix =&gt; namespace_URI, ... } );
+  $bool = $pattern-&gt;matchesNode($node);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a perl interface to libxml2&#39;s pattern matching support <i>http://xmlsoft.org/html/libxml-pattern.html</i>. This feature requires recent versions of libxml2.</p>
+
+<p>Patterns are a small subset of XPath language, which is limited to (disjunctions of) location paths involving the child and descendant axes in abbreviated form as described by the extended BNF given below:</p>
+
+<pre><code>  Selector ::=     Path ( &#39;|&#39; Path )*
+  Path     ::=     (&#39;.//&#39; | &#39;//&#39; | &#39;/&#39; )? Step ( &#39;/&#39; Step )*
+  Step     ::=     &#39;.&#39; | NameTest
+  NameTest ::=     QName | &#39;*&#39; | NCName &#39;:&#39; &#39;*&#39;</code></pre>
+
+<p>For readability, whitespace may be used in selector XPath expressions even though not explicitly allowed by the grammar: whitespace may be freely added within patterns before or after any token, where</p>
+
+<pre><code>  token     ::=     &#39;.&#39; | &#39;/&#39; | &#39;//&#39; | &#39;|&#39; | NameTest</code></pre>
+
+<p>Note that no predicates or attribute tests are allowed.</p>
+
+<p>Patterns are particularly useful for stream parsing provided via the <code>XML::LibXML::Reader</code> interface.</p>
+
+<dl>
+
+<dt id="new">new()</dt>
+<dd>
+
+<pre><code>  $pattern = XML::LibXML::Pattern-&gt;new( pattern, { prefix =&gt; namespace_URI, ... } );</code></pre>
+
+<p>The constructor of a pattern takes a pattern expression (as described by the BNF grammar above) and an optional HASH reference mapping prefixes to namespace URIs. The method returns a compiled pattern object.</p>
+
+<p>Note that if the document has a default namespace, it must still be given an prefix in order to be matched (as demanded by the XPath 1.0 specification). For example, to match an element <code>&lt;a xmlns=&quot;http://foo.bar&quot;&lt;/a&gt;</code>, one should use a pattern like this:</p>
+
+<pre><code>  $pattern = XML::LibXML::Pattern-&gt;new( &#39;foo:a&#39;, { foo =&gt; &#39;http://foo.bar&#39; });</code></pre>
+
+</dd>
+<dt id="matchesNode-node">matchesNode($node)</dt>
+<dd>
+
+<pre><code>  $bool = $pattern-&gt;matchesNode($node);</code></pre>
+
+<p>Given an XML::LibXML::Node object, returns a true value if the node is matched by the compiled pattern expression.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../../../root/.cpanm/work/1591583772.18/XML-LibXML-2.0205/blib/lib/XML/LibXML/Reader.html">XML::LibXML::Reader</a> for other methods involving compiled patterns.</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt Sergeant, Christian Glahn, Petr Pajas</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>2.0205</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>2001-2007, AxKit.com Ltd.</p>
+
+<p>2002-2006, Christian Glahn.</p>
+
+<p>2006-2009, Petr Pajas.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

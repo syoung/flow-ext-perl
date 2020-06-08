@@ -1,0 +1,156 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#API">API</a>
+    <ul>
+      <li><a href="#new-nodes">new(@nodes)</a></li>
+      <li><a href="#get_nodelist">get_nodelist()</a></li>
+      <li><a href="#string_value">string_value()</a></li>
+      <li><a href="#to_literal">to_literal()</a></li>
+      <li><a href="#to_literal_delimited-separator">to_literal_delimited($separator)</a></li>
+      <li><a href="#to_literal_list">to_literal_list()</a></li>
+      <li><a href="#get_node-pos">get_node($pos)</a></li>
+      <li><a href="#size">size()</a></li>
+      <li><a href="#pop">pop()</a></li>
+      <li><a href="#push-nodes">push(@nodes)</a></li>
+      <li><a href="#append-nodelist">append($nodelist)</a></li>
+      <li><a href="#shift">shift()</a></li>
+      <li><a href="#unshift-nodes">unshift(@nodes)</a></li>
+      <li><a href="#prepend-nodelist">prepend($nodelist)</a></li>
+      <li><a href="#map-coderef">map($coderef)</a></li>
+      <li><a href="#grep-coderef">grep($coderef)</a></li>
+      <li><a href="#sort-coderef">sort($coderef)</a></li>
+      <li><a href="#reverse">reverse()</a></li>
+      <li><a href="#foreach-coderef">foreach($coderef)</a></li>
+      <li><a href="#reduce-coderef-init">reduce($coderef, $init)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::NodeList - a list of XML document nodes</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>An XML::LibXML::NodeList object contains an ordered list of nodes, as detailed by the W3C DOM documentation of Node Lists.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  my $results = $dom-&gt;findnodes(&#39;//somepath&#39;);
+  foreach my $context ($results-&gt;get_nodelist) {
+    my $newresults = $context-&gt;findnodes(&#39;./other/element&#39;);
+    ...
+  }</code></pre>
+
+<h1 id="API">API</h1>
+
+<h2 id="new-nodes">new(@nodes)</h2>
+
+<p>You will almost never have to create a new NodeList object, as it is all done for you by XPath.</p>
+
+<h2 id="get_nodelist">get_nodelist()</h2>
+
+<p>Returns a list of nodes, the contents of the node list, as a perl list.</p>
+
+<h2 id="string_value">string_value()</h2>
+
+<p>Returns the string-value of the first node in the list. See the XPath specification for what &quot;string-value&quot; means.</p>
+
+<h2 id="to_literal">to_literal()</h2>
+
+<p>Returns the concatenation of all the string-values of all the nodes in the list.</p>
+
+<h2 id="to_literal_delimited-separator">to_literal_delimited($separator)</h2>
+
+<p>Returns the concatenation of all the string-values of all the nodes in the list, delimited by the specified separator.</p>
+
+<h2 id="to_literal_list">to_literal_list()</h2>
+
+<p>Returns all the string-values of all the nodes in the list as a perl list.</p>
+
+<h2 id="get_node-pos">get_node($pos)</h2>
+
+<p>Returns the node at $pos. The node position in XPath is based at 1, not 0.</p>
+
+<h2 id="size">size()</h2>
+
+<p>Returns the number of nodes in the NodeList.</p>
+
+<h2 id="pop">pop()</h2>
+
+<p>Equivalent to perl&#39;s pop function.</p>
+
+<h2 id="push-nodes">push(@nodes)</h2>
+
+<p>Equivalent to perl&#39;s push function.</p>
+
+<h2 id="append-nodelist">append($nodelist)</h2>
+
+<p>Given a nodelist, appends the list of nodes in $nodelist to the end of the current list.</p>
+
+<h2 id="shift">shift()</h2>
+
+<p>Equivalent to perl&#39;s shift function.</p>
+
+<h2 id="unshift-nodes">unshift(@nodes)</h2>
+
+<p>Equivalent to perl&#39;s unshift function.</p>
+
+<h2 id="prepend-nodelist">prepend($nodelist)</h2>
+
+<p>Given a nodelist, prepends the list of nodes in $nodelist to the front of the current list.</p>
+
+<h2 id="map-coderef">map($coderef)</h2>
+
+<p>Equivalent to perl&#39;s map function.</p>
+
+<h2 id="grep-coderef">grep($coderef)</h2>
+
+<p>Equivalent to perl&#39;s grep function.</p>
+
+<h2 id="sort-coderef">sort($coderef)</h2>
+
+<p>Equivalent to perl&#39;s sort function.</p>
+
+<p>Caveat: Perl&#39;s magic <code>$a</code> and <code>$b</code> variables are not available in <code>$coderef</code>. Instead the two terms are passed to the coderef as arguments.</p>
+
+<h2 id="reverse">reverse()</h2>
+
+<p>Equivalent to perl&#39;s reverse function.</p>
+
+<h2 id="foreach-coderef">foreach($coderef)</h2>
+
+<p>Inspired by perl&#39;s foreach loop. Executes the coderef on each item in the list. Similar to <code>map</code>, but instead of returning the list of values returned by $coderef, returns the original NodeList.</p>
+
+<h2 id="reduce-coderef-init">reduce($coderef, $init)</h2>
+
+<p>Equivalent to List::Util&#39;s reduce function. <code>$init</code> is optional and provides an initial value for the reduction.</p>
+
+<p>Caveat: Perl&#39;s magic <code>$a</code> and <code>$b</code> variables are not available in <code>$coderef</code>. Instead the two terms are passed to the coderef as arguments.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,277 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#NAME1">NAME</a></li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#VARIABLES">VARIABLES</a></li>
+  <li><a href="#TODO">TODO</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+  <li><a href="#CONTRIBUTORS">CONTRIBUTORS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::NamespaceSupport - A simple generic namespace processor</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 1.12</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::NamespaceSupport;
+  my $nsup = XML::NamespaceSupport-&gt;new;
+
+  # add a new empty context
+  $nsup-&gt;push_context;
+  # declare a few prefixes
+  $nsup-&gt;declare_prefix($prefix1, $uri1);
+  $nsup-&gt;declare_prefix($prefix2, $uri2);
+  # the same shorter
+  $nsup-&gt;declare_prefixes($prefix1 =&gt; $uri1, $prefix2 =&gt; $uri2);
+
+  # get a single prefix for a URI (randomly)
+  $prefix = $nsup-&gt;get_prefix($uri);
+  # get all prefixes for a URI (probably better)
+  @prefixes = $nsup-&gt;get_prefixes($uri);
+  # get all prefixes in scope
+  @prefixes = $nsup-&gt;get_prefixes();
+  # get all prefixes that were declared for the current scope
+  @prefixes = $nsup-&gt;get_declared_prefixes;
+  # get a URI for a given prefix
+  $uri = $nsup-&gt;get_uri($prefix);
+
+  # get info on a qname (java-ish way, it&#39;s a bit weird)
+  ($ns_uri, $local_name, $qname) = $nsup-&gt;process_name($qname, $is_attr);
+  # the same, more perlish
+  ($ns_uri, $prefix, $local_name) = $nsup-&gt;process_element_name($qname);
+  ($ns_uri, $prefix, $local_name) = $nsup-&gt;process_attribute_name($qname);
+
+  # remove the current context
+  $nsup-&gt;pop_context;
+
+  # reset the object for reuse in another document
+  $nsup-&gt;reset;
+
+  # a simple helper to process Clarkian Notation
+  my ($ns, $lname) = $nsup-&gt;parse_jclark_notation(&#39;{http://foo}bar&#39;);
+  # or (given that it doesn&#39;t care about the object
+  my ($ns, $lname) = XML::NamespaceSupport-&gt;parse_jclark_notation(&#39;{http://foo}bar&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module offers a simple to process namespaced XML names (unames) from within any application that may need them. It also helps maintain a prefix to namespace URI map, and provides a number of basic checks.</p>
+
+<p>The model for this module is SAX2&#39;s NamespaceSupport class, readable at http://www.saxproject.org/namespaces.html It adds a few perlisations where we thought it appropriate.</p>
+
+<h1 id="NAME1">NAME</h1>
+
+<p>XML::NamespaceSupport - a simple generic namespace support class</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<ul>
+
+<li><p>XML::NamespaceSupport-&gt;new(\%options)</p>
+
+<p>A simple constructor.</p>
+
+<p>The options are <code>xmlns</code>, <code>fatal_errors</code>, and <code>auto_prefix</code></p>
+
+<p>If <code>xmlns</code> is turned on (it is off by default) the mapping from the xmlns prefix to the URI defined for it in DOM level 2 is added to the list of predefined mappings (which normally only contains the xml prefix mapping).</p>
+
+<p>If <code>fatal_errors</code> is turned off (it is on by default) a number of validity errors will simply be flagged as failures, instead of die()ing.</p>
+
+<p>If <code>auto_prefix</code> is turned on (it is off by default) when one provides a prefix of <code>undef</code> to <code>declare_prefix</code> it will generate a random prefix mapped to that namespace. Otherwise an undef prefix will trigger a warning (you should probably know what you&#39;re doing if you turn this option on).</p>
+
+<p>If <code>xmlns_11</code> us turned off, it becomes illegal to undeclare namespace prefixes. It is on by default. This behaviour is compliant with Namespaces in XML 1.1, turning it off reverts you to version 1.0.</p>
+
+</li>
+<li><p>$nsup-&gt;push_context</p>
+
+<p>Adds a new empty context to the stack. You can then populate it with new prefixes defined at this level.</p>
+
+</li>
+<li><p>$nsup-&gt;pop_context</p>
+
+<p>Removes the topmost context in the stack and reverts to the previous one. It will die() if you try to pop more than you have pushed.</p>
+
+</li>
+<li><p>$nsup-&gt;declare_prefix($prefix, $uri)</p>
+
+<p>Declares a mapping of $prefix to $uri, at the current level.</p>
+
+<p>Note that with <code>auto_prefix</code> turned on, if you declare a prefix mapping in which $prefix is undef(), you will get an automatic prefix selected for you. If it is off you will get a warning.</p>
+
+<p>This is useful when you deal with code that hasn&#39;t kept prefixes around and need to reserialize the nodes. It also means that if you want to set the default namespace (i.e. with an empty prefix) you must use the empty string instead of undef. This behaviour is consistent with the SAX 2.0 specification.</p>
+
+</li>
+<li><p>$nsup-&gt;declare_prefixes(%prefixes2uris)</p>
+
+<p>Declares a mapping of several prefixes to URIs, at the current level.</p>
+
+</li>
+<li><p>$nsup-&gt;get_prefix($uri)</p>
+
+<p>Returns a prefix given a URI. Note that as several prefixes may be mapped to the same URI, it returns an arbitrary one. It&#39;ll return undef on failure.</p>
+
+</li>
+<li><p>$nsup-&gt;get_prefixes($uri)</p>
+
+<p>Returns an array of prefixes given a URI. It&#39;ll return all the prefixes if the uri is undef.</p>
+
+</li>
+<li><p>$nsup-&gt;get_declared_prefixes</p>
+
+<p>Returns an array of all the prefixes that have been declared within this context, ie those that were declared on the last element, not those that were declared above and are simply in scope.</p>
+
+<p>Note that at least one context must be added to the stack via <code>push_context</code> before this method can be called.</p>
+
+</li>
+<li><p>$nsup-&gt;get_uri($prefix)</p>
+
+<p>Returns a URI for a given prefix. Returns undef on failure.</p>
+
+</li>
+<li><p>$nsup-&gt;process_name($qname, $is_attr)</p>
+
+<p>Given a qualified name and a boolean indicating whether this is an attribute or another type of name (those are differently affected by default namespaces), it returns a namespace URI, local name, qualified name tuple. I know that that is a rather abnormal list to return, but it is so for compatibility with the Java spec. See below for more Perlish alternatives.</p>
+
+<p>If the prefix is not declared, or if the name is not valid, it&#39;ll either die or return undef depending on the current setting of <code>fatal_errors</code>.</p>
+
+</li>
+<li><p>$nsup-&gt;undeclare_prefix($prefix);</p>
+
+<p>Removes a namespace prefix from the current context. This function may be used in SAX&#39;s end_prefix_mapping when there is fear that a namespace declaration might be available outside their scope (which shouldn&#39;t normally happen, but you never know ;) ). This may be needed in order to properly support Namespace 1.1.</p>
+
+</li>
+<li><p>$nsup-&gt;process_element_name($qname)</p>
+
+<p>Given a qualified name, it returns a namespace URI, prefix, and local name tuple. This method applies to element names.</p>
+
+<p>If the prefix is not declared, or if the name is not valid, it&#39;ll either die or return undef depending on the current setting of <code>fatal_errors</code>.</p>
+
+</li>
+<li><p>$nsup-&gt;process_attribute_name($qname)</p>
+
+<p>Given a qualified name, it returns a namespace URI, prefix, and local name tuple. This method applies to attribute names.</p>
+
+<p>If the prefix is not declared, or if the name is not valid, it&#39;ll either die or return undef depending on the current setting of <code>fatal_errors</code>.</p>
+
+</li>
+<li><p>$nsup-&gt;reset</p>
+
+<p>Resets the object so that it can be reused on another document.</p>
+
+</li>
+</ul>
+
+<p>All methods of the interface have an alias that is the name used in the original Java specification. You can use either name interchangeably. Here is the mapping:</p>
+
+<pre><code>  Java name                 Perl name
+  ---------------------------------------------------
+  pushContext               push_context
+  popContext                pop_context
+  declarePrefix             declare_prefix
+  declarePrefixes           declare_prefixes
+  getPrefix                 get_prefix
+  getPrefixes               get_prefixes
+  getDeclaredPrefixes       get_declared_prefixes
+  getURI                    get_uri
+  processName               process_name
+  processElementName        process_element_name
+  processAttributeName      process_attribute_name
+  parseJClarkNotation       parse_jclark_notation
+  undeclarePrefix           undeclare_prefix</code></pre>
+
+<h1 id="VARIABLES">VARIABLES</h1>
+
+<p>Two global variables are made available to you. They used to be constants but simple scalars are easier to use in a number of contexts. They are not exported but can easily be accessed from any package, or copied into it.</p>
+
+<ul>
+
+<li><p><code>$NS_XMLNS</code></p>
+
+<p>The namespace for xmlns prefixes, http://www.w3.org/2000/xmlns/.</p>
+
+</li>
+<li><p><code>$NS_XML</code></p>
+
+<p>The namespace for xml prefixes, http://www.w3.org/XML/1998/namespace.</p>
+
+</li>
+</ul>
+
+<h1 id="TODO">TODO</h1>
+
+<pre><code> - add more tests
+ - optimise here and there</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>XML::Parser::PerlSAX</p>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<ul>
+
+<li><p>Robin Berjon &lt;robin@knowscape.com&gt;</p>
+
+</li>
+<li><p>Chris Prather &lt;chris@prather.org&gt;</p>
+
+</li>
+</ul>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2015 by Robin Berjon.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+<h1 id="CONTRIBUTORS">CONTRIBUTORS</h1>
+
+<ul>
+
+<li><p>Chris Prather &lt;cprather@hdpublishing.com&gt;</p>
+
+</li>
+<li><p>David Steinbrunner &lt;dsteinbrunner@pobox.com&gt;</p>
+
+</li>
+<li><p>Paul Cochrane &lt;paul@liekut.de&gt;</p>
+
+</li>
+<li><p>Paulo Custodio &lt;pauloscustodio@gmail.com&gt;</p>
+
+</li>
+</ul>
+
+
+</body>
+
+</html>
+
+

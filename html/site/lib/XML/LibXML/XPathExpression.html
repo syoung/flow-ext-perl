@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHORS">AUTHORS</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::LibXML::XPathExpression - XML::LibXML::XPathExpression - interface to libxml2 pre-compiled XPath expressions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::LibXML;
+  my $compiled_xpath = XML::LibXML::XPathExpression-&gt;new(&#39;//foo[@bar=&quot;baz&quot;][position()&lt;4]&#39;);
+
+  # interface from XML::LibXML::Node
+
+  my $result = $node-&gt;find($compiled_xpath);
+  my @nodes = $node-&gt;findnodes($compiled_xpath);
+  my $value = $node-&gt;findvalue($compiled_xpath);
+
+  # interface from XML::LibXML::XPathContext
+
+  my $result = $xpc-&gt;find($compiled_xpath,$node);
+  my @nodes = $xpc-&gt;findnodes($compiled_xpath,$node);
+  my $value = $xpc-&gt;findvalue($compiled_xpath,$node);
+
+  $compiled = XML::LibXML::XPathExpression-&gt;new( xpath_string );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a perl interface to libxml2&#39;s pre-compiled XPath expressions. Pre-compiling an XPath expression can give in some performance benefit if the same XPath query is evaluated many times. <code>XML::LibXML::XPathExpression</code> objects can be passed to all <code>find...</code> functions <code>XML::LibXML</code> that expect an XPath expression.</p>
+
+<dl>
+
+<dt id="new">new()</dt>
+<dd>
+
+<pre><code>  $compiled = XML::LibXML::XPathExpression-&gt;new( xpath_string );</code></pre>
+
+<p>The constructor takes an XPath 1.0 expression as a string and returns an object representing the pre-compiled expressions (the actual data structure is internal to libxml2).</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHORS">AUTHORS</h1>
+
+<p>Matt Sergeant, Christian Glahn, Petr Pajas</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>2.0205</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>2001-2007, AxKit.com Ltd.</p>
+
+<p>2002-2006, Christian Glahn.</p>
+
+<p>2006-2009, Petr Pajas.</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

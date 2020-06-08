@@ -1,0 +1,192 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SIMPLE-SCALAR-CONSTANTS">SIMPLE SCALAR CONSTANTS</a>
+    <ul>
+      <li><a href="#BOOLEANS-Types::Serialiser::Boolean-class">BOOLEANS (Types::Serialiser::Boolean class)</a></li>
+      <li><a href="#ERROR-Types::Serialiser::Error-class">ERROR (Types::Serialiser::Error class)</a></li>
+    </ul>
+  </li>
+  <li><a href="#NOTES-FOR-XS-USERS">NOTES FOR XS USERS</a></li>
+  <li><a href="#A-GENERIC-OBJECT-SERIALIATION-PROTOCOL">A GENERIC OBJECT SERIALIATION PROTOCOL</a>
+    <ul>
+      <li><a href="#ENCODING">ENCODING</a></li>
+      <li><a href="#DECODING">DECODING</a></li>
+      <li><a href="#EXAMPLES">EXAMPLES</a></li>
+    </ul>
+  </li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Types::Serialiser - simple data types for common serialisation formats</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides some extra datatypes that are used by common serialisation formats such as JSON or CBOR. The idea is to have a repository of simple/small constants and containers that can be shared by different implementations so they become interoperable between each other.</p>
+
+<h1 id="SIMPLE-SCALAR-CONSTANTS">SIMPLE SCALAR CONSTANTS</h1>
+
+<p>Simple scalar constants are values that are overloaded to act like simple Perl values, but have (class) type to differentiate them from normal Perl scalars. This is necessary because these have different representations in the serialisation formats.</p>
+
+<h2 id="BOOLEANS-Types::Serialiser::Boolean-class">BOOLEANS (Types::Serialiser::Boolean class)</h2>
+
+<p>This type has only two instances, true and false. A natural representation for these in Perl is <code>1</code> and <code>0</code>, but serialisation formats need to be able to differentiate between them and mere numbers.</p>
+
+<dl>
+
+<dt id="Types::Serialiser::true-Types::Serialiser::true">$Types::Serialiser::true, Types::Serialiser::true</dt>
+<dd>
+
+<p>This value represents the &quot;true&quot; value. In most contexts is acts like the number <code>1</code>. It is up to you whether you use the variable form (<code>$Types::Serialiser::true</code>) or the constant form (<code>Types::Serialiser::true</code>).</p>
+
+<p>The constant is represented as a reference to a scalar containing <code>1</code> - implementations are allowed to directly test for this.</p>
+
+</dd>
+<dt id="Types::Serialiser::false-Types::Serialiser::false">$Types::Serialiser::false, Types::Serialiser::false</dt>
+<dd>
+
+<p>This value represents the &quot;false&quot; value. In most contexts is acts like the number <code>0</code>. It is up to you whether you use the variable form (<code>$Types::Serialiser::false</code>) or the constant form (<code>Types::Serialiser::false</code>).</p>
+
+<p>The constant is represented as a reference to a scalar containing <code>0</code> - implementations are allowed to directly test for this.</p>
+
+</dd>
+<dt id="is_bool-Types::Serialiser::is_bool-value">$is_bool = Types::Serialiser::is_bool $value</dt>
+<dd>
+
+<p>Returns true iff the <code>$value</code> is either <code>$Types::Serialiser::true</code> or <code>$Types::Serialiser::false</code>.</p>
+
+<p>For example, you could differentiate between a perl true value and a <code>Types::Serialiser::true</code> by using this:</p>
+
+<pre><code>   $value &amp;&amp; Types::Serialiser::is_bool $value</code></pre>
+
+</dd>
+<dt id="is_true-Types::Serialiser::is_true-value">$is_true = Types::Serialiser::is_true $value</dt>
+<dd>
+
+<p>Returns true iff <code>$value</code> is <code>$Types::Serialiser::true</code>.</p>
+
+</dd>
+<dt id="is_false-Types::Serialiser::is_false-value">$is_false = Types::Serialiser::is_false $value</dt>
+<dd>
+
+<p>Returns false iff <code>$value</code> is <code>$Types::Serialiser::false</code>.</p>
+
+</dd>
+</dl>
+
+<h2 id="ERROR-Types::Serialiser::Error-class">ERROR (Types::Serialiser::Error class)</h2>
+
+<p>This class has only a single instance, <code>error</code>. It is used to signal an encoding or decoding error. In CBOR for example, and object that couldn&#39;t be encoded will be represented by a CBOR undefined value, which is represented by the error value in Perl.</p>
+
+<dl>
+
+<dt id="Types::Serialiser::error-Types::Serialiser::error">$Types::Serialiser::error, Types::Serialiser::error</dt>
+<dd>
+
+<p>This value represents the &quot;error&quot; value. Accessing values of this type will throw an exception.</p>
+
+<p>The constant is represented as a reference to a scalar containing <code>undef</code> - implementations are allowed to directly test for this.</p>
+
+</dd>
+<dt id="is_error-Types::Serialiser::is_error-value">$is_error = Types::Serialiser::is_error $value</dt>
+<dd>
+
+<p>Returns false iff <code>$value</code> is <code>$Types::Serialiser::error</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="NOTES-FOR-XS-USERS">NOTES FOR XS USERS</h1>
+
+<p>The recommended way to detect whether a scalar is one of these objects is to check whether the stash is the <code>Types::Serialiser::Boolean</code> or <code>Types::Serialiser::Error</code> stash, and then follow the scalar reference to see if it&#39;s <code>1</code> (true), <code>0</code> (false) or <code>undef</code> (error).</p>
+
+<p>While it is possible to use an isa test, directly comparing stash pointers is faster and guaranteed to work.</p>
+
+<p>For historical reasons, the <code>Types::Serialiser::Boolean</code> stash is just an alias for <code>JSON::PP::Boolean</code>. When printed, the classname with usually be <code>JSON::PP::Boolean</code>, but isa tests and stash pointer comparison will normally work correctly (i.e. Types::Serialiser::true ISA JSON::PP::Boolean, but also ISA Types::Serialiser::Boolean).</p>
+
+<h1 id="A-GENERIC-OBJECT-SERIALIATION-PROTOCOL">A GENERIC OBJECT SERIALIATION PROTOCOL</h1>
+
+<p>This section explains the object serialisation protocol used by <a>CBOR::XS</a>. It is meant to be generic enough to support any kind of generic object serialiser.</p>
+
+<p>This protocol is called &quot;the Types::Serialiser object serialisation protocol&quot;.</p>
+
+<h2 id="ENCODING">ENCODING</h2>
+
+<p>When the encoder encounters an object that it cannot otherwise encode (for example, <a>CBOR::XS</a> can encode a few special types itself, and will first attempt to use the special <code>TO_CBOR</code> serialisation protocol), it will look up the <code>FREEZE</code> method on the object.</p>
+
+<p>Note that the <code>FREEZE</code> method will normally be called <i>during</i> encoding, and <i>MUST NOT</i> change the data structure that is being encoded in any way, or it might cause memory corruption or worse.</p>
+
+<p>If it exists, it will call it with two arguments: the object to serialise, and a constant string that indicates the name of the data model. For example <a>CBOR::XS</a> uses <code>CBOR</code>, and the <a href="../../../lib/perl5/5.26.3/JSON.html">JSON</a> and <a>JSON::XS</a> modules (or any other JSON serialiser), would use <code>JSON</code> as second argument.</p>
+
+<p>The <code>FREEZE</code> method can then return zero or more values to identify the object instance. The serialiser is then supposed to encode the class name and all of these return values (which must be encodable in the format) using the relevant form for Perl objects. In CBOR for example, there is a registered tag number for encoded perl objects.</p>
+
+<p>The values that <code>FREEZE</code> returns must be serialisable with the serialiser that calls it. Therefore, it is recommended to use simple types such as strings and numbers, and maybe array references and hashes (basically, the JSON data model). You can always use a more complex format for a specific data model by checking the second argument, the data model.</p>
+
+<p>The &quot;data model&quot; is not the same as the &quot;data format&quot; - the data model indicates what types and kinds of return values can be returned from <code>FREEZE</code>. For example, in <code>CBOR</code> it is permissible to return tagged CBOR values, while JSON does not support these at all, so <code>JSON</code> would be a valid (but too limited) data model name for <code>CBOR::XS</code>. similarly, a serialising format that supports more or less the same data model as JSON could use <code>JSON</code> as data model without losing anything.</p>
+
+<h2 id="DECODING">DECODING</h2>
+
+<p>When the decoder then encounters such an encoded perl object, it should look up the <code>THAW</code> method on the stored classname, and invoke it with the classname, the constant string to identify the data model/data format, and all the return values returned by <code>FREEZE</code>.</p>
+
+<h2 id="EXAMPLES">EXAMPLES</h2>
+
+<p>See the <code>OBJECT SERIALISATION</code> section in the <a>CBOR::XS</a> manpage for more details, an example implementation, and code examples.</p>
+
+<p>Here is an example <code>FREEZE</code>/<code>THAW</code> method pair:</p>
+
+<pre><code>   sub My::Object::FREEZE {
+      my ($self, $model) = @_;
+
+      ($self-&gt;{type}, $self-&gt;{id}, $self-&gt;{variant})
+   }
+
+   sub My::Object::THAW {
+      my ($class, $model, $type, $id, $variant) = @_;
+
+      $class-&gt;new (type =&gt; $type, id =&gt; $id, variant =&gt; $variant)
+   }</code></pre>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>The use of <a href="../../../lib/perl5/5.26.3/overload.html">overload</a> makes this module much heavier than it should be (on my system, this module: 4kB RSS, overload: 260kB RSS).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>Currently, <a>JSON::XS</a> and <a>CBOR::XS</a> use these types.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<pre><code> Marc Lehmann &lt;schmorp@schmorp.de&gt;
+ http://home.schmorp.de/</code></pre>
+
+
+</body>
+
+</html>
+
+

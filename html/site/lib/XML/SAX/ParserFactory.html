@@ -1,0 +1,122 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>XML::SAX::ParserFactory - Obtain a SAX parser</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use XML::SAX::ParserFactory;
+  use XML::SAX::XYZHandler;
+  my $handler = XML::SAX::XYZHandler-&gt;new();
+  my $p = XML::SAX::ParserFactory-&gt;parser(Handler =&gt; $handler);
+  $p-&gt;parse_uri(&quot;foo.xml&quot;);
+  # or $p-&gt;parse_string(&quot;&lt;foo/&gt;&quot;) or $p-&gt;parse_file($fh);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>XML::SAX::ParserFactory is a factory class for providing an application with a Perl SAX2 XML parser. It is akin to DBI - a front end for other parser classes. Each new SAX2 parser installed will register itself with XML::SAX, and then it will become available to all applications that use XML::SAX::ParserFactory to obtain a SAX parser.</p>
+
+<p>Unlike DBI however, XML/SAX parsers almost all work alike (especially if they subclass XML::SAX::Base, as they should), so rather than specifying the parser you want in the call to <code>parser()</code>, XML::SAX has several ways to automatically choose which parser to use:</p>
+
+<ul>
+
+<li><p>$XML::SAX::ParserPackage</p>
+
+<p>If this package variable is set, then this package is <code>require()</code>d and an instance of this package is returned by calling the <code>new()</code> class method in that package. If it cannot be loaded or there is an error, an exception will be thrown. The variable can also contain a version number:</p>
+
+<pre><code>  $XML::SAX::ParserPackage = &quot;XML::SAX::Expat (0.72)&quot;;</code></pre>
+
+<p>And the number will be treated as a minimum version number.</p>
+
+</li>
+<li><p>Required features</p>
+
+<p>It is possible to require features from the parsers. For example, you may wish for a parser that supports validation via a DTD. To do that, use the following code:</p>
+
+<pre><code>  use XML::SAX::ParserFactory;
+  my $factory = XML::SAX::ParserFactory-&gt;new();
+  $factory-&gt;require_feature(&#39;http://xml.org/sax/features/validation&#39;);
+  my $parser = $factory-&gt;parser(...);</code></pre>
+
+<p>Alternatively, specify the required features in the call to the ParserFactory constructor:</p>
+
+<pre><code>  my $factory = XML::SAX::ParserFactory-&gt;new(
+          RequiredFeatures =&gt; {
+               &#39;http://xml.org/sax/features/validation&#39; =&gt; 1,
+               }
+          );</code></pre>
+
+<p>If the features you have asked for are unavailable (for example the user might not have a validating parser installed), then an exception will be thrown.</p>
+
+<p>The list of known parsers is searched in reverse order, so it will always return the last installed parser that supports all of your requested features (Note: this is subject to change if someone comes up with a better way of making this work).</p>
+
+</li>
+<li><p>SAX.ini</p>
+
+<p>ParserFactory will search @INC for a file called SAX.ini, which is in a simple format:</p>
+
+<pre><code>  # a comment looks like this,
+  ; or like this, and are stripped anywhere in the file
+  key = value # SAX.in contains key/value pairs.</code></pre>
+
+<p>All whitespace is non-significant.</p>
+
+<p>This file can contain either a line:</p>
+
+<pre><code>  ParserPackage = MyParserModule (1.02)</code></pre>
+
+<p>Where MyParserModule is the module to load and use for the parser, and the number in brackets is a minimum version to load.</p>
+
+<p>Or you can list required features:</p>
+
+<pre><code>  http://xml.org/sax/features/validation = 1</code></pre>
+
+<p>And each feature with a true value will be required.</p>
+
+</li>
+<li><p>Fallback</p>
+
+<p>If none of the above works, the last parser installed on the user&#39;s system will be used. The XML::SAX package ships with a pure perl XML parser, XML::SAX::PurePerl, so that there will always be a fallback parser.</p>
+
+</li>
+</ul>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Matt Sergeant, matt@sergeant.org</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This is free software, you may use it and distribute it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

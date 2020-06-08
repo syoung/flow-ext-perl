@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Net::RabbitFoot - An Asynchronous and multi channel Perl AMQP client.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Net::RabbitFoot;
+
+  my $rf = Net::RabbitFoot-&gt;new()-&gt;load_xml_spec()-&gt;connect(
+      host    =&gt; &#39;localhost&#39;,
+      port    =&gt; 5672,
+      user    =&gt; &#39;guest&#39;,
+      pass    =&gt; &#39;guest&#39;,
+      vhost   =&gt; &#39;/&#39;,
+      timeout =&gt; 1,
+  );
+
+  my $ch = $rf-&gt;open_channel();
+  $ch-&gt;declare_exchange(exchange =&gt; &#39;test_exchange&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Net::RabbitFoot is an AMQP(Advanced Message Queuing Protocol) client library, that is intended to allow you to interact with AMQP-compliant message brokers/servers such as RabbitMQ in an asynchronous fashion.</p>
+
+<p>You can use Net::RabbitFoot to -</p>
+
+<pre><code>  * Declare and delete exchanges
+  * Declare, delete, bind and unbind queues
+  * Set QoS
+  * Publish, consume, get, ack and recover messages
+  * Select, commit and rollback transactions</code></pre>
+
+<p>Net::RabbitFoot is known to work with RabbitMQ versions 2.3.1 and version 0-8 of the AMQP specification.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Masahito Ikuta &lt;cooldaemon@gmail.com&gt;</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 2010, the above named author(s).</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,10 @@
+/flow/perl/html/site/lib/AnyEvent/RabbitMQ.html
+/flow/perl/html/site/lib/AnyEvent/RabbitMQ/Channel.html
+/flow/perl/lib/perl5/site_perl/5.26.3/AnyEvent/RabbitMQ.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/AnyEvent/RabbitMQ/Channel.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/AnyEvent/RabbitMQ/LocalQueue.pm
+/flow/perl/lib/perl5/site_perl/5.26.3/auto/share/dist/AnyEvent-RabbitMQ/README
+/flow/perl/lib/perl5/site_perl/5.26.3/auto/share/dist/AnyEvent-RabbitMQ/fixed_amqp0-8.xml
+/flow/perl/lib/perl5/site_perl/5.26.3/auto/share/dist/AnyEvent-RabbitMQ/fixed_amqp0-9-1.xml
+/flow/perl/man/man3/AnyEvent::RabbitMQ.3
+/flow/perl/man/man3/AnyEvent::RabbitMQ::Channel.3

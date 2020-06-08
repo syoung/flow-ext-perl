@@ -1,0 +1,122 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#EXPORT">EXPORT</a></li>
+      <li><a href="#Test::Without::Module::get_forbidden_list">Test::Without::Module::get_forbidden_list</a></li>
+    </ul>
+  </li>
+  <li><a href="#ONE-LINER">ONE LINER</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#CREDITS">CREDITS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#LICENSE">LICENSE</a></li>
+  <li><a href="#REPOSITORY">REPOSITORY</a></li>
+  <li><a href="#SUPPORT">SUPPORT</a></li>
+  <li><a href="#BUG-TRACKER">BUG TRACKER</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Test::Without::Module - Test fallback behaviour in absence of modules</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Test::Without::Module qw( My::Module );
+
+  # Now, loading of My::Module fails :
+  eval { require My::Module; };
+  warn $@ if $@;
+
+  # Now it works again
+  eval q{ no Test::Without::Module qw( My::Module ) };
+  eval { require My::Module; };
+  print &quot;Found My::Module&quot; unless $@;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module allows you to deliberately hide modules from a program even though they are installed. This is mostly useful for testing modules that have a fallback when a certain dependency module is not installed.</p>
+
+<h2 id="EXPORT">EXPORT</h2>
+
+<p>None. All magic is done via <code>use Test::Without::Module LIST</code> and <code>no Test::Without::Module LIST</code>.</p>
+
+<h2 id="Test::Without::Module::get_forbidden_list">Test::Without::Module::get_forbidden_list</h2>
+
+<p>This function returns a reference to a copy of the current hash of forbidden modules or an empty hash if none are currently forbidden. This is convenient if you are testing and/or debugging this module.</p>
+
+<h1 id="ONE-LINER">ONE LINER</h1>
+
+<p>A neat trick for using this module from the command line was mentioned to me by NUFFIN and by Jerrad Pierce:</p>
+
+<pre><code>  perl -MTest::Without::Module=Some::Module -w -Iblib/lib t/SomeModule.t</code></pre>
+
+<p>That way, you can easily see how your module or test file behaves when a certain module is unavailable.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<ul>
+
+<li><p>There is no lexical scoping</p>
+
+</li>
+</ul>
+
+<h1 id="CREDITS">CREDITS</h1>
+
+<p>Much improvement must be thanked to Aristotle from PerlMonks, he pointed me to a much less convoluted way to fake a module at <a href="https://perlmonks.org?node=192635">https://perlmonks.org?node=192635</a>.</p>
+
+<p>I also discussed with him an even more elegant way of overriding CORE::GLOBAL::require, but the parsing of the overridden subroutine didn&#39;t work out the way I wanted it - CORE::require didn&#39;t recognize barewords as such anymore.</p>
+
+<p>NUFFIN and Jerrad Pierce pointed out the convenient use from the command line to interactively watch the behaviour of the test suite and module in absence of a module.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Copyright (c) 2003-2014 Max Maischein, &lt;corion@cpan.org&gt;</p>
+
+<h1 id="LICENSE">LICENSE</h1>
+
+<p>This module is released under the same terms as Perl itself.</p>
+
+<h1 id="REPOSITORY">REPOSITORY</h1>
+
+<p>The public repository of this module is <a href="https://github.com/Corion/test-without-module">https://github.com/Corion/test-without-module</a>.</p>
+
+<h1 id="SUPPORT">SUPPORT</h1>
+
+<p>The public support forum of this module is <a href="https://perlmonks.org/">https://perlmonks.org/</a>.</p>
+
+<h1 id="BUG-TRACKER">BUG TRACKER</h1>
+
+<p>Please report bugs in this module via the RT CPAN bug queue at <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Test-Without-Module">https://rt.cpan.org/Public/Dist/Display.html?Name=Test-Without-Module</a> or via mail to <a>test-without-module-Bugs@rt.cpan.org</a>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../../../../lib/perl5/5.26.3/Devel/Hide.html">Devel::Hide</a>, <a>Acme::Intraweb</a>, <a>PAR</a>, <a href="../../../../lib/perl5/5.26.3/pod/perlfunc.html">perlfunc</a></p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#OVERVIEW">OVERVIEW</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Setup - helper for setting up App::Cmd classes</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="OVERVIEW">OVERVIEW</h1>
+
+<p>App::Cmd::Setup is a helper library, used to set up base classes that will be used as part of an App::Cmd program. For the most part you should refer to <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Tutorial.html">the tutorial</a> for how you should use this library.</p>
+
+<p>This class is useful in three scenarios:</p>
+
+<dl>
+
+<dt id="when-writing-your-App::Cmd-subclass">when writing your App::Cmd subclass</dt>
+<dd>
+
+<p>Instead of writing:</p>
+
+<pre><code>  package MyApp;
+  use base &#39;App::Cmd&#39;;</code></pre>
+
+<p>...you can write:</p>
+
+<pre><code>  package MyApp;
+  use App::Cmd::Setup -app;</code></pre>
+
+<p>The benefits of doing this are mostly minor, and relate to sanity-checking your class. The significant benefit is that this form allows you to specify plugins, as in:</p>
+
+<pre><code>  package MyApp;
+  use App::Cmd::Setup -app =&gt; { plugins =&gt; [ &#39;Prompt&#39; ] };</code></pre>
+
+<p>Plugins are described in <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Tutorial.html">App::Cmd::Tutorial</a> and <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Plugin.html">App::Cmd::Plugin</a>.</p>
+
+</dd>
+<dt id="when-writing-abstract-base-classes-for-commands">when writing abstract base classes for commands</dt>
+<dd>
+
+<p>That is: when you write a subclass of <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command.html">App::Cmd::Command</a> that is intended for other commands to use as their base class, you should use App::Cmd::Setup. For example, if you want all the commands in MyApp to inherit from MyApp::Command, you may want to write that package like this:</p>
+
+<pre><code>  package MyApp::Command;
+  use App::Cmd::Setup -command;</code></pre>
+
+<p>Do not confuse this with the way you will write specific commands:</p>
+
+<pre><code>  package MyApp::Command::mycmd;
+  use MyApp -command;</code></pre>
+
+<p>Again, this form mostly performs some validation and setup behind the scenes for you. You can use <code><a href="../../../../lib/perl5/5.26.3/base.html">base</a></code> if you prefer.</p>
+
+</dd>
+<dt id="when-writing-App::Cmd-plugins">when writing App::Cmd plugins</dt>
+<dd>
+
+<p><a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Plugin.html">App::Cmd::Plugin</a> is a mechanism that allows an App::Cmd class to inject code into all its command classes, providing them with utility routines.</p>
+
+<p>To write a plugin, you must use App::Cmd::Setup. As seen above, you must also use App::Cmd::Setup to set up your App::Cmd subclass if you wish to consume plugins.</p>
+
+<p>For more information on writing plugins, see <a>App::Cmd::Manual</a> and <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Plugin.html">App::Cmd::Plugin</a>.</p>
+
+</dd>
+</dl>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<title></title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:support@ActiveState.com" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#new">new</a></li>
+      <li><a href="#prepare">prepare</a></li>
+      <li><a href="#app">app</a></li>
+      <li><a href="#choose_parent_app">choose_parent_app</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>App::Cmd::Subdispatch - an App::Cmd::Command that is also an App::Cmd</p>
+
+<h1 id="VERSION">VERSION</h1>
+
+<p>version 0.331</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="new">new</h2>
+
+<p>A hackish new that allows us to have an Command instance before they normally exist.</p>
+
+<h2 id="prepare">prepare</h2>
+
+<pre><code>  my $subcmd = $subdispatch-&gt;prepare($app, @args);</code></pre>
+
+<p>An overridden version of <a href="../../../../../../root/.cpanm/work/1591583772.18/App-Cmd-0.331/blib/lib/App/Cmd/Command.html#prepare">&quot;prepare&quot; in App::Cmd::Command</a> that performs a new dispatch cycle.</p>
+
+<h2 id="app">app</h2>
+
+<pre><code>  $subdispatch-&gt;app;</code></pre>
+
+<p>This method returns the application that this subdispatch is a command of.</p>
+
+<h2 id="choose_parent_app">choose_parent_app</h2>
+
+<pre><code>  $subcmd-&gt;prepare(
+    $subdispatch-&gt;choose_parent_app($app, $opt, $plugin),
+    @$args
+  );</code></pre>
+
+<p>A method that chooses whether the parent app or the subdispatch is going to be <code>$cmd-&gt;app</code>.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Ricardo Signes &lt;rjbs@cpan.org&gt;</p>
+
+<h1 id="COPYRIGHT-AND-LICENSE">COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2016 by Ricardo Signes.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+</body>
+
+</html>
+
+
